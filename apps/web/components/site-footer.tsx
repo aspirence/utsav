@@ -32,38 +32,36 @@ export async function SiteFooter() {
 
   return (
     <footer className="mt-20">
-      {/*
-        A line-art frieze sitting flush on top of the dark band - baraat, mandap, the
-        couple, the whole procession read left to right.
+      <div className="bg-ink-900">
+        {/*
+          A line-art frieze across the top of the footer - baraat, band, mandap, the
+          couple, read left to right.
 
-        It lives inside <footer> rather than in the page, so it is attached to the footer
-        on every route and no page has to remember to put it there. It carries its own
-        white ground because the section above it differs per page; without that it would
-        sit on cream here and white there.
+          This is the second version of the artwork and it changed where the strip lives.
+          The first was black line work, which needed its own light ground above the dark
+          band; this one is white line work on transparent, so it goes straight onto
+          ink-900 and the footer is one uninterrupted block instead of a pale strip with a
+          dark box under it.
 
-        The art is black line work on transparent, so it stays on a light ground rather
-        than being knocked out onto ink-900 - inverted, fine strokes this thin turn to
-        mush. `block` on the image kills the inline-element baseline gap that would
-        otherwise leave a white hairline between the frieze and the dark band below it.
+          It sits inside <footer> rather than in any page, so every route gets it without
+          having to remember.
 
-        Source is 984px wide, so on a large monitor it is drawn above 1:1. Acceptable for
-        flat line work; a wider export is the fix if it ever looks soft, not CSS.
-      */}
-      <div className="bg-surface-raised">
+          `block` kills the inline-element baseline gap - as an inline image it would leave
+          a few pixels of nothing under the frieze.
+
+          2016px wide, so it is roughly 1:1 on a large monitor rather than being stretched.
+        */}
         {/* eslint-disable-next-line @next/next/no-img-element -- plan §12: no next/image */}
         <img
           src="/footer-frieze.webp"
           alt=""
           aria-hidden="true"
-          width={984}
-          height={177}
+          width={2016}
+          height={364}
           loading="lazy"
           decoding="async"
           className="block w-full"
         />
-      </div>
-
-      <div className="bg-ink-900">
         <Container className="py-14">
           <div className="grid gap-12 text-center sm:text-left lg:grid-cols-3 lg:items-start">
             {/* ── Left: categories ─────────────────────────────────────── */}
