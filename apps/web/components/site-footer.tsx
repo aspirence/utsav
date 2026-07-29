@@ -37,32 +37,38 @@ export async function SiteFooter() {
         read left to right. It lives inside <footer> rather than in any page, so every
         route gets it without having to remember.
 
-        THE BACKGROUND IS BAKED IN, and it is white on purpose.
+        The master is design/source-images/footer3.png - black line work on a flat,
+        fully opaque ground, which is the version that finally worked. The two before it
+        did not, and both failures are worth remembering:
 
-        The master (design/source-images/footer2.png) is *white* line work on transparent.
-        Dropping that straight onto the dark band did not work: 16% of its pixels are
-        partially transparent with black underneath, and the haze turned the strip into a
-        visible near-black rectangle sitting on the warm ink-900 around it - lossy WebP
-        smeared that region from 16% to 23%. So the export is opaque either way.
+          · footer.png  black on transparent, 984px. Too small; visibly stretched.
+          · footer2.png white on transparent. Sounded right for the dark band, but 16% of
+            its pixels are *partially* transparent with black underneath, and that haze
+            turned the strip into a near-black rectangle sitting on the warm ink-900 around
+            it. Lossy WebP smeared the partial-alpha region from 16% to 23%.
 
-        White ground means the strokes have to be dark, so the art is inverted on the way
-        out. That is one Pillow step, not a second asset to keep in sync - regenerate from
-        the master if it ever needs to go back to white-on-dark.
+        The lesson both times: a frieze that spans the full width has no business carrying
+        an alpha channel. It always covers whatever is behind it, so the ground may as well
+        be baked in - which is also why this is 233 KB rather than the 380 KB the alpha
+        version cost.
 
-        Opaque also costs less: 140 KB with no alpha channel, against 380 KB with one.
+        The master's paper is #f3f4f3, not white, and the section above the footer is
+        pure white - a four-value step across the full width of the page reads as a band
+        edge. So the export lifts the ground to #ffffff with a single linear scale, which
+        leaves the black strokes where they are because 0 maps to 0.
 
         `block` kills the inline-element baseline gap - as an inline image it would leave a
         few pixels of dark under the white frieze.
 
-        2016px wide, so it is roughly 1:1 on a large monitor rather than being stretched.
+        2508px wide, so it is at or above 1:1 on any monitor.
       */}
       {/* eslint-disable-next-line @next/next/no-img-element -- plan §12: no next/image */}
       <img
         src="/footer-frieze.webp"
         alt=""
         aria-hidden="true"
-        width={2016}
-        height={364}
+        width={2508}
+        height={546}
         loading="lazy"
         decoding="async"
         className="block w-full"
