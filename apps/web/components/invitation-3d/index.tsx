@@ -104,6 +104,16 @@ function Music() {
   return (
     <>
       <audio ref={el} src="/inv/music.mp3" loop preload="auto" />
+
+      {/* Only shown while the music is not playing - which, on a browser that blocked
+          autoplay, is the difference between a page with a silent icon in the corner and
+          a page someone knows has a soundtrack. It disappears the moment it starts. */}
+      {!on && (
+        <span className="pointer-events-none absolute right-16 top-4 z-10 rounded-full bg-[#2a1f16]/70 px-3 py-2 text-xs text-white/85 backdrop-blur-sm">
+          Tap for music
+        </span>
+      )}
+
       <button
         type="button"
         onClick={toggle}
