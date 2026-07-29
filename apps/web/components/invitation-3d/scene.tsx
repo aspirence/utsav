@@ -38,12 +38,22 @@ import { CARD_ASPECT, cardTexture } from './card-texture'
 
 const DUR = 12.0
 
-/** The beats, in seconds, so the choreography can be read at a glance. */
+/**
+ * The beats, in seconds.
+ *
+ * There is no camera move. An earlier cut pushed the camera in as the doors opened and it
+ * was wrong twice over: the frame the artwork was drawn for got cropped away, and the
+ * doors stopped reading as doors because everything grew at once. The camera now sits at
+ * the distance that fits the whole frame and stays there - the doors do the moving.
+ *
+ * The leaf unrolls from its top-left corner rather than rising, like a rolled calendar
+ * being let down: `unrollY` drops the top edge, `unrollX` opens it out sideways a beat
+ * later, and the lag between them is what makes it read as unrolling instead of zooming.
+ */
 const T = {
-  hold: [0.0, 1.4],
-  doors: [1.4, 3.6],
-  push: [1.8, 5.2],
-  card: [4.2, 6.0],
+  doors: [1.2, 3.4],
+  unrollY: [3.6, 5.0],
+  unrollX: [4.0, 5.6],
 } as const
 
 const clamp01 = (v: number) => (v < 0 ? 0 : v > 1 ? 1 : v)
@@ -120,13 +130,21 @@ export default function InvitationScene({ onTime }: { onTime: (t: number) => voi
       scene.add(stage)
 
       // ── Card ──────────────────────────────────────────────────────────
+      // Parented to a Group parked on its own top-left corner, because that is the point
+      // it unrolls from. Scaling a mesh scales it about its centre; scaling the pivot
+      // instead pins the corner and lets the rest of the leaf grow away from it.
       const cardTex = new THREE.CanvasTexture(cardTexture())
       cardTex.colorSpace = THREE.SRGBColorSpace
       cardTex.anisotropy = renderer.capabilities.getMaxAnisotropy()
-      const cardH = FRAME_H * 0.94
-      const card = plane(cardH * CARD_ASPECT * 1.06, cardH * 1.06, cardTex, true)
-      card.position.set(0, -FRAME_H, -0.7)
-      scene.add(card)
+      const cardH = FRAME_H * 0.92
+      const cardW = cardH * CARD_ASPECT * 1.06
+      const card = plane(cardW, cardH, cardTex, true)
+      card.position.set(cardW / 2, -cardH / 2, 0)
+
+      const cardPivot = new THREE.Group()
+      cardPivot.position.set(-cardW / 2, cardH / 2, -0.7)
+      cardPivot.add(card)
+      scene.add(cardPivot)
 
       // ── Doors ─────────────────────────────────────────────────────────
       const DW = FRAME_W / 2
@@ -158,15 +176,31 @@ export default function InvitationScene({ onTime }: { onTime: (t: number) => voi
         doors[0]!.rotation.y = open * 1.95
         doors[1]!.rotation.y = -open * 1.95
 
-        camera.position.z = 7.6 - seg(t, T.push) * 3.1
-
-        const rise = seg(t, T.card)
-        card.position.y = -FRAME_H + rise * FRAME_H
-        card.rotation.x = (1 - rise) * -0.75
+        // The unroll. Y leads and X follows; running them together would be a zoom out of
+        // the corner rather than a sheet being let down. The small floor stops the leaf
+        // collapsing to a zero-area plane, which renders as nothing at all.
+        const uy = seg(t, T.unrollY)
+        const ux = seg(t, T.unrollX)
+        cardPivot.scale.set(0.04 + ux * 0.96, 0.06 + uy * 0.94, 1)
+        // A little tilt and twist that settle to nothing - paper coming off a roll is not
+        // flat until the last moment.
+        cardPivot.rotation.z = (1 - uy) * -0.22
+        card.rotation.x = (1 - ux) * 0.55
 
         tick.current(t)
       }
 
+      /**
+       * Park the camera at whatever distance shows the whole frame, and leave it there.
+       *
+       * A fixed z was the bug behind the earlier crop: the artwork is 720x1280, and at
+       * 34 degrees a plane 8 units tall needs about 13 units of distance to fit. Sitting
+       * at 4.5 put the camera inside the composition.
+       *
+       * Solved for both axes and the larger distance wins, so a narrow phone frames to
+       * width and a wide desktop frames to height. Either way nothing is ever cropped -
+       * the arch and the lotus border are the composition, not padding.
+       */
       function resize() {
         // `el` is narrowed above, but TypeScript widens a ref-derived const back to
         // nullable inside a closure that outlives the guard.
@@ -174,12 +208,16 @@ export default function InvitationScene({ onTime }: { onTime: (t: number) => voi
         const w = box.clientWidth
         const h = box.clientHeight
         if (!w || !h) return
+
         renderer.setSize(w, h, false)
         camera.aspect = w / h
-        camera.updateProjectionMatrix()
-        // The film is portrait. On a landscape window, frame to height so the composition
-        // is never cropped top and bottom - the arch and the flowers are the whole point.
-        camera.fov = camera.aspect < FRAME_W / FRAME_H ? 34 / camera.aspect * (FRAME_W / FRAME_H) : 34
+
+        const half = THREE.MathUtils.degToRad(camera.fov) / 2
+        const forHeight = FRAME_H / 2 / Math.tan(half)
+        const forWidth = FRAME_W / 2 / Math.tan(half) / camera.aspect
+        // 1.02: a sliver of margin, so the frame's own edge never lands exactly on the
+        // viewport edge and shimmer along it at fractional device pixel ratios.
+        camera.position.z = Math.max(forHeight, forWidth) * 1.02
         camera.updateProjectionMatrix()
       }
       resize()

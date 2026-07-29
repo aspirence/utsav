@@ -7,15 +7,14 @@ import { getCategories, getLaunchedCities } from '@/lib/queries'
 /**
  * Footer. Categories left, the mark centred, company right.
  *
- * The city list used to be a fourth column. It moved into the bottom bar rather than being
- * deleted: plan §12 runs on internal linking, and /[city]/photography for every launched
- * city is one of the highest-value links on the site to have on every page. A row of two
- * or three city names reads fine down there; a column of them would have unbalanced a
- * layout whose whole point is symmetry around the mark.
+ * The outer grid is three equal columns rather than `justify-between`: the two link lists
+ * are different lengths, so anything that packs them would push the logo off centre.
  *
- * Symmetry is also why the outer grid is three equal columns rather than `justify-between`:
- * the two link lists are different lengths, so anything that packs them would push the
- * logo off centre.
+ * A city list lived here and has been removed. Worth knowing what that costs: the
+ * Categories column links /lucknow/*, so the launch city is still covered, but Delhi NCR
+ * now has no internal link anywhere on the site. It is still in the sitemap, so it stays
+ * crawlable - but plan §12 leans on internal linking, and if Delhi NCR traffic matters,
+ * this is the change to look at first.
  *
  * COLOUR. ink-900, against the warm cream every other band on the site sits on. A footer
  * in the same family as the page does not end it, it just fades out - this gives the page
@@ -31,7 +30,7 @@ export async function SiteFooter() {
   const defaultCity = cities[0]?.slug ?? 'lucknow'
 
   return (
-    <footer className="mt-20">
+    <footer className="mt-14">
       {/*
         A line-art frieze across the top of the footer - baraat, band, mandap, the couple,
         read left to right. It lives inside <footer> rather than in any page, so every
@@ -75,8 +74,11 @@ export async function SiteFooter() {
       />
 
       <div className="bg-ink-900">
-        <Container className="py-14">
-          <div className="grid gap-12 text-center sm:text-left lg:grid-cols-3 lg:items-start">
+        {/* py-10, not py-14: with the city column gone the left and right lists are four
+            rows each, and the centre column's 192px mark already sets the height. More
+            padding on top of that was just empty floor. */}
+        <Container className="py-10">
+          <div className="grid gap-8 text-center sm:text-left lg:grid-cols-3 lg:items-center">
             {/* ── Left: categories ─────────────────────────────────────── */}
             <div className="lg:justify-self-start">
               <h2 className="text-accent-300 text-xs font-semibold uppercase tracking-[0.14em]">
@@ -90,27 +92,6 @@ export async function SiteFooter() {
                       className="text-ink-200 text-sm hover:text-white"
                     >
                       {category.pluralName}
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-
-              {/* The city links used to be their own column, then the bottom bar; the bar
-                now carries the legal links instead. They live here rather than nowhere
-                because plan §12 runs on internal linking and this is the only place
-                /delhi-ncr is reachable from - drop it and that city is orphaned on every
-                page of the site. */}
-              <h2 className="text-accent-300 mt-8 text-xs font-semibold uppercase tracking-[0.14em]">
-                Cities
-              </h2>
-              <ul className="mt-4 space-y-2.5">
-                {cities.map((city) => (
-                  <li key={city.slug}>
-                    <Link
-                      href={`/${city.slug}/photography`}
-                      className="text-ink-200 text-sm hover:text-white"
-                    >
-                      {city.name}
                     </Link>
                   </li>
                 ))}
@@ -133,7 +114,7 @@ export async function SiteFooter() {
                   className="h-48 w-auto [filter:brightness(0)_invert(1)]"
                 />
               </Link>
-              <p className="text-ink-300 mt-4 max-w-xs text-sm leading-relaxed">
+              <p className="text-ink-300 mt-3 max-w-xs text-sm leading-relaxed">
                 Discovery and booking for weddings, celebrations and corporate events across India.
               </p>
             </div>
@@ -176,7 +157,7 @@ export async function SiteFooter() {
             </div>
           </div>
 
-          <div className="text-ink-300 mt-12 flex flex-col-reverse items-center gap-4 border-t border-white/15 pt-6 text-xs sm:flex-row sm:justify-between">
+          <div className="text-ink-300 mt-8 flex flex-col-reverse items-center gap-4 border-t border-white/15 pt-5 text-xs sm:flex-row sm:justify-between">
             <p>
               © {new Date().getFullYear()} Utsava. Working title. Prices shown are vendor-declared
               bands.
