@@ -36,13 +36,32 @@ export interface SliderCard {
   imageSrcSet?: string
 }
 
+/** Held between pages, and how long a page takes to travel. */
+const HOLD_MS = 3400
+const SLIDE_MS = 550
+
 export function TypeSlider({ items, label }: { items: SliderCard[]; label: string }) {
   // Two across on a phone rather than one: these are narrow portrait tiles with a short
   // blurb, and a single one per slide would leave a card taller than the viewport.
   const perPage = useResponsivePerPage(2, 4, 4)
   const pages = paginate(items, perPage)
   const count = pages.length
-  const { index, page, animate, next, prev, pauseProps } = usePagedLoop(count)
+  /*
+    Quicker than the default 5.2s hold.
+
+    Eight traditions across two pages is a short loop, and a long hold on a short loop
+    means most of the time nothing is happening. The destinations and packages bands keep
+    the slower pace because their cards carry more to read.
+
+    SLIDE_MS has to be passed *and* written into the track's class below. The hook uses it
+    to time the jump back off the trailing clone; if the two disagree the reset lands
+    mid-transition and the loop visibly stutters once per lap.
+  */
+  const { index, page, animate, next, prev, pauseProps } = usePagedLoop(
+    count,
+    HOLD_MS,
+    SLIDE_MS,
+  )
 
   if (count === 0) return null
 
@@ -53,7 +72,7 @@ export function TypeSlider({ items, label }: { items: SliderCard[]; label: strin
     <div {...pauseProps}>
       <div className="overflow-hidden">
         <div
-          className={'flex ' + (animate ? 'transition-transform duration-700 ease-out' : '')}
+          className={'flex ' + (animate ? 'transition-transform duration-[550ms] ease-out' : '')}
           style={{ transform: `translateX(-${index * 100}%)` }}
           role="group"
           aria-label={label}
