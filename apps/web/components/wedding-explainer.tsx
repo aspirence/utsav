@@ -75,7 +75,7 @@ export function WeddingExplainer({
           left half, and a 7xl container would squeeze it into a narrow ribbon. */}
       <div className="relative mx-auto w-full max-w-[1600px] px-4 sm:px-6 lg:px-8">
         <div className="grid items-center gap-10 py-14 sm:py-16 lg:grid-cols-2 lg:gap-16 lg:py-20">
-          <div className="max-w-xl">
+          <div className="order-2 max-w-xl lg:order-none">
             {/* Marigold on red - the design system's celebration colour, and the only
                 thing in the palette that holds its own against primary-800. */}
             <p className="text-xs font-semibold uppercase tracking-[0.14em] text-accent-300">
@@ -107,11 +107,16 @@ export function WeddingExplainer({
               </p>
             </div>
 
-            <ul className="mt-7 flex flex-wrap gap-2">
+            {/* One row on a phone, not a wrapped block. Five functions in order is a
+                sequence - broken across two lines with "Reception" stranded underneath, it
+                stops reading as one. Type and padding step down on mobile so all five fit
+                a 375px screen; `whitespace-nowrap` keeps a chip from breaking inside
+                itself when they get tight. */}
+            <ul className="mt-7 flex flex-nowrap gap-1.5 sm:flex-wrap sm:gap-2">
               {FUNCTIONS.map((f) => (
                 <li
                   key={f}
-                  className="rounded-full border border-white/30 px-3.5 py-1.5 text-sm text-white/90"
+                  className="whitespace-nowrap rounded-full border border-white/30 px-2 py-1 text-[11px] text-white/90 sm:px-3.5 sm:py-1.5 sm:text-sm"
                 >
                   {f}
                 </li>
@@ -120,8 +125,11 @@ export function WeddingExplainer({
           </div>
 
           {/* On phones the video cannot bleed off a half-width column, so it renders
-              inline here instead and the absolute one above is hidden. */}
-          <div className="relative lg:hidden">
+              inline here instead and the absolute one above is hidden - and it goes first,
+              because a wall of copy is a poor thing to meet before you know what the
+              section is about. `order` rather than a second element, so the video only
+              exists once in the document. */}
+          <div className="relative order-1 lg:hidden">
             {videoSrc ? (
               <video
                 className="aspect-video w-full rounded-xl object-cover"

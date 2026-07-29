@@ -83,9 +83,21 @@ export async function SiteFooter() {
             was just empty floor, so it is down from py-14 to py-8 and the rule above the
             copyright has come in with it. */}
         <Container className="py-8">
-          <div className="grid gap-8 text-center sm:text-left lg:grid-cols-3 lg:items-center">
+          {/*
+            Two shapes, one markup.
+
+            On a phone it is a two-column grid: the mark spans both and comes first, then
+            the two lists sit side by side underneath, each aligned to its own left edge so
+            their headings share a baseline. Stacked, the same content ran nearly a full
+            screen of scrolling for four links a side.
+
+            From `lg` it is the three-column layout the desktop footer has always had, with
+            the mark back in the middle. `order-*` does the rearranging rather than a
+            second copy of the markup, so the links only exist once in the document.
+          */}
+          <div className="grid grid-cols-2 gap-x-6 gap-y-8 lg:grid-cols-3 lg:items-center">
             {/* ── Left: categories ─────────────────────────────────────── */}
-            <div className="lg:justify-self-start">
+            <div className="order-2 text-left lg:order-1 lg:justify-self-start">
               <h2 className="text-accent-300 text-xs font-semibold uppercase tracking-[0.14em]">
                 Categories
               </h2>
@@ -104,7 +116,7 @@ export async function SiteFooter() {
             </div>
 
             {/* ── Centre: the mark ─────────────────────────────────────── */}
-            <div className="flex flex-col items-center text-center lg:order-none">
+            <div className="order-1 col-span-2 flex flex-col items-center text-center lg:order-2 lg:col-span-1">
               <Link href="/" aria-label="Utsava — home">
                 {/* Same white knockout the header uses over the hero. The mark is dark brown
                   and gold on transparent, so on ink-900 the wordmark would all but vanish
@@ -128,7 +140,7 @@ export async function SiteFooter() {
             {/* The block still sits at the right edge, but its text reads left-aligned like
               every other list on the page. Right-aligning a ragged list of links makes
               each one start in a different place, so the eye has no column to run down. */}
-            <div className="lg:justify-self-end lg:text-left">
+            <div className="order-3 text-left lg:justify-self-end lg:text-left">
               <h2 className="text-accent-300 text-xs font-semibold uppercase tracking-[0.14em]">
                 Company
               </h2>
