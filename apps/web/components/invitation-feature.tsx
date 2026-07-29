@@ -38,15 +38,21 @@ export function InvitationFeature({ imageUrl }: { imageUrl?: string | null }) {
   const dialog = useRef<HTMLDialogElement>(null)
   const [open, setOpen] = useState(false)
 
-  // The mockup is only worth drawing on a desktop. On a phone the device *is* the frame,
-  // and a picture of a phone inside a phone wastes most of the screen showing bezel - so
-  // below `sm` the player goes edge to edge instead.
-  //
-  // Defaults to the framed version because the server has no viewport to measure; the
-  // dialog is closed at that point, so the correction on mount is never visible.
+  /*
+    The mockup is only worth drawing on a desktop. On anything handheld the device *is*
+    the frame, and a picture of a phone inside a phone spends most of the screen on bezel.
+
+    The threshold is 1024px, not 640. At 640 a large phone in landscape and every tablet
+    got the mockup, which is exactly where it is least wanted - the video ends up a
+    postage stamp in the middle of a drawing of a handset. Below `lg` the player goes edge
+    to edge.
+
+    Defaults to framed because the server has no viewport to measure. The dialog is closed
+    at that point, so the correction on mount is never visible.
+  */
   const [framed, setFramed] = useState(true)
   useEffect(() => {
-    const m = window.matchMedia('(min-width: 640px)')
+    const m = window.matchMedia('(min-width: 1024px)')
     const read = () => setFramed(m.matches)
     read()
     m.addEventListener('change', read)
@@ -193,9 +199,19 @@ export function InvitationFeature({ imageUrl }: { imageUrl?: string | null }) {
           'overflow-hidden backdrop:bg-ink-950/80 backdrop:backdrop-blur-sm ' +
           (framed
             ? 'm-auto bg-transparent p-0'
-            : // Edge to edge. max-w/max-h-none override the UA stylesheet's
-              // `calc(100% - 6px - 2em)` caps, which otherwise leave a hairline gutter.
-              'm-0 h-[100dvh] max-h-none w-screen max-w-none bg-ink-950 p-0')
+            : // Edge to edge.
+              //
+              // `fixed inset-0` rather than relying on the UA's own absolute placement -
+              // a top-layer <dialog> is positioned by the browser and the rules vary, so
+              // this states it outright.
+              //
+              // max-w/max-h-none override the UA stylesheet's `calc(100% - 6px - 2em)`
+              // caps, which otherwise leave a hairline gutter down every edge.
+              //
+              // 100dvh, not 100vh: on a phone 100vh is the viewport with the address bar
+              // hidden, so the bottom of the video sits under the browser chrome until
+              // you scroll - and there is nothing to scroll.
+              'fixed inset-0 m-0 h-[100dvh] max-h-none w-screen max-w-none bg-ink-950 p-0')
         }
         aria-label="How an invitation is made"
       >
