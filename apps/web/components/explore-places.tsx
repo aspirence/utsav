@@ -33,6 +33,9 @@ export interface PlaceCard {
   badge?: string
   count?: number
   imageUrl?: string | null
+  /** Optional responsive set. Descriptors are the files' real widths, not their filenames
+      - optimize-images.mjs never upscales, so `-1920.webp` off a 1448px source is 1448w. */
+  imageSrcSet?: string
 }
 
 export function ExplorePlaces({
@@ -100,8 +103,14 @@ export function ExplorePlaces({
         {current.imageUrl ? (
           // eslint-disable-next-line @next/next/no-img-element -- plan §12: Storage CDN
           <img
+            // Keyed on the slug so React swaps the element rather than mutating the src
+            // in place - without it the browser holds the old frame until the new one has
+            // decoded, and stepping through the list flickers.
             key={current.slug}
             src={current.imageUrl}
+            {...(current.imageSrcSet
+              ? { srcSet: current.imageSrcSet, sizes: '(min-width: 1024px) 50vw, 100vw' }
+              : {})}
             alt=""
             loading="lazy"
             decoding="async"

@@ -56,6 +56,32 @@ import { getWeddingTypes } from '@/lib/wedding-types'
 export const revalidate = 3600
 
 /**
+ * Artwork for the explore panel, by locality slug.
+ *
+ * Keyed rather than positional: the list is ordered by vendor count, so a positional map
+ * would silently hand Gomti Nagar's photograph to whichever area happened to overtake it.
+ * A locality with no photograph yet falls through to the placeholder, which is the honest
+ * state and not a bug.
+ *
+ * `pnpm images` emits three widths from design/source-images/place-*.png. The panel is
+ * roughly half the viewport, so 1280 is the right default and 1920 covers a retina
+ * desktop - the descriptor says 1448 because that is the source width and the script does
+ * not upscale.
+ */
+const PLACE_ART: Record<string, { imageUrl: string; imageSrcSet: string }> = Object.fromEntries(
+  ['gomti-nagar', 'hazratganj', 'aliganj', 'chowk'].map((slug) => [
+    slug,
+    {
+      imageUrl: `/place-${slug}-1280.webp`,
+      imageSrcSet:
+        `/place-${slug}-768.webp 768w, ` +
+        `/place-${slug}-1280.webp 1280w, ` +
+        `/place-${slug}-1920.webp 1448w`,
+    },
+  ]),
+)
+
+/**
  * Locality counts -> cards for the explore band.
  *
  * The busiest locality is flagged rather than every card carrying a badge: the panel shows
@@ -75,6 +101,7 @@ function toPlaces(
     region,
     count: l.count,
     href: `/${citySlug}/photography/${l.slug}`,
+    ...PLACE_ART[l.slug],
     ...(i === 0 ? { badge: 'Most photographers' } : {}),
   }))
 }
