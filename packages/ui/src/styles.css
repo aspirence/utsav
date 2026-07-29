@@ -1,0 +1,216 @@
+@import 'tailwindcss';
+
+/*
+ * Utsava design system v1 — plan §S1.
+ *
+ * Tailwind v4: tokens live here as CSS custom properties inside @theme, which
+ * generates the matching utilities (bg-primary-600, font-display, …).
+ * packages/ui/src/tokens.ts mirrors these for anything computed in JS.
+ */
+
+/* Tailwind v4 scans the importing app by default; point it at this package too. */
+@source "../../ui/src/**/*.{ts,tsx}";
+
+@theme {
+  --color-ink-50: #f7f5f3;
+  --color-ink-100: #ede9e5;
+  --color-ink-200: #d9d2cb;
+  --color-ink-300: #bcb2a8;
+  --color-ink-400: #948779;
+  --color-ink-500: #736758;
+  --color-ink-600: #5a5044;
+  --color-ink-700: #443c33;
+  --color-ink-800: #2c2721;
+  --color-ink-900: #1a1614;
+  --color-ink-950: #0f0c0b;
+
+  --color-primary-50: #fdf4f2;
+  --color-primary-100: #fbe6e1;
+  --color-primary-200: #f7cdc3;
+  --color-primary-300: #efa795;
+  --color-primary-400: #e37a60;
+  --color-primary-500: #d4553a;
+  --color-primary-600: #b3402b;
+  --color-primary-700: #953224;
+  --color-primary-800: #7b2c22;
+  --color-primary-900: #672921;
+  --color-primary-950: #38120d;
+
+  --color-accent-50: #fef9ec;
+  --color-accent-100: #fcefc9;
+  --color-accent-200: #f9dd8f;
+  --color-accent-300: #f5c455;
+  --color-accent-400: #e8a33d;
+  --color-accent-500: #de8a21;
+  --color-accent-600: #c46a17;
+  --color-accent-700: #a34c16;
+  --color-accent-800: #853c19;
+  --color-accent-900: #6e3218;
+
+  --color-success-50: #f2f9f1;
+  --color-success-100: #e0f1de;
+  --color-success-500: #4c9a47;
+  --color-success-600: #3a7c37;
+  --color-success-700: #2f612e;
+
+  --color-warning-50: #fef8ec;
+  --color-warning-500: #d99b1c;
+  --color-warning-700: #8f6210;
+
+  --color-danger-50: #fef2f2;
+  --color-danger-500: #dc3545;
+  --color-danger-700: #991b22;
+
+  --color-surface: #fffcf9;
+  --color-surface-raised: #ffffff;
+  --color-surface-sunken: #f7f3ee;
+  --color-surface-inverse: #1a1614;
+
+  --font-display: 'Fraunces', Georgia, serif;
+  --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, monospace;
+
+  --radius-sm: 0.25rem;
+  --radius-md: 0.625rem;
+  --radius-lg: 0.875rem;
+  --radius-xl: 1.25rem;
+  --radius-2xl: 1.75rem;
+
+  --shadow-sm: 0 1px 2px 0 rgb(26 22 20 / 0.05);
+  --shadow-md: 0 4px 12px -2px rgb(26 22 20 / 0.1), 0 2px 6px -2px rgb(26 22 20 / 0.06);
+  --shadow-lg: 0 12px 28px -6px rgb(26 22 20 / 0.14), 0 4px 10px -4px rgb(26 22 20 / 0.07);
+  --shadow-xl: 0 24px 48px -12px rgb(26 22 20 / 0.2);
+}
+
+@layer base {
+  html {
+    -webkit-text-size-adjust: 100%;
+    scroll-behavior: smooth;
+  }
+
+  body {
+    background-color: var(--color-surface);
+    color: var(--color-ink-900);
+    font-family: var(--font-sans);
+    font-feature-settings: 'cv02', 'cv03', 'cv04', 'cv11';
+    -webkit-font-smoothing: antialiased;
+  }
+
+  h1,
+  h2,
+  h3 {
+    font-family: var(--font-display);
+    font-weight: 600;
+    letter-spacing: -0.02em;
+  }
+
+  /* Visible focus everywhere — plan §9 requires an accessibility pass in the DoD. */
+  :focus-visible {
+    outline: 2px solid var(--color-primary-600);
+    outline-offset: 2px;
+    border-radius: var(--radius-sm);
+  }
+
+  ::selection {
+    background-color: var(--color-accent-200);
+    color: var(--color-ink-900);
+  }
+}
+
+@layer components {
+  /*
+   * Photographs are the product (plan §2 "portfolio-first"). Every image sits on a
+   * sunken warm tile so a slow 4G load shows a plausible placeholder rather than a
+   * white flash — plan §13 measures LCP on mid-range Android.
+   */
+  .u-media {
+    background-color: var(--color-surface-sunken);
+    overflow: hidden;
+    position: relative;
+  }
+
+  .u-media img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  /* Placeholder for demo/seed rows whose Storage object does not exist locally. */
+  .u-media-fallback {
+    background-image:
+      radial-gradient(circle at 30% 25%, var(--color-accent-100), transparent 55%),
+      radial-gradient(circle at 75% 70%, var(--color-primary-100), transparent 55%);
+    background-color: var(--color-surface-sunken);
+  }
+
+  /*
+   * Infinite vertical marquee.
+   *
+   * The track holds the list twice and translates up by exactly half its height, so the
+   * second copy lands where the first began and the loop is seamless with no JS and no
+   * measurement. Duration is set per instance via --u-marquee-duration.
+   *
+   * It pauses on hover and on focus-within — a quote sliding away mid-sentence is
+   * unreadable, and a keyboard user tabbing to a link inside it must not have that link
+   * move out from under them.
+   */
+  .u-marquee {
+    position: relative;
+    overflow: hidden;
+    /* Feather the top and bottom edges so items enter and leave instead of being cut. */
+    mask-image: linear-gradient(
+      to bottom,
+      transparent 0%,
+      black 12%,
+      black 88%,
+      transparent 100%
+    );
+  }
+
+  .u-marquee-track {
+    display: flex;
+    flex-direction: column;
+    animation: u-marquee-scroll var(--u-marquee-duration, 40s) linear infinite;
+  }
+
+  .u-marquee:hover .u-marquee-track,
+  .u-marquee:focus-within .u-marquee-track {
+    animation-play-state: paused;
+  }
+
+  @keyframes u-marquee-scroll {
+    from {
+      transform: translateY(0);
+    }
+    to {
+      transform: translateY(-50%);
+    }
+  }
+
+  /* The horizontal variant that used to live here is gone. Its only consumer was the
+     wedding-traditions strip, and that now pages four cards at a time instead of scrolling
+     continuously - see components/use-paged-loop.ts. The vertical marquee above is still
+     in use by the reviews band. */
+
+  /* The global prefers-reduced-motion rule below collapses every animation to ~0s, which
+     would leave the track frozen at its start. That is the correct outcome here: the
+     full list is still in the DOM and the container scrolls normally. */
+  @media (prefers-reduced-motion: reduce) {
+    .u-marquee {
+      mask-image: none;
+      overflow-y: auto;
+    }
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

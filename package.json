@@ -1,0 +1,35 @@
+{
+  "name": "utsava",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Utsava — all-events discovery and booking marketplace for India. Photography-first wedge.",
+  "packageManager": "pnpm@9.15.9",
+  "engines": {
+    "node": ">=20.11.0"
+  },
+  "scripts": {
+    "dev": "turbo run dev",
+    "build": "turbo run build",
+    "lint": "turbo run lint",
+    "typecheck": "turbo run typecheck",
+    "test": "turbo run test",
+    "images": "node scripts/optimize-images.mjs",
+    "format": "prettier --write \"**/*.{ts,tsx,js,jsx,json,md,sql,yaml,yml}\"",
+    "format:check": "prettier --check \"**/*.{ts,tsx,js,jsx,json,md,sql,yaml,yml}\"",
+    "db:start": "supabase start",
+    "db:stop": "supabase stop",
+    "db:reset": "supabase db reset",
+    "db:diff": "supabase db diff -f",
+    "db:lint": "supabase db lint",
+    "db:types": "supabase gen types typescript --local --schema public > packages/db/src/generated/database.types.ts",
+    "db:test": "supabase test db"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.5",
+    "prettier": "^3.4.2",
+    "prettier-plugin-tailwindcss": "^0.6.9",
+    "supabase": "^2.6.8",
+    "turbo": "^2.3.3",
+    "typescript": "^5.7.3"
+  }
+}
