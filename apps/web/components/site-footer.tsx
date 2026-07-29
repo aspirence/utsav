@@ -185,7 +185,14 @@ export async function SiteFooter() {
               bands.
             </p>
 
-            <nav aria-label="Legal" className="flex flex-wrap justify-center gap-x-5 gap-y-2">
+            {/* Hidden on phones, where the same two pages are already one tap away in the
+                Company column directly above - repeating them in the bottom bar just adds
+                a row to scroll past. From sm the bar has a spare half to itself and they
+                sit there rather than nowhere. */}
+            <nav
+              aria-label="Legal"
+              className="hidden flex-wrap justify-center gap-x-5 gap-y-2 sm:flex"
+            >
               <Link href="/p/privacy" className="hover:text-white">
                 Privacy policy
               </Link>
