@@ -74,7 +74,12 @@ export async function SiteFooter() {
         height={546}
         loading="lazy"
         decoding="async"
-        className="block w-full"
+        // On a phone the frieze is 2508px of artwork squeezed into 375, which lands it at
+        // about 80px tall - every figure in it too small to be anything. So below `sm` it
+        // is given a real height and cropped to the centre instead: the mandap and the
+        // couple at a size you can actually see, at the cost of the pavilions at the ends.
+        // From `sm` up there is width enough to show the whole procession.
+        className="block h-[130px] w-full object-cover object-center sm:h-auto sm:object-fill"
       />
 
       <div className="bg-ink-900">
@@ -97,7 +102,7 @@ export async function SiteFooter() {
           */}
           <div className="grid grid-cols-2 gap-x-6 gap-y-8 lg:grid-cols-3 lg:items-center">
             {/* ── Left: categories ─────────────────────────────────────── */}
-            <div className="order-2 text-left lg:order-1 lg:justify-self-start">
+            <div className="order-2 text-center lg:order-1 lg:justify-self-start lg:text-left">
               <h2 className="text-accent-300 text-xs font-semibold uppercase tracking-[0.14em]">
                 Categories
               </h2>
@@ -140,7 +145,7 @@ export async function SiteFooter() {
             {/* The block still sits at the right edge, but its text reads left-aligned like
               every other list on the page. Right-aligning a ragged list of links makes
               each one start in a different place, so the eye has no column to run down. */}
-            <div className="order-3 text-left lg:justify-self-end lg:text-left">
+            <div className="order-3 text-center lg:justify-self-end lg:text-left">
               <h2 className="text-accent-300 text-xs font-semibold uppercase tracking-[0.14em]">
                 Company
               </h2>
