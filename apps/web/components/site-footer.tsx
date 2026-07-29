@@ -30,7 +30,7 @@ export async function SiteFooter() {
   const defaultCity = cities[0]?.slug ?? 'lucknow'
 
   return (
-    <footer className="mt-14">
+    <footer className="mt-10">
       {/*
         A line-art frieze across the top of the footer - baraat, band, mandap, the couple,
         read left to right. It lives inside <footer> rather than in any page, so every
@@ -74,10 +74,11 @@ export async function SiteFooter() {
       />
 
       <div className="bg-ink-900">
-        {/* py-10, not py-14: with the city column gone the left and right lists are four
-            rows each, and the centre column's 192px mark already sets the height. More
-            padding on top of that was just empty floor. */}
-        <Container className="py-10">
+        {/* The centre column's 192px mark plus its tagline already sets the footer's
+            height, and the two link lists are five rows and four. Padding on top of that
+            was just empty floor, so it is down from py-14 to py-8 and the rule above the
+            copyright has come in with it. */}
+        <Container className="py-8">
           <div className="grid gap-8 text-center sm:text-left lg:grid-cols-3 lg:items-center">
             {/* ── Left: categories ─────────────────────────────────────── */}
             <div className="lg:justify-self-start">
@@ -111,7 +112,7 @@ export async function SiteFooter() {
                   alt="Utsava"
                   width={623}
                   height={576}
-                  className="h-48 w-auto [filter:brightness(0)_invert(1)]"
+                  className="h-40 w-auto [filter:brightness(0)_invert(1)]"
                 />
               </Link>
               <p className="text-ink-300 mt-3 max-w-xs text-sm leading-relaxed">
@@ -157,7 +158,7 @@ export async function SiteFooter() {
             </div>
           </div>
 
-          <div className="text-ink-300 mt-8 flex flex-col-reverse items-center gap-4 border-t border-white/15 pt-5 text-xs sm:flex-row sm:justify-between">
+          <div className="text-ink-300 mt-6 flex flex-col-reverse items-center gap-4 border-t border-white/15 pt-4 text-xs sm:flex-row sm:justify-between">
             <p>
               © {new Date().getFullYear()} Utsava. Working title. Prices shown are vendor-declared
               bands.
