@@ -276,9 +276,11 @@ export default async function HomePage() {
         <QuotationCta />
       </Container>
 
-      {/* 10. Wedding packages - Lucknow only, by area within the city */}
+      {/* 10. Wedding packages - Lucknow only, by area within the city.
+             pb is lighter than pt: the footer frieze sits directly under this section and
+             brings its own air, so a full py-16 underneath stacked two gaps into one. */}
       <section className="border-t border-ink-100 bg-surface-raised">
-        <Container className="py-16">
+        <Container className="pb-8 pt-16">
           <div className="flex items-end justify-between gap-6">
             <div>
               <p className="text-sm text-ink-600">Explore the packages</p>

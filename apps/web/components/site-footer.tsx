@@ -34,7 +34,7 @@ export async function SiteFooter() {
     // of the page's warm surface (#fffcf9) between the last section and the frieze - two
     // whites with a cream band across the middle, which reads as a seam rather than as
     // space. Padding is inside the element, so it takes the background with it.
-    <footer className="bg-surface-raised pt-3 sm:pt-10">
+    <footer className="bg-surface-raised pt-2 sm:pt-4">
       {/*
         A line-art frieze across the top of the footer - baraat, band, mandap, the couple,
         read left to right. It lives inside <footer> rather than in any page, so every
@@ -60,6 +60,11 @@ export async function SiteFooter() {
         edge. So the export lifts the ground to #ffffff with a single linear scale, which
         leaves the black strokes where they are because 0 maps to 0.
 
+        It is also cropped. The master carries 104px of empty paper above the artwork, and
+        at full width that renders as about 80px of nothing between the last section and
+        the procession - which looked like a layout gap rather than part of the drawing.
+        Trimmed to 22px of air, so the frieze still has somewhere to breathe.
+
         `block` kills the inline-element baseline gap - as an inline image it would leave a
         few pixels of dark under the white frieze.
 
@@ -71,7 +76,7 @@ export async function SiteFooter() {
         alt=""
         aria-hidden="true"
         width={2508}
-        height={546}
+        height={464}
         loading="lazy"
         decoding="async"
         // On a phone the frieze is 2508px of artwork squeezed into 375, which lands it at
