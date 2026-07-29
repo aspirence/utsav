@@ -2,6 +2,8 @@
 
 import { useCallback, useEffect, useRef, useState } from 'react'
 
+import { InvitationCard3D } from '@/components/invitation-card-3d'
+
 /**
  * Wedding invitations: illustration left, the argument right.
  *
@@ -26,14 +28,12 @@ import { useCallback, useEffect, useRef, useState } from 'react'
  * The stat is a service promise, not a track record. Utsava has no years of history to
  * claim yet, and plan §2 stakes the product on claims being verifiable, so a "15+ years"
  * badge here would undercut the thing that makes the reviews worth reading.
- *
- * Artwork is a placeholder until it is supplied - pass `imageUrl`.
  */
 
 const VIDEO_ID = 'izdaynHU4w0'
 const EMBED = `https://www.youtube-nocookie.com/embed/${VIDEO_ID}?autoplay=1&playsinline=1&rel=0&modestbranding=1`
 
-export function InvitationFeature({ imageUrl }: { imageUrl?: string | null }) {
+export function InvitationFeature() {
   const dialog = useRef<HTMLDialogElement>(null)
   const [open, setOpen] = useState(false)
 
@@ -80,30 +80,18 @@ export function InvitationFeature({ imageUrl }: { imageUrl?: string | null }) {
   return (
     <div className="grid items-center gap-10 lg:grid-cols-2 lg:gap-16">
       {/*
-        ── Left: the illustration ──────────────────────────────────────
+        ── Left: the animated invitation ───────────────────────────────
 
-        object-contain, not cover. The artwork is a transparent-background illustration
-        trimmed to its alpha bounding box, so it has no bleed to crop into - cover would
-        slice the edges off it. It sits on the page background rather than in a card for
-        the same reason.
+        This slot held a flat illustration. It now holds the three.js card - cusped arch
+        doors that swing open, a camera push through the opening, and the invitation
+        rising through it. The section is about invitations, so showing one open itself
+        makes the argument better than a picture of a couple did.
 
-        The source is only 500px square, which is smaller than the slot renders at on a
-        desktop, so it is drawn a little above 1:1. Fine for flat illustration; if it ever
-        looks soft, the fix is a larger export, not a CSS change.
+        Portrait, because an invitation is portrait; the aspect is what makes the doors
+        read as doors rather than as a wide panel splitting apart.
       */}
-      <div className="relative h-[360px] sm:h-[480px] lg:h-[600px]">
-        {imageUrl ? (
-          // eslint-disable-next-line @next/next/no-img-element -- plan §12: Storage CDN
-          <img
-            src={imageUrl}
-            alt=""
-            loading="lazy"
-            decoding="async"
-            className="h-full w-full object-contain"
-          />
-        ) : (
-          <div className="u-media-fallback h-full w-full rounded-2xl" aria-hidden="true" />
-        )}
+      <div className="relative h-[420px] sm:h-[560px] lg:h-[640px]">
+        <InvitationCard3D />
       </div>
 
       {/* ── Right: the copy ────────────────────────────────────────────── */}
