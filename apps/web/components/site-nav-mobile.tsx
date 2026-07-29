@@ -16,6 +16,10 @@ import { createPortal } from 'react-dom'
  * Full screen rather than a dropdown. A panel hanging off a 112px header leaves the page
  * showing underneath it, and on a dark translucent bar that reads as a rendering fault.
  *
+ * It slides in from the right, out of the corner the button sits in, and carries the mark
+ * at the top with everything centred beneath it. The panel covers the header while it is
+ * open, so it needs its own close control - the hamburger underneath cannot be reached.
+ *
  * THE PANEL IS PORTALLED TO THE BODY, and it has to be. The header carries `backdrop-blur`
  * in its solid state, and `backdrop-filter` makes an element a containing block for any
  * `position: fixed` descendant. Left inside the header, the panel's `inset-0` resolved
@@ -66,29 +70,20 @@ export function SiteNavMobile({
 
   return (
     <div className="md:hidden">
+      {/* Stays a hamburger in both states. The panel covers it when open and carries its
+          own close control, so animating this one into an X would be animating something
+          nobody can see. */}
       <button
         type="button"
-        onClick={() => setOpen((v) => !v)}
+        onClick={() => setOpen(true)}
         aria-expanded={open}
         aria-controls="site-menu"
-        aria-label={open ? 'Close menu' : 'Open menu'}
-        className="relative z-50 flex h-11 w-11 items-center justify-center rounded-md text-white transition-colors hover:bg-white/10"
+        aria-label="Open menu"
+        className="flex h-11 w-11 items-center justify-center rounded-md text-white transition-colors hover:bg-white/10"
       >
-        {/* Two bars that cross into an X - one element, both states, so there is nothing
-            to swap and nothing to keep in sync. */}
         <span className="relative block h-4 w-6" aria-hidden="true">
-          <span
-            className={
-              'absolute left-0 block h-0.5 w-6 bg-current transition-all duration-300 ' +
-              (open ? 'top-1/2 -translate-y-1/2 rotate-45' : 'top-0')
-            }
-          />
-          <span
-            className={
-              'absolute left-0 block h-0.5 w-6 bg-current transition-all duration-300 ' +
-              (open ? 'top-1/2 -translate-y-1/2 -rotate-45' : 'bottom-0')
-            }
-          />
+          <span className="absolute left-0 top-0 block h-0.5 w-6 bg-current" />
+          <span className="absolute bottom-0 left-0 block h-0.5 w-6 bg-current" />
         </span>
       </button>
 
@@ -104,15 +99,49 @@ export function SiteNavMobile({
             // dropped on the page.
             className={
               'bg-ink-900 fixed inset-0 z-[60] flex origin-top-right flex-col ' +
-              'transition-[transform,opacity] duration-300 ease-out ' +
-              (open ? 'visible translate-x-0 opacity-100' : 'invisible translate-x-8 opacity-0')
+              'transition-[transform,opacity] duration-[350ms] ease-out ' +
+              (open
+                ? 'visible translate-x-0 opacity-100'
+                : 'invisible translate-x-full opacity-0')
             }
           >
-            <nav aria-label="Main" className="flex-1 overflow-y-auto px-6 pb-8 pt-28">
-              <p className="text-accent-300 text-xs font-semibold uppercase tracking-[0.14em]">
+            <button
+              type="button"
+              onClick={() => setOpen(false)}
+              tabIndex={open ? undefined : -1}
+              aria-label="Close menu"
+              className="absolute right-4 top-6 flex h-11 w-11 items-center justify-center rounded-md text-white transition-colors hover:bg-white/10"
+            >
+              <span className="relative block h-6 w-6" aria-hidden="true">
+                <span className="absolute left-0 top-1/2 block h-0.5 w-6 -translate-y-1/2 rotate-45 bg-current" />
+                <span className="absolute left-0 top-1/2 block h-0.5 w-6 -translate-y-1/2 -rotate-45 bg-current" />
+              </span>
+            </button>
+
+            <nav
+              aria-label="Main"
+              className="flex flex-1 flex-col items-center overflow-y-auto px-6 pb-10 pt-16 text-center"
+            >
+              <Link href="/" tabIndex={open ? undefined : -1} aria-label="Utsava — home">
+                {/* Same knockout the header and footer use - the mark is dark brown and
+                    gold on transparent, and would all but vanish on ink-900. */}
+                {/* eslint-disable-next-line @next/next/no-img-element -- plan §12: no next/image */}
+                <img
+                  src="/logo.webp"
+                  alt="Utsava"
+                  width={623}
+                  height={576}
+                  className="h-28 w-auto [filter:brightness(0)_invert(1)]"
+                />
+              </Link>
+
+              <p className="text-accent-300 mt-8 text-xs font-semibold uppercase tracking-[0.14em]">
                 Browse
               </p>
-              <ul className="mt-5 space-y-1">
+
+              {/* w-full on the list, not the items: the rules under each link should run
+                  the width of the panel, while the labels stay centred on it. */}
+              <ul className="mt-4 w-full max-w-xs">
                 {categories.map((c) => (
                   <li key={c.slug}>
                     <Link
@@ -126,9 +155,9 @@ export function SiteNavMobile({
                 ))}
               </ul>
 
-              <div className="mt-8 space-y-3">
+              <div className="mt-8 w-full max-w-xs space-y-3">
                 {/* The button that used to sit in the bar. Plan §1 keeps the vendor entry
-                point unburied, so it comes along too rather than being desktop-only. */}
+                    point unburied, so it comes along rather than being desktop-only. */}
                 <Link
                   href={`/${defaultCity}/photography`}
                   tabIndex={open ? undefined : -1}
