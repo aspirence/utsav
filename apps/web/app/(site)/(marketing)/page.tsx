@@ -170,7 +170,7 @@ export default async function HomePage() {
 
       {/* 3. Wedding invitations - illustration left, the argument right */}
       <Container className="py-16">
-        <InvitationFeature />
+        <InvitationFeature imageUrl="/invitation.webp" />
       </Container>
 
       {/* 4. What an Indian wedding actually is - copy left, video right */}
