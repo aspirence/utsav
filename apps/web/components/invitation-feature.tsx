@@ -1,5 +1,6 @@
 'use client'
 
+import Link from 'next/link'
 import { useCallback, useEffect, useRef, useState } from 'react'
 
 /**
@@ -162,6 +163,17 @@ export function InvitationFeature({ imageUrl }: { imageUrl?: string | null }) {
               </span>
             </button>
           </div>
+
+          {/* Its own route, not embedded here. The invitation is a full-screen piece with
+              a WebGL renderer behind it - opening it on demand keeps three.js off this
+              page entirely (plan §13). */}
+          <Link
+            href="/invitation"
+            className="mt-8 inline-flex items-center gap-2 border-b border-ink-300 pb-1 text-sm font-semibold text-ink-900 transition-colors hover:border-ink-900"
+          >
+            Open a live invitation
+            <span aria-hidden="true">&rarr;</span>
+          </Link>
         </div>
       </div>
 
