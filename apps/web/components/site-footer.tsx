@@ -37,14 +37,20 @@ export async function SiteFooter() {
           A line-art frieze across the top of the footer - baraat, band, mandap, the
           couple, read left to right.
 
-          This is the second version of the artwork and it changed where the strip lives.
-          The first was black line work, which needed its own light ground above the dark
-          band; this one is white line work on transparent, so it goes straight onto
-          ink-900 and the footer is one uninterrupted block instead of a pale strip with a
-          dark box under it.
-
           It sits inside <footer> rather than in any page, so every route gets it without
           having to remember.
+
+          THE BACKGROUND IS BAKED IN, and that is deliberate. The source is white line work
+          on transparent, which sounds like it should just drop onto ink-900 - but 16% of
+          its pixels are *partially* transparent with black underneath them, and that haze
+          darkened the band into a visible near-black rectangle sitting on the warm ink-900
+          around it. Lossy WebP made it worse, smearing the partial-alpha region to 23%.
+
+          So the art is composited onto #1a1614 - exactly the ink-900 the band uses - and
+          exported opaque. The edges now match the footer to the pixel, there is no alpha
+          to mis-compress, and the file dropped from 380 KB to 140 KB because there is no
+          alpha channel to store. If the footer colour ever changes, re-composite; the
+          transparent master is design/source-images/footer2.png.
 
           `block` kills the inline-element baseline gap - as an inline image it would leave
           a few pixels of nothing under the frieze.
