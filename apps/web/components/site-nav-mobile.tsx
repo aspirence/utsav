@@ -20,6 +20,12 @@ import { createPortal } from 'react-dom'
  * at the top with everything centred beneath it. The panel covers the header while it is
  * open, so it needs its own close control - the hamburger underneath cannot be reached.
  *
+ * THE OPENING IS STAGGERED. The panel itself takes 600ms on an expo-out curve, and its
+ * contents follow one after another rather than arriving with it. A menu that snaps in
+ * fully formed gives you nothing to follow; letting the mark land, then the list unfold a
+ * row at a time, is what makes it read as opening. Closing runs with no delays at all -
+ * you have already decided, and staggering an exit only makes it feel slow.
+ *
  * THE PANEL IS PORTALLED TO THE BODY, and it has to be. The header carries `backdrop-blur`
  * in its solid state, and `backdrop-filter` makes an element a containing block for any
  * `position: fixed` descendant. Left inside the header, the panel's `inset-0` resolved
@@ -68,6 +74,14 @@ export function SiteNavMobile({
     }
   }, [open])
 
+  /** Fade-and-rise for a panel child, held back by `ms` while opening. */
+  const step = (ms: number) => ({
+    opacity: open ? 1 : 0,
+    transform: open ? 'none' : 'translateY(14px)',
+    transition: 'opacity 420ms ease-out, transform 420ms cubic-bezier(0.22, 1, 0.36, 1)',
+    transitionDelay: open ? `${ms}ms` : '0ms',
+  })
+
   return (
     <div className="md:hidden">
       {/* Stays a hamburger in both states. The panel covers it when open and carries its
@@ -99,7 +113,10 @@ export function SiteNavMobile({
             // dropped on the page.
             className={
               'bg-ink-900 fixed inset-0 z-[60] flex origin-top-right flex-col ' +
-              'transition-[transform,opacity] duration-[350ms] ease-out ' +
+              'transition-[transform,opacity,visibility] ' +
+              // Expo-out: most of the travel happens early and it settles for a long
+              // while, which is what reads as "arriving" rather than "snapping".
+              'duration-[600ms] ease-[cubic-bezier(0.22,1,0.36,1)] ' +
               (open
                 ? 'visible translate-x-0 opacity-100'
                 : 'invisible translate-x-full opacity-0')
@@ -110,7 +127,8 @@ export function SiteNavMobile({
               onClick={() => setOpen(false)}
               tabIndex={open ? undefined : -1}
               aria-label="Close menu"
-              className="absolute right-4 top-6 flex h-11 w-11 items-center justify-center rounded-md text-white transition-colors hover:bg-white/10"
+              style={step(120)}
+              className="absolute right-4 top-6 flex h-11 w-11 items-center justify-center rounded-md text-white hover:bg-white/10"
             >
               <span className="relative block h-6 w-6" aria-hidden="true">
                 <span className="absolute left-0 top-1/2 block h-0.5 w-6 -translate-y-1/2 rotate-45 bg-current" />
@@ -122,7 +140,12 @@ export function SiteNavMobile({
               aria-label="Main"
               className="flex flex-1 flex-col items-center overflow-y-auto px-6 pb-10 pt-16 text-center"
             >
-              <Link href="/" tabIndex={open ? undefined : -1} aria-label="Utsava — home">
+              <Link
+                href="/"
+                tabIndex={open ? undefined : -1}
+                aria-label="Utsava — home"
+                style={step(140)}
+              >
                 {/* Same knockout the header and footer use - the mark is dark brown and
                     gold on transparent, and would all but vanish on ink-900. */}
                 {/* eslint-disable-next-line @next/next/no-img-element -- plan §12: no next/image */}
@@ -135,15 +158,18 @@ export function SiteNavMobile({
                 />
               </Link>
 
-              <p className="text-accent-300 mt-8 text-xs font-semibold uppercase tracking-[0.14em]">
+              <p
+                style={step(240)}
+                className="text-accent-300 mt-8 text-xs font-semibold uppercase tracking-[0.14em]"
+              >
                 Browse
               </p>
 
               {/* w-full on the list, not the items: the rules under each link should run
                   the width of the panel, while the labels stay centred on it. */}
               <ul className="mt-4 w-full max-w-xs">
-                {categories.map((c) => (
-                  <li key={c.slug}>
+                {categories.map((c, i) => (
+                  <li key={c.slug} style={step(300 + i * 70)}>
                     <Link
                       href={`/${defaultCity}/${c.slug}`}
                       tabIndex={open ? undefined : -1}
@@ -161,6 +187,7 @@ export function SiteNavMobile({
                 <Link
                   href={`/${defaultCity}/photography`}
                   tabIndex={open ? undefined : -1}
+                  style={step(300 + categories.length * 70)}
                   className="bg-primary-600 block rounded-md px-5 py-3.5 text-center font-medium text-white"
                 >
                   Find vendors
@@ -168,6 +195,7 @@ export function SiteNavMobile({
                 <Link
                   href="/partner"
                   tabIndex={open ? undefined : -1}
+                  style={step(360 + categories.length * 70)}
                   className="text-ink-100 block rounded-md border border-white/25 px-5 py-3.5 text-center font-medium"
                 >
                   List your business

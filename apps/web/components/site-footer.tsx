@@ -34,7 +34,7 @@ export async function SiteFooter() {
     // of the page's warm surface (#fffcf9) between the last section and the frieze - two
     // whites with a cream band across the middle, which reads as a seam rather than as
     // space. Padding is inside the element, so it takes the background with it.
-    <footer className="bg-surface-raised pt-10">
+    <footer className="bg-surface-raised pt-3 sm:pt-10">
       {/*
         A line-art frieze across the top of the footer - baraat, band, mandap, the couple,
         read left to right. It lives inside <footer> rather than in any page, so every
