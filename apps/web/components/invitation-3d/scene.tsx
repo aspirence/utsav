@@ -36,7 +36,7 @@ import { CARD_ASPECT, cardTexture } from './card-texture'
  * state and stops.
  */
 
-const DUR = 15.0
+const DUR = 17.5
 
 /**
  * The beats, in seconds.
@@ -122,20 +122,63 @@ export default function InvitationScene({ onTime }: { onTime: (t: number) => voi
       )
 
     void (async () => {
-      const [stageTex, dlTex, drTex, lotusTex] = await Promise.all([
+      const [stageTex, dlTex, drTex, lotusTex, lightsTex] = await Promise.all([
         load('/inv/stage.webp'),
         load('/inv/door-l.webp'),
         load('/inv/door-r.webp'),
         load('/inv/lotus.webp'),
+        load('/inv/lights.webp'),
       ])
       if (disposed) return
 
       // ── Stage ─────────────────────────────────────────────────────────
       const stage = plane(FRAME_W, FRAME_H, stageTex)
       stage.position.z = -2.6
-      // Slightly oversized, so the push-in never runs past its edges.
+      // Oversized, so the frame's own edge is never inside the viewport.
       stage.scale.setScalar(1.35)
       scene.add(stage)
+
+      /*
+        ── Lamps ───────────────────────────────────────────────────────
+
+        The strings of bulbs, cut out of the same frame and laid over it with additive
+        blending so they read as light rather than as paint.
+
+        The twinkle is a shader rather than a pulsing opacity because pulsing the whole
+        layer makes every bulb on the building blink in lockstep, which looks like a fault
+        rather than a decoration. Quantising the UV into cells and hashing that gives each
+        cluster its own phase, so they drift in and out of step the way real strings do -
+        one texture, one draw call, no per-lamp objects.
+      */
+      const lampMat = new THREE.ShaderMaterial({
+        uniforms: { map: { value: lightsTex }, uTime: { value: 0 } },
+        transparent: true,
+        depthWrite: false,
+        blending: THREE.AdditiveBlending,
+        vertexShader: `
+          varying vec2 vUv;
+          void main() {
+            vUv = uv;
+            gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+          }
+        `,
+        fragmentShader: `
+          uniform sampler2D map;
+          uniform float uTime;
+          varying vec2 vUv;
+          void main() {
+            vec4 t = texture2D(map, vUv);
+            vec2 cell = floor(vUv * vec2(34.0, 60.0));
+            float phase = fract(sin(dot(cell, vec2(12.9898, 78.233))) * 43758.5453);
+            float tw = 0.55 + 0.45 * sin(uTime * 2.1 + phase * 6.2831);
+            gl_FragColor = vec4(t.rgb * tw, t.a * tw);
+          }
+        `,
+      })
+      const lamps = new THREE.Mesh(new THREE.PlaneGeometry(FRAME_W, FRAME_H), lampMat)
+      lamps.position.z = -2.58
+      lamps.scale.setScalar(1.35)
+      scene.add(lamps)
 
       // ── Card ──────────────────────────────────────────────────────────
       /*
@@ -249,6 +292,8 @@ export default function InvitationScene({ onTime }: { onTime: (t: number) => voi
         // Flowers clear off the bottom as the leaf arrives. Enough travel to put the tops
         // of the tallest blooms below the frame, not just the plane's own centre.
         lotus.position.y = LOTUS_Y - seg(t, T.lotusOut) * lotusH * 1.15
+
+        lampMat.uniforms.uTime!.value = t
 
         tick.current(t)
       }

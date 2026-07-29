@@ -148,7 +148,13 @@ function Music() {
  * Every line is real text in document order, so a screen reader gets the invitation in the
  * order it is meant to be read, and the clip is purely visual.
  */
-const START = 6.0
+/**
+ * The Ganesha comes first and leaves before the wording starts - invoked, then out of the
+ * way. Overlapping the two would put a large gold motif behind the first lines, which is
+ * exactly where the eye needs to be.
+ */
+const GANESHA = { in: 6.0, hold: 2.4, out: 0.8 }
+const START = GANESHA.in + GANESHA.hold + GANESHA.out + 0.3
 const GAP = 0.34
 const WIPE = 0.55
 
@@ -157,7 +163,7 @@ type Line = { t: string; cls?: string; gap?: number; hidden?: boolean }
 const LINES: Line[] = [
   { t: 'R&D', cls: 'font-display text-[7vh] leading-none text-[#2b2119]', hidden: true },
 
-  { t: 'Mrs. Ramilaben & Mr. Manoj Kumar', gap: 3 },
+  { t: 'Mrs. Ramilaben & Mr. Manoj Kumar', gap: 2.4 },
   { t: 'request your gracious presence' },
   { t: 'on the auspicious occasion of' },
   { t: 'the wedding of their grandson' },
@@ -176,8 +182,30 @@ const LINES: Line[] = [
 ]
 
 function Wording({ t }: { t: number }) {
+  // In, hold, out - a single value so the motif never sits behind the wording.
+  const gIn = clamp01((t - GANESHA.in) / 1.1)
+  const gOut = clamp01((t - (GANESHA.in + GANESHA.hold)) / GANESHA.out)
+  const ganesha = gIn * (1 - gOut)
+
   return (
     <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
+      {/* eslint-disable-next-line @next/next/no-img-element -- plan §12: no next/image */}
+      <img
+        src="/inv/ganesha.webp"
+        alt=""
+        aria-hidden="true"
+        width={400}
+        height={400}
+        className="absolute h-[26vh] w-auto"
+        style={{
+          opacity: ganesha,
+          // Rises a little on the way in and settles - it should arrive, not switch on.
+          transform: `translateY(${(1 - gIn) * 3}vh) scale(${0.94 + gIn * 0.06})`,
+          marginTop: '-14vh',
+          visibility: ganesha > 0.002 ? 'visible' : 'hidden',
+        }}
+      />
+
       <div
         className="w-[min(46vh,20rem)] text-center text-[#3a2f24]"
         style={{ marginTop: '2vh' }}
