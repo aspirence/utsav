@@ -46,14 +46,17 @@ const DUR = 12.0
  * doors stopped reading as doors because everything grew at once. The camera now sits at
  * the distance that fits the whole frame and stays there - the doors do the moving.
  *
- * The leaf unrolls from its top-left corner rather than rising, like a rolled calendar
- * being let down: `unrollY` drops the top edge, `unrollX` opens it out sideways a beat
- * later, and the lag between them is what makes it read as unrolling instead of zooming.
+ * `draw` is the leaf being revealed. Not a scale and not a slide - a diagonal wipe from
+ * the top-left corner, the way a theatre curtain is drawn across rather than switched on.
+ *
+ * `lotusOut` clears the flowers off the bottom as the leaf arrives. It starts after the
+ * wipe has begun, so the two overlap: the flowers are on their way down while the card is
+ * still being drawn, which is what stops it reading as two separate events.
  */
 const T = {
   doors: [1.2, 3.4],
-  unrollY: [3.6, 5.0],
-  unrollX: [4.0, 5.6],
+  draw: [3.5, 5.6],
+  lotusOut: [4.0, 6.0],
 } as const
 
 const clamp01 = (v: number) => (v < 0 ? 0 : v > 1 ? 1 : v)
@@ -86,6 +89,9 @@ export default function InvitationScene({ onTime }: { onTime: (t: number) => voi
     const renderer = new THREE.WebGLRenderer({ antialias: true })
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
     renderer.outputColorSpace = THREE.SRGBColorSpace
+    // Off by default; without it a material's own clippingPlanes are ignored entirely and
+    // the curtain sweep silently does nothing.
+    renderer.localClippingEnabled = true
     el.appendChild(renderer.domElement)
     Object.assign(renderer.domElement.style, { display: 'block', width: '100%', height: '100%' })
 
@@ -130,25 +136,42 @@ export default function InvitationScene({ onTime }: { onTime: (t: number) => voi
       scene.add(stage)
 
       // ── Card ──────────────────────────────────────────────────────────
-      // Parented to a Group parked on its own top-left corner, because that is the point
-      // it unrolls from. Scaling a mesh scales it about its centre; scaling the pivot
-      // instead pins the corner and lets the rest of the leaf grow away from it.
+      /*
+        Revealed by a clipping plane sweeping across it, not by scaling or sliding it in.
+
+        A scale grows out of the corner and reads as a zoom; a slide reads as a card being
+        pushed on from off-screen. A curtain does neither - it stays where it is and is
+        uncovered. A single plane whose normal points along the diagonal does exactly that,
+        and it costs one uniform per frame rather than a texture rebuild.
+
+        The plane keeps the half-space where `normal · p + constant > 0`. With the normal
+        pointing up-and-left, sweeping the constant from -REACH to +REACH uncovers the leaf
+        from its top-left corner down to its bottom-right.
+      */
       const cardTex = new THREE.CanvasTexture(cardTexture())
       cardTex.colorSpace = THREE.SRGBColorSpace
       cardTex.anisotropy = renderer.capabilities.getMaxAnisotropy()
       const cardH = FRAME_H * 0.92
       const cardW = cardH * CARD_ASPECT * 1.06
-      const card = plane(cardW, cardH, cardTex, true)
-      card.position.set(cardW / 2, -cardH / 2, 0)
 
-      const cardPivot = new THREE.Group()
-      cardPivot.position.set(-cardW / 2, cardH / 2, -0.7)
-      cardPivot.add(card)
-      scene.add(cardPivot)
+      const SQ = Math.SQRT1_2
+      const curtain = new THREE.Plane(new THREE.Vector3(-SQ, SQ, 0), 0)
+      // Half the diagonal extent, projected onto the sweep direction.
+      const REACH = SQ * (cardW / 2 + cardH / 2)
+
+      const card = plane(cardW, cardH, cardTex, true)
+      card.position.set(0, 0, -0.7)
+      const cardMat = card.material as THREE.MeshBasicMaterial
+      cardMat.clippingPlanes = [curtain]
+      scene.add(card)
 
       // ── Doors ─────────────────────────────────────────────────────────
+      // Full frame height. They used to stop above the flowers so the lotus layer could
+      // stay put while they swung, but a door that ends two thirds of the way down does
+      // not read as a door - the leaves now run to the floor, and the lotus in front
+      // covers where the two meet.
       const DW = FRAME_W / 2
-      const DH = FRAME_H * 0.79
+      const DH = FRAME_H
       const doors: THREE.Group[] = []
       for (const [side, tex] of [
         ['left', dlTex],
@@ -158,7 +181,7 @@ export default function InvitationScene({ onTime }: { onTime: (t: number) => voi
         const leaf = plane(DW, DH, tex)
         leaf.position.x = (DW / 2) * -dir
         const pivot = new THREE.Group()
-        pivot.position.set(dir * DW, FRAME_H / 2 - DH / 2, 0)
+        pivot.position.set(dir * DW, 0, 0)
         pivot.add(leaf)
         scene.add(pivot)
         doors.push(pivot)
@@ -167,7 +190,8 @@ export default function InvitationScene({ onTime }: { onTime: (t: number) => voi
       // ── Lotus, in front of all of it ──────────────────────────────────
       const lotusH = FRAME_H * 0.43
       const lotus = plane(FRAME_W, lotusH, lotusTex, true)
-      lotus.position.set(0, -FRAME_H / 2 + lotusH / 2, 0.9)
+      const LOTUS_Y = -FRAME_H / 2 + lotusH / 2
+      lotus.position.set(0, LOTUS_Y, 0.9)
       scene.add(lotus)
 
       function apply(t: number) {
@@ -176,16 +200,13 @@ export default function InvitationScene({ onTime }: { onTime: (t: number) => voi
         doors[0]!.rotation.y = open * 1.95
         doors[1]!.rotation.y = -open * 1.95
 
-        // The unroll. Y leads and X follows; running them together would be a zoom out of
-        // the corner rather than a sheet being let down. The small floor stops the leaf
-        // collapsing to a zero-area plane, which renders as nothing at all.
-        const uy = seg(t, T.unrollY)
-        const ux = seg(t, T.unrollX)
-        cardPivot.scale.set(0.04 + ux * 0.96, 0.06 + uy * 0.94, 1)
-        // A little tilt and twist that settle to nothing - paper coming off a roll is not
-        // flat until the last moment.
-        cardPivot.rotation.z = (1 - uy) * -0.22
-        card.rotation.x = (1 - ux) * 0.55
+        // The curtain. A hair past REACH at each end so the first and last pixels are
+        // fully in rather than sitting exactly on the plane.
+        curtain.constant = -REACH * 1.02 + seg(t, T.draw) * REACH * 2.04
+
+        // Flowers clear off the bottom as the leaf arrives. Enough travel to put the tops
+        // of the tallest blooms below the frame, not just the plane's own centre.
+        lotus.position.y = LOTUS_Y - seg(t, T.lotusOut) * lotusH * 1.15
 
         tick.current(t)
       }
