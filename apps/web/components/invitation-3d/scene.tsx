@@ -36,7 +36,7 @@ import { CARD_ASPECT, cardTexture } from './card-texture'
  * state and stops.
  */
 
-const DUR = 12.0
+const DUR = 15.0
 
 /**
  * The beats, in seconds.
@@ -55,6 +55,8 @@ const DUR = 12.0
  */
 const T = {
   doors: [1.2, 3.4],
+  /** The leaves fade as they finish swinging, so nothing is left standing at the sides. */
+  doorsGone: [2.6, 3.8],
   draw: [3.5, 5.6],
   lotusOut: [4.0, 6.0],
 } as const
@@ -160,10 +162,28 @@ export default function InvitationScene({ onTime }: { onTime: (t: number) => voi
       const REACH = SQ * (cardW / 2 + cardH / 2)
 
       const card = plane(cardW, cardH, cardTex, true)
-      card.position.set(0, 0, -0.7)
       const cardMat = card.material as THREE.MeshBasicMaterial
       cardMat.clippingPlanes = [curtain]
-      scene.add(card)
+
+      /*
+        The fold. The wipe alone uncovers the leaf but does not open it, so the sheet also
+        swings flat about a crease running from its top-left corner down the diagonal - the
+        way a folded card is opened out rather than slid into view.
+
+        The pivot sits on that corner and the mesh is offset into it, because a mesh
+        rotates about its own centre and a fold happens at an edge.
+
+        The two effects compose without fighting because the fold axis is exactly
+        antiparallel to the clipping plane's normal: rotating about it moves every point
+        *within* a plane perpendicular to that normal, so `n · p` never changes and the
+        wipe sweeps identically whatever angle the sheet is at.
+      */
+      const FOLD_AXIS = new THREE.Vector3(SQ, -SQ, 0)
+      const cardPivot = new THREE.Group()
+      cardPivot.position.set(-cardW / 2, cardH / 2, -0.7)
+      card.position.set(cardW / 2, -cardH / 2, 0)
+      cardPivot.add(card)
+      scene.add(cardPivot)
 
       // ── Doors ─────────────────────────────────────────────────────────
       // Full frame height. They used to stop above the flowers so the lotus layer could
@@ -173,18 +193,20 @@ export default function InvitationScene({ onTime }: { onTime: (t: number) => voi
       const DW = FRAME_W / 2
       const DH = FRAME_H
       const doors: THREE.Group[] = []
+      const doorMats: THREE.MeshBasicMaterial[] = []
       for (const [side, tex] of [
         ['left', dlTex],
         ['right', drTex],
       ] as const) {
         const dir = side === 'left' ? -1 : 1
-        const leaf = plane(DW, DH, tex)
+        const leaf = plane(DW, DH, tex, true)
         leaf.position.x = (DW / 2) * -dir
         const pivot = new THREE.Group()
         pivot.position.set(dir * DW, 0, 0)
         pivot.add(leaf)
         scene.add(pivot)
         doors.push(pivot)
+        doorMats.push(leaf.material as THREE.MeshBasicMaterial)
       }
 
       // ── Lotus, in front of all of it ──────────────────────────────────
@@ -195,14 +217,34 @@ export default function InvitationScene({ onTime }: { onTime: (t: number) => voi
       scene.add(lotus)
 
       function apply(t: number) {
+        /*
+          Outward, towards the camera.
+
+          Sign follows from where each pivot is. The left leaf hangs off a hinge at -DW and
+          extends in +x, and a positive rotation.y carries +x towards -z - away from the
+          viewer. So the left leaf needs a negative angle to come outward, and the right
+          leaf, which extends in -x from +DW, needs a positive one.
+
+          Just over a right angle, and then they fade: at 90 degrees a plane is edge-on and
+          already almost nothing, and the fade removes the sliver that is left rather than
+          leaving two leaves standing at the sides of the frame.
+        */
         const open = seg(t, T.doors)
-        // Inward, away from the camera - the film's leading edges recede as they part.
-        doors[0]!.rotation.y = open * 1.95
-        doors[1]!.rotation.y = -open * 1.95
+        doors[0]!.rotation.y = -open * 1.75
+        doors[1]!.rotation.y = open * 1.75
+
+        const gone = 1 - seg(t, T.doorsGone)
+        doorMats[0]!.opacity = gone
+        doorMats[1]!.opacity = gone
+        doors[0]!.visible = doors[1]!.visible = gone > 0.001
 
         // The curtain. A hair past REACH at each end so the first and last pixels are
         // fully in rather than sitting exactly on the plane.
-        curtain.constant = -REACH * 1.02 + seg(t, T.draw) * REACH * 2.04
+        const drawn = seg(t, T.draw)
+        curtain.constant = -REACH * 1.02 + drawn * REACH * 2.04
+
+        // ...and the sheet swings flat about the crease through that same corner.
+        cardPivot.quaternion.setFromAxisAngle(FOLD_AXIS, (1 - drawn) * 1.15)
 
         // Flowers clear off the bottom as the leaf arrives. Enough travel to put the tops
         // of the tallest blooms below the frame, not just the plane's own centre.

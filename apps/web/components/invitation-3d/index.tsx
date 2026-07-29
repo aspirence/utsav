@@ -136,66 +136,72 @@ function Music() {
   )
 }
 
-function Wording({ t }: { t: number }) {
-  /** Fade up, staggered off the same clock the scene runs on. */
-  const at = (start: number, len = 0.7) => {
-    const p = clamp01((t - start) / len)
-    return { opacity: p, transform: `translateY(${(1 - p) * 12}px)` }
-  }
+/**
+ * The wording, written on one line at a time.
+ *
+ * Each line is wiped in left to right with `clip-path: inset()` rather than faded. A fade
+ * puts the whole line there at once at low opacity, which reads as a slide appearing; a
+ * wipe reads as something being written, which is what an invitation should look like
+ * arriving. Sizes are `vh` because the card is framed to height - tie them to width and
+ * the type drifts off the leaf the moment the window stops being portrait.
+ *
+ * Every line is real text in document order, so a screen reader gets the invitation in the
+ * order it is meant to be read, and the clip is purely visual.
+ */
+const START = 6.0
+const GAP = 0.34
+const WIPE = 0.55
 
+type Line = { t: string; cls?: string; gap?: number; hidden?: boolean }
+
+const LINES: Line[] = [
+  { t: 'R&D', cls: 'font-display text-[7vh] leading-none text-[#2b2119]', hidden: true },
+
+  { t: 'Mrs. Ramilaben & Mr. Manoj Kumar', gap: 3 },
+  { t: 'request your gracious presence' },
+  { t: 'on the auspicious occasion of' },
+  { t: 'the wedding of their grandson' },
+
+  { t: 'Dhanesh', cls: 'font-display text-[2.6vh] italic leading-tight', gap: 2.4 },
+  { t: '(S/o. Mrs. Gita & Mr. Mahesh Kumar)', cls: 'text-[1.35vh] leading-snug' },
+  { t: 'with', gap: 1 },
+  { t: 'Radha', cls: 'font-display text-[2.6vh] italic leading-tight', gap: 0.8 },
+  { t: '(D/o. Mrs. Kailashben & Mr. Randhir Jariwala)', cls: 'text-[1.35vh] leading-snug' },
+
+  { t: 'on Monday, 1st May', gap: 2.6 },
+  { t: '9:00 p.m. onwards' },
+  { t: 'at' },
+  { t: 'SMC Party Plot,' },
+  { t: 'Athwalines, Surat, India.' },
+]
+
+function Wording({ t }: { t: number }) {
   return (
     <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
-      {/* Sized as a share of the viewport height, because the card is framed to height -
-          tie it to width and it drifts off the leaf the moment the window is not portrait. */}
       <div
         className="w-[min(46vh,20rem)] text-center text-[#3a2f24]"
         style={{ marginTop: '2vh' }}
       >
-        <p
-          aria-hidden="true"
-          className="font-display text-[7vh] leading-none text-[#2b2119]"
-          style={at(6.2)}
-        >
-          R<span className="mx-[-0.18em] align-baseline">&amp;</span>D
-        </p>
-
-        <p className="mt-[3vh] text-[1.55vh] leading-[1.9]" style={at(7.0)}>
-          Mrs. Ramilaben &amp; Mr. Manoj Kumar
-          <br />
-          request your gracious presence
-          <br />
-          on the auspicious occasion of
-          <br />
-          the wedding of their grandson
-        </p>
-
-        <p className="mt-[2.4vh] font-display text-[2.6vh] italic leading-tight" style={at(7.8)}>
-          Dhanesh
-        </p>
-        <p className="text-[1.35vh] leading-snug" style={at(7.8)}>
-          (S/o. Mrs. Gita &amp; Mr. Mahesh Kumar)
-        </p>
-        <p className="mt-[1vh] text-[1.4vh]" style={at(8.2)}>
-          with
-        </p>
-        <p className="mt-[0.6vh] font-display text-[2.6vh] italic leading-tight" style={at(8.6)}>
-          Radha
-        </p>
-        <p className="text-[1.35vh] leading-snug" style={at(8.6)}>
-          (D/o. Mrs. Kailashben &amp; Mr. Randhir Jariwala)
-        </p>
-
-        <p className="mt-[2.6vh] text-[1.55vh] leading-[1.9]" style={at(9.4)}>
-          on Monday, 1st May
-          <br />
-          9:00 p.m. onwards
-          <br />
-          at
-          <br />
-          SMC Party Plot,
-          <br />
-          Athwalines, Surat, India.
-        </p>
+        {LINES.map((line, i) => {
+          const p = clamp01((t - (START + i * GAP)) / WIPE)
+          return (
+            <p
+              key={line.t}
+              {...(line.hidden ? { 'aria-hidden': 'true' as const } : {})}
+              className={line.cls ?? 'text-[1.55vh] leading-[1.9]'}
+              style={{
+                marginTop: line.gap ? `${line.gap}vh` : undefined,
+                // The line is fully opaque from the first frame it is visible at all -
+                // the reveal is the clip, not the alpha, or it looks like it is fading in
+                // through the paper.
+                clipPath: `inset(0 ${(1 - p) * 100}% 0 0)`,
+                opacity: p > 0 ? 1 : 0,
+              }}
+            >
+              {line.t}
+            </p>
+          )
+        })}
       </div>
     </div>
   )
