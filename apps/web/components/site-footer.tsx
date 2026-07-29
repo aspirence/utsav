@@ -30,7 +30,11 @@ export async function SiteFooter() {
   const defaultCity = cities[0]?.slug ?? 'lucknow'
 
   return (
-    <footer className="mt-10">
+    // Padding, not a margin, and it carries the frieze's own white. A margin left a strip
+    // of the page's warm surface (#fffcf9) between the last section and the frieze - two
+    // whites with a cream band across the middle, which reads as a seam rather than as
+    // space. Padding is inside the element, so it takes the background with it.
+    <footer className="bg-surface-raised pt-10">
       {/*
         A line-art frieze across the top of the footer - baraat, band, mandap, the couple,
         read left to right. It lives inside <footer> rather than in any page, so every
