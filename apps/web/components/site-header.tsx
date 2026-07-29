@@ -3,6 +3,7 @@ import Link from 'next/link'
 import { LinkButton } from '@utsava/ui'
 
 import { SiteHeaderShell } from '@/components/site-header-shell'
+import { SiteNavMobile } from '@/components/site-nav-mobile'
 import { getCategories, getLaunchedCities } from '@/lib/queries'
 
 /**
@@ -75,18 +76,25 @@ export async function SiteHeader() {
         </div>
 
         <div className="relative z-10 flex shrink-0 items-center gap-2">
-          {/* Plan §1: "Supply tooling before demand product" — the vendor entry point
-              ships seven months before customers arrive, so it is never buried. */}
-          <Link
-            href="/partner"
-            className="hidden rounded-md px-3 py-2 text-sm font-medium text-ink-200 transition-colors hover:bg-white/10 hover:text-white sm:block"
-          >
-            List your business
-          </Link>
-          {/* Carries its own solid background, so it needs no transparent-state variant. */}
-          <LinkButton href={`/${defaultCity}/photography`} size="sm">
-            Find vendors
-          </LinkButton>
+          {/* From md up these sit in the bar. Below that they move into the panel behind
+              the hamburger - see SiteNavMobile - because a 375px bar cannot hold the mark,
+              a link and a button without one of them losing. */}
+          <div className="hidden items-center gap-2 md:flex">
+            {/* Plan §1: "Supply tooling before demand product" — the vendor entry point
+                ships seven months before customers arrive, so it is never buried. */}
+            <Link
+              href="/partner"
+              className="rounded-md px-3 py-2 text-sm font-medium text-ink-200 transition-colors hover:bg-white/10 hover:text-white"
+            >
+              List your business
+            </Link>
+            {/* Carries its own solid background, so it needs no transparent-state variant. */}
+            <LinkButton href={`/${defaultCity}/photography`} size="sm">
+              Find vendors
+            </LinkButton>
+          </div>
+
+          <SiteNavMobile categories={categories} defaultCity={defaultCity} />
         </div>
       </div>
     </SiteHeaderShell>
