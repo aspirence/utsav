@@ -32,42 +32,43 @@ export async function SiteFooter() {
 
   return (
     <footer className="mt-20">
+      {/*
+        A line-art frieze across the top of the footer - baraat, band, mandap, the couple,
+        read left to right. It lives inside <footer> rather than in any page, so every
+        route gets it without having to remember.
+
+        THE BACKGROUND IS BAKED IN, and it is white on purpose.
+
+        The master (design/source-images/footer2.png) is *white* line work on transparent.
+        Dropping that straight onto the dark band did not work: 16% of its pixels are
+        partially transparent with black underneath, and the haze turned the strip into a
+        visible near-black rectangle sitting on the warm ink-900 around it - lossy WebP
+        smeared that region from 16% to 23%. So the export is opaque either way.
+
+        White ground means the strokes have to be dark, so the art is inverted on the way
+        out. That is one Pillow step, not a second asset to keep in sync - regenerate from
+        the master if it ever needs to go back to white-on-dark.
+
+        Opaque also costs less: 140 KB with no alpha channel, against 380 KB with one.
+
+        `block` kills the inline-element baseline gap - as an inline image it would leave a
+        few pixels of dark under the white frieze.
+
+        2016px wide, so it is roughly 1:1 on a large monitor rather than being stretched.
+      */}
+      {/* eslint-disable-next-line @next/next/no-img-element -- plan §12: no next/image */}
+      <img
+        src="/footer-frieze.webp"
+        alt=""
+        aria-hidden="true"
+        width={2016}
+        height={364}
+        loading="lazy"
+        decoding="async"
+        className="block w-full"
+      />
+
       <div className="bg-ink-900">
-        {/*
-          A line-art frieze across the top of the footer - baraat, band, mandap, the
-          couple, read left to right.
-
-          It sits inside <footer> rather than in any page, so every route gets it without
-          having to remember.
-
-          THE BACKGROUND IS BAKED IN, and that is deliberate. The source is white line work
-          on transparent, which sounds like it should just drop onto ink-900 - but 16% of
-          its pixels are *partially* transparent with black underneath them, and that haze
-          darkened the band into a visible near-black rectangle sitting on the warm ink-900
-          around it. Lossy WebP made it worse, smearing the partial-alpha region to 23%.
-
-          So the art is composited onto #1a1614 - exactly the ink-900 the band uses - and
-          exported opaque. The edges now match the footer to the pixel, there is no alpha
-          to mis-compress, and the file dropped from 380 KB to 140 KB because there is no
-          alpha channel to store. If the footer colour ever changes, re-composite; the
-          transparent master is design/source-images/footer2.png.
-
-          `block` kills the inline-element baseline gap - as an inline image it would leave
-          a few pixels of nothing under the frieze.
-
-          2016px wide, so it is roughly 1:1 on a large monitor rather than being stretched.
-        */}
-        {/* eslint-disable-next-line @next/next/no-img-element -- plan §12: no next/image */}
-        <img
-          src="/footer-frieze.webp"
-          alt=""
-          aria-hidden="true"
-          width={2016}
-          height={364}
-          loading="lazy"
-          decoding="async"
-          className="block w-full"
-        />
         <Container className="py-14">
           <div className="grid gap-12 text-center sm:text-left lg:grid-cols-3 lg:items-start">
             {/* ── Left: categories ─────────────────────────────────────── */}
