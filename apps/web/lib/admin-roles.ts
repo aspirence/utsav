@@ -60,6 +60,10 @@ export function canSee(role: StaffRoleKind, href: string): boolean {
     // their own city, which is a different job — and invitation_templates_write_staff agrees.
     case '/admin/templates':
       return role === 'moderator'
+    // Orders carry money, so finance reads them as well as moderators. A field agent has no
+    // reason to see a customer's phone number against a payment.
+    case '/admin/orders':
+      return role === 'moderator' || role === 'finance'
     default:
       return true
   }

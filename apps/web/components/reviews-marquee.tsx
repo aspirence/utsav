@@ -43,16 +43,55 @@ export interface MarqueeReview {
   verified: boolean
 }
 
+/**
+ * The photograph behind the band.
+ *
+ * A prop rather than a literal so the two places this section appears can carry different art —
+ * the invitation page has its own. Every field is required together, because a `src` without a
+ * matching `srcSet` silently ships the largest file to a phone.
+ *
+ * `widths` states the REAL pixel width of each file, which is not always the number in its name:
+ * scripts/optimize-images.mjs resizes with `withoutEnlargement`, so a `-1920` variant off a
+ * 1912px source is 1912px wide. A srcSet that claims 1920w for a 1912px file makes the browser
+ * pick fractionally wrong on a boundary — small, but free to get right.
+ */
+export interface MarqueeBackground {
+  /** Fallback src, and the largest variant. */
+  src: string
+  /** [path, real width] pairs, ascending. */
+  variants: readonly (readonly [string, number])[]
+  /**
+   * Tailwind object-position class. Which part of the frame survives the crop depends on where
+   * the couple sit in it, so it belongs with the image rather than in the component.
+   */
+  position: string
+}
+
+const DEFAULT_BACKGROUND: MarqueeBackground = {
+  src: '/bg-image-1920.webp',
+  variants: [
+    ['/bg-image-768.webp', 768],
+    ['/bg-image-1280.webp', 1280],
+    ['/bg-image-1920.webp', 1920],
+  ],
+  // object-top: the source is 2172x724, so a section shorter than 1:3 has to crop somewhere.
+  // Anchoring to the top keeps the sky and the canopy and takes the crop off the empty
+  // foreground at the bottom.
+  position: 'object-top',
+}
+
 export function ReviewsMarquee({
   reviews,
   eyebrow = 'Reviews',
   heading = 'Only people who actually booked can write these.',
   description = 'Every review needs a completed booking. Vendors can reply, never edit or remove.',
+  background = DEFAULT_BACKGROUND,
 }: {
   reviews: MarqueeReview[]
   eyebrow?: string
   heading?: string
   description?: string
+  background?: MarqueeBackground
 }) {
   if (reviews.length === 0) return null
 
@@ -77,16 +116,13 @@ export function ReviewsMarquee({
       <div className="absolute inset-0 -z-10" aria-hidden="true">
         {/* eslint-disable-next-line @next/next/no-img-element -- plan §12: no Vercel optimizer */}
         <img
-          src="/bg-image-1920.webp"
-          srcSet="/bg-image-768.webp 768w, /bg-image-1280.webp 1280w, /bg-image-1920.webp 1920w"
+          src={background.src}
+          srcSet={background.variants.map(([path, w]) => `${path} ${w}w`).join(', ')}
           sizes="100vw"
           alt=""
           loading="lazy"
           decoding="async"
-          // object-top, not object-center: the source is 2172x724, so a section shorter
-          // than 1:3 has to crop somewhere. Anchoring to the top means the sky and the
-          // canopy survive and the crop comes off the empty foreground at the bottom.
-          className="h-full w-full object-cover object-top"
+          className={`h-full w-full object-cover ${background.position}`}
         />
       </div>
 

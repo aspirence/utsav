@@ -35,6 +35,34 @@ export const INVITATION_FEATURES = [
 ] as const
 
 /**
+ * The booking amount, in one place.
+ *
+ * A customer pays a small amount to reserve a design slot and the balance on approval. These are
+ * business numbers, so they live as one constant rather than scattered through copy — the launch
+ * price appears in a banner, a summary row, a button and a note, and four literals is four
+ * places to forget when the offer ends.
+ *
+ * The balance is DERIVED, never written down: `invitation_orders_amounts_reconcile` requires
+ * booking + balance = template price, so a hardcoded "₹1,400" would be a constraint violation the
+ * day the template price changes.
+ *
+ * Integer paise (plan §5).
+ */
+export const BOOKING = {
+  /** What the launch offer asks for now. */
+  amountPaise: 9_900,
+  /** What it will be afterwards — shown struck through, so the offer means something. */
+  regularAmountPaise: 29_900,
+  /** The offer's cap. Copy only; nothing counts orders against it yet. */
+  offerSeats: 20,
+} as const
+
+/** Balance owed after the booking amount. Derived so the two legs always reconcile. */
+export function balancePaise(templatePricePaise: number): number {
+  return Math.max(0, templatePricePaise - BOOKING.amountPaise)
+}
+
+/**
  * How ordering an invitation actually goes.
  *
  * Written from the flow that exists, not from a template. There is deliberately no turnaround

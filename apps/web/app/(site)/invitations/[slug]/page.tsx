@@ -9,6 +9,8 @@ import { HowItWorks } from '@/components/how-it-works'
 import { ReviewsMarquee } from '@/components/reviews-marquee'
 import { TemplatePhone } from '@/components/template-phone'
 import {
+  balancePaise,
+  BOOKING,
   getInvitationTemplate,
   getLiveInvitationTemplates,
   INVITATION_FEATURES,
@@ -127,17 +129,18 @@ export default async function InvitationTemplatePage({
 
             <div className="mt-8">
               <Link
-                href={`/enquire?template=${encodeURIComponent(template.slug)}`}
+                href={`/invitations/${template.slug}/book`}
                 className="bg-primary-600 hover:bg-primary-700 inline-flex h-12 items-center gap-2 rounded-full px-7 text-sm font-semibold uppercase tracking-[0.1em] text-white transition-colors"
               >
                 Order now
                 <span aria-hidden="true">&rarr;</span>
               </Link>
-              {/* Said plainly. Escrow is a 2027 milestone (plan §14), so a button that looked like
-                a checkout would be a promise this cannot keep today. */}
+              {/* The booking page says the rest. Two numbers here rather than a vague "payment is
+                  arranged later": what it costs to start, and when the remainder falls due. */}
               <p className="text-ink-500 mt-3 max-w-md text-xs leading-relaxed">
-                This opens a short form. We will confirm your names, dates and events, then send the
-                finished invitation — payment is arranged after that, not now.
+                Start with {formatPaise(BOOKING.amountPaise)} to reserve a design slot. The{' '}
+                {formatPaise(balancePaise(template.pricePaise))} balance is due only after you have
+                seen the draft and approved it.
               </p>
             </div>
 
@@ -178,6 +181,27 @@ export default async function InvitationTemplatePage({
         eyebrow="Loved by couples across India"
         heading="One link, and the whole family opened it."
         description="What couples told us after sending theirs out. Invitation reviews are not booking-verified yet — the badge on our vendor reviews means something these do not."
+        /*
+         * This page's own photograph. The home page keeps bg-image — the component's default —
+         * so changing one does not change the other.
+         *
+         * 1912w, not 1920w: optimize-images.mjs resizes withoutEnlargement, so the "-1920"
+         * variant off this 1912px source is 1912px wide. Claiming 1920 would be a srcSet that
+         * lies about a file, in the small way that makes a browser pick wrong on a boundary.
+         *
+         * object-center rather than the default object-top: at 1912x823 this frame is far less
+         * letterboxed than bg-image's 3:1, and the couple sit centre-right — anchoring to the
+         * top would crop their feet off on a short viewport.
+         */
+        background={{
+          src: '/invitation-review-1920.webp',
+          variants: [
+            ['/invitation-review-768.webp', 768],
+            ['/invitation-review-1280.webp', 1280],
+            ['/invitation-review-1920.webp', 1912],
+          ],
+          position: 'object-center',
+        }}
       />
 
       {others.length > 0 && (

@@ -29,13 +29,27 @@ export function TemplatePhone({
   item,
   className,
   showIsland = true,
+  compact = false,
 }: {
   item: PhonePreview
   className?: string
   /** The Dynamic Island. Off only where the frame is too narrow to carry one legibly. */
   showIsland?: boolean
+  /**
+   * For frames around 120px wide or less.
+   *
+   * The corner radius has to scale with the frame or the proportions break: 2.1rem is 34px, which
+   * is a reasonable 12% of a 280px phone and an absurd 37% of a 92px one — the small phone in the
+   * booking page's sidebar was coming out as a rounded blob rather than a device. Padding thins
+   * with it, because a 3px bezel on a 110px frame is proportionally three times too thick.
+   */
+  compact?: boolean
 }) {
   const { ref, seen } = useOnScreen<HTMLDivElement>()
+
+  const r = compact
+    ? { outer: 'rounded-[1.05rem]', mid: 'rounded-[0.95rem]', screen: 'rounded-[0.8rem]', pad: 'p-[1.5px]' }
+    : { outer: 'rounded-[2.1rem]', mid: 'rounded-[1.95rem]', screen: 'rounded-[1.75rem]', pad: 'p-[3px]' }
 
   return (
     /*
@@ -51,12 +65,17 @@ export function TemplatePhone({
     <div
       ref={ref}
       className={
-        'relative rounded-[2.1rem] bg-gradient-to-b from-ink-700 via-ink-900 to-ink-800 p-[3px] shadow-[0_16px_34px_-14px_rgba(24,17,12,0.45)] ' +
+        `relative ${r.outer} ${r.pad} bg-gradient-to-b from-ink-700 via-ink-900 to-ink-800 ` +
+        (compact
+          ? 'shadow-[0_6px_16px_-8px_rgba(24,17,12,0.4)] '
+          : 'shadow-[0_16px_34px_-14px_rgba(24,17,12,0.45)] ') +
         (className ?? '')
       }
     >
-      <div className="relative overflow-hidden rounded-[1.95rem] bg-ink-950 p-[3px]">
-        <div className="relative aspect-[1206/2622] overflow-hidden rounded-[1.75rem] bg-ink-900">
+      <div className={`relative overflow-hidden ${r.mid} ${r.pad} bg-ink-950`}>
+        <div
+          className={`relative aspect-[1206/2622] overflow-hidden ${r.screen} bg-ink-900`}
+        >
           <Preview item={item} active={seen} />
 
           {showIsland && (

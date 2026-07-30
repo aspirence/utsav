@@ -140,6 +140,46 @@ export type InvitationTemplateRow = {
   updated_at: string
 }
 
+export type InvitationOrderStatus =
+  | 'awaiting_payment'
+  | 'booked'
+  | 'details_received'
+  | 'draft_sent'
+  | 'approved'
+  | 'delivered'
+  | 'refunded'
+  | 'cancelled'
+
+/**
+ * public.invitation_orders — mirrors 20260730000200_invitation_orders.sql.
+ *
+ * NOT a money table in the plan §6 sense — no vendor, no payout leg, no escrow — but it holds
+ * amounts, so it behaves like one where it counts: there is no client INSERT policy at all, and
+ * app.guard_invitation_order_columns() blocks a console edit to any of the amounts, the
+ * reference or the payment stamps. See that migration's header.
+ */
+export type InvitationOrderRow = {
+  id: string
+  reference: string
+  template_id: string | null
+  template_slug: string
+  template_name: string
+  /** Integer paise. What the template cost when ordered, not what it costs now. */
+  template_price: number
+  booking_amount: number
+  balance_amount: number
+  status: InvitationOrderStatus
+  contact_name: string
+  contact_email: string
+  contact_phone: string
+  customer_id: string | null
+  payment_ref: string | null
+  paid_at: string | null
+  notes: string | null
+  created_at: string
+  updated_at: string
+}
+
 export type CityRow = {
   id: string
   slug: string
@@ -530,6 +570,13 @@ export type Database = {
       invitation_templates: Table<
         InvitationTemplateRow,
         Omit<Partial<InvitationTemplateRow>, 'id' | 'created_at' | 'updated_at'>
+      >
+
+      // Orders against those templates. No client INSERT policy exists — the Insert type below
+      // describes what the service-role action writes, and RLS refuses it from anywhere else.
+      invitation_orders: Table<
+        InvitationOrderRow,
+        Omit<Partial<InvitationOrderRow>, 'id' | 'created_at' | 'updated_at'>
       >
 
       vendors: Table<VendorRow>
