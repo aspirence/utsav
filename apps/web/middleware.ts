@@ -1,5 +1,7 @@
 import { NextResponse, type NextRequest } from 'next/server'
 
+import { createUtsavaServerClient, hasSupabaseEnv } from '@utsava/db'
+
 /**
  * Edge middleware.
  *
@@ -29,9 +31,17 @@ import { NextResponse, type NextRequest } from 'next/server'
  * Server Components cannot set cookies (see the note in packages/db/src/clients.ts), so
  * a rotated refresh token has nowhere to land and the user silently logs out. Middleware
  * is the one place in the request lifecycle that can write them back.
+ *
+ * `getUser()` is the call that does it. It is not a read for its own sake - it revalidates
+ * the access token against the auth server and, if the refresh token has rotated, hands
+ * the new pair to `setAll`, which writes them onto the outgoing response. Drop the call
+ * and sessions expire after an hour no matter how recently the user was active.
+ *
+ * It must be `getUser()` and not `getSession()`. getSession reads the cookie and trusts
+ * it; a cookie is client-supplied, so on the server it proves nothing. getUser verifies.
  */
 
-export function middleware(request: NextRequest) {
+export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl
 
   if (pathname === '/admin' || pathname.startsWith('/admin/')) {
@@ -42,7 +52,7 @@ export function middleware(request: NextRequest) {
       return new NextResponse(null, { status: 404 })
     }
 
-    const response = NextResponse.next()
+    const response = await refreshSession(request)
     // Defence in depth alongside robots.ts and the route's own metadata.
     response.headers.set('X-Robots-Tag', 'noindex, nofollow, noarchive')
     response.headers.set('X-Frame-Options', 'DENY')
@@ -52,7 +62,48 @@ export function middleware(request: NextRequest) {
     return response
   }
 
-  return NextResponse.next()
+  return refreshSession(request)
+}
+
+/**
+ * Revalidate the session and carry any rotated cookies onto the response.
+ *
+ * The two-place cookie write is the part that is easy to get wrong. A rotated token has to
+ * land on *both* the request (so anything later in this same request sees it) and the
+ * response (so the browser keeps it). Writing only the response means the current render
+ * still runs on the old token; writing only the request means the browser never gets it and
+ * the next request starts over.
+ *
+ * No Supabase configured is not an error. The site runs off fixtures until it is pointed at
+ * an instance, and every page has to keep working - so this passes the request through
+ * untouched rather than throwing at the edge, where a throw is a 500 on every route.
+ */
+async function refreshSession(request: NextRequest): Promise<NextResponse> {
+  if (!hasSupabaseEnv()) return NextResponse.next({ request })
+
+  let response = NextResponse.next({ request })
+
+  // Through @utsava/db rather than @supabase/ssr directly. pnpm's strict layout means a
+  // transitive dependency is not resolvable from here, and going through the package keeps
+  // one typed factory instead of a second client configured slightly differently.
+  const supabase = createUtsavaServerClient({
+    getAll: () => request.cookies.getAll().map(({ name, value }) => ({ name, value })),
+    setAll: (list) => {
+      for (const { name, value } of list) request.cookies.set(name, value)
+      response = NextResponse.next({ request })
+      for (const { name, value, options } of list) response.cookies.set(name, value, options)
+    },
+  })
+
+  try {
+    await supabase.auth.getUser()
+  } catch {
+    // A reachability failure must not take the whole site down with it. The user simply
+    // stays unauthenticated for this request; RLS then returns nothing, which is the
+    // correct outcome rather than a 500 on every route.
+  }
+
+  return response
 }
 
 /**

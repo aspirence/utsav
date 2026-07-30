@@ -4,6 +4,7 @@ import { LinkButton } from '@utsava/ui'
 
 import { SiteHeaderShell } from '@/components/site-header-shell'
 import { SiteNavMobile } from '@/components/site-nav-mobile'
+import { getSessionUser } from '@/lib/auth'
 import { getCategories, getLaunchedCities } from '@/lib/queries'
 
 /**
@@ -30,8 +31,15 @@ import { getCategories, getLaunchedCities } from '@/lib/queries'
  * text-shadow the type needs when there is a photograph behind it instead of a background.
  */
 export async function SiteHeader() {
-  const [cities, categories] = await Promise.all([getLaunchedCities(), getCategories()])
+  const [cities, categories, user] = await Promise.all([
+    getLaunchedCities(),
+    getCategories(),
+    getSessionUser(),
+  ])
   const defaultCity = cities[0]?.slug ?? 'lucknow'
+  // Only whether, never who. The header does not need the identity, and reading it here
+  // would put a user's phone number in the markup of every cached page on the site.
+  const signedIn = Boolean(user)
 
   return (
     <SiteHeaderShell>
@@ -88,13 +96,28 @@ export async function SiteHeader() {
             >
               List your business
             </Link>
+
+            {/* Plan §3 has no signup step - the first OTP creates the account - so the
+                anonymous label is "Sign in" and never "Sign up". Offering both would imply
+                a second path that does not exist. */}
+            <Link
+              href={signedIn ? '/account' : '/login'}
+              className="rounded-md px-3 py-2 text-sm font-medium text-ink-200 transition-colors hover:bg-white/10 hover:text-white"
+            >
+              {signedIn ? 'Your account' : 'Sign in'}
+            </Link>
+
             {/* Carries its own solid background, so it needs no transparent-state variant. */}
             <LinkButton href={`/${defaultCity}/photography`} size="sm">
               Find vendors
             </LinkButton>
           </div>
 
-          <SiteNavMobile categories={categories} defaultCity={defaultCity} />
+          <SiteNavMobile
+            categories={categories}
+            defaultCity={defaultCity}
+            signedIn={signedIn}
+          />
         </div>
       </div>
     </SiteHeaderShell>

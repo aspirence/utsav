@@ -46,9 +46,11 @@ import { createPortal } from 'react-dom'
 export function SiteNavMobile({
   categories,
   defaultCity,
+  signedIn = false,
 }: {
   categories: { slug: string; pluralName: string }[]
   defaultCity: string
+  signedIn?: boolean
 }) {
   const [open, setOpen] = useState(false)
   // Portals need a DOM, so nothing renders on the server pass.
@@ -193,10 +195,18 @@ export function SiteNavMobile({
                   Find vendors
                 </Link>
                 <Link
-                  href="/partner"
+                  href={signedIn ? '/account' : '/login'}
                   tabIndex={open ? undefined : -1}
                   style={step(360 + categories.length * 70)}
                   className="text-ink-100 block rounded-md border border-white/25 px-5 py-3.5 text-center font-medium"
+                >
+                  {signedIn ? 'Your account' : 'Sign in'}
+                </Link>
+                <Link
+                  href="/partner"
+                  tabIndex={open ? undefined : -1}
+                  style={step(420 + categories.length * 70)}
+                  className="text-ink-300 block py-2 text-center text-sm"
                 >
                   List your business
                 </Link>

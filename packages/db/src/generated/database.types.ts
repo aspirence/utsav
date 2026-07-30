@@ -69,6 +69,31 @@ export type PricingUnit = 'per_day' | 'per_event' | 'per_plate' | 'per_person' |
 // Row shapes
 // ---------------------------------------------------------------------------
 
+/**
+ * public.profiles — mirrors 20260727000300_identity.sql.
+ *
+ * Plan §3: "auth.users 1:1 profiles. Holds no role column by design — capabilities are
+ * derived from vendor_members / corporate_members / staff_roles." So there is nothing here
+ * to check for permission; RLS restricts the table to the owner's own row.
+ */
+export type ProfileRow = {
+  id: string
+  full_name: string | null
+  /** E.164. The primary customer identity in India; OTP-verified at enquiry. */
+  phone: string | null
+  phone_verified: boolean
+  email: string | null
+  avatar_url: string | null
+  city_id: string | null
+  locale: 'en' | 'hi'
+  marketing_consent: boolean
+  marketing_consent_at: string | null
+  deletion_requested_at: string | null
+  deleted_at: string | null
+  created_at: string
+  updated_at: string
+}
+
 export type CityRow = {
   id: string
   slug: string
@@ -360,6 +385,15 @@ export type Database = {
   __InternalSupabase: { PostgrestVersion: '12' }
   public: {
     Tables: {
+      // Own row only, enforced by RLS. `id`, `phone` and `phone_verified` are excluded
+      // from Insert/Update: the row is created by the on_auth_user_created trigger, and
+      // the phone is the account identity - changing it is an OTP re-verification, not a
+      // column write.
+      profiles: Table<
+        ProfileRow,
+        Omit<Partial<ProfileRow>, 'id' | 'phone' | 'phone_verified'>
+      >
+
       // Reference data — public SELECT, staff-only writes (see 001300_rls_policies.sql).
       cities: Table<CityRow>
       localities: Table<LocalityRow>
