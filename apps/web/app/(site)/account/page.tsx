@@ -1,5 +1,6 @@
 import Link from 'next/link'
 
+import { getMyEnquiries, getMyEvents, getMyShortlist } from '@/lib/account-queries'
 import { getProfile, getSessionUser } from '@/lib/auth'
 
 /**
@@ -15,7 +16,21 @@ import { getProfile, getSessionUser } from '@/lib/auth'
  * tile that never changes because nothing can write to it is worse than no tile.
  */
 export default async function AccountPage() {
-  const [user, profile] = await Promise.all([getSessionUser(), getProfile()])
+  // All four in parallel. They are four independent RLS-scoped reads against one connection,
+  // so waterfalling them would cost four round trips to say the same thing.
+  const [user, profile, enquiries, shortlist, events] = await Promise.all([
+    getSessionUser(),
+    getProfile(),
+    getMyEnquiries(),
+    getMyShortlist(),
+    getMyEvents(),
+  ])
+
+  const counts = {
+    enquiries: enquiries.length,
+    shortlist: shortlist.length,
+    events: events.filter((e) => !e.isArchived).length,
+  }
 
   return (
     <div className="grid gap-10 lg:grid-cols-[minmax(0,1fr)_minmax(0,0.9fr)]">
@@ -57,28 +72,34 @@ export default async function AccountPage() {
         </Link>
       </div>
 
-      {/* What is coming, stated plainly. The tables and policies for all of it are already
-          in supabase/migrations - only these screens are outstanding. */}
+      {/* Counts, now that there are screens behind them. A tile is only worth showing when
+          tapping it goes somewhere - a "0 bookings" tile whose page does not exist reads as
+          a fault rather than as a fact, so bookings and reviews stay in the note below. */}
       <aside className="rounded-2xl border border-ink-100 bg-surface-sunken/50 p-6">
-        <h3 className="font-display text-lg text-ink-900">Not built yet</h3>
-        <p className="mt-2 text-sm leading-relaxed text-ink-600">
-          The database already holds all of this, with the policies that keep it yours. The
-          screens are next.
-        </p>
-        <ul className="mt-5 space-y-3 text-sm">
+        <h3 className="font-display text-lg text-ink-900">Your planning</h3>
+
+        <ul className="mt-5 space-y-1">
           {[
-            ['Events', 'Your wedding, with its date, city and budget'],
-            ['Shortlists', 'Vendors you saved, kept per event'],
-            ['Enquiries', 'Who replied, who quoted, and the five it went to'],
-            ['Checklist', 'What to book and when'],
-            ['Bookings & reviews', 'After escrow ships — plan §14'],
-          ].map(([title, detail]) => (
-            <li key={title} className="border-b border-ink-100 pb-3 last:border-0 last:pb-0">
-              <span className="font-medium text-ink-900">{title}</span>
-              <span className="mt-0.5 block text-ink-600">{detail}</span>
+            { href: '/account/enquiries', label: 'Enquiries sent', n: counts.enquiries },
+            { href: '/account/shortlists', label: 'Vendors saved', n: counts.shortlist },
+            { href: '/account/events', label: 'Events', n: counts.events },
+          ].map((row) => (
+            <li key={row.href}>
+              <Link
+                href={row.href}
+                className="flex items-center justify-between gap-4 border-b border-ink-100 py-3 text-ink-800 transition-colors hover:text-primary-700"
+              >
+                <span>{row.label}</span>
+                <span className="font-display text-xl text-ink-900">{row.n}</span>
+              </Link>
             </li>
           ))}
         </ul>
+
+        <p className="mt-5 text-sm leading-relaxed text-ink-600">
+          Bookings and reviews arrive with escrow — plan §14. A review needs a completed
+          booking behind it, which is why they come together.
+        </p>
       </aside>
     </div>
   )

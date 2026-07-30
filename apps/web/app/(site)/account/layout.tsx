@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import { headers } from 'next/headers'
 import Link from 'next/link'
 
 import { Container } from '@utsava/ui'
@@ -29,11 +30,18 @@ export const metadata: Metadata = {
 
 const TABS = [
   { href: '/account', label: 'Overview' },
+  { href: '/account/enquiries', label: 'Enquiries' },
+  { href: '/account/shortlists', label: 'Saved' },
+  { href: '/account/events', label: 'Events' },
   { href: '/account/profile', label: 'Profile' },
 ]
 
 export default async function AccountLayout({ children }: { children: React.ReactNode }) {
-  await requireUser('/account')
+  // Set by middleware; Next gives a Server Component no way to read its own path. Falling
+  // back to /account keeps the gate working if the header is ever absent - it just returns
+  // you to the overview instead of the exact page.
+  const path = (await headers()).get('x-pathname') ?? '/account'
+  await requireUser(path.startsWith('/account') ? path : '/account')
 
   return (
     <Container className="py-12 sm:py-16">

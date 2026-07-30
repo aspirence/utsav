@@ -13,6 +13,7 @@ import {
   SectionHeading,
 } from '@utsava/ui'
 
+import { ShortlistButton } from '@/components/shortlist-button'
 import { getLiveVendorSlugs, getVendorBySlug } from '@/lib/queries'
 
 type Props = { params: Promise<{ slug: string }> }
@@ -292,6 +293,24 @@ export default async function VendorPage({ params }: Props) {
                 >
                   Check availability
                 </LinkButton>
+
+                {/*
+                  The shortlist button and its action already existed and were rendered
+                  nowhere - the feature had no entry point at all, so rows could only ever
+                  have been written by calling the action directly.
+
+                  No `initialSaved` here on purpose. This page is statically generated and
+                  heavily crawled (plan §12), so baking one visitor's shortlist state into it
+                  would show that state to everyone. The button reads localStorage instead and
+                  the account page is where the database's answer is authoritative.
+                */}
+                <div className="mt-3">
+                  <ShortlistButton
+                    vendorSlug={vendor.slug}
+                    vendorName={vendor.displayName}
+                    className="w-full [&>button]:w-full [&>button]:justify-center"
+                  />
+                </div>
 
                 {/* Plan §1/§2: the promises that make the enquiry worth completing —
                     and that make the resulting lead worth paying for. */}

@@ -312,6 +312,75 @@ export type ShortlistRow = {
   created_at: string
 }
 
+/** public.events — the container an enquiry, shortlist and checklist all hang off. */
+export type EventRow = {
+  id: string
+  owner_id: string
+  name: string | null
+  event_type: EventType
+  event_date: string | null
+  date_flexible: boolean
+  guest_count: number | null
+  city_id: string | null
+  locality_id: string | null
+  budget_min: number | null
+  budget_max: number | null
+  notes: string | null
+  is_archived: boolean
+  created_at: string
+  updated_at: string
+}
+
+/**
+ * public.leads — the customer side.
+ *
+ * Vendors read leads through the `vendor_leads` view, which masks contact details until the
+ * state permits (plan §6). A customer needs none of that masking - it is their own contact
+ * detail - so `leads_select_customer` lets them read the table directly, scoped to leads
+ * whose enquiry they own.
+ *
+ * Writes are not the customer's to make: state moves through app.transition_lead().
+ */
+export type LeadRow = {
+  id: string
+  enquiry_id: string
+  vendor_id: string
+  status: LeadStatus
+  routed_seq: number
+  routed_at: string
+  viewed_at: string | null
+  responded_at: string | null
+  quoted_at: string | null
+  converted_at: string | null
+  expires_at: string
+}
+
+export type ChecklistRow = {
+  id: string
+  event_id: string
+  owner_id: string
+  name: string
+  template_slug: string | null
+  created_at: string
+  updated_at: string
+}
+
+export type ChecklistItemRow = {
+  id: string
+  checklist_id: string
+  category_id: string | null
+  title: string
+  description: string | null
+  /** Negative = before the event. Renders as "3 months before". */
+  due_offset_days: number | null
+  due_date: string | null
+  is_done: boolean
+  done_at: string | null
+  sort_order: number
+  created_at: string
+  updated_at: string
+}
+
 /** public.vendor_leads — the §6 contact-masking view. */
 export type VendorLeadRow = {
   lead_id: string
@@ -410,7 +479,16 @@ export type Database = {
       reviews: Table<ReviewRow>
       stories: Table<StoryRow>
       enquiries: Table<EnquiryRow>
+
+      // The customer's own rows, all gated by `*_all_own` policies on profile ownership.
+      events: Table<EventRow, Omit<Partial<EventRow>, 'id' | 'created_at' | 'updated_at'>>
       shortlists: Table<ShortlistRow>
+      checklists: Table<ChecklistRow>
+      checklist_items: Table<ChecklistItemRow>
+
+      // Read-only to a customer. `leads_select_customer` scopes SELECT to leads whose
+      // enquiry they own; every transition goes through app.transition_lead().
+      leads: Table<LeadRow>
     }
     Views: {
       vendor_leads: View<VendorLeadRow>

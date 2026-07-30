@@ -140,10 +140,15 @@ export async function toggleShortlist(vendor: string, eventId?: string): Promise
  * The vendor profile page is deliberately NOT revalidated. Shortlist state is per-user
  * and read on the client, so busting a heavily-crawled static profile on every tap would
  * cost plan §12's "static-first pages" for nothing.
+ *
+ * These were `/shortlist` and `/events/:id` - paths that were never built. The account area
+ * lives under /account, so a tap was busting two routes that do not exist and leaving the
+ * one that does stale.
  */
 function revalidateShortlist(eventId?: string): void {
-  revalidatePath('/shortlist')
-  if (eventId) revalidatePath(`/events/${eventId}`)
+  revalidatePath('/account/shortlists')
+  revalidatePath('/account')
+  if (eventId) revalidatePath(`/account/events/${eventId}`)
 }
 
 /**

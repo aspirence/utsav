@@ -27,6 +27,7 @@ export function ShortlistButton({
   vendorSlug,
   vendorName,
   eventId,
+  initialSaved,
   className,
 }: {
   /** Slug or vendor UUID — the action accepts either. */
@@ -34,18 +35,34 @@ export function ShortlistButton({
   vendorName: string
   /** File the save under one of the customer's events instead of the account-wide list. */
   eventId?: string
+  /**
+   * What the database says, when the caller knows. Pass it wherever the page has already
+   * read the shortlist server-side - the /account/shortlists list, or a vendor card rendered
+   * for a signed-in user.
+   *
+   * When it is supplied it wins over localStorage, because it is the account's state rather
+   * than this device's. Without it, a row saved on a phone rendered "Shortlist" on a laptop
+   * that had never seen it, and tapping would have deleted it.
+   *
+   * Leave it undefined on anonymous and statically-cached pages: there is nothing to read,
+   * and baking one visitor's answer into a shared cache would show it to everyone.
+   */
+  initialSaved?: boolean
   className?: string
 }) {
-  const [saved, setSaved] = useState(false)
+  const [saved, setSaved] = useState(initialSaved ?? false)
   const [error, setError] = useState<string | null>(null)
   const [pending, startTransition] = useTransition()
 
   const storageKey = eventId ? `${vendorSlug}@${eventId}` : vendorSlug
 
   // Read after mount so the server-rendered markup and the first client render match.
+  // Skipped entirely when the server already told us - the account's state beats the
+  // device's, and reading anyway would flip a correctly-filled button back off.
   useEffect(() => {
+    if (initialSaved !== undefined) return
     setSaved(readShortlist().includes(storageKey))
-  }, [storageKey])
+  }, [storageKey, initialSaved])
 
   function handleClick() {
     const optimistic = !saved

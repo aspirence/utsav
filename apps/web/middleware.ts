@@ -78,10 +78,26 @@ export async function middleware(request: NextRequest) {
  * an instance, and every page has to keep working - so this passes the request through
  * untouched rather than throwing at the edge, where a throw is a 500 on every route.
  */
-async function refreshSession(request: NextRequest): Promise<NextResponse> {
-  if (!hasSupabaseEnv()) return NextResponse.next({ request })
+/**
+ * Next gives a Server Component no way to read the current path, so middleware forwards it.
+ *
+ * The account layout needs it to build `/login?next=…`: without it every sub-page redirects
+ * to the same hardcoded `/account`, and someone who followed a link to their enquiries
+ * lands on the overview after signing in and has to find them again.
+ *
+ * A request header rather than a cookie: it is per-request by nature, never persisted, and
+ * cannot be read by the client.
+ */
+function withPath(request: NextRequest): NextResponse {
+  const headers = new Headers(request.headers)
+  headers.set('x-pathname', request.nextUrl.pathname)
+  return NextResponse.next({ request: { headers } })
+}
 
-  let response = NextResponse.next({ request })
+async function refreshSession(request: NextRequest): Promise<NextResponse> {
+  if (!hasSupabaseEnv()) return withPath(request)
+
+  let response = withPath(request)
 
   // Through @utsava/db rather than @supabase/ssr directly. pnpm's strict layout means a
   // transitive dependency is not resolvable from here, and going through the package keeps
@@ -90,7 +106,7 @@ async function refreshSession(request: NextRequest): Promise<NextResponse> {
     getAll: () => request.cookies.getAll().map(({ name, value }) => ({ name, value })),
     setAll: (list) => {
       for (const { name, value } of list) request.cookies.set(name, value)
-      response = NextResponse.next({ request })
+      response = withPath(request)
       for (const { name, value, options } of list) response.cookies.set(name, value, options)
     },
   })

@@ -32,6 +32,28 @@ import { getServerClientOrNull } from './supabase'
 // Reference data
 // ---------------------------------------------------------------------------
 
+/**
+ * Cities as `{ id, name }`, for a form that has to write `events.city_id`.
+ *
+ * Separate from getLaunchedCities, which returns slugs because that is what a URL needs. A
+ * foreign key needs the uuid, and the fixtures do not have one - they are hand-written rows
+ * keyed by slug - so with no Supabase attached this returns an empty list and the form falls
+ * back to its "Not decided" option. Inventing a uuid to fill the gap would write a value
+ * that fails the FK the moment a real database is behind it.
+ */
+export async function getCityOptions(): Promise<{ id: string; name: string }[]> {
+  const supabase = await getServerClientOrNull()
+  if (!supabase) return []
+
+  const { data } = await supabase
+    .from('cities')
+    .select('id, name')
+    .eq('is_launched', true)
+    .order('launch_order')
+
+  return (data ?? []).map((c) => ({ id: c.id, name: c.name }))
+}
+
 export async function getLaunchedCities(): Promise<FixtureCity[]> {
   const supabase = await getServerClientOrNull()
   if (!supabase) return CITIES
