@@ -80,12 +80,20 @@ export default async function AdminDashboardPage() {
         title="Dashboard"
         description="Today's picture, then the launch gates. Nothing here is a vanity metric — every number has something a moderator can do about it."
         action={
-          <Link
-            href="/admin/enquiries"
-            className="rounded-md bg-ink-900 px-4 py-2.5 text-sm font-medium text-white transition-colors hover:bg-ink-800"
-          >
-            Open enquiries
-          </Link>
+          <div className="flex flex-wrap gap-2">
+            <Link
+              href="/admin/vendors/new"
+              className="rounded-md border border-ink-300 bg-white px-4 py-2.5 text-sm font-medium text-ink-800 transition-colors hover:bg-ink-50"
+            >
+              New listing
+            </Link>
+            <Link
+              href="/admin/enquiries"
+              className="rounded-md bg-ink-900 px-4 py-2.5 text-sm font-medium text-white transition-colors hover:bg-ink-800"
+            >
+              Open enquiries
+            </Link>
+          </div>
         }
       />
 

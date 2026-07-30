@@ -78,6 +78,14 @@ export default async function AdminVendorsPage({
       <PageHeader
         title="Vendors"
         description="A listing only becomes discoverable when a moderator approves it — vendors can pause and resume themselves, but never publish. is_seo_eligible additionally gates whether they receive routed leads at all."
+        action={
+          <Link
+            href="/admin/vendors/new"
+            className="rounded-md bg-ink-900 px-4 py-2.5 text-sm font-medium text-white transition-colors hover:bg-ink-800"
+          >
+            New listing
+          </Link>
+        }
       />
 
       {/* Both filters carry the other's current value, so picking a category does not
