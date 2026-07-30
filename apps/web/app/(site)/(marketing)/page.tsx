@@ -11,10 +11,12 @@ import { InvitationFeature } from '@/components/invitation-feature'
 import { PackageSlider } from '@/components/package-slider'
 import { QuotationCta } from '@/components/quotation-cta'
 import { ReviewsMarquee } from '@/components/reviews-marquee'
+import { TemplateCollections } from '@/components/template-collections'
 import { TypeSlider } from '@/components/type-slider'
 import { WeddingExplainer } from '@/components/wedding-explainer'
 import { getCategoryContent } from '@/lib/category-content'
 import { getDestinationTypes } from '@/lib/destination-types'
+import { getLiveInvitationTemplates } from '@/lib/invitation-templates'
 import { getWeddingPackages } from '@/lib/packages'
 import { PLACE_ART } from '@/lib/place-art'
 import {
@@ -88,10 +90,11 @@ export default async function HomePage() {
   const citySlug = city?.slug ?? 'lucknow'
   const cityName = city?.name ?? 'your city'
 
-  const [featured, localities, reviews] = await Promise.all([
+  const [featured, localities, reviews, templates] = await Promise.all([
     discoverVendors({ citySlug, categorySlug: 'photography', perPage: 6 }),
     getLocalityCounts(citySlug, 'photography'),
     getRecentReviews(3),
+    getLiveInvitationTemplates(),
   ])
 
   const photographyRungs = getCategoryContent('photography').priceRungs
@@ -170,7 +173,21 @@ export default async function HomePage() {
         </Container>
       </section>
 
-      {/* 3. Wedding invitations - illustration left, the argument right */}
+      {/* 3. The invitation storefront - plan section 2 counts digital invitations as a revenue
+             line, and this is the thing being sold. Above the invitation feature on purpose:
+             the products come first, and the section below then explains what they are. */}
+      <Container className="py-16">
+        <SectionHeading
+          eyebrow="Digital invitations"
+          title="Curated Collections"
+          description="Hand-crafted templates, each one a blank canvas for your own names, dates and traditions. Tap any card to see it running on a phone."
+        />
+        <div className="mt-10">
+          <TemplateCollections items={templates} />
+        </div>
+      </Container>
+
+      {/* 4. Wedding invitations - illustration left, the argument right */}
       <Container className="py-16">
         <InvitationFeature imageUrl="/invitation.webp" />
       </Container>

@@ -29,6 +29,7 @@ const NAV: { href: string; label: string; icon: React.ReactNode }[] = [
   { href: '/admin', label: 'Dashboard', icon: <IconGrid /> },
   { href: '/admin/enquiries', label: 'Enquiries', icon: <IconInbox /> },
   { href: '/admin/vendors', label: 'Vendors', icon: <IconStore /> },
+  { href: '/admin/templates', label: 'Invitations', icon: <IconCard /> },
   { href: '/admin/moderation', label: 'Moderation', icon: <IconShield /> },
   { href: '/admin/pipeline', label: 'Pipeline', icon: <IconFlow /> },
   { href: '/admin/leads', label: 'Routing health', icon: <IconPulse /> },
@@ -195,6 +196,15 @@ function IconFlow() {
       <rect x="15" y="10" width="6" height="4" rx="1" />
       <rect x="3" y="16" width="6" height="4" rx="1" />
       <path d="M9 6h3a2 2 0 012 2v2M9 18h3a2 2 0 002-2v-2" />
+    </svg>
+  )
+}
+
+function IconCard() {
+  return (
+    <svg {...S}>
+      <rect x="4" y="3" width="16" height="18" rx="2" />
+      <path d="M8 8h8M8 12h8M8 16h4" />
     </svg>
   )
 }

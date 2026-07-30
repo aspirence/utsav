@@ -56,6 +56,10 @@ export function canSee(role: StaffRoleKind, href: string): boolean {
     // Routing health carries refunds and payout signals, so it is moderator-and-up.
     case '/admin/leads':
       return role === 'moderator' || role === 'finance'
+    // National storefront copy with a price on it. A field agent's remit is vendor listings in
+    // their own city, which is a different job — and invitation_templates_write_staff agrees.
+    case '/admin/templates':
+      return role === 'moderator'
     default:
       return true
   }

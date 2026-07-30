@@ -118,6 +118,30 @@ export type StaffRoleRow = {
   updated_at: string
 }
 
+/**
+ * public.invitation_templates — mirrors 20260730000100_invitation_templates.sql.
+ *
+ * `video_url` is a link somebody pasted, not a managed storage path. See that migration's
+ * header for why, and for what has to change when this outgrows five rows.
+ */
+export type InvitationTemplateRow = {
+  id: string
+  slug: string
+  name: string
+  tags: string[]
+  /** Integer paise (plan §5). */
+  price: number
+  video_url: string | null
+  poster_url: string | null
+  order_url: string | null
+  demo_url: string | null
+  sort_order: number
+  is_active: boolean
+  created_by: string | null
+  created_at: string
+  updated_at: string
+}
+
 export type CityRow = {
   id: string
   slug: string
@@ -502,6 +526,13 @@ export type Database = {
       localities: Table<LocalityRow>
       categories: Table<CategoryRow>
       style_tags: Table<StyleTagRow>
+
+      // Plan §2's digital-invitation storefront. `created_at`/`updated_at` are excluded from
+      // Insert so an upsert cannot backdate a row.
+      invitation_templates: Table<
+        InvitationTemplateRow,
+        Omit<Partial<InvitationTemplateRow>, 'id' | 'created_at' | 'updated_at'>
+      >
 
       vendors: Table<VendorRow>
       vendor_categories: Table<VendorCategoryRow>
