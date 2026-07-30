@@ -16,6 +16,24 @@ import { getServerClientOrNull } from '@/lib/admin-supabase'
 
 export type PreviewKind = 'video' | 'embed' | 'none'
 
+/**
+ * What every template includes.
+ *
+ * A shared constant, not a per-row column, because it is currently true of all of them — they
+ * are the same product in different art, at the same price. A `features text[]` column would let
+ * them diverge, and the day one actually does is the day to add it; until then eight copies of
+ * the same seven strings is eight places to forget to update.
+ */
+export const INVITATION_FEATURES = [
+  'A free “save the date” invite',
+  'Immersive “tap to enter” gateway',
+  'Background music, chosen to match',
+  'Interactive ceremony timeline',
+  'High-fidelity photo gallery',
+  'RSVP and guest management',
+  'Venue maps for every event',
+] as const
+
 export interface InvitationTemplate {
   id: string
   slug: string
@@ -195,10 +213,13 @@ function shape(r: RawTemplate, isDemo = false): InvitationTemplate {
  */
 const DEMO: InvitationTemplate[] = [
   raw('vibrant-heritage', 'Vibrant Heritage', ['Royal', 'Vibrant', 'New'], 149_900, '/invitation.webp'),
-  raw('divine-kedarnath', 'Divine Kedarnath Elegance', ['Temple', 'New', 'Shiva'], 149_900, '/luck-1-1280.webp'),
-  raw('taj-mahal-elegance', 'Taj Mahal Elegance', ['New', 'Royal', 'Tajmahal'], 149_900, '/luck-2-1280.webp'),
+  raw('divine-kedarnath', 'Divine Kedarnath Elegance', ['Temple', 'New', 'Shiva'], 149_900, '/mountain-1280.webp'),
+  raw('taj-mahal-elegance', 'Taj Mahal Elegance', ['New', 'Royal', 'Tajmahal'], 149_900, '/historical-1280.webp'),
   raw('modern-rajputana', 'The Modern Rajputana', ['Modern', 'Royalty', 'New'], 149_900, '/luck-3-1280.webp'),
-  raw('divine-prem-radha-krishna', 'Divine Prem: The Radha-Krishna Edition', ['Radha', 'Temple', 'Krishna'], 149_900, '/luck-4-1280.webp'),
+  raw('divine-prem-radha-krishna', 'Divine Prem: The Radha-Krishna Edition', ['Radha', 'Temple', 'Krishna'], 149_900, '/temple-1280.webp'),
+  raw('marathi-shalu', 'Marathi Shalu & Mundavalya', ['Marathi', 'Classic', 'New'], 149_900, '/marathi-1280.webp'),
+  raw('punjabi-phulkari', 'Punjabi Phulkari', ['Punjabi', 'Vibrant', 'Dhol'], 149_900, '/punjabi-1280.webp'),
+  raw('kanjivaram-classic', 'Kanjivaram Classic', ['South', 'Temple', 'Silk'], 149_900, '/tamil-1280.webp'),
 ].map((r) => shape(r, true))
 
 function raw(
