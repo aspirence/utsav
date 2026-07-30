@@ -197,28 +197,30 @@ export default async function InvitationTemplatePage({
         heading="One link, and the whole family opened it."
         description="What couples told us after sending theirs out. Invitation reviews are not booking-verified yet — the badge on our vendor reviews means something these do not."
         /*
-         * This page's own photograph. The home page keeps bg-image — the component's default —
-         * so changing one does not change the other.
+         * This page's own photograph. The home page keeps bg-image — the component's default — so
+         * changing one does not change the other.
          *
-         * 1912w, not 1920w: optimize-images.mjs resizes withoutEnlargement, so the "-1920"
-         * variant off this 1912px source is 1912px wide. Claiming 1920 would be a srcSet that
-         * lies about a file, in the small way that makes a browser pick wrong on a boundary.
+         * 1920w, and it says 1920 because the file IS 1920: the source is 2172px wide, so
+         * optimize-images.mjs has room to produce a true 1920 variant. The previous photograph was
+         * 1912px and this said 1912w for the same reason — the descriptor tracks the file, not the
+         * filename, because withoutEnlargement means the two can disagree.
          *
-         * object-center rather than the default object-top: at 1912x823 this frame is far less
-         * letterboxed than bg-image's 3:1, and the couple sit centre-right — anchoring to the
-         * top would crop their feet off on a short viewport.
+         * object-top, not object-center. At 2172x724 this is a 3:1 frame in a band that renders
+         * shorter than that, so something gets cropped: the couple and the phone they are holding
+         * sit in the upper-middle band and the bottom third is petals and diyas. Anchoring to the
+         * top takes the crop off the foreground and keeps the subject. (The previous photograph was
+         * 2.32:1 with the couple centred, which is why it wanted object-center — the anchor belongs
+         * to the image, not to the section.)
          */
         background={{
           src: '/invitation-review-1920.webp',
           variants: [
             ['/invitation-review-768.webp', 768],
             ['/invitation-review-1280.webp', 1280],
-            ['/invitation-review-1920.webp', 1912],
+            ['/invitation-review-1920.webp', 1920],
           ],
-          position: 'object-center',
+          position: 'object-top',
         }}
-        // This photograph's left third is open sky and sea, so the copy can move in closer than
-        // the shared default allows. The home page keeps the default — see the prop's note.
         wide
       />
 
