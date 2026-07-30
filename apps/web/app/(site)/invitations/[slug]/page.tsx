@@ -236,10 +236,13 @@ export default async function InvitationTemplatePage({
                       item={other}
                       className="mx-auto w-full max-w-[180px] transition-transform duration-500 group-hover:-translate-y-1.5"
                     />
-                    <p className="font-display text-ink-900 mt-3 text-base leading-snug">
+                    {/* Centred on the phone, not on the grid cell. The frame is mx-auto and
+                        capped at 180px, so a full-width caption reads as left-of-centre against
+                        the thing it labels. */}
+                    <p className="font-display text-ink-900 mt-3 text-center text-base leading-snug">
                       {other.name}
                     </p>
-                    <p className="text-ink-600 mt-0.5 text-sm tabular-nums">
+                    <p className="text-ink-600 mt-0.5 text-center text-sm tabular-nums">
                       {formatPaise(other.pricePaise)}
                     </p>
                   </Link>

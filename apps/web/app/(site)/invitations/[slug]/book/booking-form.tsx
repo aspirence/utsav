@@ -258,19 +258,26 @@ export function BookingForm({
               </span>
             </div>
 
-            <p className="mt-4 border-t border-ink-100 pt-4 text-center text-[11px] leading-relaxed text-ink-500">
-              By paying, you agree to our{' '}
-              <Link href="/p/terms" className="underline hover:text-ink-800">
-                terms of service
-              </Link>{' '}
-              and{' '}
-              <Link href="/p/privacy" className="underline hover:text-ink-800">
-                privacy policy
-              </Link>
-              .
-            </p>
           </div>
         </div>
+
+        {/*
+          Outside the two-column grid, so "centred" means centred in the card.
+          Inside the right-hand column it was centred on that column, which on a wide card put it
+          visibly right of the middle — the kind of near-miss that reads as a mistake rather than as
+          alignment.
+        */}
+        <p className="border-t border-ink-100 px-5 pb-6 pt-4 text-center text-[11px] leading-relaxed text-ink-500 sm:px-8">
+          By paying, you agree to our{' '}
+          <Link href="/p/terms" className="underline hover:text-ink-800">
+            terms of service
+          </Link>{' '}
+          and{' '}
+          <Link href="/p/privacy" className="underline hover:text-ink-800">
+            privacy policy
+          </Link>
+          .
+        </p>
       </form>
     </div>
   )
