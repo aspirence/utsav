@@ -202,6 +202,9 @@ export default async function InvitationTemplatePage({
           ],
           position: 'object-center',
         }}
+        // This photograph's left third is open sky and sea, so the copy can move in closer than
+        // the shared default allows. The home page keeps the default — see the prop's note.
+        wide
       />
 
       {others.length > 0 && (

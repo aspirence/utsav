@@ -86,12 +86,27 @@ export function ReviewsMarquee({
   heading = 'Only people who actually booked can write these.',
   description = 'Every review needs a completed booking. Vendors can reply, never edit or remove.',
   background = DEFAULT_BACKGROUND,
+  wide = false,
 }: {
   reviews: MarqueeReview[]
   eyebrow?: string
   heading?: string
   description?: string
   background?: MarqueeBackground
+  /**
+   * Pull the copy column closer to the left edge.
+   *
+   * The band is full-bleed but its copy sits in the standard max-w-7xl container, so on a 1900px
+   * screen the text starts ~340px in — fine for a section with a heading centred above it, loose
+   * for one where the photograph runs to both edges. `wide` widens the container to 1600px, which
+   * moves the copy about 160px left without letting it touch the edge.
+   *
+   * A prop rather than a change to the shared default, because the home page's copy is positioned
+   * against a different photograph: bg-image is 3:1 and its couple sit further right, so the same
+   * shift there would push type over the canopy. Container merges through twMerge, so the widened
+   * max-width overrides cleanly and the default stays byte-identical.
+   */
+  wide?: boolean
 }) {
   if (reviews.length === 0) return null
 
@@ -126,7 +141,7 @@ export function ReviewsMarquee({
         />
       </div>
 
-      <Container className="py-10 sm:py-12">
+      <Container className={`py-10 sm:py-12 ${wide ? 'max-w-[1600px]' : ''}`}>
         <div className="grid gap-10 lg:grid-cols-[minmax(0,0.95fr)_minmax(0,1fr)]">
           <div>
             <p className="text-xs font-semibold uppercase tracking-[0.14em] text-accent-300">
