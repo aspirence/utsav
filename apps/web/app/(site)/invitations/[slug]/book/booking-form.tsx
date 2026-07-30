@@ -28,15 +28,15 @@ import { placeInvitationOrder, type BookingState } from './actions'
  * away. That line is not optional. Without it the button is a promise nothing keeps, and a
  * storefront that lies about payment is one a customer stops believing about everything else.
  *
- * ── THE SECURITY BADGES RENDER UNCONDITIONALLY, ALSO ON REQUEST ───────────────
- * "256-bit secure payment · Secured via Razorpay" is not a description of a journey; it is a
- * factual claim about an integration. The conditional version was built and overruled, so it now
- * shows whether or not RAZORPAY_KEY_ID is set — which means it is currently ahead of the code.
- * Whoever wires payment should re-read this block and confirm it became true, rather than assuming
- * it always was.
+ * ── THE PAYMENT COPY IS AHEAD OF THE CODE, BY DECISION ────────────────────────
+ * The button says "Pay ₹99 & continue" and the row beneath it says "256-bit secure payment ·
+ * Secured via Razorpay", and none of that is wired yet — plan §14 puts escrow in July 2027.
  *
- * `paymentLive` survives for one thing only: the line that says the payment link comes over
- * WhatsApp, which disappears by itself the day a provider is configured.
+ * Conditional versions of both were built and removed on request, as was the line that said the
+ * payment link arrives over WhatsApp. So there is now nothing on this card that tells a customer
+ * where the money actually changes hands. That is a product decision, recorded here rather than
+ * argued again: whoever connects the aggregator should read this comment, confirm the claims became
+ * true, and delete the paragraph.
  */
 export function BookingForm({
   templateSlug,
@@ -46,7 +46,6 @@ export function BookingForm({
   balancePaise,
   regularAmountPaise,
   offerSeats,
-  paymentLive,
 }: {
   templateSlug: string
   templateName: string
@@ -55,8 +54,6 @@ export function BookingForm({
   balancePaise: number
   regularAmountPaise: number
   offerSeats: number
-  /** True only when a payment aggregator is actually configured. */
-  paymentLive: boolean
 }) {
   const [state, act, pending] = useActionState<BookingState, FormData>(placeInvitationOrder, {
     status: 'idle',
@@ -272,27 +269,6 @@ export function BookingForm({
               </Link>
               .
             </p>
-
-            <p className="mt-1.5 text-center text-[11px] italic leading-relaxed text-ink-500">
-              *The {formatPaise(bookingAmountPaise)} booking amount is refundable if you are not
-              satisfied with the draft.
-            </p>
-
-            {/*
-              The one sentence that must survive, and the only remaining use of `paymentLive`.
-
-              The button says "Pay" and the badges above say "secured", but with no aggregator
-              configured this submit does not charge anything. One quiet line saying where the
-              payment actually happens is what keeps the card from being a promise nothing keeps —
-              and it disappears by itself the moment RAZORPAY_KEY_ID is set, so nobody has to
-              remember to delete it.
-            */}
-            {!paymentLive && (
-              <p className="mt-2 text-center text-[11px] leading-relaxed text-ink-500">
-                We send the {formatPaise(bookingAmountPaise)} payment link on WhatsApp — this step
-                saves your details and holds the slot.
-              </p>
-            )}
           </div>
         </div>
       </form>

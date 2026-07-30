@@ -46,16 +46,6 @@ export default async function BookInvitationPage({
 
   if (!template || !template.isActive) notFound()
 
-  /**
-   * Is a payment aggregator actually configured?
-   *
-   * This decides the button's wording and whether any security badge is shown at all. Read from
-   * the server so a missing key cannot be faked from the client. See the note in booking-form.tsx:
-   * a "Secured via Razorpay" badge with no Razorpay is the same class of lie as a verified badge on
-   * an unverified review.
-   */
-  const paymentLive = Boolean(process.env.RAZORPAY_KEY_ID)
-
   /*
    * The same derivation the action uses, so the page cannot quote one number and the order record
    * another. Passing BOOKING.amountPaise straight through was that bug in miniature: for a template
@@ -141,7 +131,6 @@ export default async function BookInvitationPage({
           balancePaise={balancePaise}
           regularAmountPaise={BOOKING.regularAmountPaise}
           offerSeats={BOOKING.offerSeats}
-          paymentLive={paymentLive}
         />
       </div>
     </Container>
