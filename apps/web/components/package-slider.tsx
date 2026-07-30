@@ -27,6 +27,9 @@ export interface PackageCard {
   startsAtPaise: number
   href: string
   imageUrl?: string | null
+  /** Optional responsive set. Descriptors are the files' real widths, not their filenames
+      - optimize-images.mjs never upscales. See lib/place-art.ts. */
+  imageSrcSet?: string
 }
 
 export function PackageSlider({ items }: { items: PackageCard[] }) {
@@ -68,6 +71,14 @@ export function PackageSlider({ items }: { items: PackageCard[] }) {
                       // eslint-disable-next-line @next/next/no-img-element -- plan section 12: Storage CDN
                       <img
                         src={item.imageUrl}
+                        {...(item.imageSrcSet
+                          ? {
+                              srcSet: item.imageSrcSet,
+                              // Three across inside a 1280px container on a desktop, two
+                              // on a tablet, one on a phone.
+                              sizes: '(min-width: 1024px) 31vw, (min-width: 640px) 46vw, 92vw',
+                            }
+                          : {})}
                         alt=""
                         loading="lazy"
                         decoding="async"

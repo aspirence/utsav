@@ -16,6 +16,7 @@ import { WeddingExplainer } from '@/components/wedding-explainer'
 import { getCategoryContent } from '@/lib/category-content'
 import { getDestinationTypes } from '@/lib/destination-types'
 import { getWeddingPackages } from '@/lib/packages'
+import { PLACE_ART } from '@/lib/place-art'
 import {
   discoverVendors,
   getLaunchedCities,
@@ -54,44 +55,6 @@ import { getWeddingTypes } from '@/lib/wedding-types'
  * completed booking.
  */
 export const revalidate = 3600
-
-/**
- * Artwork for the explore panel, by locality slug.
- *
- * Keyed rather than positional: the list is ordered by vendor count, so a positional map
- * would silently hand Gomti Nagar's photograph to whichever area happened to overtake it.
- * A locality with no photograph yet falls through to the placeholder, which is the honest
- * state and not a bug.
- *
- * The numbers are each file's REAL pixel width, and they have to be written out rather
- * than assumed. `pnpm images` resizes withoutEnlargement and skips a variant once it would
- * be an upscale, so a 1536px source yields a `-1920.webp` that is 1536 wide, and a square
- * 1254px source yields a 1254px `-1280.webp` and no 1920 at all. A descriptor that claims
- * more than the file holds makes the browser pick something smaller than it asked for.
- */
-const PLACE_ART: Record<string, { imageUrl: string; imageSrcSet: string }> = Object.fromEntries(
-  (
-    [
-      ['gomti-nagar', [768, 1280, 1448]],
-      ['hazratganj', [768, 1280, 1448]],
-      ['aliganj', [768, 1280, 1448]],
-      ['chowk', [768, 1280, 1448]],
-      ['indira-nagar', [768, 1280, 1536]],
-      ['sushant-golf-city', [768, 1280, 1536]],
-      ['mahanagar', [768, 1280, 1536]],
-      // Square source, 1254px. No 1920 variant exists, and the 1280 file is really 1254.
-      ['kanpur-road', [768, 1254]],
-    ] as const
-  ).map(([slug, widths]) => [
-    slug,
-    {
-      imageUrl: `/place-${slug}-1280.webp`,
-      imageSrcSet: widths
-        .map((real, i) => `/place-${slug}-${[768, 1280, 1920][i]}.webp ${real}w`)
-        .join(', '),
-    },
-  ]),
-)
 
 /**
  * Locality counts -> cards for the explore band.
