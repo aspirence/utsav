@@ -2,7 +2,10 @@ import Link from 'next/link'
 import { redirect } from 'next/navigation'
 import type { Metadata } from 'next'
 
+import { hasSupabaseEnv } from '@utsava/db'
+
 import { getStaffGate } from '@/lib/admin-auth'
+import type { LocalAuthStatus } from '@/lib/admin-local-auth'
 
 import { StaffLoginForm } from './login-form'
 import { signOutStaff } from './actions'
@@ -35,6 +38,7 @@ export default async function StaffLoginPage({
 }) {
   const { next } = await searchParams
   const gate = await getStaffGate()
+  const live = hasSupabaseEnv()
 
   // Already in. Honour `next` on exactly the terms the action does, so a stale tab lands
   // somewhere sensible rather than bouncing off the dashboard.
@@ -65,20 +69,26 @@ export default async function StaffLoginPage({
               is for customers.
             </p>
 
-            {gate.state === 'demo' && (
-              <p className="mt-5 rounded-md bg-warning-500/15 px-3 py-2.5 text-sm leading-relaxed text-warning-500">
-                No database is attached yet, so nothing to log in to — the console is open in
-                demo mode and every screen is showing fixtures.{' '}
-                <Link href="/admin" className="underline">
-                  Open it anyway
-                </Link>
-                .
-              </p>
-            )}
+            {gate.state === 'locked' ? (
+              <Locked reason={gate.reason} />
+            ) : (
+              <>
+                {/* No database, but a local admin is configured. Say which credentials these
+                    are, or the operator types their Supabase password into a form that has
+                    never heard of Supabase. */}
+                {!live && (
+                  <p className="mt-5 rounded-md bg-warning-500/15 px-3 py-2.5 text-xs leading-relaxed text-warning-500">
+                    No database is attached, so this accepts the local admin credentials from
+                    <code className="mx-1 rounded bg-ink-800 px-1 py-0.5">.env.local</code>
+                    and every screen inside will be showing fixtures.
+                  </p>
+                )}
 
-            <div className="mt-6">
-              <StaffLoginForm {...(next ? { next } : {})} />
-            </div>
+                <div className="mt-6">
+                  <StaffLoginForm {...(next ? { next } : {})} />
+                </div>
+              </>
+            )}
 
             <p className="mt-8 border-t border-ink-800 pt-5 text-xs leading-relaxed text-ink-500">
               Every action you take in the console is written to an append-only audit log with
@@ -92,6 +102,70 @@ export default async function StaffLoginPage({
         )}
       </div>
     </main>
+  )
+}
+
+/**
+ * There is no way in yet, so say how to make one.
+ *
+ * The console is locked rather than open, which is the whole point of this change — but locked
+ * with no explanation is a bug report. The three lines are pasteable, and the secret is
+ * deliberately shown as a command to run rather than a value to copy: a secret printed in
+ * documentation is a secret everybody shares.
+ */
+function Locked({ reason }: { reason: LocalAuthStatus }) {
+  if (reason === 'weak') {
+    return (
+      <div className="mt-5 rounded-md bg-warning-500/15 p-4 text-sm leading-relaxed text-warning-500">
+        <p className="font-medium">The local admin credentials are too weak to sign with.</p>
+        <p className="mt-2">
+          <code className="text-white">ADMIN_LOCAL_SECRET</code> needs at least 32 characters and{' '}
+          <code className="text-white">ADMIN_LOCAL_PASSWORD</code> at least 8. A short secret means
+          a forgeable cookie, which looks exactly like a working login until somebody forges one.
+        </p>
+      </div>
+    )
+  }
+
+  return (
+    <div className="mt-5 space-y-4 rounded-md bg-ink-800/70 p-4 text-sm leading-relaxed text-ink-300">
+      <p className="font-medium text-white">Nothing to log in to yet.</p>
+      <p>
+        The console is locked because there is no database attached and no local admin
+        configured. Two ways to open it:
+      </p>
+
+      <div>
+        <p className="text-xs font-semibold uppercase tracking-[0.14em] text-ink-500">
+          For now, without a database
+        </p>
+        <p className="mt-1.5">
+          Put these in <code className="text-white">apps/web/.env.local</code> and restart:
+        </p>
+        <pre className="mt-2 overflow-x-auto rounded bg-ink-950 p-3 text-xs leading-relaxed text-ink-200">
+          {`ADMIN_LOCAL_EMAIL=you@utsava.in
+ADMIN_LOCAL_PASSWORD=<something long>
+ADMIN_LOCAL_SECRET=<32+ random characters>`}
+        </pre>
+        <p className="mt-2 text-xs text-ink-500">
+          Generate the secret rather than inventing it —{' '}
+          <code className="text-ink-300">openssl rand -hex 32</code>. Everything inside the
+          console will still be fixtures; nothing you do is saved.
+        </p>
+      </div>
+
+      <div>
+        <p className="text-xs font-semibold uppercase tracking-[0.14em] text-ink-500">
+          Properly
+        </p>
+        <p className="mt-1.5">
+          Connect a Supabase project. Real staff accounts, real roles, a real audit trail — and
+          this local path disables itself the moment{' '}
+          <code className="text-white">NEXT_PUBLIC_SUPABASE_URL</code> is set, so it can never be
+          left switched on in production.
+        </p>
+      </div>
+    </div>
   )
 }
 

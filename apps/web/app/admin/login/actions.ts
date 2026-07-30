@@ -6,6 +6,14 @@ import { z } from 'zod'
 
 import { createUtsavaServerClient, hasSupabaseEnv } from '@utsava/db'
 
+import {
+  LOCAL_COOKIE_NAME,
+  checkLocalCredentials,
+  isLocalAuthAvailable,
+  localAuthStatus,
+  mintLocalCookie,
+} from '@/lib/admin-local-auth'
+
 /**
  * Staff sign-in, and sign-out.
  *
@@ -64,16 +72,6 @@ export async function signInStaff(
   _prev: StaffAuthState,
   form: FormData,
 ): Promise<StaffAuthState> {
-  if (!hasSupabaseEnv()) {
-    return {
-      status: 'unconfigured',
-      message:
-        'No Supabase instance is connected, so there is nothing to sign in to yet. The console ' +
-        'is running on fixtures — set NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY ' +
-        'to turn real sign-in on.',
-    }
-  }
-
   const parsed = credentialsSchema.safeParse({
     email: text(form.get('email')),
     password: typeof form.get('password') === 'string' ? form.get('password') : '',
@@ -82,6 +80,40 @@ export async function signInStaff(
 
   if (!parsed.success) {
     return { status: 'error', message: parsed.error.issues[0]?.message ?? REFUSED }
+  }
+
+  /**
+   * No Supabase: the local credential path.
+   *
+   * Mutually exclusive with the Supabase branch below — isLocalAuthAvailable() is false the
+   * moment NEXT_PUBLIC_SUPABASE_URL is set, so a real deployment cannot reach this even if
+   * ADMIN_LOCAL_* are somehow still in the environment.
+   */
+  if (!hasSupabaseEnv()) {
+    if (!isLocalAuthAvailable()) return { status: 'unconfigured', message: setupMessage() }
+
+    if (!checkLocalCredentials(parsed.data.email, parsed.data.password)) {
+      return { status: 'error', message: REFUSED }
+    }
+
+    const cookie = mintLocalCookie()
+    if (!cookie) return { status: 'error', message: setupMessage() }
+
+    const jar = await cookies()
+    jar.set(LOCAL_COOKIE_NAME, cookie.value, {
+      // httpOnly so no script can read it; the signature stops it being forged, and httpOnly
+      // stops it being stolen by one.
+      httpOnly: true,
+      sameSite: 'lax',
+      // Not `secure` unconditionally: this path only ever runs without Supabase, which in
+      // practice means http://localhost or a LAN address, where a secure cookie is dropped
+      // silently and the login appears to do nothing.
+      secure: process.env.NODE_ENV === 'production',
+      path: '/',
+      maxAge: cookie.maxAge,
+    })
+
+    redirect(safeNext(parsed.data.next))
   }
 
   const supabase = await authClient()
@@ -106,11 +138,45 @@ export async function signInStaff(
 }
 
 export async function signOutStaff(): Promise<void> {
-  const supabase = await authClient()
-  // scope 'local' clears this browser only. 'global' would sign the same person out of the
-  // customer site on their phone, which is a different context and not this button's business.
-  if (supabase) await supabase.auth.signOut({ scope: 'local' })
+  // Clear both, unconditionally. Which one is live depends on the environment, and a sign-out
+  // that only clears the session it expects to find is a sign-out that sometimes does nothing.
+  const jar = await cookies()
+  jar.delete(LOCAL_COOKIE_NAME)
+
+  if (hasSupabaseEnv()) {
+    const supabase = await authClient()
+    // scope 'local' clears this browser only. 'global' would sign the same person out of the
+    // customer site on their phone, which is a different context and not this button's business.
+    if (supabase) await supabase.auth.signOut({ scope: 'local' })
+  }
+
   redirect('/admin/login')
+}
+
+/**
+ * The setup instructions, as one sentence plus three lines to paste.
+ *
+ * Shown when there is neither a Supabase project nor local credentials — the state a fresh
+ * checkout is in. The console is locked then, which is correct, and being locked out with no
+ * explanation is not.
+ */
+function setupMessage(): string {
+  const status = localAuthStatus()
+
+  if (status === 'weak') {
+    return (
+      'The local admin credentials are set but too weak to sign with: ADMIN_LOCAL_SECRET needs ' +
+      'at least 32 characters and ADMIN_LOCAL_PASSWORD at least 8. A short secret is a forgeable ' +
+      'cookie, which looks exactly like a working login until somebody forges it.'
+    )
+  }
+
+  return (
+    'No database is attached and no local admin is configured, so there is nothing to sign in ' +
+    'to. Add ADMIN_LOCAL_EMAIL, ADMIN_LOCAL_PASSWORD and ADMIN_LOCAL_SECRET to ' +
+    'apps/web/.env.local and restart — or connect a Supabase project, which replaces this path ' +
+    'entirely.'
+  )
 }
 
 // ---------------------------------------------------------------------------

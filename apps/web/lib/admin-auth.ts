@@ -1,9 +1,17 @@
 import 'server-only'
 
+import { cookies } from 'next/headers'
+
 import type { StaffRoleKind } from '@utsava/db'
 
 import { getServerClientOrNull, hasSupabaseEnv } from '@/lib/admin-supabase'
 import { STAFF_ROLE_RANK } from '@/lib/admin-roles'
+import {
+  LOCAL_COOKIE_NAME,
+  localAuthStatus,
+  readLocalCookie,
+  type LocalAuthStatus,
+} from '@/lib/admin-local-auth'
 
 /**
  * Is the caller staff, and which kind?
@@ -32,10 +40,17 @@ import { STAFF_ROLE_RANK } from '@/lib/admin-roles'
  */
 
 export type StaffGate =
-  /** No Supabase attached. The console runs on fixtures and says so; there is nothing to sign in to. */
-  | { state: 'demo' }
   /** Nobody is signed in on this browser. */
   | { state: 'anonymous' }
+  /**
+   * No Supabase, and no local credentials configured either — so there is no way to log in and
+   * nothing may be opened. The login screen explains how to set it up.
+   *
+   * THIS IS THE SAFE DEFAULT, and it used to be the unsafe one. A `demo` state that rendered
+   * the console for anyone who reached the URL made the login button decoration: the dashboard
+   * was already on screen behind it.
+   */
+  | { state: 'locked'; reason: LocalAuthStatus }
   /** Signed in, but this account holds no staff role. A customer who wandered in. */
   | { state: 'not_staff'; email: string | null; phone: string | null }
   | { state: 'staff'; identity: StaffIdentity }
@@ -54,13 +69,49 @@ export interface StaffIdentity {
    * finance and super admins always have, and what app.staff_covers_city() reads as "all".
    */
   cityIds: string[]
+  /**
+   * True when this session came from the local credentials rather than Supabase.
+   *
+   * Everything on screen is then a fixture and nothing written is persisted, so the chrome has
+   * to say so — otherwise a suspension that quietly went nowhere looks like it worked.
+   */
+  isLocal: boolean
 }
 
 export async function getStaffGate(): Promise<StaffGate> {
-  if (!hasSupabaseEnv()) return { state: 'demo' }
+  /**
+   * No Supabase: the local credential path, or locked.
+   *
+   * Ordered before the Supabase branch and mutually exclusive with it — localAuthConfig()
+   * returns null whenever Supabase is configured, so a real deployment can never reach this.
+   */
+  if (!hasSupabaseEnv()) {
+    const status = localAuthStatus()
+    if (status !== 'available') return { state: 'locked', reason: status }
+
+    const jar = await cookies()
+    const local = readLocalCookie(jar.get(LOCAL_COOKIE_NAME)?.value)
+    if (!local) return { state: 'anonymous' }
+
+    return {
+      state: 'staff',
+      identity: {
+        id: 'local-super-admin',
+        email: local.email,
+        phone: null,
+        fullName: 'Local super admin',
+        roles: ['super'],
+        role: 'super',
+        cityIds: [],
+        isLocal: true,
+      },
+    }
+  }
 
   const supabase = await getServerClientOrNull()
-  if (!supabase) return { state: 'demo' }
+  // Supabase is configured but the client could not be built — a broken cookie store, not a
+  // reason to open the console.
+  if (!supabase) return { state: 'anonymous' }
 
   const user = await verifiedUser(supabase)
   if (!user) return { state: 'anonymous' }
@@ -124,6 +175,7 @@ export async function getStaffGate(): Promise<StaffGate> {
       // The scope belongs to the row granting the highest role, not to a merge of all rows —
       // a merged list could widen an agent's reach beyond any single grant they were given.
       cityIds: rows.find((row) => row.role === primary)?.city_ids ?? [],
+      isLocal: false,
     },
   }
 }

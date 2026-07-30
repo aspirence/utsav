@@ -23,12 +23,18 @@ import { getStaffGate } from '@/lib/admin-auth'
  * whose role was revoked this morning stops seeing the console rather than seeing an oddly
  * empty one.
  *
- * FOUR OUTCOMES, and the fourth is the one worth arguing about:
+ * NOTHING RENDERS WITHOUT A SESSION. There was a `demo` state that opened the console whenever
+ * no Supabase was attached, on the reasoning that a login wall in front of fixtures protects
+ * nothing. That reasoning was wrong in the way that matters: the dashboard was on screen, so
+ * the login link beside it was decoration. Log in first, always — and with no database the
+ * credentials come from .env.local instead of Supabase (see lib/admin-local-auth.ts).
  *
- *   demo      → no Supabase attached. Render the console on fixtures. There is no identity to
- *               check and nothing real to protect; a login wall in front of hardcoded sample
- *               rows would only stop the person trying to build the thing.
+ * FOUR OUTCOMES, and the last two are the ones worth arguing about:
+ *
  *   anonymous → /admin/login, carrying where they were headed.
+ *   locked    → /admin/login too, which explains that no login exists yet and how to make one.
+ *               Locked rather than open is the safe default; locked with no explanation is a
+ *               bug report, which is why the page says exactly what to set.
  *   not_staff → /admin/login, which explains it and offers a sign-out. NOT a 404: the likeliest
  *               person here is a colleague whose role has not been granted yet, and telling them
  *               "this does not exist" sends them to debug a working system. It reveals nothing —
@@ -38,7 +44,7 @@ import { getStaffGate } from '@/lib/admin-auth'
 export default async function ConsoleLayout({ children }: { children: React.ReactNode }) {
   const gate = await getStaffGate()
 
-  if (gate.state === 'anonymous' || gate.state === 'not_staff') {
+  if (gate.state !== 'staff') {
     // Middleware forwards the path because a Server Component has no way to read it. Without
     // it, someone deep-linked to an enquiry would sign in and land on the dashboard, then have
     // to find their way back.
@@ -47,13 +53,15 @@ export default async function ConsoleLayout({ children }: { children: React.Reac
     redirect(`/admin/login${next}`)
   }
 
-  const identity = gate.state === 'staff' ? gate.identity : null
+  // Past the redirect, so this is always a real session. Narrowed rather than defaulted: a
+  // `?? null` here would quietly reintroduce the signed-out render path this change removed.
+  const { identity } = gate
 
   return (
     // Denser type than the customer site: a moderator working a queue needs rows per screen,
     // not whitespace. Scoped here so it cannot leak into the public pages.
     <div className="min-h-screen bg-ink-50 text-[0.9375rem]">
-      <AdminSidebar role={identity?.role ?? null} />
+      <AdminSidebar role={identity.role} />
 
       {/* `lg:pl-60` rather than a flex row, because the rail is `fixed`: a position-fixed
           sidebar is out of flow, so the content has to be inset by hand. A flex row would
@@ -66,9 +74,9 @@ export default async function ConsoleLayout({ children }: { children: React.Reac
 
         <footer className="mx-auto max-w-[1500px] px-4 pb-8 sm:px-6">
           <p className="border-t border-ink-200 pt-5 text-xs text-ink-500">
-            {identity
-              ? 'Every action taken here is written to an append-only audit log with your identity attached.'
-              : 'Demo mode — no database is attached, so nothing you do here is written anywhere.'}
+            {identity.isLocal
+              ? 'Local admin session — no database is attached, so every screen is showing fixtures and nothing you do here is saved.'
+              : 'Every action taken here is written to an append-only audit log with your identity attached.'}
           </p>
         </footer>
       </div>

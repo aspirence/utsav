@@ -19,7 +19,7 @@ import { roleLabel, type StaffIdentity } from '@/lib/admin-auth'
  * notification store for staff, so it could only render an empty tray or an invented count. The
  * queues carry their own counts, which is where a moderator is going anyway.
  */
-export function AdminTopBar({ identity }: { identity: StaffIdentity | null }) {
+export function AdminTopBar({ identity }: { identity: StaffIdentity }) {
   return (
     <header className="sticky top-0 z-20 border-b border-ink-200 bg-white/95 backdrop-blur">
       <div className="mx-auto flex max-w-[1500px] items-center gap-4 px-4 py-3 sm:px-6">
@@ -50,55 +50,48 @@ export function AdminTopBar({ identity }: { identity: StaffIdentity | null }) {
           </div>
         </form>
 
-        {identity ? (
-          <>
-            <span className="hidden shrink-0 rounded-full bg-success-50 px-2.5 py-1 text-xs font-medium text-success-700 ring-1 ring-success-100 sm:inline">
-              Live data
-            </span>
+        {/* The badge is not decoration. A local session means every screen is a fixture and
+            nothing is written, so a suspension that quietly went nowhere would otherwise look
+            like it worked. */}
+        <span
+          className={
+            'hidden shrink-0 rounded-full px-2.5 py-1 text-xs font-medium sm:inline ' +
+            (identity.isLocal
+              ? 'bg-warning-50 text-warning-700'
+              : 'bg-success-50 text-success-700 ring-1 ring-success-100')
+          }
+        >
+          {identity.isLocal ? 'Local session — fixtures, nothing saved' : 'Live data'}
+        </span>
 
-            <div className="flex shrink-0 items-center gap-2.5">
-              <span className="hidden text-right text-xs leading-tight sm:block">
-                <span className="block max-w-[14rem] truncate font-medium text-ink-900">
-                  {identity.fullName ?? identity.email ?? identity.phone ?? 'Signed in'}
-                </span>
-                <span className="block text-ink-500">{roleLabel(identity.role)}</span>
-              </span>
-              {/* Initials, not a photo: there is no staff avatar in the schema, and a
-                  placeholder headshot would imply one exists. */}
-              <span
-                className="flex h-9 w-9 items-center justify-center rounded-full bg-ink-800 text-xs font-semibold text-white"
-                aria-hidden="true"
-              >
-                {initials(identity)}
-              </span>
-            </div>
-
-            <form action={signOutStaff} className="shrink-0">
-              <button
-                type="submit"
-                className="rounded-md border border-ink-200 px-3 py-2 text-xs font-medium text-ink-700 transition-colors hover:border-ink-300 hover:text-ink-900"
-              >
-                Sign out
-              </button>
-            </form>
-          </>
-        ) : (
-          <>
-            {/* Demo mode. The badge is not decoration: this console shares an origin with the
-                customer site, and saying "nothing you do here is written" in the chrome is
-                cheaper than someone spending ten minutes wondering why a suspension did not
-                stick. */}
-            <span className="hidden shrink-0 rounded-full bg-warning-50 px-2.5 py-1 text-xs font-medium text-warning-700 sm:inline">
-              Demo data — no database attached
+        <div className="flex shrink-0 items-center gap-2.5">
+          <span className="hidden text-right text-xs leading-tight sm:block">
+            <span className="block max-w-[14rem] truncate font-medium text-ink-900">
+              {identity.fullName ?? identity.email ?? identity.phone ?? 'Signed in'}
             </span>
-            <Link
-              href="/admin/login"
-              className="shrink-0 rounded-md border border-ink-200 px-3 py-2 text-xs font-medium text-ink-700 transition-colors hover:border-ink-300 hover:text-ink-900"
-            >
-              Staff log in
-            </Link>
-          </>
-        )}
+            <span className="block text-ink-500">{roleLabel(identity.role)}</span>
+          </span>
+          {/* Initials, not a photo: there is no staff avatar in the schema, and a
+              placeholder headshot would imply one exists. */}
+          <span
+            className="flex h-9 w-9 items-center justify-center rounded-full bg-ink-800 text-xs font-semibold text-white"
+            aria-hidden="true"
+          >
+            {initials(identity)}
+          </span>
+        </div>
+
+        {/* No "Staff log in" link any more. Nothing renders this bar without a session, so a
+            log-in link here could only ever have been next to a console you were already
+            reading. */}
+        <form action={signOutStaff} className="shrink-0">
+          <button
+            type="submit"
+            className="rounded-md border border-ink-200 px-3 py-2 text-xs font-medium text-ink-700 transition-colors hover:border-ink-300 hover:text-ink-900"
+          >
+            Sign out
+          </button>
+        </form>
 
         <Link
           href="/"
