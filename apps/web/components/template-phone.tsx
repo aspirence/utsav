@@ -28,36 +28,49 @@ export interface PhonePreview {
 export function TemplatePhone({
   item,
   className,
-  /** Off for the slider, where the notch would crowd a 232px-wide frame. */
-  showNotch = true,
+  showIsland = true,
 }: {
   item: PhonePreview
   className?: string
-  showNotch?: boolean
+  /** The Dynamic Island. Off only where the frame is too narrow to carry one legibly. */
+  showIsland?: boolean
 }) {
   const { ref, seen } = useOnScreen<HTMLDivElement>()
 
   return (
+    /*
+     * An iPhone 17 Pro.
+     *
+     * `aspect-[1206/2622]` is the device's real pixel ratio — 6.3", 2622 × 1206 — rather than a
+     * rounded 9:19.5. It works out at 1:2.174, so the frame's height follows from whatever width
+     * the caller gives it and the proportions are right at any size.
+     *
+     * The two rings are the two edges a Pro actually has: an outer aluminium band and the inner
+     * black bezel the glass sits in. One ring reads as a flat rectangle with a border.
+     */
     <div
       ref={ref}
       className={
-        'relative overflow-hidden rounded-[2rem] bg-ink-950 p-[5px] shadow-[0_18px_40px_-16px_rgba(24,17,12,0.5)] ring-1 ring-ink-900/10 ' +
+        'relative rounded-[2.1rem] bg-gradient-to-b from-ink-700 via-ink-900 to-ink-800 p-[3px] shadow-[0_16px_34px_-14px_rgba(24,17,12,0.45)] ' +
         (className ?? '')
       }
     >
-      {/* 9:19.5, the aspect of the phones invitations are actually read on. A 16:9 "phone"
-          reads as a tablet. */}
-      <div className="relative aspect-[9/19.5] overflow-hidden rounded-[1.75rem] bg-ink-900">
-        <Preview item={item} active={seen} />
+      <div className="relative overflow-hidden rounded-[1.95rem] bg-ink-950 p-[3px]">
+        <div className="relative aspect-[1206/2622] overflow-hidden rounded-[1.75rem] bg-ink-900">
+          <Preview item={item} active={seen} />
 
-        {showNotch && (
-          <span
-            aria-hidden="true"
-            className="absolute left-1/2 top-2 z-10 h-[18px] w-[78px] -translate-x-1/2 rounded-full bg-ink-950"
-          >
-            <span className="absolute right-3 top-1/2 block h-[7px] w-[7px] -translate-y-1/2 rounded-full bg-ink-800" />
-          </span>
-        )}
+          {showIsland && (
+            /*
+             * The Dynamic Island, not a notch. A notch is what a 14-and-earlier iPhone has; on a
+             * 17 Pro it is a free-floating pill below the top edge, which is why this is inset
+             * rather than clipped into the bezel.
+             */
+            <span
+              aria-hidden="true"
+              className="absolute left-1/2 top-[1.6%] z-10 h-[3.1%] w-[30%] -translate-x-1/2 rounded-full bg-black"
+            />
+          )}
+        </div>
       </div>
     </div>
   )

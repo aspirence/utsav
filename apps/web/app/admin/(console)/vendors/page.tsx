@@ -1,7 +1,11 @@
 import Link from 'next/link'
 
+import { AdminModal } from '@/components/admin-modal'
 import { AdminTable, PageHeader, Panel, Pill } from '@/components/admin-ui'
 import { getAdminVendors, type AdminVendor } from '@/lib/admin-data'
+import { getAdminReference } from '@/lib/admin-reference'
+
+import { CreateVendorForm } from './new/create-form'
 
 export const metadata = { title: 'Vendors' }
 
@@ -35,6 +39,9 @@ export default async function AdminVendorsPage({
   const status = typeof params.status === 'string' ? params.status : 'all'
   const category = typeof params.category === 'string' ? params.category : 'all'
 
+  // The create form's dropdowns are foreign keys, so they need the real lists. Fetched here
+  // rather than inside the dialog because a dialog is a client component and this is a read.
+  const reference = await getAdminReference()
   const all = getAdminVendors()
   const rows = all.filter(
     (v) =>
@@ -79,12 +86,21 @@ export default async function AdminVendorsPage({
         title="Vendors"
         description="A listing only becomes discoverable when a moderator approves it — vendors can pause and resume themselves, but never publish. is_seo_eligible additionally gates whether they receive routed leads at all."
         action={
-          <Link
-            href="/admin/vendors/new"
-            className="rounded-md bg-ink-900 px-4 py-2.5 text-sm font-medium text-white transition-colors hover:bg-ink-800"
+          /* A dialog rather than a jump to /admin/vendors/new. That route still exists for a
+             bookmark or a link from the dashboard, but filing a listing from the roster you are
+             already looking at should not lose your place in it. */
+          <AdminModal
+            trigger="New listing"
+            title="File a new listing"
+            description="Everything filed here starts as a draft — not publicly visible, not receiving enquiries — until a moderator publishes it."
+            width="lg"
           >
-            New listing
-          </Link>
+            <CreateVendorForm
+              cities={reference.cities}
+              categories={reference.categories}
+              isLive={reference.isLive}
+            />
+          </AdminModal>
         }
       />
 

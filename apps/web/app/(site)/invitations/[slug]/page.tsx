@@ -145,7 +145,7 @@ export default async function InvitationTemplatePage({
 
         {/* Sticky on a tall screen, so the preview stays put while the copy scrolls. */}
         <div className="lg:order-2 lg:sticky lg:top-28">
-          <TemplatePhone item={template} className="mx-auto w-[300px] max-w-full" />
+          <TemplatePhone item={template} className="mx-auto w-[268px] max-w-full" />
         </div>
       </div>
 
@@ -158,8 +158,7 @@ export default async function InvitationTemplatePage({
                 <Link href={`/invitations/${other.slug}`} className="group block">
                   <TemplatePhone
                     item={other}
-                    showNotch={false}
-                    className="transition-transform duration-500 group-hover:-translate-y-1.5"
+                    className="mx-auto w-full max-w-[180px] transition-transform duration-500 group-hover:-translate-y-1.5"
                   />
                   <p className="mt-3 font-display text-base leading-snug text-ink-900">
                     {other.name}

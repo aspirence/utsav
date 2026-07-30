@@ -1,6 +1,8 @@
 'use client'
 
-import { useActionState, useState } from 'react'
+import { useActionState, useEffect, useState } from 'react'
+
+import { useAdminModalClose } from '@/components/admin-modal'
 
 import { saveTemplate, type TemplateActionState } from './actions'
 
@@ -35,9 +37,22 @@ export function TemplateForm({
   const [state, act, pending] = useActionState<TemplateActionState, FormData>(saveTemplate, {
     status: 'idle',
   })
+  const closeDialog = useAdminModalClose()
 
   const [video, setVideo] = useState(initial?.videoUrl ?? '')
   const verdict = describeLink(video)
+
+  /**
+   * Close on a clean save only.
+   *
+   * A warning is something to read — a link that saved but will not play — and closing the dialog
+   * would throw the sentence away. So the caveat case stays open and the operator dismisses it
+   * themselves. In an effect rather than inline, because calling a parent's setState during
+   * render is the classic "cannot update a component while rendering a different component".
+   */
+  useEffect(() => {
+    if (state.status === 'done' && !state.warn) closeDialog?.()
+  }, [state, closeDialog])
 
   return (
     <form action={act} className="space-y-5">

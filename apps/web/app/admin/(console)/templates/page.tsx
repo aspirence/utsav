@@ -1,5 +1,6 @@
 import { formatPaise } from '@utsava/db'
 
+import { AdminModal } from '@/components/admin-modal'
 import { AdminTable, PageHeader, Panel, Pill } from '@/components/admin-ui'
 import { getInvitationTemplates, type InvitationTemplate } from '@/lib/invitation-templates'
 
@@ -28,6 +29,18 @@ export default async function AdminTemplatesPage() {
       <PageHeader
         title="Invitation templates"
         description="The Curated Collections row on the home page. Each row is one phone-shaped card: a looping preview, a few tag words, and a price that flips to Order now under the cursor."
+        action={
+          /* Top right, and the form is behind it rather than stacked under the list. The list and
+             the create form on one page read as one long muddle instead of as two things. */
+          <AdminModal
+            trigger="New create"
+            title="New invitation template"
+            description="Paste a link to the preview — a direct video file, or a YouTube or Vimeo URL."
+            width="lg"
+          >
+            <TemplateForm />
+          </AdminModal>
+        }
       />
 
       {isDemo && (
@@ -87,19 +100,40 @@ export default async function AdminTemplatesPage() {
               render: (r) =>
                 r.isActive ? <Pill tone="green">published</Pill> : <Pill tone="neutral">draft</Pill>,
             },
+            {
+              key: 'edit',
+              header: '',
+              align: 'right',
+              render: (r) => (
+                /* The same dialog and the same form, prefilled. One form for create and edit
+                   because the action upserts on slug — two forms differing in one verb is two
+                   places to add the next field to. */
+                <AdminModal
+                  trigger="Edit"
+                  variant="quiet"
+                  title={`Edit ${r.name}`}
+                  description="The URL name is fixed once created — it is the key this row is saved against."
+                  width="lg"
+                >
+                  <TemplateForm
+                    initial={{
+                      slug: r.slug,
+                      name: r.name,
+                      tags: r.tags,
+                      priceRupees: Math.round(r.pricePaise / 100),
+                      videoUrl: r.videoUrl,
+                      posterUrl: r.posterUrl,
+                      orderUrl: r.orderUrl,
+                      demoUrl: r.demoUrl,
+                      sortOrder: 100,
+                      isActive: r.isActive,
+                    }}
+                  />
+                </AdminModal>
+              ),
+            },
           ]}
         />
-      </Panel>
-
-      <Panel className="p-5">
-        <h2 className="font-display text-lg text-ink-900">Add a template</h2>
-        <p className="mt-1 max-w-2xl text-sm leading-relaxed text-ink-600">
-          Paste a link to the preview — a direct video file, or a YouTube or Vimeo URL. Saving
-          with an existing URL name edits that template instead of adding a second one.
-        </p>
-        <div className="mt-5">
-          <TemplateForm />
-        </div>
       </Panel>
     </>
   )

@@ -126,8 +126,16 @@ export function TemplateCollections({ items }: { items: TemplateCard[] }) {
         is ever half-visible. Reading it off the DOM instead would mean a resize listener and a
         frame of wrong layout on every breakpoint change.
       */}
+      {/*
+        `-my-5 py-5` is the fix for the hover clip, not decoration.
+
+        The clipping box has to hide the cards sliding in and out sideways, but `overflow-hidden`
+        clips vertically too — so the 6px lift on hover sheared the top off the phone, and its
+        shadow with it. The padding gives 20px of room inside the clip box and the negative margin
+        takes the same 20px back out of the layout, so nothing below moves.
+      */}
       <div
-        className="overflow-hidden"
+        className="-my-5 overflow-hidden py-5"
         style={
           {
             '--gap': '1.5rem',
@@ -198,10 +206,16 @@ function TemplateFigure({ item }: { item: TemplateCard }) {
           taps its picture — making them find a 40px button under it is a worse version of the
           same journey. */}
       <Link href={href} aria-label={`${item.name}, ${formatPaise(item.pricePaise)}`}>
+        {/*
+          Capped width, so the height is capped with it.
+          The card is a quarter of the row — around 280px on a wide screen — and at the iPhone's
+          1:2.174 that made a 600px-tall phone that dominated the section. 200px brings it to
+          ~435px, which reads as a phone rather than as a pillar. Centred in the card so the
+          four stay evenly spaced.
+        */}
         <TemplatePhone
           item={item}
-          showNotch={false}
-          className="transition-transform duration-500 group-hover:-translate-y-1.5"
+          className="mx-auto w-full max-w-[200px] transition-transform duration-500 group-hover:-translate-y-1.5"
         />
       </Link>
 

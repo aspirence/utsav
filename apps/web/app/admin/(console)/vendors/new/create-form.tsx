@@ -1,8 +1,9 @@
 'use client'
 
 import Link from 'next/link'
-import { useActionState, useMemo, useState } from 'react'
+import { useActionState, useEffect, useMemo, useState } from 'react'
 
+import { useAdminModalClose } from '@/components/admin-modal'
 import type { RefCategory, RefCity } from '@/lib/admin-reference'
 
 import { createVendorListing, type CreateVendorState } from './actions'
@@ -36,6 +37,15 @@ export function CreateVendorForm({
     status: 'idle',
   })
 
+  /**
+   * Non-null inside a dialog, null on the standalone /admin/vendors/new page.
+   *
+   * That is how one implementation serves both: in a dialog it closes on success, because the
+   * panel's three links are all redundant when the roster underneath already has the new draft in
+   * it. On its own page there is nothing underneath, so the panel is the only feedback there is.
+   */
+  const closeDialog = useAdminModalClose()
+
   const [name, setName] = useState('')
   const [slug, setSlug] = useState('')
   const [slugTouched, setSlugTouched] = useState(false)
@@ -50,8 +60,14 @@ export function CreateVendorForm({
   // what will happen, not the value of record.
   const effectiveSlug = slugTouched ? slug : slugify(name)
 
+  // In an effect, not inline: calling a parent's setState during render is the classic "cannot
+  // update a component while rendering a different component".
+  useEffect(() => {
+    if (state.status === 'done') closeDialog?.()
+  }, [state, closeDialog])
+
   if (state.status === 'done') {
-    return <Created message={state.message} slug={state.slug} />
+    return closeDialog ? null : <Created message={state.message} slug={state.slug} />
   }
 
   return (

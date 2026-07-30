@@ -30,7 +30,15 @@ import { createUtsavaServerClient, hasSupabaseEnv, slugSchema } from '@utsava/db
 
 export type TemplateActionState =
   | { status: 'idle' }
-  | { status: 'done'; message: string }
+  /**
+   * `warn` is what decides whether the dialog closes itself.
+   *
+   * A clean save needs no acknowledgement — the row appearing in the list is the feedback. A save
+   * that produced a caveat (a link that saved fine but cannot play) has something to read, and
+   * closing the dialog would throw it away. So the form stays open for one and not the other, and
+   * this flag is how it tells them apart.
+   */
+  | { status: 'done'; message: string; warn: boolean }
   | { status: 'error'; message: string }
   | { status: 'unconfigured'; message: string }
 
@@ -166,10 +174,7 @@ export async function saveTemplate(
   // as far as the operator is concerned.
   revalidatePath('/')
 
-  return {
-    status: 'done',
-    message: shapeWarning(d.videoUrl, `${d.name} saved.`),
-  }
+  return { status: 'done', ...shapeWarning(d.videoUrl, `${d.name} saved.`) }
 }
 
 export async function toggleTemplate(slug: string, active: boolean): Promise<TemplateActionState> {
@@ -204,6 +209,8 @@ export async function toggleTemplate(slug: string, active: boolean): Promise<Tem
 
   return {
     status: 'done',
+    // Nothing to read twice about a toggle, so it never holds a dialog open.
+    warn: false,
     message: active
       ? 'Published. It is now on the home page.'
       : 'Unpublished. It is off the home page but not deleted.',
@@ -239,8 +246,14 @@ async function staffClient() {
  * and their own storefront. But it must not save silently, because the failure it produces —
  * a poster where a video was expected — looks like nothing happened.
  */
-function shapeWarning(videoUrl: string | undefined, success: string): string {
-  if (!videoUrl) return `${success} No preview video, so the card shows its poster.`
+function shapeWarning(
+  videoUrl: string | undefined,
+  success: string,
+): { message: string; warn: boolean } {
+  // No video at all is a choice, not a mistake — a poster-only card is a supported state.
+  if (!videoUrl) {
+    return { message: `${success} No preview video, so the card shows its poster.`, warn: false }
+  }
 
   let host = ''
   let path = ''
@@ -249,19 +262,23 @@ function shapeWarning(videoUrl: string | undefined, success: string): string {
     host = u.hostname.replace(/^www\./, '')
     path = u.pathname
   } catch {
-    return success
+    return { message: success, warn: false }
   }
 
   const isFile = /\.(mp4|webm|ogv|ogg|mov|m4v)$/i.test(path)
   const isEmbed = ['youtube.com', 'm.youtube.com', 'youtu.be', 'vimeo.com', 'player.vimeo.com'].includes(host)
 
-  if (isFile || isEmbed) return `${success} The preview will play on the home page.`
+  if (isFile || isEmbed) {
+    return { message: `${success} The preview will play on the home page.`, warn: false }
+  }
 
-  return (
-    `${success} But that link is not a video file (.mp4, .webm, .mov) and not a YouTube or ` +
-    'Vimeo link, so the card will show its poster instead of playing. Paste a direct file link ' +
-    'if you want it to move.'
-  )
+  return {
+    message:
+      `${success} But that link is not a video file (.mp4, .webm, .mov) and not a YouTube or ` +
+      'Vimeo link, so the card will show its poster instead of playing. Paste a direct file link ' +
+      'if you want it to move.',
+    warn: true,
+  }
 }
 
 /** Comma-separated in the form, an array in the column. */
