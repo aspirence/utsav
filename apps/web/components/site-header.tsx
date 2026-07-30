@@ -98,13 +98,13 @@ export async function SiteHeader() {
             </Link>
 
             {/* Plan §3 has no signup step - the first OTP creates the account - so the
-                anonymous label is "Sign in" and never "Sign up". Offering both would imply
+                anonymous label is "Login" and never "Sign up". Offering both would imply
                 a second path that does not exist. */}
             <Link
               href={signedIn ? '/account' : '/login'}
               className="rounded-md px-3 py-2 text-sm font-medium text-ink-200 transition-colors hover:bg-white/10 hover:text-white"
             >
-              {signedIn ? 'Your account' : 'Sign in'}
+              {signedIn ? 'Your account' : 'Login'}
             </Link>
 
             {/* Carries its own solid background, so it needs no transparent-state variant. */}

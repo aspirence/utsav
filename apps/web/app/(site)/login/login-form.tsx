@@ -99,7 +99,7 @@ export function LoginForm({ next }: { next?: string }) {
             disabled={verifying}
             className="w-full rounded-md bg-primary-600 px-5 py-3 font-medium text-white transition-colors hover:bg-primary-700 disabled:opacity-60"
           >
-            {verifying ? 'Checking…' : 'Sign in'}
+            {verifying ? 'Checking…' : 'Login'}
           </button>
 
           {/* Submits the phone step again, which sends a fresh code and keeps the server

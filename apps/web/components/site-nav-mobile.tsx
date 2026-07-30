@@ -200,7 +200,7 @@ export function SiteNavMobile({
                   style={step(360 + categories.length * 70)}
                   className="text-ink-100 block rounded-md border border-white/25 px-5 py-3.5 text-center font-medium"
                 >
-                  {signedIn ? 'Your account' : 'Sign in'}
+                  {signedIn ? 'Your account' : 'Login'}
                 </Link>
                 <Link
                   href="/partner"
