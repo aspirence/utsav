@@ -4,6 +4,9 @@ import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { useState } from 'react'
 
+import { canSee } from '@/lib/admin-roles'
+import type { StaffRoleKind } from '@utsava/db'
+
 /**
  * The console's left rail.
  *
@@ -15,6 +18,12 @@ import { useState } from 'react'
  * other route, so a plain startsWith would light the dashboard up on every page. The one place
  * that rule bites is a detail route - /admin/vendors/lightleak-studio should keep Vendors lit,
  * which prefix matching gets right.
+ *
+ * THE ROLE FILTER IS COURTESY, NOT SECURITY. It comes from the server as a plain string, and a
+ * client component is the wrong place to enforce anything - anyone can edit what arrives here.
+ * Every page behind these links is governed by its own RLS policies, so a hand-typed URL
+ * reaches a screen with no rows rather than someone else's data. Hiding a link the caller
+ * cannot use saves them a pointless click; it is not what stops them.
  */
 const NAV: { href: string; label: string; icon: React.ReactNode }[] = [
   { href: '/admin', label: 'Dashboard', icon: <IconGrid /> },
@@ -25,12 +34,16 @@ const NAV: { href: string; label: string; icon: React.ReactNode }[] = [
   { href: '/admin/leads', label: 'Routing health', icon: <IconPulse /> },
 ]
 
-export function AdminSidebar() {
+export function AdminSidebar({ role }: { role: StaffRoleKind | null }) {
   const pathname = usePathname()
   const [open, setOpen] = useState(false)
 
   const isActive = (href: string) =>
     href === '/admin' ? pathname === '/admin' : pathname.startsWith(href)
+
+  // A null role is demo mode - no database, so no session to read a role from. Showing the
+  // full rail there is right: it is the only way to see what the console consists of.
+  const items = role ? NAV.filter((item) => canSee(role, item.href)) : NAV
 
   return (
     <>
@@ -74,7 +87,7 @@ export function AdminSidebar() {
 
         <nav aria-label="Sections" className="mt-3 flex-1 overflow-y-auto px-3">
           <ul className="space-y-0.5">
-            {NAV.map((item) => {
+            {items.map((item) => {
               const active = isActive(item.href)
               return (
                 <li key={item.href}>

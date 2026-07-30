@@ -94,6 +94,30 @@ export type ProfileRow = {
   updated_at: string
 }
 
+/**
+ * public.staff_roles — mirrors 20260727000300_identity.sql.
+ *
+ * Registered here because the console reads it on every request to decide whether the caller
+ * is staff at all. It is a read surface, not the one-off write the vendor actions cast for.
+ *
+ * NO Insert type worth having: `staff_roles_select_own` is the only policy on this table.
+ * There is deliberately no write policy — granting staff access is a service-role operation,
+ * so a client-side insert has nowhere to land, and the shared `Table<>` alias's `Partial<T>`
+ * insert shape is the honest reflection of "postgrest can express this, RLS will refuse it".
+ */
+export type StaffRoleRow = {
+  id: string
+  profile_id: string
+  role: StaffRoleKind
+  /** Plan §6: scopes a field_agent to their own city. Empty array = unscoped. */
+  city_ids: string[]
+  granted_by: string | null
+  granted_at: string
+  revoked_at: string | null
+  created_at: string
+  updated_at: string
+}
+
 export type CityRow = {
   id: string
   slug: string
@@ -468,6 +492,10 @@ export type Database = {
         ProfileRow,
         Omit<Partial<ProfileRow>, 'id' | 'phone' | 'phone_verified'>
       >
+
+      // Read-only from any client. `staff_roles_select_own` admits the holder and super
+      // admins; there is no write policy at all, by design.
+      staff_roles: Table<StaffRoleRow>
 
       // Reference data — public SELECT, staff-only writes (see 001300_rls_policies.sql).
       cities: Table<CityRow>
