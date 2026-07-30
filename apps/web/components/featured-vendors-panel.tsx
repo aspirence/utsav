@@ -58,8 +58,12 @@ export function FeaturedVendorsPanel({
       */}
       {/* max-w-2xl, not xl. The heading is 48px Playfair and "Photographers in Lucknow"
           measures about 580px at that size, so a 576px cap broke it onto two lines by a
-          handful of pixels. */}
-      <div className="flex h-full max-w-2xl flex-col">
+          handful of pixels.
+
+          h-full and the column layout are lg-only. They exist so the link can be pushed to
+          the floor and finish level with the image grid beside it - and there is no grid
+          beside it below lg, so all they did there was open a hole above the link. */}
+      <div className="max-w-2xl lg:flex lg:h-full lg:flex-col">
         <p className="text-base text-ink-600">
           Ranked by the work, not by what anyone pays us.
         </p>
@@ -110,7 +114,7 @@ export function FeaturedVendorsPanel({
 
         <Link
           href={seeAllHref}
-          className="mt-auto inline-flex w-fit items-center gap-1.5 pt-8 font-semibold text-primary-700 hover:text-primary-800"
+          className="mt-6 inline-flex w-fit items-center gap-1.5 font-semibold text-primary-700 hover:text-primary-800 lg:mt-auto lg:pt-8"
         >
           See all {totalCount} photographers
           <span aria-hidden="true">&rarr;</span>
