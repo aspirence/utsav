@@ -33,14 +33,36 @@ export default async function AdminVendorsPage({
 }) {
   const params = await searchParams
   const status = typeof params.status === 'string' ? params.status : 'all'
+  const category = typeof params.category === 'string' ? params.category : 'all'
 
   const all = getAdminVendors()
-  const rows = status === 'all' ? all : all.filter((v) => v.status === status)
+  const rows = all.filter(
+    (v) =>
+      (status === 'all' || v.status === status) &&
+      (category === 'all' || v.category === category),
+  )
 
   const counts = all.reduce<Record<string, number>>((acc, v) => {
     acc[v.status] = (acc[v.status] ?? 0) + 1
     return acc
   }, {})
+
+  /**
+   * Categories are derived from the roster rather than hardcoded.
+   *
+   * A fixed list would go stale the day a sixth category is added, and would show a tab with
+   * nothing behind it in the meantime. This shows exactly what exists, with its count.
+   */
+  const categoryCounts = all.reduce<Record<string, number>>((acc, v) => {
+    acc[v.category] = (acc[v.category] ?? 0) + 1
+    return acc
+  }, {})
+  const categoryTabs = [
+    { key: 'all', label: 'All categories', count: all.length },
+    ...Object.entries(categoryCounts)
+      .sort((a, b) => b[1] - a[1])
+      .map(([key, count]) => ({ key, label: key, count })),
+  ]
 
   const tabs = [
     { key: 'all', label: 'All', count: all.length },
@@ -58,15 +80,33 @@ export default async function AdminVendorsPage({
         description="A listing only becomes discoverable when a moderator approves it — vendors can pause and resume themselves, but never publish. is_seo_eligible additionally gates whether they receive routed leads at all."
       />
 
-      <div className="mb-4 flex flex-wrap gap-2">
+      {/* Both filters carry the other's current value, so picking a category does not
+          silently reset the status tab back to All. */}
+      <div className="mb-3 flex flex-wrap gap-2">
         {tabs.map((t) => (
           <Link
             key={t.key}
-            href={`/admin/vendors?status=${t.key}`}
+            href={`/admin/vendors?status=${t.key}&category=${category}`}
             className={
               status === t.key
                 ? 'rounded-full bg-ink-900 px-3.5 py-1.5 text-sm font-medium text-white'
                 : 'rounded-full border border-ink-200 bg-white px-3.5 py-1.5 text-sm text-ink-700 hover:border-ink-300'
+            }
+          >
+            {t.label} ({t.count})
+          </Link>
+        ))}
+      </div>
+
+      <div className="mb-4 flex flex-wrap gap-2">
+        {categoryTabs.map((t) => (
+          <Link
+            key={t.key}
+            href={`/admin/vendors?status=${status}&category=${t.key}`}
+            className={
+              category === t.key
+                ? 'rounded-md bg-ink-700 px-3 py-1.5 text-sm font-medium text-white'
+                : 'rounded-md border border-ink-200 bg-white px-3 py-1.5 text-sm text-ink-600 hover:border-ink-300'
             }
           >
             {t.label} ({t.count})

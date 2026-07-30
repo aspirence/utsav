@@ -300,7 +300,13 @@ export type EnquiryRow = {
   phone_verified_at: string | null
   consent_text: string
   consent_version: string
+  /** Plan §12: lead quality is the top risk, so spam scoring feeds moderation. 0–100. */
+  spam_score: number
+  source: 'web' | 'vendor_app' | 'partner_pwa' | 'admin' | 'seo'
+  routed_at: string | null
+  closed_at: string | null
   created_at: string
+  updated_at: string
 }
 
 export type ShortlistRow = {

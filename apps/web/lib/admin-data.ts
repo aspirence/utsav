@@ -133,11 +133,36 @@ export interface AdminVendor {
   isAnchor: boolean
   ratingAvg: number | null
   ratingCount: number
+
+  /**
+   * The editable copy, for the details form on the vendor page.
+   *
+   * Everything above this line is either identity or a derived signal a moderator reads;
+   * these are the fields a moderator may change. Optional because the fixture roster is
+   * hand-written and only the rows worth demonstrating an edit on carry them - a real read
+   * fills all of them.
+   *
+   * Money is integer paise (plan §5). The form types rupees and converts on the way in.
+   */
+  about?: string | null
+  priceBandMinPaise?: number | null
+  priceBandMaxPaise?: number | null
+  establishedYear?: number | null
+  teamSize?: number | null
+  travelsOutstation?: boolean
 }
 
 export function getAdminVendors(): AdminVendor[] {
   return [
-    v('lightleak-studio', 'Lightleak Studio', 'Lucknow', 'Gomti Nagar', 'Photography', 'live', 92, 8, true, 'verified', false, 5, 1),
+    v('lightleak-studio', 'Lightleak Studio', 'Lucknow', 'Gomti Nagar', 'Photography', 'live', 92, 8, true, 'verified', false, 5, 1, {
+      about:
+        'A four-person candid team that has shot over 300 weddings since 2016. We work quietly, stay out of the rituals, and hand over a full gallery in three weeks.',
+      priceBandMinPaise: 12_000_000,
+      priceBandMaxPaise: 35_000_000,
+      establishedYear: 2016,
+      teamSize: 4,
+      travelsOutstation: true,
+    }),
     v('utsava-studio', 'Utsava Studio', 'Lucknow', 'Gomti Nagar', 'Photography', 'live', 88, 8, true, 'verified', true, 4.9, 11),
     v('saat-phere-films', 'Saat Phere Films', 'Lucknow', 'Hazratganj', 'Photography', 'live', 90, 8, true, 'verified', false, 4.8, 42),
     v('anantha-photography', 'Anantha Photography', 'Lucknow', 'Aliganj', 'Photography', 'live', 85, 8, true, 'verified', false, 4.6, 128),
@@ -172,8 +197,42 @@ function v(
   isAnchor: boolean,
   ratingAvg: number | null,
   ratingCount: number,
+  /**
+   * Editable copy. Positional like the rest of this helper, and last, so the existing rows
+   * did not all have to be rewritten to add it - the fixture roster is a wall of calls and
+   * a named-object refactor here would be a large diff for no behavioural change.
+   */
+  editable?: Pick<
+    AdminVendor,
+    | 'about'
+    | 'priceBandMinPaise'
+    | 'priceBandMaxPaise'
+    | 'establishedYear'
+    | 'teamSize'
+    | 'travelsOutstation'
+  >,
 ): AdminVendor {
-  return { slug, name, city, locality, category, status, profileScore, mediaCount, seoEligible, kyc, isAnchor, ratingAvg, ratingCount }
+  return {
+    slug,
+    name,
+    city,
+    locality,
+    category,
+    status,
+    profileScore,
+    mediaCount,
+    seoEligible,
+    kyc,
+    isAnchor,
+    ratingAvg,
+    ratingCount,
+    about: editable?.about ?? null,
+    priceBandMinPaise: editable?.priceBandMinPaise ?? null,
+    priceBandMaxPaise: editable?.priceBandMaxPaise ?? null,
+    establishedYear: editable?.establishedYear ?? null,
+    teamSize: editable?.teamSize ?? null,
+    travelsOutstation: editable?.travelsOutstation ?? false,
+  }
 }
 
 export type PipelineStage =

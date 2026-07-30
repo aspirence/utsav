@@ -4,6 +4,7 @@ import { notFound } from 'next/navigation'
 import { PageHeader, Panel, Pill } from '@/components/admin-ui'
 import { getAdminVendors } from '@/lib/admin-data'
 
+import { VendorDetailsForm } from '../details-form'
 import { VendorStatusControls } from '../status-controls'
 
 export const metadata = { title: 'Vendor' }
@@ -77,6 +78,30 @@ export default async function AdminVendorDetailPage({
                 </ul>
               </div>
             )}
+          </Panel>
+
+          {/* The only form in this console that edits the listing rather than moving its
+              state. It goes through the same audit path, so the change lands on record with
+              the patch that was applied — plan §3 makes that log the point of the console. */}
+          <Panel className="p-5">
+            <h2 className="font-display text-lg text-ink-900">Listing details</h2>
+            <p className="mt-1 text-sm text-ink-600">
+              Editable copy. Status, scores and ratings are not here — the first moves through
+              the controls on the right so every change carries a reason, and the rest are
+              derived columns the database refuses a write to.
+            </p>
+            <div className="mt-5">
+              <VendorDetailsForm
+                slug={vendor.slug}
+                displayName={vendor.name}
+                about={vendor.about ?? null}
+                priceBandMinPaise={vendor.priceBandMinPaise ?? null}
+                priceBandMaxPaise={vendor.priceBandMaxPaise ?? null}
+                establishedYear={vendor.establishedYear ?? null}
+                teamSize={vendor.teamSize ?? null}
+                travelsOutstation={vendor.travelsOutstation ?? false}
+              />
+            </div>
           </Panel>
 
           {vendor.isAnchor && (

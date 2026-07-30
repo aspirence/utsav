@@ -28,7 +28,8 @@ const NAV = [
   { href: '/admin/moderation', label: 'Moderation' },
   { href: '/admin/vendors', label: 'Vendors' },
   { href: '/admin/pipeline', label: 'Pipeline' },
-  { href: '/admin/leads', label: 'Leads' },
+  { href: '/admin/enquiries', label: 'Enquiries' },
+  { href: '/admin/leads', label: 'Routing health' },
 ]
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {

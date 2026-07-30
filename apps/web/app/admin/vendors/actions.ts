@@ -70,6 +70,44 @@ const sendBackSchema = z.object({
     .max(500),
 })
 
+/**
+ * Editable listing copy.
+ *
+ * NOT in here, on purpose: `status`, `published_at`, `profile_score`, `media_count`,
+ * `rating_avg`, `is_anchor_studio`. The first two move through the transition actions above
+ * so every change lands in the audit log with a reason; the rest are derived columns that
+ * app.guard_vendor_columns() rejects a write to, and the anchor-studio flag is a
+ * channel-conflict disclosure (plan §11) rather than a field.
+ *
+ * Price bands are typed in rupees because that is what a person types, and stored as integer
+ * paise (plan §5). The conversion rounds rather than truncating - a float that lands on
+ * 149.99999 loses a paisa to Math.trunc, and money that quietly loses anything surfaces in a
+ * reconciliation months later.
+ */
+const detailsSchema = z
+  .object({
+    slug: slugSchema,
+    displayName: z.string().trim().min(2, 'A listing needs a name').max(120),
+    about: z.string().trim().max(4000).optional(),
+    priceBandMin: z.number().int().nonnegative().optional(),
+    priceBandMax: z.number().int().nonnegative().optional(),
+    establishedYear: z.coerce
+      .number()
+      .int()
+      .min(1900)
+      .max(new Date().getFullYear())
+      .optional(),
+    teamSize: z.coerce.number().int().positive().max(500).optional(),
+    travelsOutstation: z.boolean(),
+  })
+  // Mirrors the vendors_price_band_ordered check. Catching it here means the operator reads a
+  // sentence instead of a Postgres constraint name.
+  .refine(
+    (d) =>
+      d.priceBandMin == null || d.priceBandMax == null || d.priceBandMin <= d.priceBandMax,
+    { message: 'The lower price band has to be the smaller number' },
+  )
+
 // ---------------------------------------------------------------------------
 // Actions
 // ---------------------------------------------------------------------------
@@ -83,6 +121,75 @@ const sendBackSchema = z.object({
  * are launch-readiness policy (plan §13: "≥5 photos and price bands"), not an
  * invariant — a future campaign may well want a different floor.
  */
+/**
+ * Edit a listing's own copy. The only action here that is not a status transition.
+ *
+ * Goes through the same commit() path as the transitions, so the edit lands in the
+ * append-only audit log with the patch that was applied. Plan §3 makes that log the point of
+ * the console - a moderator quietly rewriting a vendor's price band with no record is
+ * exactly what it exists to prevent.
+ *
+ * `rupeesToPaise` is the only place rupees and paise meet. Nothing downstream sees rupees.
+ */
+export async function updateVendorDetails(
+  _prev: VendorActionState,
+  form: FormData,
+): Promise<VendorActionState> {
+  const guard = envGuard()
+  if (guard) return guard
+
+  const parsed = detailsSchema.safeParse({
+    slug: text(form.get('slug')),
+    displayName: text(form.get('displayName')),
+    about: text(form.get('about')),
+    priceBandMin: rupeesToPaise(text(form.get('priceBandMin'))),
+    priceBandMax: rupeesToPaise(text(form.get('priceBandMax'))),
+    establishedYear: text(form.get('establishedYear')),
+    teamSize: text(form.get('teamSize')),
+    travelsOutstation: form.get('travelsOutstation') === 'on',
+  })
+  if (!parsed.success) {
+    return { status: 'error', message: firstIssue(parsed.error) ?? 'Check those details.' }
+  }
+
+  const loaded = await loadVendor(parsed.data.slug)
+  if (loaded.status === 'failed') return loaded.state
+  const { supabase, vendor, actorId } = loaded
+
+  const d = parsed.data
+  return commit({
+    supabase,
+    actorId,
+    vendor,
+    slug: d.slug,
+    action: 'vendor.details_edited',
+    reason: null,
+    patch: {
+      display_name: d.displayName,
+      about: d.about ?? null,
+      price_band_min: d.priceBandMin ?? null,
+      price_band_max: d.priceBandMax ?? null,
+      established_year: d.establishedYear ?? null,
+      team_size: d.teamSize ?? null,
+      travels_outstation: d.travelsOutstation,
+    },
+    successMessage: `${d.displayName} updated. The change is in the audit log.`,
+  })
+}
+
+/** FormData.get() returns null for an absent field; zod's .optional() rejects null. */
+function text(v: FormDataEntryValue | null): string | undefined {
+  return typeof v === 'string' && v.trim() ? v.trim() : undefined
+}
+
+/** Rupees in, integer paise out (plan §5). Rounds, never truncates. */
+function rupeesToPaise(v: string | undefined): number | undefined {
+  if (!v) return undefined
+  const n = Number(v.replace(/[^\d.]/g, ''))
+  if (!Number.isFinite(n) || n < 0) return undefined
+  return Math.round(n * 100)
+}
+
 export async function publishVendor(slug: string): Promise<VendorActionState> {
   const guard = envGuard()
   if (guard) return guard
