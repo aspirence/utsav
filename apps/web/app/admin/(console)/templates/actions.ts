@@ -26,6 +26,17 @@ import { createUtsavaServerClient, hasSupabaseEnv, slugSchema } from '@utsava/db
  * Writes go through the operator's own session: `invitation_templates_write_staff` admits
  * moderator and super, not field agents. Plan §6 makes RLS the authorization model, so this
  * file validates and sequences — it does not authorize.
+ *
+ * TWO FIELDS WERE REMOVED HERE AS DEAD, and this note exists so they are not helpfully added
+ * back. `order_url` and `demo_url` were written before the product page existed. Nothing renders
+ * them now: the card links to /invitations/<slug>, that page's button goes to
+ * /enquire?template=<slug>, and the demo button was removed on request. An input that changes
+ * nothing is worse than a missing one — it asks the operator to make a decision that has no
+ * effect.
+ *
+ * `slug` is no longer asked for either. It is derived from the name on create and passed back as
+ * a hidden field on edit, because it is the key the row is saved against and nobody should be
+ * retyping it.
  */
 
 export type TemplateActionState =
@@ -49,9 +60,8 @@ export type TemplateActionState =
 /**
  * A URL we are willing to put in a src attribute.
  *
- * Scheme allowlist rather than a blocklist: `javascript:`, `data:` and `blob:` all parse
- * cleanly through new URL(), and a blocklist is a list of the attacks somebody has thought of.
- * Paths starting with `/` are allowed for order/demo links because those are our own routes.
+ * Scheme allowlist rather than a blocklist: `javascript:`, `data:` and `blob:` all parse cleanly
+ * through new URL(), and a blocklist is a list of the attacks somebody has thought of.
  */
 function httpsUrl(label: string) {
   return z
@@ -67,20 +77,6 @@ function httpsUrl(label: string) {
     }, `${label} has to be a full https:// link`)
 }
 
-function httpsOrPath(label: string) {
-  return z
-    .string()
-    .trim()
-    .max(1000)
-    .refine((v) => {
-      if (v.startsWith('/')) return !v.startsWith('//')
-      try {
-        return new URL(v).protocol === 'https:'
-      } catch {
-        return false
-      }
-    }, `${label} has to be an https:// link or a path on this site starting with /`)
-}
 
 const templateSchema = z
   .object({
@@ -91,8 +87,6 @@ const templateSchema = z
     priceRupees: z.number().int().positive('A template needs a price'),
     videoUrl: httpsUrl('The preview link').optional(),
     posterUrl: httpsUrl('The poster link').optional(),
-    orderUrl: httpsOrPath('The order link').optional(),
-    demoUrl: httpsOrPath('The demo link').optional(),
     sortOrder: z.coerce.number().int().min(0).max(9999),
     isActive: z.boolean(),
   })
@@ -117,15 +111,16 @@ export async function saveTemplate(
     }
   }
 
+  const name = text(form.get('name'))
   const parsed = templateSchema.safeParse({
-    slug: text(form.get('slug')),
-    name: text(form.get('name')),
+    // Editing posts the existing slug in a hidden field; creating posts nothing and gets one
+    // derived from the name.
+    slug: text(form.get('slug')) ?? slugify(name ?? ''),
+    name,
     tags: splitTags(text(form.get('tags'))),
     priceRupees: rupees(text(form.get('priceRupees'))),
     videoUrl: text(form.get('videoUrl')),
     posterUrl: text(form.get('posterUrl')),
-    orderUrl: text(form.get('orderUrl')),
-    demoUrl: text(form.get('demoUrl')),
     sortOrder: text(form.get('sortOrder')) ?? '100',
     isActive: form.get('isActive') === 'on',
   })
@@ -150,8 +145,6 @@ export async function saveTemplate(
     price: Math.round(d.priceRupees * 100),
     video_url: d.videoUrl ?? null,
     poster_url: d.posterUrl ?? null,
-    order_url: d.orderUrl ?? null,
-    demo_url: d.demoUrl ?? null,
     sort_order: d.sortOrder,
     is_active: d.isActive,
   }
@@ -279,6 +272,22 @@ function shapeWarning(
       'if you want it to move.',
     warn: true,
   }
+}
+
+/**
+ * Name to slug, matching invitation_templates_slug_format: ^[a-z0-9]+(-[a-z0-9]+)*$.
+ *
+ * Diacritics are folded before stripping, so "Café Royale" becomes cafe-royale rather than
+ * caf-royale. A name written entirely in a non-Latin script folds to an empty string, which fails
+ * slugSchema and asks for one explicitly instead of inventing a wrong one.
+ */
+function slugify(name: string): string {
+  return name
+    .normalize('NFKD')
+    .replace(/[̀-ͯ]/g, '')
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '')
 }
 
 /** Comma-separated in the form, an array in the column. */

@@ -123,8 +123,6 @@ export default async function AdminTemplatesPage() {
                       priceRupees: Math.round(r.pricePaise / 100),
                       videoUrl: r.videoUrl,
                       posterUrl: r.posterUrl,
-                      orderUrl: r.orderUrl,
-                      demoUrl: r.demoUrl,
                       sortOrder: 100,
                       isActive: r.isActive,
                     }}

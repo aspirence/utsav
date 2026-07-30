@@ -42,8 +42,6 @@ export interface InvitationTemplate {
   pricePaise: number
   videoUrl: string | null
   posterUrl: string | null
-  orderUrl: string | null
-  demoUrl: string | null
   isActive: boolean
   /** What the card should render. Derived, never stored — see classifyPreview. */
   preview: PreviewKind
@@ -60,7 +58,7 @@ export async function getInvitationTemplates(): Promise<InvitationTemplate[]> {
 
   const { data, error } = await supabase
     .from('invitation_templates')
-    .select('id, slug, name, tags, price, video_url, poster_url, order_url, demo_url, is_active')
+    .select('id, slug, name, tags, price, video_url, poster_url, is_active')
     .order('sort_order', { ascending: true })
     .order('name', { ascending: true })
 
@@ -177,8 +175,6 @@ interface RawTemplate {
   price: number
   video_url: string | null
   poster_url: string | null
-  order_url: string | null
-  demo_url: string | null
   is_active: boolean
 }
 
@@ -192,8 +188,6 @@ function shape(r: RawTemplate, isDemo = false): InvitationTemplate {
     pricePaise: r.price,
     videoUrl: r.video_url,
     posterUrl: r.poster_url,
-    orderUrl: r.order_url,
-    demoUrl: r.demo_url,
     isActive: r.is_active,
     preview: kind,
     embedUrl,
@@ -237,8 +231,6 @@ function raw(
     price,
     video_url: null,
     poster_url: poster,
-    order_url: null,
-    demo_url: '/invitation',
     is_active: true,
   }
 }

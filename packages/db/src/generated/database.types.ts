@@ -133,8 +133,6 @@ export type InvitationTemplateRow = {
   price: number
   video_url: string | null
   poster_url: string | null
-  order_url: string | null
-  demo_url: string | null
   sort_order: number
   is_active: boolean
   created_by: string | null

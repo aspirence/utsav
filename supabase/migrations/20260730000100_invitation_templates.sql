@@ -36,10 +36,6 @@ create table public.invitation_templates (
   video_url     text,
   /* First frame, shown before the video plays and if it never does. */
   poster_url    text,
-  /* Where "Order now" goes. Null falls back to the enquiry form. */
-  order_url     text,
-  /* Optional "live demo" of the invitation itself. */
-  demo_url      text,
 
   sort_order    integer not null default 100,
   is_active     boolean not null default true,
@@ -54,10 +50,6 @@ create table public.invitation_templates (
     check (video_url is null or video_url ~ '^https://'),
   constraint invitation_templates_poster_https
     check (poster_url is null or poster_url ~ '^https://'),
-  constraint invitation_templates_order_url_shape
-    check (order_url is null or order_url ~ '^(https://|/)'),
-  constraint invitation_templates_demo_url_shape
-    check (demo_url is null or demo_url ~ '^(https://|/)'),
   -- Six tags would not fit above the name at any readable size.
   constraint invitation_templates_tag_count check (cardinality(tags) <= 4)
 );

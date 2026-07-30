@@ -9,12 +9,18 @@ import { saveTemplate, type TemplateActionState } from './actions'
 /**
  * Add or edit an invitation template.
  *
- * The preview link is the point of this form, so it gets a live readout: paste something and the
- * form says which element it will render before you save. Staff pasting a YouTube watch page
- * and expecting a looping clip is the failure this prevents — the card would show a poster and
- * nobody would know why.
+ * THREE FIELDS, then everything else folded away. A card is a name, a video and a price — that is
+ * the whole product — so those are what the form asks for and the rest is behind one summary line
+ * nobody has to open. It was nine fields flat, including two that changed nothing (see the note in
+ * actions.ts) and a URL name that derives from the name anyway. A form that asks for more than it
+ * needs teaches the operator that some of the boxes do not matter, and then they stop reading any
+ * of them.
  *
- * The check mirrors classifyPreview() on the server. Duplicated deliberately: this one only has
+ * The preview link gets a live readout: paste something and the form says which element it will
+ * render *before* you save. Staff pasting a YouTube watch page and expecting a looping clip is the
+ * failure this prevents — the card would show a still image and nobody would know why.
+ *
+ * That check mirrors classifyPreview() on the server. Duplicated deliberately: this one only has
  * to be roughly right to be useful as feedback, and importing the real one would drag a
  * `server-only` module into the browser.
  */
@@ -28,8 +34,6 @@ export function TemplateForm({
     priceRupees: number
     videoUrl: string | null
     posterUrl: string | null
-    orderUrl: string | null
-    demoUrl: string | null
     sortOrder: number
     isActive: boolean
   }
@@ -56,40 +60,31 @@ export function TemplateForm({
 
   return (
     <form action={act} className="space-y-5">
-      <div className="grid gap-5 sm:grid-cols-2">
-        <Field label="Name" htmlFor="name" required>
-          <input
-            id="name"
-            name="name"
-            type="text"
-            required
-            defaultValue={initial?.name ?? ''}
-            placeholder="Taj Mahal Elegance"
-            className={INPUT}
-          />
-        </Field>
+      {/* Editing keeps the slug; creating derives one from the name server-side. Either way it is
+          not something to retype — it is the key the row is saved against. */}
+      {initial && <input type="hidden" name="slug" value={initial.slug} />}
 
-        <Field label="URL name" htmlFor="slug" required>
-          <input
-            id="slug"
-            name="slug"
-            type="text"
-            required
-            defaultValue={initial?.slug ?? ''}
-            readOnly={Boolean(initial)}
-            pattern="[a-z0-9]+(-[a-z0-9]+)*"
-            placeholder="taj-mahal-elegance"
-            className={INPUT + (initial ? ' bg-ink-50 text-ink-600' : '')}
-          />
+      <Field label="Name" htmlFor="name" required>
+        <input
+          id="name"
+          name="name"
+          type="text"
+          required
+          defaultValue={initial?.name ?? ''}
+          placeholder="Taj Mahal Elegance"
+          className={INPUT}
+        />
+        {initial ? (
           <Hint>
-            {initial
-              ? 'Fixed once created — it is the key this row is saved against.'
-              : 'Lowercase letters, numbers and single hyphens.'}
+            Lives at <code className="text-ink-700">/invitations/{initial.slug}</code> — the address
+            does not change when you rename it.
           </Hint>
-        </Field>
-      </div>
+        ) : (
+          <Hint>The web address is made from this automatically.</Hint>
+        )}
+      </Field>
 
-      <Field label="Preview video link" htmlFor="videoUrl">
+      <Field label="Video link" htmlFor="videoUrl" required>
         <input
           id="videoUrl"
           name="videoUrl"
@@ -99,7 +94,7 @@ export function TemplateForm({
           placeholder="https://…/taj-mahal.mp4  or  https://youtu.be/…"
           className={INPUT}
         />
-        {/* The readout. role=status so a screen reader hears the verdict change. */}
+        {/* role=status so a screen reader hears the verdict change as it is typed. */}
         <p
           role="status"
           className={
@@ -115,34 +110,7 @@ export function TemplateForm({
         </p>
       </Field>
 
-      <Field label="Poster image link" htmlFor="posterUrl">
-        <input
-          id="posterUrl"
-          name="posterUrl"
-          type="url"
-          defaultValue={initial?.posterUrl ?? ''}
-          placeholder="https://…/taj-mahal-poster.webp"
-          className={INPUT}
-        />
-        <Hint>
-          The first frame, shown until the video starts and instead of it if the link is not
-          playable. A card needs either this or a video.
-        </Hint>
-      </Field>
-
       <div className="grid gap-5 sm:grid-cols-2">
-        <Field label="Tags" htmlFor="tags">
-          <input
-            id="tags"
-            name="tags"
-            type="text"
-            defaultValue={initial?.tags.join(', ') ?? ''}
-            placeholder="Royal, Vibrant, New"
-            className={INPUT}
-          />
-          <Hint>Comma-separated, four at most. Shown in small caps above the name.</Hint>
-        </Field>
-
         <Field label="Price in rupees" htmlFor="priceRupees" required>
           <input
             id="priceRupees"
@@ -154,46 +122,6 @@ export function TemplateForm({
             placeholder="1499"
             className={INPUT}
           />
-          <Hint>Typed in rupees, stored as integer paise.</Hint>
-        </Field>
-      </div>
-
-      <div className="grid gap-5 sm:grid-cols-2">
-        <Field label="Order link" htmlFor="orderUrl">
-          <input
-            id="orderUrl"
-            name="orderUrl"
-            type="text"
-            defaultValue={initial?.orderUrl ?? ''}
-            placeholder="/enquire?template=…"
-            className={INPUT}
-          />
-          <Hint>Where &ldquo;Order now&rdquo; goes. Blank sends them to the enquiry form.</Hint>
-        </Field>
-
-        <Field label="Live demo link" htmlFor="demoUrl">
-          <input
-            id="demoUrl"
-            name="demoUrl"
-            type="text"
-            defaultValue={initial?.demoUrl ?? ''}
-            placeholder="/invitation"
-            className={INPUT}
-          />
-        </Field>
-      </div>
-
-      <div className="grid gap-5 sm:grid-cols-2">
-        <Field label="Sort order" htmlFor="sortOrder">
-          <input
-            id="sortOrder"
-            name="sortOrder"
-            type="number"
-            min={0}
-            defaultValue={initial?.sortOrder ?? 100}
-            className={INPUT}
-          />
-          <Hint>Lower comes first. Ties fall back to the name.</Hint>
         </Field>
 
         <div className="flex items-end">
@@ -204,11 +132,66 @@ export function TemplateForm({
               defaultChecked={initial?.isActive ?? false}
               className="h-4 w-4"
             />
-            Published
-            <span className="text-xs text-ink-500">— unticked keeps it off the home page</span>
+            Show on the home page
           </label>
         </div>
       </div>
+
+      {/*
+        <details> rather than a state toggle: the browser handles it, it works before hydration, and
+        the summary line is honest about what is inside so nobody has to open it to find out.
+      */}
+      <details className="rounded-md border border-ink-200 bg-ink-50/60 px-4 py-3">
+        <summary className="cursor-pointer text-sm font-medium text-ink-800">
+          Optional
+          <span className="ml-1.5 font-normal text-ink-500">
+            — tag words, a poster image, and where it sits in the row
+          </span>
+        </summary>
+
+        <div className="mt-5 space-y-5">
+          <Field label="Tag words" htmlFor="tags">
+            <input
+              id="tags"
+              name="tags"
+              type="text"
+              defaultValue={initial?.tags.join(', ') ?? ''}
+              placeholder="Royal, Vibrant, New"
+              className={INPUT}
+            />
+            <Hint>
+              The small capitals above the name on the card. Comma-separated, four at most.
+            </Hint>
+          </Field>
+
+          <Field label="Poster image link" htmlFor="posterUrl">
+            <input
+              id="posterUrl"
+              name="posterUrl"
+              type="url"
+              defaultValue={initial?.posterUrl ?? ''}
+              placeholder="https://…/taj-mahal-poster.webp"
+              className={INPUT}
+            />
+            <Hint>
+              A still shown while the video loads, and instead of it if the link turns out not to be
+              playable. Skip it if you have given a video link above.
+            </Hint>
+          </Field>
+
+          <Field label="Position in the row" htmlFor="sortOrder">
+            <input
+              id="sortOrder"
+              name="sortOrder"
+              type="number"
+              min={0}
+              defaultValue={initial?.sortOrder ?? 100}
+              className={INPUT + ' sm:w-32'}
+            />
+            <Hint>Lower comes first. Leave it at 100 and they order by name.</Hint>
+          </Field>
+        </div>
+      </details>
 
       {(state.status === 'error' || state.status === 'unconfigured') && (
         <p
@@ -254,7 +237,7 @@ function describeLink(url: string): { tone: 'idle' | 'good' | 'warn'; message: s
   if (!trimmed) {
     return {
       tone: 'idle',
-      message: 'A direct video file (.mp4, .webm, .mov) or a YouTube or Vimeo link. Leave blank to show only the poster.',
+      message: 'A video file (.mp4, .webm, .mov) or a YouTube or Vimeo link.',
     }
   }
 
@@ -262,7 +245,7 @@ function describeLink(url: string): { tone: 'idle' | 'good' | 'warn'; message: s
   try {
     parsed = new URL(trimmed)
   } catch {
-    return { tone: 'warn', message: 'That is not a complete link yet — it needs to start with https://' }
+    return { tone: 'warn', message: 'Not a complete link yet — it needs to start with https://' }
   }
 
   if (parsed.protocol !== 'https:') {
@@ -278,7 +261,10 @@ function describeLink(url: string): { tone: 'idle' | 'good' | 'warn'; message: s
 
   const host = parsed.hostname.replace(/^www\./, '')
   if (['youtube.com', 'm.youtube.com', 'youtu.be', 'vimeo.com', 'player.vimeo.com'].includes(host)) {
-    return { tone: 'good', message: `A ${host.includes('vimeo') ? 'Vimeo' : 'YouTube'} link — it will be embedded, muted and looping, with the player chrome hidden.` }
+    return {
+      tone: 'good',
+      message: `A ${host.includes('vimeo') ? 'Vimeo' : 'YouTube'} link — embedded, muted and looping, with the player controls hidden.`,
+    }
   }
 
   return {
