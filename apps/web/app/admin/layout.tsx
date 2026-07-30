@@ -1,5 +1,7 @@
 import type { Metadata } from 'next'
-import Link from 'next/link'
+
+import { AdminSidebar } from '@/components/admin-sidebar'
+import { AdminTopBar } from '@/components/admin-topbar'
 
 export const metadata: Metadata = {
   title: { default: 'Utsava Admin', template: '%s · Utsava Admin' },
@@ -10,72 +12,58 @@ export const metadata: Metadata = {
 }
 
 /**
+ * Nothing in the console is ever cached, and this is not a performance trade.
+ *
+ * Without it, the pages that do not happen to read a cookie get prerendered at build time -
+ * the build output had /admin, /admin/leads and /admin/pipeline all marked static. A moderator
+ * reading "awaiting OTP: 3" would be reading a number from whenever the last deploy ran, and
+ * the dashboard's "this week" bucket would mean the week the build happened, permanently.
+ *
+ * A staff console has a handful of users behind an IP allowlist. There is nothing to gain from
+ * caching it and a wrong number to lose.
+ */
+export const dynamic = 'force-dynamic'
+
+/**
  * Staff console shell, nested under the root document layout at /admin.
  *
- * Plan §3 specifies "a separate deploy, SSO + IP allowlist, append-only audit log". It
- * now lives on the same origin as the customer site by explicit product decision, so the
+ * Plan §3 specifies "a separate deploy, SSO + IP allowlist, append-only audit log". It now
+ * lives on the same origin as the customer site by explicit product decision, so the
  * network-level isolation the plan assumed is replaced by:
  *
  *   · middleware.ts — IP allowlist on /admin/* via ADMIN_IP_ALLOWLIST
  *   · robots.ts + the metadata above — never indexed
  *   · public.staff_roles + RLS — the real authorization boundary, unchanged
  *
- * The chrome is deliberately dark and dense so there is never a moment's doubt about
- * which surface you are looking at when you click "suspend".
+ * LAYOUT. A fixed dark rail on the left, a light working plane on the right. The rail was a
+ * horizontal nav strip; six sections plus a seventh later do not fit across a laptop without
+ * scrolling, and a rail also gives the console an unmistakable silhouette — there is never a
+ * moment's doubt about which surface you are on when you click "suspend".
+ *
+ * `lg:pl-60` on the plane rather than a flex row, because the rail is `fixed`: a
+ * position-fixed sidebar is out of flow, so the content has to be inset by hand. A flex row
+ * would work too but scrolls the rail away with the page, and a nav that scrolls off is one
+ * you have to scroll back for.
  */
-const NAV = [
-  { href: '/admin', label: 'Launch readiness' },
-  { href: '/admin/moderation', label: 'Moderation' },
-  { href: '/admin/vendors', label: 'Vendors' },
-  { href: '/admin/pipeline', label: 'Pipeline' },
-  { href: '/admin/enquiries', label: 'Enquiries' },
-  { href: '/admin/leads', label: 'Routing health' },
-]
-
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
   return (
-    // Denser type than the customer site: a moderator working a queue needs rows per
-    // screen, not whitespace. Scoped here so it cannot leak into the public pages.
+    // Denser type than the customer site: a moderator working a queue needs rows per screen,
+    // not whitespace. Scoped here so it cannot leak into the public pages.
     <div className="min-h-screen bg-ink-50 text-[0.9375rem]">
-      <header className="border-b border-ink-800 bg-ink-900">
-        <div className="mx-auto flex h-14 max-w-[1600px] items-center gap-6 px-5">
-          <Link href="/admin" className="font-display text-lg tracking-tight text-white">
-            Utsava <span className="text-ink-400">Admin</span>
-          </Link>
+      <AdminSidebar />
 
-          <nav aria-label="Sections" className="flex items-center gap-1 overflow-x-auto">
-            {NAV.map((item) => (
-              <Link
-                key={item.href}
-                href={item.href}
-                className="whitespace-nowrap rounded-md px-3 py-1.5 text-sm font-medium text-ink-300 transition-colors hover:bg-ink-800 hover:text-white"
-              >
-                {item.label}
-              </Link>
-            ))}
-          </nav>
+      <div className="lg:pl-60">
+        <AdminTopBar />
 
-          <div className="ml-auto flex items-center gap-3 text-sm">
-            <span className="rounded-full bg-primary-900/60 px-2.5 py-0.5 text-xs font-medium text-primary-200">
-              super admin
-            </span>
-            <span className="hidden text-ink-400 sm:inline">admin@utsava.test</span>
-            {/* A way back to the customer site, since they now share an origin. */}
-            <Link href="/" className="text-ink-400 underline-offset-2 hover:text-white hover:underline">
-              View site ↗
-            </Link>
-          </div>
-        </div>
-      </header>
+        <main className="mx-auto max-w-[1500px] px-4 py-6 sm:px-6">{children}</main>
 
-      <main className="mx-auto max-w-[1600px] px-5 py-7">{children}</main>
-
-      <footer className="border-t border-ink-200 py-5">
-        <div className="mx-auto max-w-[1600px] px-5 text-xs text-ink-500">
-          Every action taken here is written to an append-only audit log with your identity
-          attached.
-        </div>
-      </footer>
+        <footer className="mx-auto max-w-[1500px] px-4 pb-8 sm:px-6">
+          <p className="border-t border-ink-200 pt-5 text-xs text-ink-500">
+            Every action taken here is written to an append-only audit log with your identity
+            attached.
+          </p>
+        </footer>
+      </div>
     </div>
   )
 }
