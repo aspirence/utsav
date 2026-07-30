@@ -40,6 +40,19 @@ function toE164(raw: string): string | null {
   return null
 }
 
+/**
+ * FormData.get() returns `null` for a field that is not in the form, and zod's
+ * `.optional()` accepts `undefined` but not `null` - so an absent hidden input failed
+ * validation and surfaced zod's own "Expected string, received null" to the user, on a form
+ * where the number they typed was fine and never even looked at.
+ *
+ * Everything from a FormData goes through here, so the schemas only ever see strings or
+ * undefined and their messages are the ones people read.
+ */
+function text(value: FormDataEntryValue | null): string | undefined {
+  return typeof value === 'string' ? value : undefined
+}
+
 const phoneSchema = z.object({
   phone: z.string().min(1, 'Enter your mobile number.'),
   next: z.string().optional(),
@@ -47,7 +60,7 @@ const phoneSchema = z.object({
 
 const verifySchema = phoneSchema.extend({
   code: z
-    .string()
+    .string({ message: 'Enter the code from the message.' })
     .regex(/^\d{4,8}$/, 'The code is the digits from the message, nothing else.'),
 })
 
@@ -64,8 +77,8 @@ export async function requestCode(
   form: FormData,
 ): Promise<AuthState> {
   const parsed = phoneSchema.safeParse({
-    phone: form.get('phone'),
-    next: form.get('next'),
+    phone: text(form.get('phone')),
+    next: text(form.get('next')),
   })
   if (!parsed.success) {
     return { step: 'phone', error: parsed.error.issues[0]?.message ?? 'Check that number.' }
@@ -107,14 +120,14 @@ export async function requestCode(
 /** Step two: exchange the code for a session. */
 export async function verifyCode(_prev: AuthState, form: FormData): Promise<AuthState> {
   const parsed = verifySchema.safeParse({
-    phone: form.get('phone'),
-    code: form.get('code'),
-    next: form.get('next'),
+    phone: text(form.get('phone')),
+    code: text(form.get('code')),
+    next: text(form.get('next')),
   })
   if (!parsed.success) {
     return {
       step: 'code',
-      phone: String(form.get('phone') ?? ''),
+      phone: text(form.get('phone')) ?? '',
       error: parsed.error.issues[0]?.message ?? 'Check that code.',
     }
   }
