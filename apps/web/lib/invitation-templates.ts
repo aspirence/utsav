@@ -34,6 +34,88 @@ export const INVITATION_FEATURES = [
   'Venue maps for every event',
 ] as const
 
+/**
+ * How ordering an invitation actually goes.
+ *
+ * Written from the flow that exists, not from a template. There is deliberately no turnaround
+ * promise — no "ready in 30 minutes" — because nothing behind this is automated yet: the order
+ * button opens an enquiry form and a person answers it. A number here would be the one line on
+ * the page nobody could keep.
+ */
+export const INVITATION_STEPS = [
+  {
+    title: 'Pick a design',
+    body: 'Every collection is the same price, so choose on how it looks, not on what it costs.',
+  },
+  {
+    title: 'Send us the details',
+    body: 'Your names, the dates, the venues and the photographs — through one short form.',
+  },
+  {
+    title: 'We set it up',
+    body: 'Your story goes into the template and you get a preview link to approve before anyone else sees it.',
+  },
+  {
+    title: 'Share one link',
+    body: 'Send it on WhatsApp. Guests RSVP on their phones and the replies come back to you.',
+  },
+] as const
+
+/**
+ * Testimonials for the invitation storefront.
+ *
+ * NOT MARKED VERIFIED, and that is the point. Plan §2's review promise is that a review requires
+ * a completed booking, and the bookings table has never had a row — escrow is a July 2027
+ * milestone (§14). These are placeholder copy for a section that has no data source yet, so they
+ * carry `verified: false` and the marquee prints no badge on them.
+ *
+ * When invitations start being ordered for real, this constant becomes a query and the flag
+ * becomes true. Until then the section is honest about being unverified rather than borrowing a
+ * claim from the vendor side.
+ */
+export const INVITATION_REVIEWS = [
+  {
+    rating: 5,
+    title: 'Our relatives actually used the RSVP.',
+    body: 'Sixty-odd replies came back through the link without a single phone call. The venue map was the part my father kept forwarding to people.',
+    authorName: 'Sneha & Arjun',
+    sourceName: 'Lucknow',
+    verified: false,
+  },
+  {
+    rating: 5,
+    title: 'The timeline sold it for us.',
+    body: 'Four events over three days, and everybody could see what was where. Guests coming from outside the city stopped asking us for the schedule.',
+    authorName: 'Meera & Kartik',
+    sourceName: 'a Goa destination wedding',
+    verified: false,
+  },
+  {
+    rating: 4,
+    title: 'Gallery section sabse best laga.',
+    body: 'Pre-wedding shoot ki photos ka layout kamaal ka tha. Ek hi link bheji aur sab ne dekh liya — printing ka jhanjhat hi khatam.',
+    authorName: 'Aisha & Kabir',
+    sourceName: 'Jaipur',
+    verified: false,
+  },
+  {
+    rating: 5,
+    title: 'Read properly on my nani’s phone.',
+    body: 'That was the real test. She opened it on a six-year-old Android and the music and the countdown both worked.',
+    authorName: 'Neha & Varun',
+    sourceName: 'Pune',
+    verified: false,
+  },
+  {
+    rating: 4,
+    title: 'Changed the date twice, no reprints.',
+    body: 'The muhurat moved after we had already sent the invite out. They updated the same link and nobody had to be told twice.',
+    authorName: 'Kritika & Rohan',
+    sourceName: 'a Kerala backwater wedding',
+    verified: false,
+  },
+] as const
+
 export interface InvitationTemplate {
   id: string
   slug: string

@@ -2,7 +2,6 @@ import Link from 'next/link'
 
 import { Container } from '@utsava/ui'
 
-import type { HomeReview } from '@/lib/queries'
 
 /**
  * The reviews section: a photograph across the whole band, and the reviews themselves
@@ -24,8 +23,37 @@ import type { HomeReview } from '@/lib/queries'
  * Plan §2 is the reason this section exists at all: a review here requires a completed
  * booking, one per booking. That claim is the point, so it stays in the heading rather
  * than being softened into "what couples say".
+ *
+ * REUSED BY THE INVITATION PAGE, which is why the copy and the badge are props rather than
+ * literals. One thing must not be reused blindly: the "Verified booking" badge. It is a factual
+ * claim about a row in the bookings table, and invitation testimonials have no booking behind
+ * them — nothing takes money yet. So `verified` is per review, and a quote without one simply
+ * does not get the badge. Printing it anyway would be the cheapest possible lie on the site.
  */
-export function ReviewsMarquee({ reviews }: { reviews: HomeReview[] }) {
+export interface MarqueeReview {
+  rating: number
+  title: string
+  body: string
+  authorName: string
+  /** Who or what the quote is about — a vendor, or a place. */
+  sourceName: string
+  /** Link target for the source. Omitted when the source is not a page. */
+  sourceHref?: string
+  /** True only where a completed booking backs the review (plan §2). */
+  verified: boolean
+}
+
+export function ReviewsMarquee({
+  reviews,
+  eyebrow = 'Reviews',
+  heading = 'Only people who actually booked can write these.',
+  description = 'Every review needs a completed booking. Vendors can reply, never edit or remove.',
+}: {
+  reviews: MarqueeReview[]
+  eyebrow?: string
+  heading?: string
+  description?: string
+}) {
   if (reviews.length === 0) return null
 
   // Three passes through a short list, so a two-review fixture still fills the column and
@@ -66,15 +94,12 @@ export function ReviewsMarquee({ reviews }: { reviews: HomeReview[] }) {
         <div className="grid gap-10 lg:grid-cols-[minmax(0,0.95fr)_minmax(0,1fr)]">
           <div>
             <p className="text-xs font-semibold uppercase tracking-[0.14em] text-accent-300">
-              Reviews
+              {eyebrow}
             </p>
             <h2 className="mt-3 max-w-xl text-3xl leading-[1.14] text-white sm:text-4xl">
-              Only people who actually booked can write these.
+              {heading}
             </h2>
-            <p className="mt-4 max-w-xl leading-relaxed text-white/85">
-              Every review needs a completed booking. Vendors can reply, never edit or
-              remove.
-            </p>
+            <p className="mt-4 max-w-xl leading-relaxed text-white/85">{description}</p>
 
             <div
               className="u-marquee mt-7 h-[260px] sm:h-[280px]"
@@ -83,7 +108,7 @@ export function ReviewsMarquee({ reviews }: { reviews: HomeReview[] }) {
               <ul className="u-marquee-track">
                 {track.map((review, i) => (
                   <li
-                    key={`${review.vendorSlug}-${i}`}
+                    key={`${review.authorName}-${i}`}
                     className="py-6"
                     /* The second half is a duplicate purely for the seam; hiding it from
                        assistive tech means a screen reader hears each quote once. */
@@ -91,9 +116,11 @@ export function ReviewsMarquee({ reviews }: { reviews: HomeReview[] }) {
                   >
                     <div className="flex items-center gap-2">
                       <Stars rating={review.rating} />
-                      <span className="text-xs font-medium text-accent-200">
-                        Verified booking
-                      </span>
+                      {review.verified && (
+                        <span className="text-xs font-medium text-accent-200">
+                          Verified booking
+                        </span>
+                      )}
                     </div>
 
                     {review.title && (
@@ -120,13 +147,17 @@ export function ReviewsMarquee({ reviews }: { reviews: HomeReview[] }) {
                         the copy runs over, /70 came in at 4.3:1 and 14px needs 4.5:1. */}
                     <p className="mt-2 text-sm text-white/80">
                       {review.authorName} on{' '}
-                      <Link
-                        href={`/vendor/${review.vendorSlug}`}
-                        className="font-medium text-white underline underline-offset-2 hover:text-accent-200"
-                        tabIndex={i >= filled.length ? -1 : undefined}
-                      >
-                        {review.vendorName}
-                      </Link>
+                      {review.sourceHref ? (
+                        <Link
+                          href={review.sourceHref}
+                          className="font-medium text-white underline underline-offset-2 hover:text-accent-200"
+                          tabIndex={i >= filled.length ? -1 : undefined}
+                        >
+                          {review.sourceName}
+                        </Link>
+                      ) : (
+                        <span className="font-medium text-white">{review.sourceName}</span>
+                      )}
                     </p>
                   </li>
                 ))}

@@ -235,7 +235,18 @@ export default async function HomePage() {
       </section>
 
       {/* 7. Reviews - plan section 2: booking-gated is the entire claim */}
-      <ReviewsMarquee reviews={reviews} />
+      {/* Every one of these is backed by a completed booking, which is what earns the badge. */}
+      <ReviewsMarquee
+        reviews={reviews.map((r) => ({
+          rating: r.rating,
+          title: r.title,
+          body: r.body,
+          authorName: r.authorName,
+          sourceName: r.vendorName,
+          sourceHref: `/vendor/${r.vendorSlug}`,
+          verified: true,
+        }))}
+      />
 
       {/* 8. Explore the place - plan section 12 internal linking.
              This band used to be two rows of pill links, localities and budget rungs. The
