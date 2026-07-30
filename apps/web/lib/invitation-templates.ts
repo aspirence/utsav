@@ -57,9 +57,30 @@ export const BOOKING = {
   offerSeats: 20,
 } as const
 
-/** Balance owed after the booking amount. Derived so the two legs always reconcile. */
+/**
+ * The two legs of an order, derived together from the price.
+ *
+ * ONE FUNCTION, BECAUSE THEY MUST RECONCILE. `invitation_orders_amounts_reconcile` requires
+ * booking + balance = template_price. The first version of this computed only the balance as
+ * `Math.max(0, price - 99)`, which silently broke that for any template priced under the booking
+ * amount: a ₹49 design quoted "booking ₹99, balance ₹0" — a reservation fee larger than the
+ * product — and then every insert was rejected by the constraint with a message blaming the form.
+ * The clamp was what hid it; without it the value went negative and app.paise would have named
+ * the real problem.
+ *
+ * So a template cheaper than the booking amount is simply paid in full up front.
+ */
+export function orderLegs(templatePricePaise: number): {
+  bookingPaise: number
+  balancePaise: number
+} {
+  const bookingPaise = Math.min(BOOKING.amountPaise, templatePricePaise)
+  return { bookingPaise, balancePaise: templatePricePaise - bookingPaise }
+}
+
+/** Just the balance, for copy. Same derivation, so it cannot disagree with orderLegs(). */
 export function balancePaise(templatePricePaise: number): number {
-  return Math.max(0, templatePricePaise - BOOKING.amountPaise)
+  return orderLegs(templatePricePaise).balancePaise
 }
 
 /**
@@ -172,7 +193,22 @@ export async function getInvitationTemplates(): Promise<InvitationTemplate[]> {
     .order('sort_order', { ascending: true })
     .order('name', { ascending: true })
 
-  if (error || !data || data.length === 0) return DEMO
+  /*
+   * DEMO IS FOR "NO DATABASE", NOT FOR "NO ROWS" AND NOT FOR "READ FAILED".
+   *
+   * This used to be `if (error || !data || data.length === 0) return DEMO`, and that was a real
+   * defect rather than a stylistic one. invitation_templates is not seeded, so a freshly migrated
+   * project has an empty table — and the storefront would then show eight designs that exist
+   * nowhere, take real orders against them, and write order rows whose price came from a
+   * TypeScript literal and whose template_id was null and unjoinable. The same substitution fired
+   * on any transient read error, and on the ordinary act of unpublishing the last live template:
+   * the console said "off the home page but not deleted" while the demo set quietly took its place
+   * and kept selling.
+   *
+   * An empty catalogue is a real answer. Nothing to sell is a correct thing to render.
+   */
+  if (error) throw new Error(`Could not read invitation templates: ${error.message}`)
+  if (!data) return []
 
   return data.map((r) => shape(r))
 }
@@ -211,7 +247,10 @@ export async function getInvitationTemplate(slug: string): Promise<InvitationTem
  * A NOTE ON MUTED AUTOPLAY. Every browser blocks autoplay with sound, so both branches force
  * mute. That is not a preference — an unmuted autoplay is an autoplay that does not happen.
  */
-export function classifyPreview(url: string | null): { kind: PreviewKind; embedUrl: string | null } {
+export function classifyPreview(url: string | null): {
+  kind: PreviewKind
+  embedUrl: string | null
+} {
   if (!url) return { kind: 'none', embedUrl: null }
 
   let parsed: URL
@@ -316,14 +355,62 @@ function shape(r: RawTemplate, isDemo = false): InvitationTemplate {
  * Posters reuse art already in public/. Prices match the reference: ₹1,499 = 149900 paise.
  */
 const DEMO: InvitationTemplate[] = [
-  raw('vibrant-heritage', 'Vibrant Heritage', ['Royal', 'Vibrant', 'New'], 149_900, '/invitation.webp'),
-  raw('divine-kedarnath', 'Divine Kedarnath Elegance', ['Temple', 'New', 'Shiva'], 149_900, '/mountain-1280.webp'),
-  raw('taj-mahal-elegance', 'Taj Mahal Elegance', ['New', 'Royal', 'Tajmahal'], 149_900, '/historical-1280.webp'),
-  raw('modern-rajputana', 'The Modern Rajputana', ['Modern', 'Royalty', 'New'], 149_900, '/luck-3-1280.webp'),
-  raw('divine-prem-radha-krishna', 'Divine Prem: The Radha-Krishna Edition', ['Radha', 'Temple', 'Krishna'], 149_900, '/temple-1280.webp'),
-  raw('marathi-shalu', 'Marathi Shalu & Mundavalya', ['Marathi', 'Classic', 'New'], 149_900, '/marathi-1280.webp'),
-  raw('punjabi-phulkari', 'Punjabi Phulkari', ['Punjabi', 'Vibrant', 'Dhol'], 149_900, '/punjabi-1280.webp'),
-  raw('kanjivaram-classic', 'Kanjivaram Classic', ['South', 'Temple', 'Silk'], 149_900, '/tamil-1280.webp'),
+  raw(
+    'vibrant-heritage',
+    'Vibrant Heritage',
+    ['Royal', 'Vibrant', 'New'],
+    149_900,
+    '/invitation.webp',
+  ),
+  raw(
+    'divine-kedarnath',
+    'Divine Kedarnath Elegance',
+    ['Temple', 'New', 'Shiva'],
+    149_900,
+    '/mountain-1280.webp',
+  ),
+  raw(
+    'taj-mahal-elegance',
+    'Taj Mahal Elegance',
+    ['New', 'Royal', 'Tajmahal'],
+    149_900,
+    '/historical-1280.webp',
+  ),
+  raw(
+    'modern-rajputana',
+    'The Modern Rajputana',
+    ['Modern', 'Royalty', 'New'],
+    149_900,
+    '/luck-3-1280.webp',
+  ),
+  raw(
+    'divine-prem-radha-krishna',
+    'Divine Prem: The Radha-Krishna Edition',
+    ['Radha', 'Temple', 'Krishna'],
+    149_900,
+    '/temple-1280.webp',
+  ),
+  raw(
+    'marathi-shalu',
+    'Marathi Shalu & Mundavalya',
+    ['Marathi', 'Classic', 'New'],
+    149_900,
+    '/marathi-1280.webp',
+  ),
+  raw(
+    'punjabi-phulkari',
+    'Punjabi Phulkari',
+    ['Punjabi', 'Vibrant', 'Dhol'],
+    149_900,
+    '/punjabi-1280.webp',
+  ),
+  raw(
+    'kanjivaram-classic',
+    'Kanjivaram Classic',
+    ['South', 'Temple', 'Silk'],
+    149_900,
+    '/tamil-1280.webp',
+  ),
 ].map((r) => shape(r, true))
 
 function raw(

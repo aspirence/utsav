@@ -14,7 +14,7 @@ import {
   slugSchema,
 } from '@utsava/db'
 
-import { BOOKING, balancePaise, getInvitationTemplate } from '@/lib/invitation-templates'
+import { getInvitationTemplate, orderLegs } from '@/lib/invitation-templates'
 
 /**
  * Place an invitation order.
@@ -86,12 +86,32 @@ export async function placeInvitationOrder(
     return { status: 'error', message: 'That design is no longer available. Please pick another.' }
   }
 
+  /*
+   * A demo template must never produce an order row.
+   *
+   * getInvitationTemplates() falls back to a hardcoded set when no database is attached. Those
+   * rows have no catalogue row behind them: their price is a TypeScript literal and their id is
+   * not a uuid, so an order written against one would carry an invented amount and a null,
+   * unjoinable template_id — permanently, because there is no DELETE policy on orders.
+   *
+   * The fallback is a rendering convenience for an unconfigured environment. It is not a
+   * sellable catalogue, and this is the line that says so.
+   */
+  if (template.isDemo) {
+    return {
+      status: 'unconfigured',
+      message:
+        'This design is part of the demo catalogue, so no order was placed. Connect a Supabase ' +
+        'project and add real templates in the console before taking orders.',
+    }
+  }
+
   if (!hasSupabaseEnv()) {
     return {
       status: 'unconfigured',
       message:
-        'No database is attached, so this order was not saved. Everything you typed is still ' +
-        'here — connect a Supabase project and submit again.',
+        'No database is attached, so this order was not saved and the form has been cleared. ' +
+        'Connect a Supabase project and submit again.',
     }
   }
 
@@ -106,8 +126,9 @@ export async function placeInvitationOrder(
   }
 
   const reference = orderReference()
-  const bookingAmount = BOOKING.amountPaise
-  const balance = balancePaise(template.pricePaise)
+  // Both legs from one derivation, so they satisfy invitation_orders_amounts_reconcile by
+  // construction rather than by two numbers happening to agree.
+  const { bookingPaise, balancePaise } = orderLegs(template.pricePaise)
 
   /**
    * A signed-in visitor gets their order attached immediately; a guest's stays unclaimed.
@@ -123,8 +144,8 @@ export async function placeInvitationOrder(
     template_slug: template.slug,
     template_name: template.name,
     template_price: template.pricePaise,
-    booking_amount: bookingAmount,
-    balance_amount: balance,
+    booking_amount: bookingPaise,
+    balance_amount: balancePaise,
     status: 'awaiting_payment',
     contact_name: d.contactName,
     contact_email: d.contactEmail,
@@ -137,11 +158,20 @@ export async function placeInvitationOrder(
 
   revalidatePath('/admin/orders')
 
+  /*
+   * "Order received", not "slot reserved".
+   *
+   * The row is inserted `awaiting_payment`, and /admin/orders tells staff in as many words that
+   * "nothing is reserved for them until it lands". Telling the customer the opposite on the same
+   * fact is the two halves of the product disagreeing, and the customer is the half that would
+   * find out late.
+   */
   return {
     status: 'placed',
     reference,
     message:
-      `Your slot is reserved under ${reference}. We will message you on WhatsApp to collect your ` +
+      `We have your details under ${reference}. Your design slot is held once the booking amount ` +
+      'reaches us — we will message you on WhatsApp with the payment link and to collect your ' +
       'names, dates and photographs.',
   }
 }

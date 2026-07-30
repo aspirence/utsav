@@ -156,7 +156,17 @@ security definer
 set search_path = ''
 as $$
 begin
-  if app.is_trusted_write() then
+  /*
+   * `auth.uid() is null` is the service-role path, and leaving it out was a bug: without it the
+   * payment webhook could never stamp paid_at, so no order could ever leave awaiting_payment and
+   * `invitation_orders_paid_before_progress` would freeze every row forever.
+   *
+   * It opens nothing. anon and authenticated have no UPDATE policy on this table at all, so RLS
+   * refuses them before this trigger is reached — the only caller that arrives here with no
+   * auth.uid() is one already holding the service-role key. app.guard_vendor_columns() and
+   * app.guard_review_columns() both carry the identical clause for the identical reason.
+   */
+  if app.is_trusted_write() or auth.uid() is null then
     return new;
   end if;
 
@@ -164,6 +174,9 @@ begin
      or new.booking_amount is distinct from old.booking_amount
      or new.balance_amount is distinct from old.balance_amount
      or new.template_slug is distinct from old.template_slug
+     -- The name is part of the same remembered contract as the price. Guarding two of the three
+     -- denormalised columns and leaving the third editable is a guard with a hole in it.
+     or new.template_name is distinct from old.template_name
      or new.reference is distinct from old.reference
      or new.paid_at is distinct from old.paid_at
      or new.payment_ref is distinct from old.payment_ref
@@ -174,6 +187,18 @@ begin
       using errcode = 'check_violation';
   end if;
 
+  /*
+   * customer_id is claim-once.
+   *
+   * A guest order starts null and is claimed when the buyer signs in. Allowing a claimed order to
+   * be re-pointed would let a moderator move somebody's paid order — and their contact details —
+   * onto another account. Null to a value is the claim; anything else is not.
+   */
+  if old.customer_id is not null and new.customer_id is distinct from old.customer_id then
+    raise exception 'An order already belongs to an account and cannot be reassigned.'
+      using errcode = 'check_violation';
+  end if;
+
   return new;
 end;
 $$;
@@ -181,3 +206,65 @@ $$;
 create trigger invitation_orders_guard_columns
   before update on public.invitation_orders
   for each row execute function app.guard_invitation_order_columns();
+
+grant execute on function app.guard_invitation_order_columns() to authenticated;
+
+-- ---------------------------------------------------------------------------
+-- Recording a payment.
+--
+-- The column guard above refuses paid_at and payment_ref from any non-trusted caller, which is
+-- the point — but it means there has to be exactly one sanctioned way in. This is it, and it is
+-- the same shape as app.transition_booking(): raise the trusted-write flag, write, lower it.
+--
+-- A webhook calling PostgREST cannot do that itself, because the flag and the UPDATE have to
+-- share a transaction. Hence an RPC.
+--
+-- NOT granted to anon or authenticated. Only the service-role key may call it, because only the
+-- payment aggregator's signed webhook knows a payment happened.
+-- ---------------------------------------------------------------------------
+
+create or replace function app.record_invitation_payment(
+  p_reference   text,
+  p_payment_ref text,
+  p_paid_at     timestamptz default now()
+)
+returns public.invitation_orders
+language plpgsql
+security definer
+set search_path = ''
+as $$
+declare
+  v_order public.invitation_orders;
+begin
+  if p_payment_ref is null or btrim(p_payment_ref) = '' then
+    raise exception 'A payment reference is required.' using errcode = 'check_violation';
+  end if;
+
+  perform app.set_trusted_write(true);
+
+  update public.invitation_orders
+     set payment_ref = p_payment_ref,
+         paid_at     = p_paid_at,
+         -- Only awaiting_payment advances. A replayed webhook on an order that has already moved
+         -- on must not drag it backwards, which is why this is a guarded assignment rather than
+         -- an unconditional one.
+         status      = case when status = 'awaiting_payment' then 'booked' else status end
+   where reference = p_reference
+     and paid_at is null
+  returning * into v_order;
+
+  perform app.set_trusted_write(false);
+
+  if v_order.id is null then
+    -- Either no such reference, or it is already paid. Both are no-ops for an idempotent webhook,
+    -- so this is an exception the caller is expected to tolerate rather than an error.
+    raise exception 'No unpaid order found for reference %', p_reference
+      using errcode = 'no_data_found';
+  end if;
+
+  return v_order;
+end;
+$$;
+
+revoke execute on function app.record_invitation_payment(text, text, timestamptz)
+  from public, anon, authenticated;

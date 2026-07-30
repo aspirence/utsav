@@ -5,6 +5,14 @@ import { useActionState } from 'react'
 
 import { formatPaise } from '@utsava/db'
 
+import {
+  GooglePayMark,
+  LockMark,
+  PaytmMark,
+  ShieldMark,
+  UpiMark,
+} from '@/components/payment-marks'
+
 import { placeInvitationOrder, type BookingState } from './actions'
 
 /**
@@ -20,11 +28,15 @@ import { placeInvitationOrder, type BookingState } from './actions'
  * away. That line is not optional. Without it the button is a promise nothing keeps, and a
  * storefront that lies about payment is one a customer stops believing about everything else.
  *
- * ── THE SECURITY BADGE IS STILL CONDITIONAL, AND THAT IS NOT THE SAME THING ──
+ * ── THE SECURITY BADGES RENDER UNCONDITIONALLY, ALSO ON REQUEST ───────────────
  * "256-bit secure payment · Secured via Razorpay" is not a description of a journey; it is a
- * factual claim about an integration. With no aggregator configured it is false, in the same class
- * as the "Verified booking" badge the invitation reviews deliberately do not print. So it renders
- * only when `paymentLive` is true. A label can describe intent; a security badge cannot.
+ * factual claim about an integration. The conditional version was built and overruled, so it now
+ * shows whether or not RAZORPAY_KEY_ID is set — which means it is currently ahead of the code.
+ * Whoever wires payment should re-read this block and confirm it became true, rather than assuming
+ * it always was.
+ *
+ * `paymentLive` survives for one thing only: the line that says the payment link comes over
+ * WhatsApp, which disappears by itself the day a provider is configured.
  */
 export function BookingForm({
   templateSlug,
@@ -66,11 +78,11 @@ export function BookingForm({
         · first {offerSeats} couples
       </p>
 
-      <div className="bg-ink-900 px-5 py-6 text-center sm:px-8">
+      <div className="bg-primary-900 px-5 py-6 text-center sm:px-8">
         <h2 className="font-display text-2xl text-white">Start your invitation</h2>
         <ol className="mx-auto mt-4 max-w-sm space-y-2 text-left text-sm text-white/85">
           <Step n={1}>
-            Reserve — {formatPaise(bookingAmountPaise)} holds your design slot.
+            Book — {formatPaise(bookingAmountPaise)} confirms your design slot.
           </Step>
           <Step n={2}>Send details — names, dates, venues and photographs.</Step>
           <Step n={3}>Approve — your draft arrives on WhatsApp.</Step>
@@ -212,37 +224,47 @@ export function BookingForm({
             <button
               type="submit"
               disabled={pending}
-              className="mt-5 flex w-full items-center justify-center gap-2 rounded-xl bg-ink-900 px-6 py-4 text-sm font-semibold uppercase tracking-[0.08em] text-white transition-colors hover:bg-ink-800 disabled:opacity-60"
+              className="mt-5 flex w-full items-center justify-center gap-2 rounded-xl bg-primary-900 px-6 py-4 text-sm font-semibold uppercase tracking-[0.08em] text-white shadow-[0_10px_24px_-12px_rgba(103,41,33,0.7)] transition-colors hover:bg-primary-800 disabled:opacity-60"
             >
               {pending ? 'Reserving…' : `Pay ${formatPaise(bookingAmountPaise)} & continue`}
               <span aria-hidden="true">&rarr;</span>
             </button>
 
-            {paymentLive ? (
-              <p className="mt-3 text-center text-[11px] text-ink-500">
-                Secure payment · UPI, GPay, Paytm and cards accepted
-              </p>
-            ) : (
-              /*
-               * The label promises payment on an explicit product decision, so this line has to
-               * carry the truth instead: no aggregator is configured, so submitting saves the
-               * details and the payment link follows. It deliberately does not contradict the
-               * button — "next step is paying" is true either way — it just says where.
-               *
-               * Still no security badge. "256-bit · Secured via Razorpay" is a claim about an
-               * integration that does not exist, which is a different thing from a button label
-               * describing the journey.
-               */
-              <p className="mt-3 text-center text-[11px] leading-relaxed text-ink-500">
-                We send the {formatPaise(bookingAmountPaise)} payment link on WhatsApp — this step
-                saves your details and holds the slot.
-              </p>
-            )}
+            {/*
+              The trust row, as asked for.
 
-            <p className="mt-4 text-center text-[11px] leading-relaxed text-ink-500">
-              By continuing you agree to our{' '}
+              These two are claims about a payment integration, and they are rendered whether or
+              not one is configured — an explicit product decision, taken after the conditional
+              version was built and overruled twice. They become true the day RAZORPAY_KEY_ID is
+              set; until then they are ahead of the code, and whoever wires payment should check
+              this block still reads correctly rather than assuming it was always accurate.
+            */}
+            <div className="mt-5 flex flex-wrap items-center justify-center gap-x-4 gap-y-2 border-t border-ink-100 pt-4 text-[11px] text-ink-600">
+              <span className="inline-flex items-center gap-1.5">
+                <LockMark />
+                256-bit secure payment
+              </span>
+              <span className="inline-flex items-center gap-1.5">
+                <ShieldMark />
+                Secured via Razorpay
+              </span>
+            </div>
+
+            <div className="mt-3 flex flex-wrap items-center justify-center gap-x-4 gap-y-2">
+              <span className="text-[11px] font-medium text-ink-600">Instant payment options</span>
+              {/* Redrawn wordmarks, not the official brand assets — see the note in
+                  components/payment-marks.tsx before launch. */}
+              <span className="flex items-center gap-3.5">
+                <UpiMark />
+                <GooglePayMark />
+                <PaytmMark />
+              </span>
+            </div>
+
+            <p className="mt-4 border-t border-ink-100 pt-4 text-center text-[11px] leading-relaxed text-ink-500">
+              By paying, you agree to our{' '}
               <Link href="/p/terms" className="underline hover:text-ink-800">
-                terms
+                terms of service
               </Link>{' '}
               and{' '}
               <Link href="/p/privacy" className="underline hover:text-ink-800">
@@ -250,6 +272,27 @@ export function BookingForm({
               </Link>
               .
             </p>
+
+            <p className="mt-1.5 text-center text-[11px] italic leading-relaxed text-ink-500">
+              *The {formatPaise(bookingAmountPaise)} booking amount is refundable if you are not
+              satisfied with the draft.
+            </p>
+
+            {/*
+              The one sentence that must survive, and the only remaining use of `paymentLive`.
+
+              The button says "Pay" and the badges above say "secured", but with no aggregator
+              configured this submit does not charge anything. One quiet line saying where the
+              payment actually happens is what keeps the card from being a promise nothing keeps —
+              and it disappears by itself the moment RAZORPAY_KEY_ID is set, so nobody has to
+              remember to delete it.
+            */}
+            {!paymentLive && (
+              <p className="mt-2 text-center text-[11px] leading-relaxed text-ink-500">
+                We send the {formatPaise(bookingAmountPaise)} payment link on WhatsApp — this step
+                saves your details and holds the slot.
+              </p>
+            )}
           </div>
         </div>
       </form>
@@ -267,8 +310,10 @@ export function BookingForm({
 function Placed({ reference, message }: { reference: string; message: string }) {
   return (
     <div className="rounded-2xl bg-white p-7 text-center shadow-[0_20px_60px_-30px_rgba(24,17,12,0.35)] ring-1 ring-success-500/40 sm:p-10">
+      {/* "Order received", not "slot reserved" — the row is awaiting_payment, and /admin/orders
+          says in as many words that nothing is reserved until the money lands. */}
       <p className="text-xs font-semibold uppercase tracking-[0.14em] text-success-700">
-        Slot reserved
+        Order received
       </p>
       <p className="mt-4 font-mono text-2xl tracking-[0.1em] text-ink-900 sm:text-3xl">
         {reference}
@@ -299,7 +344,7 @@ function Step({ n, children }: { n: number; children: React.ReactNode }) {
   return (
     <li className="flex gap-2.5">
       <span
-        className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-white/15 text-[11px] font-semibold text-white"
+        className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-white/20 text-[11px] font-semibold text-white"
         aria-hidden="true"
       >
         {n}

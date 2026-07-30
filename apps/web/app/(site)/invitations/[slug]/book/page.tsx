@@ -6,7 +6,8 @@ import { formatPaise } from '@utsava/db'
 import { Container } from '@utsava/ui'
 
 import { TemplatePhone } from '@/components/template-phone'
-import { BOOKING, balancePaise, getInvitationTemplate } from '@/lib/invitation-templates'
+import { getInvitationTemplate, orderLegs } from '@/lib/invitation-templates'
+import { BOOKING } from '@/lib/invitation-templates'
 
 import { BookingForm } from './booking-form'
 
@@ -55,6 +56,13 @@ export default async function BookInvitationPage({
    */
   const paymentLive = Boolean(process.env.RAZORPAY_KEY_ID)
 
+  /*
+   * The same derivation the action uses, so the page cannot quote one number and the order record
+   * another. Passing BOOKING.amountPaise straight through was that bug in miniature: for a template
+   * priced under the booking amount the page said ₹99 while the row would have said ₹49.
+   */
+  const { bookingPaise, balancePaise } = orderLegs(template.pricePaise)
+
   return (
     <Container className="py-12 sm:py-16">
       <nav aria-label="Breadcrumb" className="mb-8 text-sm text-ink-600">
@@ -91,13 +99,16 @@ export default async function BookInvitationPage({
               in a builder.
             </Assurance>
             <Assurance
-              title={`Start with ${formatPaise(BOOKING.amountPaise)} — the rest after you approve`}
+              title={`Start with ${formatPaise(bookingPaise)} — the rest after you approve`}
             >
-              The {formatPaise(balancePaise(template.pricePaise))} balance is due only once you have
-              seen the draft and you like it.
+              The {formatPaise(balancePaise)} balance is due only once you have seen the draft and
+              you like it.
             </Assurance>
             <Assurance title="See it before you pay">
-              Every design has a live preview on its own page. Nothing here is a mock-up.
+              {/* Softened deliberately. The stronger version — "nothing here is a mock-up" — is
+                  false for any template still showing a poster instead of a playing preview, which
+                  is every one of them until video links are pasted in the console. */}
+              Every design has its own preview page. What you look at is the design you get.
             </Assurance>
           </ul>
 
@@ -126,8 +137,8 @@ export default async function BookInvitationPage({
           templateSlug={template.slug}
           templateName={template.name}
           templatePricePaise={template.pricePaise}
-          bookingAmountPaise={BOOKING.amountPaise}
-          balancePaise={balancePaise(template.pricePaise)}
+          bookingAmountPaise={bookingPaise}
+          balancePaise={balancePaise}
           regularAmountPaise={BOOKING.regularAmountPaise}
           offerSeats={BOOKING.offerSeats}
           paymentLive={paymentLive}

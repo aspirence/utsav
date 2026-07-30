@@ -9,9 +9,8 @@ import { HowItWorks } from '@/components/how-it-works'
 import { ReviewsMarquee } from '@/components/reviews-marquee'
 import { TemplatePhone } from '@/components/template-phone'
 import {
-  balancePaise,
-  BOOKING,
   getInvitationTemplate,
+  orderLegs,
   getLiveInvitationTemplates,
   INVITATION_FEATURES,
   INVITATION_REVIEWS,
@@ -57,6 +56,9 @@ export default async function InvitationTemplatePage({
   // An unpublished template is a 404 for a visitor, which is what the RLS policy would give a
   // direct query anyway. Staff see drafts in the console, not here.
   if (!template || !template.isActive) notFound()
+
+  // One derivation for both numbers, matching the booking page and the action.
+  const { bookingPaise, balancePaise } = orderLegs(template.pricePaise)
 
   const others = (await getLiveInvitationTemplates())
     .filter((t) => t.slug !== template.slug)
@@ -138,16 +140,29 @@ export default async function InvitationTemplatePage({
               {/* The booking page says the rest. Two numbers here rather than a vague "payment is
                   arranged later": what it costs to start, and when the remainder falls due. */}
               <p className="text-ink-500 mt-3 max-w-md text-xs leading-relaxed">
-                Start with {formatPaise(BOOKING.amountPaise)} to reserve a design slot. The{' '}
-                {formatPaise(balancePaise(template.pricePaise))} balance is due only after you have
-                seen the draft and approved it.
+                Start with {formatPaise(bookingPaise)} to book a design slot. The{' '}
+                {formatPaise(balancePaise)} balance is due only after you have seen the draft and
+                approved it.
               </p>
             </div>
 
+            {/*
+              THE THREE INVENTED TILES ARE GONE, and this comment is here so they are not put back
+              without the data behind them.
+
+              "4.9 / 5 · 56+ couples" was a rating on a product with zero orders and no invitation
+              review table — a fabricated number, which is the same defect class as printing a
+              "Verified booking" badge on an unverified review. "100% Satisfaction" is a guarantee
+              with no written terms and no refund path. "Secure / Safe checkout" claimed checkout
+              security one click before a form that takes no payment.
+
+              What replaces them is true today. When invitation orders and reviews exist, derive a
+              real rating and count from them and bring the first tile back.
+            */}
             <dl className="mt-10 grid max-w-lg grid-cols-3 gap-3">
-              <Trust label="4.9 / 5" note="56+ couples" />
-              <Trust label="100%" note="Satisfaction" />
-              <Trust label="Secure" note="Safe checkout" />
+              <Trust label={formatPaise(bookingPaise)} note="To start" />
+              <Trust label="All-inclusive" note="No add-ons" />
+              <Trust label="One link" note="Works on any phone" />
             </dl>
           </div>
 

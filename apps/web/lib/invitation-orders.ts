@@ -52,10 +52,14 @@ export async function getInvitationOrders(): Promise<AdminInvitationOrder[]> {
     .order('created_at', { ascending: false })
     .limit(200)
 
-  // An empty table is a real answer here, unlike the template list — a console that invents
-  // orders is a console that shows revenue nobody earned. Only a missing database falls back.
-  if (error) return DEMO
-  if (!data) return DEMO
+  /*
+   * An empty table is a real answer, and so is a failure — a console that invents orders is a
+   * console that shows revenue nobody earned. `if (error) return DEMO` was exactly that: a
+   * PostgREST hiccup would have substituted five fabricated orders and totalled ₹297 of
+   * "Collected" on the tiles. Only a missing database falls back.
+   */
+  if (error) throw new Error(`Could not read invitation orders: ${error.message}`)
+  if (!data) return []
 
   return data.map((o) => ({
     id: o.id,
@@ -78,9 +82,7 @@ export async function getInvitationOrders(): Promise<AdminInvitationOrder[]> {
   }))
 }
 
-export async function getInvitationOrder(
-  reference: string,
-): Promise<AdminInvitationOrder | null> {
+export async function getInvitationOrder(reference: string): Promise<AdminInvitationOrder | null> {
   return (await getInvitationOrders()).find((o) => o.reference === reference) ?? null
 }
 
