@@ -337,17 +337,21 @@ export default async function InvitationTemplatePage({
 }
 
 /**
- * A rule with a diamond set into it — the device that separates the names from the date on most
- * printed wedding invitations. The lines fade at their outer ends rather than stopping, so it reads
- * as a flourish and not as a border somebody forgot to finish.
+ * A plain rule under the title.
+ *
+ * It had a diamond set into its middle — the device printed invitations use to separate the names
+ * from the date — and that came out on request. One element now instead of three, since with
+ * nothing to sit either side of there is no reason for two half-lines and a gap between them.
+ *
+ * It still fades at both ends rather than stopping square, which is what keeps it reading as a
+ * flourish rather than as a border somebody forgot to finish.
  */
 function Ornament() {
   return (
-    <div aria-hidden="true" className="mt-6 flex max-w-sm items-center gap-3">
-      <span className="via-ink-300 h-px flex-1 bg-gradient-to-r from-transparent to-transparent" />
-      <span className="text-primary-600/70 text-[10px]">&#9670;</span>
-      <span className="via-ink-300 h-px flex-1 bg-gradient-to-r from-transparent to-transparent" />
-    </div>
+    <div
+      aria-hidden="true"
+      className="via-ink-300 mt-6 h-px max-w-sm bg-gradient-to-r from-transparent to-transparent"
+    />
   )
 }
 
