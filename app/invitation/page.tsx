@@ -26,9 +26,42 @@ export const metadata: Metadata = {
   robots: { index: false, follow: false },
 }
 
+/**
+ * The five textures the scene is built from, preloaded.
+ *
+ * WITHOUT THIS THE PAGE LOADS IN THREE SEQUENTIAL STEPS. The document arrives, the page
+ * chunk mounts Invitation3D, that pulls in the three.js chunk — and only once that has
+ * downloaded and executed does TextureLoader ask for the first image. So 533 KB of artwork
+ * did not begin downloading until roughly 170 KB of JavaScript had finished, and the whole
+ * time the viewer sat looking at a dark rectangle.
+ *
+ * A preload link in the document moves the images onto the first round trip, next to the
+ * scripts rather than behind them. TextureLoader uses an Image under the hood, so `as=image`
+ * is the same request the browser is already going to make and it comes straight out of the
+ * cache when the scene finally asks.
+ *
+ * The order matters slightly: the stage is the backdrop and the doors are what the eye
+ * actually watches move, so those three go first. Nothing renders until all five resolve —
+ * the card at t=0 is doors-closed, and a stage with no doors on it is not a frame anybody
+ * should see.
+ *
+ * fetchPriority high because this is the LCP of this route. There is nothing else on it.
+ */
+const SCENE_TEXTURES = [
+  '/inv/stage.webp',
+  '/inv/door-l.webp',
+  '/inv/door-r.webp',
+  '/inv/lotus.webp',
+  '/inv/lights.webp',
+] as const
+
 export default function InvitationPage() {
   return (
     <main className="relative h-[100dvh] w-full overflow-hidden bg-[#2a1f16]">
+      {SCENE_TEXTURES.map((href) => (
+        <link key={href} rel="preload" as="image" href={href} fetchPriority="high" />
+      ))}
+
       <Invitation3D />
 
       {/* The way back. Sits over the scene rather than above it, because the scene owns

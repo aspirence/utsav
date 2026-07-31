@@ -376,9 +376,18 @@ export default function InvitationScene({ onTime }: { onTime: (t: number) => voi
   }, [])
 
   return (
+    /*
+     * 200ms, down from 700.
+     *
+     * The fade exists to stop the canvas appearing as a hard cut against the backdrop, and
+     * 200ms does that just as well. The other 500 were spent on the one thing this route
+     * cannot afford to spend them on: they sat between "everything has loaded" and "the
+     * viewer can see it", after a wait that was already the complaint. A reveal is worth a
+     * fifth of a second, not most of one.
+     */
     <div
       ref={host}
-      className="absolute inset-0 transition-opacity duration-700"
+      className="absolute inset-0 transition-opacity duration-200"
       style={{ opacity: ready ? 1 : 0 }}
     />
   )
