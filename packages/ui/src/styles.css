@@ -145,6 +145,24 @@
   }
 
   /*
+   * The discovery search bar's dropdown.
+   *
+   * Mounted only while open, so the panel's first frame IS the start of the animation and no
+   * enter/exit state machine is needed. 160ms with an expo-out curve: long enough to read as a
+   * movement, short enough that a second click does not feel queued behind it.
+   */
+  @keyframes u-drop {
+    from {
+      opacity: 0;
+      transform: translateY(-6px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  /*
    * Infinite vertical marquee.
    *
    * The track holds the list twice and translates up by exactly half its height, so the

@@ -111,27 +111,12 @@ export async function DiscoverView({
             {category?.description ? ` · ${category.description}` : ''}
           </p>
 
-          {/* Style taxonomy filter. Plan §S2/§11 — the wedge's defining filter. */}
-          {category && category.styleTags.length > 0 && (
-            <div className="mt-5 flex flex-wrap gap-2">
-              <FilterChip href={basePath} active={styles.length === 0} label="All styles" />
-              {category.styleTags.map((tag) => {
-                const active = styles.includes(tag.slug)
-                const next = active
-                  ? styles.filter((s) => s !== tag.slug)
-                  : [...styles, tag.slug]
-                return (
-                  <FilterChip
-                    key={tag.slug}
-                    href={buildHref(basePath, { styles: next, freeOn, sort })}
-                    active={active}
-                    label={tag.name}
-                  />
-                )
-              })}
-            </div>
-          )}
-
+          {/*
+            The style taxonomy used to be a row of chips above the filters. It is now the first
+            segment of the search bar below — plan §S2/§11 still makes it the wedge's defining
+            filter, but a row of nine chips plus a row of five selects was two filter systems
+            stacked on one another.
+          */}
           {/* Plan §2 Must-tier filters. WedMeGood and the rest of the category ship
               price and rating filters but no availability filter at all — "free on my
               date" is the one that saves a couple from messaging twenty studios to find
@@ -148,6 +133,7 @@ export async function DiscoverView({
               basePath={basePath}
               priceRungs={content.priceRungs}
               showDurationFilter={content.showDurationFilter}
+              styleTags={category?.styleTags ?? []}
             />
           </Suspense>
 
