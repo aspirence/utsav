@@ -261,12 +261,27 @@ export function classifyPreview(url: string | null): {
 } {
   if (!url) return { kind: 'none', embedUrl: null }
 
+  /*
+   * An app-served path is a video too.
+   *
+   * new URL() throws on '/clip.webm', so everything served out of public/ used to classify
+   * as 'none' and silently fall back to the poster. Since migration 20260731150000 the
+   * column admits those paths, and a renderer that then refuses to play them would make the
+   * constraint a lie. The single-leading-slash test is the constraint's own: '//host/x.mp4'
+   * is protocol-relative and belongs to another origin, so it is not treated as local.
+   */
+  if (url.startsWith('/') && !url.startsWith('//')) {
+    return /\.(mp4|webm|ogv|ogg|mov|m4v)$/i.test(url)
+      ? { kind: 'video', embedUrl: null }
+      : { kind: 'none', embedUrl: null }
+  }
+
   let parsed: URL
   try {
     parsed = new URL(url)
   } catch {
-    // Not a URL at all. The DB constraint requires https://, so this is a row written before
-    // that constraint or by hand.
+    // Neither an absolute URL nor an app path. The column constraint refuses both, so this
+    // is a row written before it existed or edited straight in the database.
     return { kind: 'none', embedUrl: null }
   }
 
