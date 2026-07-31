@@ -50,3 +50,7 @@ pnpm-debug.log*
 
 # vercel
 .vercel
+
+# Photographs uploaded through the console while developing. Content, not source — and on a real
+# deploy these live in Supabase Storage, not on the filesystem. See apps/web/lib/image-upload.ts.
+apps/web/public/uploads/

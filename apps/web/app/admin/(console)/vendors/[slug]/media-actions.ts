@@ -6,6 +6,8 @@ import { z } from 'zod'
 
 import { createUtsavaServerClient, hasSupabaseEnv, slugSchema } from '@utsava/db'
 
+import { storeImage } from '@/lib/image-upload'
+
 /**
  * A listing's photographs: add, edit, remove, and choose the cover.
  *
@@ -16,12 +18,18 @@ import { createUtsavaServerClient, hasSupabaseEnv, slugSchema } from '@utsava/db
  * manager or staff at field_agent and up; nothing here authorizes anything, it validates and
  * sequences. Plan §6 makes RLS the boundary and a zero-row result is what refusal looks like.
  *
- * ── WHY THE IMAGE IS A PATH RATHER THAN AN UPLOAD ────────────────────────────
- * There is no upload pipeline yet — plan §S3's portfolio editor is still outstanding — so this
- * takes what storageImageUrl() can already resolve: a Supabase Storage object path, or a URL for a
- * file that is already served. That is the same trade the invitation templates made, and it has
- * the same consequence: nothing here resizes, validates dimensions, or guarantees the file exists.
- * When the upload pipeline lands, this field becomes its output rather than a text input.
+ * ── THE IMAGE IS UPLOADED, NOT PASTED ───────────────────────────────────────
+ * It was a text field taking a path or a link. It now takes a file off the operator's machine and
+ * lib/image-upload.ts stores it — Supabase Storage when a project is attached, public/uploads
+ * otherwise so the feature works while building.
+ *
+ * That module is where the security lives, and it is worth knowing what it does before touching
+ * this: the file type is decided by magic bytes rather than by the client's MIME string, SVG is
+ * refused outright because a script-carrying document served from our origin is stored XSS, and
+ * the stored filename is a generated uuid so no caller-controlled string ever reaches a path.
+ *
+ * Editing without choosing a new file keeps the existing object. The old file is not deleted when
+ * a new one replaces it — see the note on deleteVendorMedia for why that is deliberate.
  *
  * ── TWO THINGS THIS DELIBERATELY DOES NOT SET ────────────────────────────────
  * `moderation` is left at its default of 'pending' on insert. `media_select_live` requires
@@ -40,31 +48,30 @@ export type MediaActionState =
   | { status: 'unconfigured'; message: string }
 
 /**
- * A Storage object path, or something already servable.
+ * What the uploader gives back, re-checked before it is written.
  *
- * Scheme allowlist, not a blocklist: `javascript:`, `data:` and `blob:` all parse through new URL()
- * and a blocklist is a list of the attacks somebody has thought of. A bare path is accepted because
- * that is what Storage objects look like — `vendor-slug/cover.webp` — and storageImageUrl() turns
- * it into a CDN render URL.
+ * storeImage() already generates this value, so in practice it always passes — the point is that
+ * the column is validated at the boundary regardless of who fills it, and a future caller that is
+ * less careful hits the same wall. No scheme other than a leading `/` or a bare object path, and
+ * no traversal.
  */
-const imagePath = z
+const storedPath = z
   .string()
   .trim()
-  .min(3, 'Give the photograph a path or a link')
+  .min(3)
   .max(500)
   .refine((v) => {
+    if (v.includes('..')) return false
     if (v.startsWith('//')) return false
-    if (v.startsWith('/')) return true
-    if (/^https:\/\//.test(v)) return true
-    // A Storage object path: no scheme, no leading slash, no traversal.
-    return /^[A-Za-z0-9][A-Za-z0-9._\-/]*$/.test(v) && !v.includes('..')
-  }, 'Use a Storage path (vendor-slug/photo.webp), a path on this site starting with /, or an https:// link')
+    if (v.startsWith('/')) return /^\/[A-Za-z0-9._\-/]+$/.test(v)
+    return /^[A-Za-z0-9][A-Za-z0-9._\-/]*$/.test(v)
+  }, 'That stored path is not valid.')
 
 const mediaSchema = z.object({
   vendorSlug: slugSchema,
   /** Present when editing, absent when adding. */
   mediaId: z.string().uuid().optional(),
-  storagePath: imagePath,
+  storagePath: storedPath,
   altText: z.string().trim().max(300).optional(),
   caption: z.string().trim().max(500).optional(),
   styleTags: z.array(z.string().trim().min(1).max(32)).max(8, 'Eight style tags is the maximum'),
@@ -76,19 +83,49 @@ export async function saveVendorMedia(
   _prev: MediaActionState,
   form: FormData,
 ): Promise<MediaActionState> {
+  const vendorSlug = text(form.get('vendorSlug'))
+  const slugCheck = slugSchema.safeParse(vendorSlug)
+  if (!slugCheck.success) {
+    return { status: 'error', message: 'That listing reference is not valid.' }
+  }
+
+  /*
+   * The upload happens before the database check, and deliberately before the hasSupabaseEnv()
+   * guard below.
+   *
+   * The slug is validated first because it becomes the storage folder, and storeImage() takes it
+   * on trust — it says so in its own doc comment. Nothing else from the form is used in a path.
+   *
+   * Ordering the upload first means a rejected file (wrong format, too large) is reported as a
+   * file problem rather than reaching a database error that describes something else.
+   */
+  const file = form.get('photo')
+  const existingPath = text(form.get('existingPath'))
+  let storagePath = existingPath
+
+  if (file instanceof File && file.size > 0) {
+    const stored = await storeImage(file, slugCheck.data)
+    if (!stored.ok) return { status: 'error', message: stored.message }
+    storagePath = stored.storagePath
+  }
+
+  if (!storagePath) {
+    return { status: 'error', message: 'Choose a photograph to upload.' }
+  }
+
   if (!hasSupabaseEnv()) {
     return {
       status: 'unconfigured',
       message:
-        'No Supabase instance is connected, so nothing was saved. This gallery is showing sample ' +
-        'photographs — run `pnpm db:start` and set NEXT_PUBLIC_SUPABASE_URL to manage real ones.',
+        'The image was saved to disk, but there is no database to record it in — this gallery is ' +
+        'showing sample photographs. Connect a Supabase project to keep real ones.',
     }
   }
 
   const parsed = mediaSchema.safeParse({
-    vendorSlug: text(form.get('vendorSlug')),
+    vendorSlug,
     mediaId: text(form.get('mediaId')),
-    storagePath: text(form.get('storagePath')),
+    storagePath,
     altText: text(form.get('altText')),
     caption: text(form.get('caption')),
     styleTags: splitTags(text(form.get('styleTags'))),

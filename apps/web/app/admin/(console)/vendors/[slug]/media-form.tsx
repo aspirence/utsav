@@ -43,7 +43,25 @@ export function MediaForm({
   })
   const closeDialog = useAdminModalClose()
 
-  const [path, setPath] = useState(initial?.storagePath ?? '')
+  const [picked, setPicked] = useState<File | null>(null)
+  const [objectUrl, setObjectUrl] = useState<string | null>(null)
+
+  /**
+   * Preview the chosen file, and hand the memory back.
+   *
+   * createObjectURL pins the file in memory until it is revoked. Without the cleanup, opening this
+   * dialog and picking a few photographs holds every one of them for the life of the tab — which on
+   * a gallery screen is exactly what somebody does.
+   */
+  useEffect(() => {
+    if (!picked) {
+      setObjectUrl(null)
+      return
+    }
+    const url = URL.createObjectURL(picked)
+    setObjectUrl(url)
+    return () => URL.revokeObjectURL(url)
+  }, [picked])
 
   // Close on success. In an effect rather than inline: calling a parent's setState during render is
   // the classic "cannot update a component while rendering a different component".
@@ -51,43 +69,59 @@ export function MediaForm({
     if (state.status === 'done') closeDialog?.()
   }, [state, closeDialog])
 
-  const preview = previewSrc(path)
+  /** The newly picked file wins; otherwise whatever is already stored, if it can be resolved. */
+  const preview = objectUrl ?? previewSrc(initial?.storagePath ?? '')
 
   return (
     <form action={act} className="space-y-5">
       <input type="hidden" name="vendorSlug" value={vendorSlug} />
       {initial && <input type="hidden" name="mediaId" value={initial.id} />}
 
-      <Field label="Image path or link" htmlFor="storagePath" required>
+      {/* Editing with no new file chosen keeps the object already stored. */}
+      {initial && <input type="hidden" name="existingPath" value={initial.storagePath} />}
+
+      <Field label="Photograph" htmlFor="photo" required={!initial}>
         <input
-          id="storagePath"
-          name="storagePath"
-          type="text"
-          required
-          value={path}
-          onChange={(e) => setPath(e.target.value)}
-          placeholder="lightleak-studio/pheras-01.webp"
-          className={INPUT}
+          id="photo"
+          name="photo"
+          type="file"
+          /*
+           * A hint to the file picker, not a check. The server decides the type from the file's
+           * magic bytes — `accept` is trivially bypassed and `File.type` is a client-supplied
+           * string. See lib/image-upload.ts.
+           */
+          accept="image/jpeg,image/png,image/webp"
+          required={!initial}
+          onChange={(e) => setPicked(e.target.files?.[0] ?? null)}
+          className="text-ink-700 file:bg-ink-900 hover:file:bg-ink-800 block w-full text-sm file:mr-4 file:cursor-pointer file:rounded-md file:border-0 file:px-4 file:py-2 file:text-sm file:font-medium file:text-white"
         />
         <Hint>
-          A Storage object path, a path on this site starting with <code>/</code>, or an{' '}
-          <code>https://</code> link. There is no upload here yet — plan §S3&rsquo;s portfolio
-          editor is still to come.
+          JPEG, PNG or WebP, up to 8&nbsp;MB. SVG is refused — it can carry scripts, and one served
+          from this site would run with this site&rsquo;s privileges.
+          {initial && ' Leave this empty to keep the current photograph.'}
         </Hint>
 
-        {/* The preview. A broken path shows as a broken frame, which is the answer. */}
+        {/* The preview. A locally-picked file previews from an object URL; an existing one from
+            wherever it is already stored. */}
         <div className="border-ink-200 bg-ink-50 mt-3 flex aspect-[4/3] w-full max-w-xs items-center justify-center overflow-hidden rounded-lg border">
           {preview ? (
             // eslint-disable-next-line @next/next/no-img-element -- plan §12: no Vercel optimizer
             <img src={preview} alt="" className="h-full w-full object-cover" />
           ) : (
             <p className="text-ink-500 px-4 text-center text-xs leading-relaxed">
-              {path
-                ? 'Cannot preview a bare Storage path from here — it resolves through the CDN once saved.'
-                : 'The photograph will preview here.'}
+              The photograph will preview here.
             </p>
           )}
         </div>
+
+        {picked && (
+          <p className="text-ink-500 mt-2 text-xs">
+            {picked.name} · {(picked.size / (1024 * 1024)).toFixed(1)} MB
+            {picked.size > 8 * 1024 * 1024 && (
+              <span className="text-danger-700"> — over the 8 MB limit</span>
+            )}
+          </p>
+        )}
       </Field>
 
       <Field label="Alt text" htmlFor="altText">
@@ -196,12 +230,12 @@ export function MediaForm({
 }
 
 /**
- * What the preview can actually render.
+ * Preview an already-stored photograph.
  *
- * A bare Storage path resolves through the Supabase CDN, and building that URL needs the project
- * URL plus a bucket — which the browser has but which would render a 404 for an object that does
- * not exist yet. So the preview only shows what it can be sure of: a local path or an https link.
- * Saying "cannot preview this from here" is more useful than a broken image icon.
+ * Only a path this page can serve directly. A bare Storage object path would need the project URL
+ * and bucket rebuilt client-side, which storageImageUrl() already does on the server for the
+ * gallery tiles — duplicating it here to fill a preview that the tile behind the dialog is already
+ * showing is not worth a second copy of that logic.
  */
 function previewSrc(value: string): string | null {
   const v = value.trim()

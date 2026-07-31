@@ -16,6 +16,15 @@ const config: NextConfig = {
   experimental: {
     // Plan §13: LCP < 2.5 s on 4G mid-range Android.
     optimizePackageImports: ['@utsava/ui'],
+
+    /*
+     * Server Actions take a 1 MB body by default, which rejects almost any photograph straight off
+     * a camera or a phone. 8 MB matches MAX_BYTES in lib/image-upload.ts — the two are a pair, and
+     * raising one without the other just moves where the confusing error comes from.
+     */
+    serverActions: {
+      bodySizeLimit: '8mb',
+    },
   },
 
   async headers() {
