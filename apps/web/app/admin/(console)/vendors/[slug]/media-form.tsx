@@ -3,11 +3,16 @@
 import { useActionState, useEffect, useState } from 'react'
 
 import { useAdminModalClose } from '@/components/admin-modal'
+import { mediaVocabulary } from '@/lib/category-attributes'
 
 import { saveVendorMedia, type MediaActionState } from './media-actions'
 
 /**
- * Add or edit one photograph on a listing.
+ * Add or edit one picture on a listing.
+ *
+ * The wording comes from the listing's category, the form does not. A venue is uploading a picture
+ * of a lawn and a caterer one of a chaat counter; both go through the same column, the same magic-
+ * byte check and the same moderation queue. Only the labels change — see mediaVocabulary().
  *
  * The path field gets a live preview: paste something and the image renders below it before you
  * save. That is the whole point of this form — the failure it prevents is a path that saves fine
@@ -25,9 +30,11 @@ import { saveVendorMedia, type MediaActionState } from './media-actions'
  */
 export function MediaForm({
   vendorSlug,
+  categorySlug,
   initial,
 }: {
   vendorSlug: string
+  categorySlug: string
   initial?: {
     id: string
     storagePath: string
@@ -38,6 +45,7 @@ export function MediaForm({
     isCover: boolean
   }
 }) {
+  const v = mediaVocabulary(categorySlug)
   const [state, act, pending] = useActionState<MediaActionState, FormData>(saveVendorMedia, {
     status: 'idle',
   })
@@ -80,7 +88,7 @@ export function MediaForm({
       {/* Editing with no new file chosen keeps the object already stored. */}
       {initial && <input type="hidden" name="existingPath" value={initial.storagePath} />}
 
-      <Field label="Photograph" htmlFor="photo" required={!initial}>
+      <Field label={v.noun} htmlFor="photo" required={!initial}>
         <input
           id="photo"
           name="photo"
@@ -98,7 +106,7 @@ export function MediaForm({
         <Hint>
           JPEG, PNG or WebP, up to 8&nbsp;MB. SVG is refused — it can carry scripts, and one served
           from this site would run with this site&rsquo;s privileges.
-          {initial && ' Leave this empty to keep the current photograph.'}
+          {initial && ` Leave this empty to keep the current ${v.noun}.`}
         </Hint>
 
         {/* The preview. A locally-picked file previews from an object URL; an existing one from
@@ -109,7 +117,7 @@ export function MediaForm({
             <img src={preview} alt="" className="h-full w-full object-cover" />
           ) : (
             <p className="text-ink-500 px-4 text-center text-xs leading-relaxed">
-              The photograph will preview here.
+              The {v.noun} will preview here.
             </p>
           )}
         </div>
@@ -130,7 +138,7 @@ export function MediaForm({
           name="altText"
           type="text"
           defaultValue={initial?.altText ?? ''}
-          placeholder="Bride and groom during the pheras"
+          placeholder={v.altPlaceholder}
           className={INPUT}
         />
         <Hint>
@@ -145,25 +153,22 @@ export function MediaForm({
           name="caption"
           type="text"
           defaultValue={initial?.caption ?? ''}
-          placeholder="Gomti Nagar, December 2026"
+          placeholder={v.captionPlaceholder}
           className={INPUT}
         />
-        <Hint>Shown under the photograph on the listing. Optional.</Hint>
+        <Hint>Shown under the {v.noun} on the listing. Optional.</Hint>
       </Field>
 
-      <Field label="Style tags" htmlFor="styleTags">
+      <Field label={v.tagsLabel} htmlFor="styleTags">
         <input
           id="styleTags"
           name="styleTags"
           type="text"
           defaultValue={initial?.styleTags.join(', ') ?? ''}
-          placeholder="candid, traditional"
+          placeholder={v.tagsPlaceholder}
           className={INPUT}
         />
-        <Hint>
-          Comma-separated, eight at most. These are what the style filter on the discovery page
-          searches, so they should match the category&rsquo;s taxonomy.
-        </Hint>
+        <Hint>{v.tagsHint}</Hint>
       </Field>
 
       <div className="grid gap-5 sm:grid-cols-2">
@@ -190,7 +195,7 @@ export function MediaForm({
             <span>
               Use as the listing&rsquo;s cover
               <span className="text-ink-500 block text-xs">
-                Only one photograph can be — ticking this demotes the current cover.
+                Only one {v.noun} can be — ticking this demotes the current cover.
               </span>
             </span>
           </label>
@@ -217,11 +222,11 @@ export function MediaForm({
           disabled={pending}
           className="bg-ink-900 hover:bg-ink-800 rounded-md px-4 py-2.5 text-sm font-medium text-white transition-colors disabled:opacity-60"
         >
-          {pending ? 'Saving…' : initial ? 'Save changes' : 'Add photograph'}
+          {pending ? 'Saving…' : initial ? 'Save changes' : `Add ${v.noun}`}
         </button>
         {!initial && (
           <span className="text-ink-500 text-xs leading-relaxed">
-            New photographs wait for moderation before customers see them.
+            New uploads wait for moderation before customers see them.
           </span>
         )}
       </div>
@@ -230,7 +235,7 @@ export function MediaForm({
 }
 
 /**
- * Preview an already-stored photograph.
+ * Preview an already-stored picture.
  *
  * Only a path this page can serve directly. A bare Storage object path would need the project URL
  * and bucket rebuilt client-side, which storageImageUrl() already does on the server for the

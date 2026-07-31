@@ -150,6 +150,121 @@ export function isMoneyField(field: AttributeField): boolean {
   return field.type === 'money'
 }
 
+/**
+ * What a listing's pictures are called, and what the tags on them mean.
+ *
+ * The gallery was headed "Photographs" on every listing, which is a photographer's word. On a
+ * venue the pictures are of the lawn and the banquet hall; on a caterer they are of dishes and
+ * live counters; on a decorator they are of a mandap that was built. Same panel, same table, same
+ * upload — different question being asked, so different words.
+ *
+ * `tagsHint` matters more than it looks. On a photographer the tags are shooting styles and feed
+ * the discovery style filter; on a venue the useful tag is which space the picture shows, because
+ * that is what a couple is trying to see. The field is one `text[]` column either way — what
+ * changes is what an operator is told to put in it.
+ */
+export interface MediaVocabulary {
+  /** Panel heading. */
+  heading: string
+  /** One line under it, saying what these pictures are for. */
+  description: string
+  /** The singular noun, used in buttons and messages: "Add a {noun}". */
+  noun: string
+  /** Shown when there are none yet. */
+  empty: string
+  tagsLabel: string
+  tagsHint: string
+  tagsPlaceholder: string
+  altPlaceholder: string
+  captionPlaceholder: string
+}
+
+const DEFAULT_MEDIA: MediaVocabulary = {
+  heading: 'Photographs',
+  description: 'The images on this listing’s cards. Plan §13 gates going live on five.',
+  noun: 'photograph',
+  empty: 'No photographs yet. This listing cannot go live until it has five.',
+  tagsLabel: 'Style tags',
+  tagsHint:
+    'Comma-separated, eight at most. These are what the style filter on the discovery page ' +
+    'searches, so they should match the category’s taxonomy.',
+  tagsPlaceholder: 'candid, traditional',
+    altPlaceholder: 'Bride and groom during the pheras',
+  captionPlaceholder: 'Gomti Nagar, December 2026',
+}
+
+const MEDIA_BY_CATEGORY: Record<string, MediaVocabulary> = {
+  photography: DEFAULT_MEDIA,
+
+  venues: {
+    heading: 'Venue photos',
+    description:
+      'What a couple sees before deciding to visit. Plan §13 gates going live on five.',
+    noun: 'photo',
+    empty: 'No photos yet. A venue nobody can see is a venue nobody books, and five is the floor.',
+    tagsLabel: 'Which space',
+    tagsHint:
+      'Comma-separated — banquet hall, lawn, mandap area, entrance, guest room, parking. A couple ' +
+      'is trying to work out what each picture is of.',
+    tagsPlaceholder: 'main lawn, banquet hall',
+    altPlaceholder: 'The main lawn set for an evening reception',
+    captionPlaceholder: 'Seats 450 · Gomti Nagar',
+  },
+
+  catering: {
+    heading: 'Food photos',
+    description: 'Dishes, counters and how a spread actually looks. Five is the go-live floor.',
+    noun: 'photo',
+    empty: 'No photos yet. Catering is chosen on how the food looks, and five is the floor.',
+    tagsLabel: 'What it shows',
+    tagsHint:
+      'Comma-separated — Awadhi, chaat counter, live counter, dessert, plated, buffet. Say what ' +
+      'is in the picture, not how good it is.',
+    tagsPlaceholder: 'chaat counter, Awadhi',
+    altPlaceholder: 'Live chaat counter at a reception',
+    captionPlaceholder: 'Awadhi spread for 300 guests',
+  },
+
+  decor: {
+    heading: 'Setup photos',
+    description: 'Work they have actually built. Plan §13 gates going live on five.',
+    noun: 'photo',
+    empty: 'No photos yet. A decorator is judged entirely on past setups, and five is the floor.',
+    tagsLabel: 'What was built',
+    tagsHint:
+      'Comma-separated — mandap, stage, entrance, haldi, sangeet, car decor. Match the setups ' +
+      'listed in the details above.',
+    tagsPlaceholder: 'mandap, stage',
+    altPlaceholder: 'Floral mandap with fairy lights',
+    captionPlaceholder: 'Fresh flowers · Sushant Golf City',
+  },
+
+  makeup: {
+    heading: 'Portfolio looks',
+    description: 'Finished looks on real clients. Plan §13 gates going live on five.',
+    noun: 'look',
+    empty: 'No looks yet. Bridal makeup is booked on the portfolio, and five is the floor.',
+    tagsLabel: 'Look type',
+    tagsHint:
+      'Comma-separated — bridal, engagement, HD, airbrush, natural, party. This is what a bride ' +
+      'searches by.',
+    tagsPlaceholder: 'bridal, HD',
+    altPlaceholder: 'Bridal look with a traditional red lehenga',
+    captionPlaceholder: 'HD makeup · Lucknow',
+  },
+}
+
+/**
+ * The vocabulary for a category, falling back to the photographer's.
+ *
+ * The fallback is not laziness: a category with no entry still has a gallery, still gates on five
+ * pictures, and still needs a heading. "Photographs" is the least wrong general word for a picture
+ * of somebody's work.
+ */
+export function mediaVocabulary(categorySlug: string): MediaVocabulary {
+  return MEDIA_BY_CATEGORY[categorySlug] ?? DEFAULT_MEDIA
+}
+
 export type AttributeValue = string | number | boolean | string[]
 export type AttributeMap = Record<string, AttributeValue>
 

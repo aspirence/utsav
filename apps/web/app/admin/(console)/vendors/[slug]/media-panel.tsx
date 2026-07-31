@@ -1,6 +1,7 @@
 import { AdminModal } from '@/components/admin-modal'
 import { Panel, Pill } from '@/components/admin-ui'
 import { getVendorMedia, type AdminMediaItem } from '@/lib/admin-media'
+import { mediaVocabulary } from '@/lib/category-attributes'
 
 import { MediaForm } from './media-form'
 import { RemoveMediaButton } from './remove-media-button'
@@ -9,15 +10,28 @@ import { RemoveMediaButton } from './remove-media-button'
  * The listing's gallery — the photographs that become the cards on the discovery pages.
  *
  * A Server Component that reads and lays out; every write is behind a dialog, matching the rest of
- * the console. The "Add photograph" trigger sits in the panel header rather than under the grid,
- * for the reason the templates screen was rebuilt: a list and its create form stacked on each other
- * read as one long muddle.
+ * the console. The add trigger sits in the panel header rather than under the grid, for the reason
+ * the templates screen was rebuilt: a list and its create form stacked on each other read as one
+ * long muddle.
+ *
+ * THE WORDS COME FROM THE CATEGORY, the mechanism does not. Every listing uses the same table, the
+ * same upload and the same moderation — but a venue's pictures are of a lawn and a banquet hall, a
+ * caterer's are of dishes, a decorator's are of a mandap that was built. Heading, button, empty
+ * state and the tag field all come from mediaVocabulary(); calling all of them "Photographs" was a
+ * photographer's word pasted onto four other trades.
  *
  * THE MODERATION STATE IS ON EVERY TILE, not in a footnote. `media_select_live` requires
  * `approved`, so a pending photograph is invisible to customers — and the single most confusing
  * thing this screen could do is show a full gallery to staff while the public card sits empty.
  */
-export async function VendorMediaPanel({ vendorSlug }: { vendorSlug: string }) {
+export async function VendorMediaPanel({
+  vendorSlug,
+  categorySlug,
+}: {
+  vendorSlug: string
+  categorySlug: string
+}) {
+  const v = mediaVocabulary(categorySlug)
   const media = await getVendorMedia(vendorSlug)
   const isDemo = media.some((m) => m.isDemo)
   const live = media.filter((m) => m.moderation === 'approved').length
@@ -27,18 +41,16 @@ export async function VendorMediaPanel({ vendorSlug }: { vendorSlug: string }) {
     <Panel className="mt-5">
       <div className="border-ink-200 flex flex-wrap items-start justify-between gap-3 border-b px-4 py-3">
         <div>
-          <h2 className="font-display text-ink-900 text-lg">Photographs</h2>
-          <p className="text-ink-600 mt-0.5 text-sm">
-            These are the images on this listing&rsquo;s cards. Plan §13 gates going live on five.
-          </p>
+          <h2 className="font-display text-ink-900 text-lg">{v.heading}</h2>
+          <p className="text-ink-600 mt-0.5 text-sm">{v.description}</p>
         </div>
         <AdminModal
-          trigger="Add photograph"
-          title="Add a photograph"
-          description="Give it a path or a link, then the details that travel with it — alt text, a caption and its style tags."
+          trigger={`Add ${v.noun}`}
+          title={`Add a ${v.noun}`}
+          description={`Choose a file, then the details that travel with it — alt text, a caption and ${v.tagsLabel.toLowerCase()}.`}
           width="lg"
         >
-          <MediaForm vendorSlug={vendorSlug} />
+          <MediaForm vendorSlug={vendorSlug} categorySlug={categorySlug} />
         </AdminModal>
       </div>
 
@@ -56,15 +68,13 @@ export async function VendorMediaPanel({ vendorSlug }: { vendorSlug: string }) {
 
       {isDemo && (
         <p className="border-warning-500/40 bg-warning-50 text-warning-700 m-4 rounded-md border px-3 py-2.5 text-sm leading-relaxed">
-          These are sample photographs, not database rows — no Supabase instance is attached, so
-          adding or editing will not write anything.
+          These are samples, not database rows — no Supabase instance is attached, so adding or
+          editing will not write anything.
         </p>
       )}
 
       {media.length === 0 ? (
-        <p className="text-ink-500 p-8 text-center text-sm">
-          No photographs yet. This listing cannot go live until it has five.
-        </p>
+        <p className="text-ink-500 p-8 text-center text-sm">{v.empty}</p>
       ) : (
         /*
           Denser than it was. Three columns of 4:3 on a wide screen made each photograph about
@@ -74,7 +84,7 @@ export async function VendorMediaPanel({ vendorSlug }: { vendorSlug: string }) {
         */
         <ul className="grid grid-cols-2 gap-3 p-4 sm:grid-cols-3 lg:grid-cols-5 xl:grid-cols-6">
           {media.map((m) => (
-            <MediaTile key={m.id} item={m} vendorSlug={vendorSlug} />
+            <MediaTile key={m.id} item={m} vendorSlug={vendorSlug} categorySlug={categorySlug} />
           ))}
         </ul>
       )}
@@ -90,7 +100,15 @@ export async function VendorMediaPanel({ vendorSlug }: { vendorSlug: string }) {
  * anyway, and the alt-text line is the one that carries a fault worth spotting. Hover or focus the
  * tile and the full detail is there.
  */
-function MediaTile({ item, vendorSlug }: { item: AdminMediaItem; vendorSlug: string }) {
+function MediaTile({
+  item,
+  vendorSlug,
+  categorySlug,
+}: {
+  item: AdminMediaItem
+  vendorSlug: string
+  categorySlug: string
+}) {
   const detail = [item.caption, item.styleTags.join(' · ')].filter(Boolean).join(' — ')
 
   return (
@@ -142,12 +160,13 @@ function MediaTile({ item, vendorSlug }: { item: AdminMediaItem; vendorSlug: str
           <AdminModal
             trigger="Edit"
             variant="quiet"
-            title="Edit photograph"
-            description="Changes appear on the public card as soon as they are saved, provided the photograph is approved."
+            title={`Edit ${mediaVocabulary(categorySlug).noun}`}
+            description="Changes appear on the public card as soon as they are saved, provided it is approved."
             width="lg"
           >
             <MediaForm
               vendorSlug={vendorSlug}
+              categorySlug={categorySlug}
               initial={{
                 id: item.id,
                 storagePath: item.storagePath,

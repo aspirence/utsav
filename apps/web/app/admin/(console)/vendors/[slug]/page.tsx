@@ -176,8 +176,11 @@ export default async function AdminVendorDetailPage({
         Full width, below the two columns. The gallery is the widest thing on this screen — a grid
         of image tiles squeezed into the left column would show two per row and turn a five-photo
         check into scrolling.
+
+        It takes the same categorySlug as the details form above, so a venue's gallery asks for
+        venue photos and which space each one shows, not "photographs" and "style tags".
       */}
-      <VendorMediaPanel vendorSlug={vendor.slug} />
+      <VendorMediaPanel vendorSlug={vendor.slug} categorySlug={details.categorySlug} />
     </>
   )
 }
