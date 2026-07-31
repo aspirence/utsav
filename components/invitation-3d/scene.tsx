@@ -69,7 +69,14 @@ const seg = (t: number, [a, b]: readonly [number, number]) => ease(clamp01((t - 
 const FRAME_W = 4.5
 const FRAME_H = FRAME_W * (1280 / 720)
 
-export default function InvitationScene({ onTime }: { onTime: (t: number) => void }) {
+export default function InvitationScene({
+  onTime,
+  loop = false,
+}: {
+  onTime: (t: number) => void
+  /** Replay from the top after the card has been held, rather than stopping on it. */
+  loop?: boolean
+}) {
   const host = useRef<HTMLDivElement>(null)
   const [ready, setReady] = useState(false)
   const tick = useRef(onTime)
@@ -332,13 +339,46 @@ export default function InvitationScene({ onTime }: { onTime: (t: number) => voi
       const ro = new ResizeObserver(resize)
       ro.observe(el)
 
+      /*
+        The loop.
+
+        `loop` runs the film again from the top instead of stopping on the last frame, after
+        holding it for HOLD_S so the finished card can actually be read. It is off unless the
+        page asks for it: somebody who opened the invitation to look at it should not have it
+        restart under them forever, while the phone frame on the home page has nothing to show
+        but a repeat.
+
+        This replaces an earlier attempt that remounted the iframe on a timer from outside.
+        That was wrong twice over. It reloaded the page rather than replaying the animation,
+        and its interval was set from the opening phase table — nine seconds against a film
+        that runs DUR, so it cut the thing off less than halfway and never showed the wording
+        at all. A loop belongs where the clock is.
+
+        Resetting `started` rather than zeroing an accumulator keeps the timebase in the same
+        units as requestAnimationFrame's argument, so a dropped frame slides the next cycle
+        rather than accumulating drift.
+      */
+      const HOLD_S = 2.5
+
       let started: number | null = null
       function frame(now: number) {
         if (started === null) started = now
-        const t = Math.min((now - started) / 1000, DUR)
+        const elapsed = (now - started) / 1000
+
+        if (loop && elapsed >= DUR + HOLD_S) {
+          started = now
+          apply(0)
+          renderer.render(scene, camera)
+          raf = requestAnimationFrame(frame)
+          return
+        }
+
+        const t = Math.min(elapsed, DUR)
         apply(t)
         renderer.render(scene, camera)
-        if (t < DUR) raf = requestAnimationFrame(frame)
+
+        // Without loop, stop on the last frame. With it, keep going through the hold.
+        if (loop || t < DUR) raf = requestAnimationFrame(frame)
       }
 
       apply(0)
@@ -373,7 +413,7 @@ export default function InvitationScene({ onTime }: { onTime: (t: number) => voi
       renderer.dispose()
       renderer.domElement.remove()
     }
-  }, [])
+  }, [loop])
 
   return (
     /*

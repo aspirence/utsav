@@ -55,7 +55,20 @@ const SCENE_TEXTURES = [
   '/inv/lights.webp',
 ] as const
 
+/**
+ * `?loop=1` replays the film instead of stopping on the finished card. Opt-in, because the
+ * two audiences want opposite things: somebody reading the invitation should not have it
+ * restart under them forever, while the phone frame on the home page has nothing to show but
+ * a repeat and asks for one.
+ *
+ * THE FLAG IS READ IN THE BROWSER, NOT HERE. Taking it from searchParams would make this
+ * route dynamic, and it is embedded eight times on the home page — that is eight server
+ * renders of a page whose entire payload is static and whose work is all on the GPU. The
+ * scene is a client component that has to mount before anything happens anyway, so reading
+ * location.search there costs nothing and keeps this prerendered.
+ */
 export default function InvitationPage() {
+
   return (
     <main className="relative h-[100dvh] w-full overflow-hidden bg-[#2a1f16]">
       {SCENE_TEXTURES.map((href) => (

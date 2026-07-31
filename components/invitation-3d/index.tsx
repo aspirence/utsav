@@ -26,9 +26,21 @@ const clamp01 = (v: number) => (v < 0 ? 0 : v > 1 ? 1 : v)
 export function Invitation3D() {
   const [t, setT] = useState(0)
 
+  /*
+   * Read once, on mount, from the URL this page was opened with.
+   *
+   * useState's initialiser rather than an effect: an effect would render one frame with the
+   * wrong value and restart the scene when it corrected itself, which on a WebGL scene means
+   * building the whole thing twice. There is no SSR pass to disagree with — the scene is
+   * dynamic(ssr: false), so this only ever runs in a browser.
+   */
+  const [loop] = useState(
+    () => typeof window !== 'undefined' && /[?&]loop=(1|true)/.test(window.location.search),
+  )
+
   return (
     <div className="relative h-full w-full overflow-hidden bg-[#2a1f16]">
-      <Scene onTime={setT} />
+      <Scene onTime={setT} loop={loop} />
       <Wording t={t} />
       <Music />
     </div>
