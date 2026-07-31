@@ -304,9 +304,20 @@ export default async function InvitationTemplatePage({
         wide
       />
 
+      {/*
+        White, not the site's warm #fffcf9.
+
+        The band above it is a full-bleed photograph, so this one has to declare a surface of its
+        own or it inherits the body's paper tone and the two read as one long fade. bg-surface-raised
+        is the token for true white — a literal bg-white would be the same pixels today and the
+        wrong thing the day the palette moves.
+
+        The wrapper carries the colour rather than the Container, so the fill runs edge to edge
+        while the content stays inside the same gutter as every other section.
+      */}
       {others.length > 0 && (
-        <Container className="pb-16">
-          <section className="border-ink-200 border-t pt-10">
+        <section className="bg-surface-raised">
+          <Container className="pb-16 pt-10">
             <h2 className="font-display text-ink-900 text-2xl">Other collections</h2>
             <ul className="mt-6 grid grid-cols-2 gap-6 sm:grid-cols-4">
               {others.map((other) => (
@@ -329,8 +340,8 @@ export default async function InvitationTemplatePage({
                 </li>
               ))}
             </ul>
-          </section>
-        </Container>
+          </Container>
+        </section>
       )}
     </>
   )
