@@ -130,20 +130,95 @@ function Preview({ item, active }: { item: PhonePreview; active: boolean }) {
 
   if (item.preview === 'embed' && item.embedUrl) {
     return active ? (
-      <iframe
-        src={item.embedUrl}
-        title={`${item.name} preview`}
-        loading="lazy"
-        allow="autoplay; encrypted-media; picture-in-picture"
-        referrerPolicy="strict-origin-when-cross-origin"
-        className="h-full w-full border-0"
-      />
+      <EmbedPreview name={item.name} url={item.embedUrl} />
     ) : (
       <Poster item={item} />
     )
   }
 
   return <Poster item={item} />
+}
+
+/**
+ * How long one run of the invitation takes, in milliseconds.
+ *
+ * Read off the phase table in components/invitation-3d/scene.tsx rather than guessed: the
+ * doors swing 1.2–3.4s, the card is drawn 3.5–5.6s and the flowers clear by 6.0s. So the
+ * film is over at six seconds and the card then simply stands there.
+ *
+ * The extra three seconds are for reading it. Restarting the moment the animation ends makes
+ * the card something that flickers past; three seconds is long enough to take in the names
+ * and short enough that somebody scrolling by still sees a door open.
+ */
+const REPLAY_MS = 9_000
+
+/**
+ * An embedded page in the phone, replayed on a loop.
+ *
+ * WHY IT REMOUNTS RATHER THAN ASKING THE PAGE TO REPLAY. The invitation runs off its own
+ * clock, starting from zero when it mounts, and there is no way to rewind it from out here —
+ * postMessage would need a protocol on both sides, and this frame is meant to embed any page
+ * we own, not one that has been taught a handshake. Changing the `key` throws the iframe away
+ * and builds a new one, which restarts everything the page does: the doors, the drawing, the
+ * music cue. The textures are in the browser cache by the second run, so it is a re-render
+ * and not a re-download.
+ *
+ * ONLY OUR OWN PAGES LOOP. A YouTube or Vimeo embed already loops through its own URL
+ * parameters; tearing that iframe down every nine seconds would restart the player, refetch
+ * the video and look far worse than leaving it alone. So the interval is armed only for a
+ * same-origin path, which is the case that has no other way to repeat.
+ *
+ * IT STOPS WHEN NOBODY IS WATCHING. A hidden tab still runs its timers, and a WebGL scene
+ * rebuilding itself every nine seconds in a background tab is a laptop fan for no reason.
+ */
+function EmbedPreview({ name, url }: { name: string; url: string }) {
+  const isOwnPage = url.startsWith('/') && !url.startsWith('//')
+  const [run, setRun] = useState(0)
+
+  useEffect(() => {
+    if (!isOwnPage) return
+
+    // Someone who has asked for less motion has asked for exactly this: a thing that starts
+    // over on its own, forever. It plays once and stays on the finished card.
+    const reduced = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches
+    if (reduced) return
+
+    let timer: ReturnType<typeof setInterval> | undefined
+
+    const start = () => {
+      timer ??= setInterval(() => setRun((n) => n + 1), REPLAY_MS)
+    }
+    const stop = () => {
+      if (timer !== undefined) {
+        clearInterval(timer)
+        timer = undefined
+      }
+    }
+
+    const onVisibility = () => (document.hidden ? stop() : start())
+
+    if (!document.hidden) start()
+    document.addEventListener('visibilitychange', onVisibility)
+
+    return () => {
+      stop()
+      document.removeEventListener('visibilitychange', onVisibility)
+    }
+  }, [isOwnPage])
+
+  return (
+    <iframe
+      // The key, not the src: a changed src would navigate the existing frame and leave its
+      // history and audio context behind. A changed key is a new element.
+      key={run}
+      src={url}
+      title={`${name} preview`}
+      loading="lazy"
+      allow="autoplay; encrypted-media; picture-in-picture"
+      referrerPolicy="strict-origin-when-cross-origin"
+      className="h-full w-full border-0"
+    />
+  )
 }
 
 /**
