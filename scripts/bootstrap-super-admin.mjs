@@ -32,12 +32,12 @@ import { createClient } from '@supabase/supabase-js'
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..')
 
 function loadEnv() {
-  const path = join(ROOT, 'apps', 'web', '.env.local')
+  const path = join(ROOT, '.env.local')
   let raw
   try {
     raw = readFileSync(path, 'utf8')
   } catch {
-    die(`No ${path}. Copy .env.example to apps/web/.env.local and fill in the Supabase keys.`)
+    die(`No ${path}. Copy .env.example to .env.local and fill in the Supabase keys.`)
   }
 
   const env = {}
@@ -178,6 +178,6 @@ if (roleError) die(`Could not grant the super role: ${roleError.message}`)
 console.log('  · super role granted\n')
 
 console.log('  Done. Sign in at /admin/login with that email and password.')
-console.log('  Now remove ADMIN_LOCAL_EMAIL / _PASSWORD / _SECRET from apps/web/.env.local —')
+console.log('  Now remove ADMIN_LOCAL_EMAIL / _PASSWORD / _SECRET from .env.local —')
 console.log('  they are already inert with Supabase attached, and a dead credential in a file')
 console.log('  is one somebody will later assume still works.\n')

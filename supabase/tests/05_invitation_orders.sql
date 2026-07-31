@@ -11,7 +11,7 @@
 -- ============================================================================
 
 begin;
-select plan(16);
+select plan(18);
 
 -- ---------------------------------------------------------------------------
 -- Fixtures
@@ -165,10 +165,17 @@ select throws_ok(
 );
 
 -- Plan §6's real worry: a customer re-pricing an order they can see.
+--
+-- The WITH has to be at the top level. Postgres allows a data-modifying statement in a CTE
+-- only there — not in a sub-SELECT, and not in a FROM-clause subquery, which is how this
+-- was first written and why the whole file failed to parse.
+with attempted_update as (
+  update public.invitation_orders set booking_amount = 1
+   where reference = 'UTS-INV-AAAA50'
+  returning 1
+)
 select is(
-  (select count(*)::int from (
-     update public.invitation_orders set booking_amount = 1
-      where reference = 'UTS-INV-AAAA50' returning 1) u),
+  (select count(*)::int from attempted_update),
   0,
   'a customer cannot update their own order — no UPDATE policy admits them'
 );
