@@ -112,61 +112,108 @@ export default async function InvitationTemplatePage({
         a list of features about it.
       */}
           <div className="grid gap-10 lg:grid-cols-[minmax(0,1fr)_360px] lg:items-start lg:gap-14">
+            {/*
+              LAID OUT LIKE AN INVITATION, NOT LIKE A PRODUCT PAGE.
+
+              The previous version was dark pills, a boxed feature card and three bordered tiles —
+              the default shape of every SaaS product page, and interchangeable with the reference
+              it was built from. This borrows the typographic conventions of the thing actually
+              being sold: letter-spaced small caps, a rule with a centred diamond, a price set as
+              display type rather than a badge, and facts separated by hairlines instead of boxed up.
+
+              Nothing was dropped to achieve it — every element that went was replaced by a quieter
+              one carrying the same information.
+            */}
             <div className="lg:order-1">
               {template.tags.length > 0 && (
-                <ul className="flex flex-wrap gap-2">
-                  {template.tags.map((tag) => (
-                    <li
-                      key={tag}
-                      className="bg-ink-900 rounded-full px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.14em] text-white"
-                    >
+                <ul className="text-primary-700 flex flex-wrap items-center gap-x-3 gap-y-1 text-[11px] font-semibold uppercase tracking-[0.22em]">
+                  {template.tags.map((tag, i) => (
+                    <li key={tag} className="flex items-center gap-3">
+                      {i > 0 && (
+                        <span aria-hidden="true" className="text-primary-700/40">
+                          &#9670;
+                        </span>
+                      )}
                       {tag}
                     </li>
                   ))}
                 </ul>
               )}
 
-              <h1 className="font-display text-ink-900 mt-5 text-4xl leading-tight sm:text-5xl">
+              <h1 className="font-display text-ink-900 mt-4 text-[2.6rem] leading-[1.08] sm:text-[3.4rem]">
                 {template.name}
               </h1>
 
-              <div className="mt-6 flex flex-wrap items-center gap-3">
-                <p className="font-display border-primary-600/40 bg-primary-50 text-ink-800 rounded-full border px-5 py-2.5 text-[15px]">
-                  Available at{' '}
-                  <span className="text-ink-900 text-xl font-semibold tabular-nums">
+              <Ornament />
+
+              {/*
+                The price as display type with its terms beside it, the way an invitation sets a
+                date. A vertical hairline rather than a second capsule: two bordered pills side by
+                side is exactly the shape this is trying to get away from.
+              */}
+              <div className="mt-7 flex flex-wrap items-end gap-x-7 gap-y-4">
+                <div>
+                  <p className="text-ink-500 text-[10px] font-semibold uppercase tracking-[0.2em]">
+                    Available at
+                  </p>
+                  <p className="font-display text-ink-900 mt-1 text-4xl leading-none tabular-nums">
                     {formatPaise(template.pricePaise)}
-                  </span>
-                </p>
-                <p className="border-ink-200 text-ink-600 rounded-full border px-4 py-2.5 text-xs font-semibold uppercase tracking-[0.12em]">
-                  One-time / all-inclusive
-                </p>
+                  </p>
+                </div>
+                <div className="border-ink-300/70 self-stretch border-l pl-7">
+                  <p className="text-ink-500 text-[10px] font-semibold uppercase tracking-[0.2em]">
+                    Terms
+                  </p>
+                  <p className="font-display text-ink-800 mt-1 text-[15px] leading-snug">
+                    One-time payment
+                    <span className="block">Everything included</span>
+                  </p>
+                </div>
               </div>
 
-              <section className="bg-surface-raised mt-8 rounded-xl p-5 sm:p-6">
-                <h2 className="font-display text-ink-700 text-base">
-                  What&rsquo;s included in the price
+              {/*
+                A ruled list, not a card. The white panel was the heaviest object on the page and it
+                was holding the lightest content — seven short phrases. Hairlines group them just as
+                well without the weight, and the diamond bullet ties back to the rule above.
+              */}
+              <section className="mt-10">
+                <h2 className="text-ink-500 border-ink-300/70 border-t pt-3 text-[10px] font-semibold uppercase tracking-[0.2em]">
+                  What is included
                 </h2>
-                {/* A definition list rather than a styled <ul>: each item is a name and what it
-                means, and the two-column grid keeps seven of them from becoming a wall. */}
-                <ul className="mt-4 grid gap-3 sm:grid-cols-2">
+                <ul className="mt-1 grid sm:grid-cols-2 sm:gap-x-10">
                   {INVITATION_FEATURES.map((feature) => (
-                    <li key={feature} className="text-ink-800 flex items-start gap-2.5">
-                      <Tick />
+                    <li
+                      key={feature}
+                      className="border-ink-200/70 text-ink-800 flex items-baseline gap-3 border-b py-2.5"
+                    >
+                      <span aria-hidden="true" className="text-primary-600/60 text-[8px]">
+                        &#9670;
+                      </span>
                       {/* 15px, not 14. Playfair is a high-contrast face — its thin strokes go
-                        spindly a size below where the sans body face is still solid. */}
+                          spindly a size below where the sans body face is still solid. */}
                       <span className="font-display text-[15px] leading-snug">{feature}</span>
                     </li>
                   ))}
                 </ul>
               </section>
 
-              <div className="mt-8">
+              <div className="mt-10">
+                {/*
+                  A rectangle with an offset rule, not a pill. rounded-full is what every checkout
+                  on the internet looks like; a bordered block reads like the panel on a letterpress
+                  card, which is what the rest of this column is now doing.
+                */}
                 <Link
                   href={`/invitations/${template.slug}/book`}
-                  className="bg-primary-600 hover:bg-primary-700 inline-flex h-12 items-center gap-2 rounded-full px-7 text-sm font-semibold uppercase tracking-[0.1em] text-white transition-colors"
+                  className="bg-primary-700 hover:bg-primary-800 ring-primary-700/25 group inline-flex h-14 items-center gap-3 px-9 text-[13px] font-semibold uppercase tracking-[0.2em] text-white ring-1 ring-offset-2 transition-colors"
                 >
                   Order now
-                  <span aria-hidden="true">&rarr;</span>
+                  <span
+                    aria-hidden="true"
+                    className="transition-transform group-hover:translate-x-1"
+                  >
+                    &rarr;
+                  </span>
                 </Link>
                 {/* The booking page says the rest. Two numbers here rather than a vague "payment is
                   arranged later": what it costs to start, and when the remainder falls due. */}
@@ -187,13 +234,14 @@ export default async function InvitationTemplatePage({
               with no written terms and no refund path. "Secure / Safe checkout" claimed checkout
               security one click before a form that takes no payment.
 
-              What replaces them is true today. When invitation orders and reviews exist, derive a
-              real rating and count from them and bring the first tile back.
+              What replaces them is true today, and it is now one ruled row rather than three
+              bordered boxes — the boxes were three more rectangles on a page that already had
+              enough of them.
             */}
-              <dl className="mt-10 grid max-w-lg grid-cols-3 gap-3">
-                <Trust label={formatPaise(bookingPaise)} note="To start" />
-                <Trust label="All-inclusive" note="No add-ons" />
-                <Trust label="One link" note="Works on any phone" />
+              <dl className="border-ink-300/70 mt-12 grid max-w-lg grid-cols-3 border-t pt-5">
+                <Fact label={formatPaise(bookingPaise)} note="To start" />
+                <Fact label="All-inclusive" note="No add-ons" divided />
+                <Fact label="One link" note="Works on any phone" divided />
               </dl>
             </div>
 
@@ -288,28 +336,33 @@ export default async function InvitationTemplatePage({
   )
 }
 
-function Trust({ label, note }: { label: string; note: string }) {
+/**
+ * A rule with a diamond set into it — the device that separates the names from the date on most
+ * printed wedding invitations. The lines fade at their outer ends rather than stopping, so it reads
+ * as a flourish and not as a border somebody forgot to finish.
+ */
+function Ornament() {
   return (
-    <div className="border-ink-200 bg-surface-raised rounded-lg border px-3 py-3 text-center">
-      <dt className="font-display text-ink-900 text-lg leading-none">{label}</dt>
-      <dd className="text-ink-600 mt-1 text-[11px] uppercase tracking-[0.1em]">{note}</dd>
+    <div aria-hidden="true" className="mt-6 flex max-w-sm items-center gap-3">
+      <span className="via-ink-300 h-px flex-1 bg-gradient-to-r from-transparent to-transparent" />
+      <span className="text-primary-600/70 text-[10px]">&#9670;</span>
+      <span className="via-ink-300 h-px flex-1 bg-gradient-to-r from-transparent to-transparent" />
     </div>
   )
 }
 
-function Tick() {
+/**
+ * One fact in the ruled row.
+ *
+ * `divided` draws the hairline on its own left edge, so the first cell has none and the three read
+ * as columns of one row rather than as three separate objects — which is the whole difference
+ * between this and the bordered tiles it replaced.
+ */
+function Fact({ label, note, divided }: { label: string; note: string; divided?: boolean }) {
   return (
-    <svg
-      viewBox="0 0 20 20"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth={2}
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      className="text-success-700 mt-0.5 h-4 w-4 shrink-0"
-      aria-hidden="true"
-    >
-      <path d="M4 10.5l4 4 8-9" />
-    </svg>
+    <div className={divided ? 'border-ink-200 border-l pl-4' : ''}>
+      <dt className="font-display text-ink-900 text-lg leading-none">{label}</dt>
+      <dd className="text-ink-600 mt-1.5 text-[10px] uppercase tracking-[0.16em]">{note}</dd>
+    </div>
   )
 }
