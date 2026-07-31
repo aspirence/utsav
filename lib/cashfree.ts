@@ -282,6 +282,8 @@ export interface CashfreePaymentEvent {
   paymentAmount: number
   paymentTime: string | null
   method: string | null
+  /** Only on PAYMENT_FAILED_WEBHOOK. Cashfree's own description, kept verbatim. */
+  failureReason: string | null
 }
 
 /**
@@ -337,5 +339,23 @@ export function parseCashfreeEvent(body: unknown): CashfreePaymentEvent | null {
     paymentAmount: Number(payment?.payment_amount ?? 0),
     paymentTime: typeof payment?.payment_time === 'string' ? payment.payment_time : null,
     method,
+    failureReason: readFailureReason(data?.error_details ?? payment?.error_details),
   }
+}
+
+/**
+ * Cashfree puts the reason under error_details on a failure, and has moved it between the
+ * data and payment objects across API versions — so both are tried. The description is what
+ * a person needs ("insufficient funds"); the codes beside it survive in webhook_payload.
+ */
+function readFailureReason(details: unknown): string | null {
+  if (typeof details === 'string') return details || null
+  if (typeof details !== 'object' || details === null) return null
+
+  const d = details as Record<string, unknown>
+  for (const key of ['error_description', 'error_reason', 'error_code']) {
+    const v = d[key]
+    if (typeof v === 'string' && v.trim()) return v
+  }
+  return null
 }

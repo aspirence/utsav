@@ -1,4 +1,4 @@
-import { createAdminClient, hasSupabaseEnv, rupeesToPaise } from '@/lib/db'
+import { createAdminClient, hasSupabaseEnv, rupeesToPaise, type Json } from '@/lib/db'
 import {
   isCashfreeConfigured,
   parseCashfreeEvent,
@@ -97,13 +97,6 @@ export async function POST(request: Request): Promise<Response> {
     return json(200, { ignored: true })
   }
 
-  if (event.type !== 'PAYMENT_SUCCESS_WEBHOOK') {
-    // Failures and drop-offs leave the order awaiting_payment, which is already true. There
-    // is nothing to write, and writing a failure reason onto the order would need a column
-    // that does not exist yet.
-    return json(200, { ignored: true, type: event.type })
-  }
-
   const supabase = createAdminClient()
 
   /*
@@ -119,7 +112,7 @@ export async function POST(request: Request): Promise<Response> {
    */
   const { data: order, error: readError } = await supabase
     .from('invitation_orders')
-    .select('reference, booking_amount, paid_at')
+    .select('id, reference, booking_amount, paid_at')
     .eq('reference', event.orderId)
     .maybeSingle()
 
@@ -135,13 +128,78 @@ export async function POST(request: Request): Promise<Response> {
   }
 
   const paidPaise = rupeesToPaise(event.paymentAmount)
+
+  /*
+   * THE LEDGER ROW IS WRITTEN FIRST, AND FOR EVERY EVENT.
+   *
+   * Before the amount check, before the order is touched, and for failures and drop-offs as
+   * well as successes. The order carries a summary — one paid_at, one payment_ref — which
+   * can only ever describe the attempt that worked. Everything else used to vanish: a
+   * declined card, a customer who abandoned the page, a payment for the wrong amount. Those
+   * are precisely the ones support is asked about, and "I paid and nothing happened" has no
+   * answer if the attempt was never recorded.
+   *
+   * Writing it first also means a crash between here and the order update leaves evidence
+   * rather than silence. The order can be reconciled from the ledger; the ledger cannot be
+   * reconstructed from the order.
+   *
+   * `on conflict do nothing` on (aggregator, aggregator_payment_id) is the idempotency:
+   * Cashfree re-delivers, and the same payment must land once.
+   */
+  const { error: ledgerError } = await supabase.from('invitation_payments').upsert(
+    {
+      order_id: order.id,
+      aggregator: 'cashfree',
+      aggregator_payment_id: event.paymentId,
+      amount: paidPaise,
+      status: event.paymentStatus || event.type.replace('PAYMENT_', '').replace('_WEBHOOK', ''),
+      method: event.method,
+      // The constraint requires a timestamp on SUCCESS. A failure legitimately has none.
+      paid_at:
+        event.type === 'PAYMENT_SUCCESS_WEBHOOK'
+          ? (event.paymentTime ?? new Date().toISOString())
+          : null,
+      failure_reason: event.failureReason,
+      // `body` is typed unknown because it came out of JSON.parse and nothing should assume
+      // its shape. It is JSON by construction — it was just parsed from a JSON string — so
+      // the assertion is narrowing a proof the type system cannot see, not a guess.
+      webhook_payload: body as Json,
+    },
+    { onConflict: 'aggregator,aggregator_payment_id', ignoreDuplicates: true },
+  )
+
+  if (ledgerError) {
+    // A payment we cannot write down is one we must not silently accept. 500 asks Cashfree
+    // to retry, which is the right outcome — the event is not lost, it arrives again.
+    console.error('[cashfree] could not write the payment ledger:', ledgerError.message)
+    return json(500, { error: 'Could not record the payment.' })
+  }
+
+  if (event.type !== 'PAYMENT_SUCCESS_WEBHOOK') {
+    // Recorded, but the order does not move. A failure or a drop-off leaves it
+    // awaiting_payment, which it already is.
+    return json(200, { recorded: true, type: event.type, movedOrder: false })
+  }
+
+  /*
+   * THE AMOUNT IS CHECKED AGAINST THE ORDER BEFORE IT IS MARKED PAID.
+   *
+   * A valid signature proves Cashfree sent this, not that it says what we expect. Orders can
+   * be created with the wrong amount, partial captures exist, and an order_id could in
+   * principle be reused across environments. Marking a ₹99 booking paid on the strength of a
+   * ₹1 payment is the kind of thing nobody finds until reconciliation.
+   *
+   * booking_amount is integer paise; Cashfree sends rupees. rupeesToPaise rounds rather than
+   * truncating, for the reason spelled out where it is defined.
+   */
   if (paidPaise !== order.booking_amount) {
     console.error(
       `[cashfree] amount mismatch on ${event.orderId}: paid ${paidPaise}, expected ${order.booking_amount}`,
     )
     // 200 on purpose. The webhook was delivered correctly and retrying changes nothing; the
-    // discrepancy is for a person to settle, and it is now in the log with both figures.
-    return json(200, { ignored: true, reason: 'amount-mismatch' })
+    // discrepancy is for a person to settle — and it is now a ledger row they can find,
+    // not just a log line.
+    return json(200, { recorded: true, movedOrder: false, reason: 'amount-mismatch' })
   }
 
   const { error: rpcError } = await supabase.rpc('record_invitation_payment', {

@@ -151,6 +151,23 @@ export default async function AdminOrdersPage() {
                 ),
             },
             {
+              /*
+                What the money actually did.
+
+                The amount column above says whether an order was settled; this says how, when
+                and under which reference — the three things needed to match a row against
+                Cashfree's own dashboard, and the three that were previously in the database
+                and nowhere on screen.
+
+                Failed and abandoned attempts show here too. An order that reads "unpaid" with
+                two declined cards behind it is a different support conversation from one
+                nobody ever tried to pay, and the table should not make them look identical.
+              */
+              key: 'payment',
+              header: 'Payment',
+              render: (r) => <PaymentCell order={r} />,
+            },
+            {
               key: 'balance',
               header: 'Balance',
               align: 'right',
@@ -227,4 +244,85 @@ function IconBell() {
       <path d="M10 21h4" />
     </svg>
   )
+}
+
+/**
+ * The payment column: what actually happened to the money.
+ *
+ * NEWEST ATTEMPT IN FULL, THE REST AS A COUNT. A row that unrolled every attempt would push
+ * the table into a scroll for the one order in fifty that has more than one, so the latest
+ * event is spelled out and earlier ones are summarised. The order detail is the place for the
+ * whole list; this is the scanning view.
+ *
+ * "No attempts" is deliberately different from "unpaid". An order nobody ever tried to pay
+ * and an order with two declined cards behind it are different problems, and the column that
+ * showed them identically was the reason this exists.
+ */
+function PaymentCell({ order }: { order: AdminInvitationOrder }) {
+  const [latest, ...earlier] = order.payments
+
+  if (!latest) {
+    return (
+      <span className="text-xs text-ink-400">
+        {order.paidAt ? 'Recorded before the ledger existed' : 'No attempts'}
+      </span>
+    )
+  }
+
+  return (
+    <div className="min-w-[11rem] leading-tight">
+      <div className="flex items-center gap-1.5">
+        <PaymentStatusPill status={latest.status} />
+        {latest.method && (
+          <span className="text-xs uppercase tracking-wide text-ink-600">{latest.method}</span>
+        )}
+      </div>
+
+      {/* The reconciliation key. font-mono because it gets compared against Cashfree's
+          dashboard character by character, and a proportional font makes that harder than it
+          needs to be. `break-all` so a long id wraps instead of widening the column. */}
+      <p className="mt-1 break-all font-mono text-[11px] text-ink-700">{latest.paymentId}</p>
+
+      <p className="mt-0.5 text-[11px] text-ink-500">
+        {formatPaise(latest.amountPaise)} · {shortDateTime(latest.paidAt ?? latest.receivedAt)}
+      </p>
+
+      {latest.failureReason && (
+        <p className="mt-0.5 text-[11px] text-danger-700">{latest.failureReason}</p>
+      )}
+
+      {earlier.length > 0 && (
+        <p className="mt-0.5 text-[11px] text-ink-500">
+          +{earlier.length} earlier {earlier.length === 1 ? 'attempt' : 'attempts'}
+        </p>
+      )}
+    </div>
+  )
+}
+
+/**
+ * The aggregator's own vocabulary, not ours.
+ *
+ * SUCCESS / FAILED / USER_DROPPED are Cashfree's strings, and they may add another. An
+ * unknown value renders as itself in a neutral pill rather than being mapped to a guess —
+ * showing a state we do not understand is honest; colouring it green is not.
+ */
+function PaymentStatusPill({ status }: { status: string }) {
+  const tone =
+    status === 'SUCCESS' ? 'green' : status === 'FAILED' ? 'red' : status === 'USER_DROPPED' ? 'amber' : 'neutral'
+
+  const label =
+    status === 'USER_DROPPED' ? 'Dropped' : status.charAt(0) + status.slice(1).toLowerCase()
+
+  return <Pill tone={tone}>{label}</Pill>
+}
+
+/** "31 Jul, 5:42 pm" — en-IN, because every operator reading this screen is in India. */
+function shortDateTime(iso: string): string {
+  return new Date(iso).toLocaleString('en-IN', {
+    day: 'numeric',
+    month: 'short',
+    hour: 'numeric',
+    minute: '2-digit',
+  })
 }

@@ -180,6 +180,34 @@ export type InvitationOrderRow = {
   updated_at: string
 }
 
+/**
+ * One payment event from the aggregator, success or failure. Migration 20260731180000.
+ *
+ * A ledger rather than columns on the order, because an order can be paid at the second
+ * attempt and the first one is the one support gets asked about. Service-role write-only:
+ * SELECT is granted to staff and there is no INSERT or UPDATE policy at all.
+ */
+export type InvitationPaymentRow = {
+  id: string
+  order_id: string
+  aggregator: 'razorpay' | 'cashfree'
+  aggregator_payment_id: string
+  /** Integer paise. What was actually taken, which is not always what the order asked. */
+  amount: number
+  currency: string
+  /** The aggregator's own word: SUCCESS, FAILED, USER_DROPPED. Not an enum on purpose. */
+  status: string
+  /** 'upi', 'card', 'netbanking', 'wallet'. */
+  method: string | null
+  paid_at: string | null
+  failure_reason: string | null
+  /** Plan §4: kept whole for reconciliation and dispute evidence. */
+  webhook_payload: Json
+  received_at: string
+  created_at: string
+  updated_at: string
+}
+
 export type CityRow = {
   id: string
   slug: string
@@ -583,6 +611,13 @@ export type Database = {
       invitation_orders: Table<
         InvitationOrderRow,
         Omit<Partial<InvitationOrderRow>, 'id' | 'created_at' | 'updated_at'>
+      >
+
+      // The payment ledger behind those orders. Same rule as invitation_orders and more so:
+      // the only writer is the signature-verified webhook, under the service-role key.
+      invitation_payments: Table<
+        InvitationPaymentRow,
+        Omit<Partial<InvitationPaymentRow>, 'id' | 'created_at' | 'updated_at' | 'received_at'>
       >
 
       vendors: Table<VendorRow>

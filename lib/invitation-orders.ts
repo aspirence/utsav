@@ -36,6 +36,31 @@ export interface AdminInvitationOrder {
   /** True when the buyer has signed in and the order is attached to an account. */
   claimed: boolean
   isDemo: boolean
+  /**
+   * Every payment event the aggregator sent for this order, newest first — failures and
+   * abandoned attempts included.
+   *
+   * The order's own paidAt/paymentRef describe the attempt that worked and nothing else,
+   * which is exactly the wrong shape for the question support is actually asked: "I paid and
+   * nothing happened." That is a declined card or a drop-off, and it only has an answer if
+   * the attempt is on record.
+   */
+  payments: AdminOrderPayment[]
+}
+
+export interface AdminOrderPayment {
+  id: string
+  aggregator: string
+  /** The aggregator's id for the payment — the key for reconciling against their dashboard. */
+  paymentId: string
+  amountPaise: number
+  /** The aggregator's own word: SUCCESS, FAILED, USER_DROPPED. */
+  status: string
+  /** 'upi', 'card', 'netbanking', 'wallet' — null when the aggregator did not say. */
+  method: string | null
+  paidAt: string | null
+  failureReason: string | null
+  receivedAt: string
 }
 
 export async function getInvitationOrders(): Promise<AdminInvitationOrder[]> {
@@ -61,6 +86,41 @@ export async function getInvitationOrders(): Promise<AdminInvitationOrder[]> {
   if (error) throw new Error(`Could not read invitation orders: ${error.message}`)
   if (!data) return []
 
+  /*
+   * The ledger in a second query rather than a postgrest embed.
+   *
+   * database.types.ts is hand-authored with `Relationships: []`, so a nested select types as
+   * a SelectQueryError — the same reason every other join in this codebase is flat. Two
+   * round trips for at most 200 orders is not the thing worth optimising here.
+   *
+   * A failure to read the ledger does NOT fail the page. The orders are the screen's job and
+   * the payment detail is the annotation; losing the annotation should not take the list
+   * down with it, and an order with an empty payments array reads as "no events recorded",
+   * which is also true of every order placed before this table existed.
+   */
+  const { data: paymentRows } = await supabase
+    .from('invitation_payments')
+    .select('id, order_id, aggregator, aggregator_payment_id, amount, status, method, paid_at, failure_reason, received_at')
+    .in('order_id', data.map((o) => o.id))
+    .order('received_at', { ascending: false })
+
+  const byOrder = new Map<string, AdminOrderPayment[]>()
+  for (const p of paymentRows ?? []) {
+    const list = byOrder.get(p.order_id) ?? []
+    list.push({
+      id: p.id,
+      aggregator: p.aggregator,
+      paymentId: p.aggregator_payment_id,
+      amountPaise: p.amount,
+      status: p.status,
+      method: p.method,
+      paidAt: p.paid_at,
+      failureReason: p.failure_reason,
+      receivedAt: p.received_at,
+    })
+    byOrder.set(p.order_id, list)
+  }
+
   return data.map((o) => ({
     id: o.id,
     reference: o.reference,
@@ -79,6 +139,7 @@ export async function getInvitationOrders(): Promise<AdminInvitationOrder[]> {
     notes: o.notes,
     claimed: o.customer_id != null,
     isDemo: false,
+    payments: byOrder.get(o.id) ?? [],
   }))
 }
 
@@ -153,6 +214,27 @@ function order(
     notes: opts.notes ?? null,
     claimed: opts.claimed ?? false,
     isDemo: true,
+    /*
+     * A paid demo order carries one payment event, so the screen's payment column has
+     * something to render before a database exists. Synthesised from the same paidAt and
+     * paymentRef the row already shows rather than invented separately — two demo values
+     * that could disagree about whether an order was paid would be worse than none.
+     */
+    payments: opts.paidAt
+      ? [
+          {
+            id: `demo-pay-${reference}`,
+            aggregator: 'cashfree',
+            paymentId: opts.paymentRef ?? `demo_${reference}`,
+            amountPaise: booking,
+            status: 'SUCCESS',
+            method: 'upi',
+            paidAt: opts.paidAt,
+            failureReason: null,
+            receivedAt: opts.paidAt,
+          },
+        ]
+      : [],
   }
 }
 
