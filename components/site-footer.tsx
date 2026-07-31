@@ -40,47 +40,42 @@ export async function SiteFooter() {
         read left to right. It lives inside <footer> rather than in any page, so every
         route gets it without having to remember.
 
-        The master is design/source-images/footer3.png - black line work on a flat,
-        fully opaque ground, which is the version that finally worked. The two before it
-        did not, and both failures are worth remembering:
+        THE ARTWORK IS footer2, chosen on 2026-07-31. An earlier note here recorded footer2
+        as a failure, and that judgement was about a different file: the master
+        design/source-images/footer2.png is white line work on transparent, 16% of its
+        pixels *partially* so, which turned into a near-black haze when it sat on the dark
+        band. The exported public/footer2-*.webp are black line work on a transparent
+        ground, which is the opposite problem and no problem at all here - the strip they
+        sit on is surface-raised, #ffffff exactly.
 
-          · footer.png  black on transparent, 984px. Too small; visibly stretched.
-          · footer2.png white on transparent. Sounded right for the dark band, but 16% of
-            its pixels are *partially* transparent with black underneath, and that haze
-            turned the strip into a near-black rectangle sitting on the warm ink-900 around
-            it. Lossy WebP smeared the partial-alpha region from 16% to 23%.
+        THE ALPHA IS GONE ANYWAY, because the lesson from that failure outlives the file it
+        came from: a frieze spanning the full width always covers whatever is behind it, so
+        the ground may as well be baked in. Flattened onto #ffffff - the same value the
+        strip already paints, so not one visible pixel moved - and the three files together
+        went from 559 KB to 233 KB. No alpha channel means no partial-alpha region for lossy
+        WebP to smear, which is what went wrong the first time.
 
-        The lesson both times: a frieze that spans the full width has no business carrying
-        an alpha channel. It always covers whatever is behind it, so the ground may as well
-        be baked in - which is also why this is 233 KB rather than the 380 KB the alpha
-        version cost.
-
-        The master's paper is #f3f4f3, not white, and the section above the footer is
-        pure white - a four-value step across the full width of the page reads as a band
-        edge. So the export lifts the ground to #ffffff with a single linear scale, which
-        leaves the black strokes where they are because 0 maps to 0.
-
-        It is also cropped. The master carries 104px of empty paper above the artwork, and
-        at full width that renders as about 80px of nothing between the last section and
-        the procession - which looked like a layout gap rather than part of the drawing.
-        Trimmed to 22px of air, so the frieze still has somewhere to breathe.
+        THREE WIDTHS, and the descriptors are the files' real pixel widths rather than the
+        sizes they were asked for. The exporter does not enlarge, so a nominal 1920 that was
+        only rendered at 1600 would make the browser pick the wrong candidate and the
+        artwork would land soft.
 
         `block` kills the inline-element baseline gap - as an inline image it would leave a
         few pixels of dark under the white frieze.
-
-        2508px wide, so it is at or above 1:1 on any monitor.
       */}
       {/* eslint-disable-next-line @next/next/no-img-element -- plan §12: no next/image */}
       <img
-        src="/footer-frieze.webp"
+        src="/footer2-1920.webp"
+        srcSet="/footer2-768.webp 768w, /footer2-1280.webp 1280w, /footer2-1920.webp 1920w"
+        sizes="100vw"
         alt=""
         aria-hidden="true"
-        width={2508}
-        height={464}
+        width={1920}
+        height={480}
         loading="lazy"
         decoding="async"
-        // On a phone the frieze is 2508px of artwork squeezed into 375, which lands it at
-        // about 80px tall - every figure in it too small to be anything. So below `sm` it
+        // On a phone the frieze is 1920px of artwork squeezed into 375, which lands it at
+        // about 94px tall - every figure in it too small to be anything. So below `sm` it
         // is given a real height and cropped to the centre instead: the mandap and the
         // couple at a size you can actually see, at the cost of the pavilions at the ends.
         // From `sm` up there is width enough to show the whole procession.
