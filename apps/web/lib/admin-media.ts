@@ -39,7 +39,7 @@ export interface AdminMediaItem {
 
 export async function getVendorMedia(vendorSlug: string): Promise<AdminMediaItem[]> {
   const supabase = await getServerClientOrNull()
-  if (!supabase) return DEMO
+  if (!supabase) return demoFor(vendorSlug)
 
   // Two queries rather than an embed: database.types.ts is hand-authored with `Relationships: []`,
   // so postgrest types a nested select as a SelectQueryError. Same reason as lib/admin-reference.ts.
@@ -114,16 +114,77 @@ function item(
 }
 
 /**
- * Local files from public/, so the grid has something real to show with no database attached.
+ * Sample photographs, varied per listing.
  *
- * The awkward cases are here on purpose: one still pending approval and therefore invisible to
- * customers, and one with no alt text. A gallery that only shows finished rows teaches nobody what
- * to look for.
+ * A single shared constant was the first version, and it made every listing in the console — a
+ * venue, a caterer, a decorator — show the same five wedding-photography frames. That reads as
+ * "the gallery is broken" rather than as "there is no database attached", which is the opposite of
+ * what a demo set is for.
+ *
+ * The pool is every static image in public/ that looks like event work. A listing gets a stable
+ * slice of it derived from its slug, so the same listing always shows the same photographs and two
+ * different listings almost never show the same set. Not random: a set that reshuffles on every
+ * render makes the screen look unstable.
+ *
+ * The awkward cases are seeded deliberately — one photograph still pending approval and therefore
+ * invisible to customers, and one with no alt text. A gallery that only shows finished rows teaches
+ * nobody what to look for.
  */
-const DEMO: AdminMediaItem[] = [
-  item(1, '/luck-1-1280.webp', 'Bride and groom during the pheras', 'Gomti Nagar, December 2026', ['traditional'], 'approved', true),
-  item(2, '/luck-2-1280.webp', 'Haldi ceremony in the courtyard', null, ['candid'], 'approved'),
-  item(3, '/luck-3-1280.webp', 'Couple portrait at golden hour', 'Shot on the terrace at Hazratganj', ['fine-art'], 'approved'),
-  item(4, '/luck-4-1280.webp', 'Baraat arriving with dhol', null, ['candid', 'documentary'], 'pending'),
-  item(5, '/historical-1280.webp', '', 'Rumi Darwaza pre-wedding', ['pre-wedding'], 'approved'),
+const POOL: { path: string; alt: string; caption: string | null; tags: string[] }[] = [
+  { path: '/luck-1-1280.webp', alt: 'Bride and groom during the pheras', caption: 'Gomti Nagar, December 2026', tags: ['traditional'] },
+  { path: '/luck-2-1280.webp', alt: 'Haldi ceremony in the courtyard', caption: null, tags: ['candid'] },
+  { path: '/luck-3-1280.webp', alt: 'Couple portrait at golden hour', caption: 'Shot on the terrace at Hazratganj', tags: ['fine-art'] },
+  { path: '/luck-4-1280.webp', alt: 'Baraat arriving with dhol', caption: null, tags: ['candid', 'documentary'] },
+  { path: '/historical-1280.webp', alt: 'Couple at Rumi Darwaza', caption: 'Pre-wedding, Lucknow', tags: ['pre-wedding'] },
+  { path: '/temple-1280.webp', alt: 'Temple mandap set for the ceremony', caption: null, tags: ['traditional'] },
+  { path: '/mountain-1280.webp', alt: 'Mandap against the hills at dusk', caption: 'Destination setup', tags: ['destination'] },
+  { path: '/beach-1280.webp', alt: 'Beachside mandap at sunset', caption: null, tags: ['destination'] },
+  { path: '/marathi-1280.webp', alt: 'Marathi ceremony under the antarpat', caption: null, tags: ['traditional'] },
+  { path: '/punjabi-1280.webp', alt: 'Anand karaj in the gurudwara', caption: 'Punjabi ceremony', tags: ['documentary'] },
+  { path: '/tamil-1280.webp', alt: 'South Indian ceremony with the nadaswaram', caption: null, tags: ['traditional'] },
+  { path: '/place-gomti-nagar-1280.webp', alt: 'Reception hall dressed for the evening', caption: 'Gomti Nagar', tags: ['decor'] },
+  { path: '/place-hazratganj-1280.webp', alt: 'Banquet lawn laid out for dinner', caption: null, tags: ['decor'] },
 ]
+
+/**
+ * A stable slice of the pool, chosen from the slug.
+ *
+ * A tiny FNV-style hash rather than an index into a map: it needs no table to maintain, gives every
+ * slug a different starting point, and produces the same answer every render — including on the
+ * server and the client, which a Math.random() version would not.
+ */
+function demoFor(vendorSlug: string): AdminMediaItem[] {
+  let hash = 2166136261
+  for (let i = 0; i < vendorSlug.length; i++) {
+    hash ^= vendorSlug.charCodeAt(i)
+    hash = Math.imul(hash, 16777619)
+  }
+
+  /*
+   * Both the starting point and the step come from the hash.
+   *
+   * With only the offset varying, two slugs landing on the same start produced the same five
+   * photographs — which happened on the first try, between a caterer and a photographer. POOL.length
+   * is prime, so any step from 1 to length-1 walks the whole pool without repeating, and two
+   * listings now have to collide on both numbers to look alike.
+   */
+  const offset = Math.abs(hash) % POOL.length
+  const stride = 1 + (Math.abs(Math.imul(hash, 2654435761)) % (POOL.length - 1))
+
+  return Array.from({ length: 5 }, (_, i) => {
+    const entry = POOL[(offset + i * stride) % POOL.length]!
+    return item(
+      i + 1,
+      entry.path,
+      // The fourth in every set has no alt text, so the missing-alt counter always has something
+      // to report and the red state is visible without hunting for it.
+      i === 3 ? '' : entry.alt,
+      entry.caption,
+      entry.tags,
+      // The second is still awaiting moderation, so the "approved and public" count never matches
+      // the total and the gap is visible.
+      i === 1 ? 'pending' : 'approved',
+      i === 0,
+    )
+  })
+}
