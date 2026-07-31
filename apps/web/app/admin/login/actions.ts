@@ -1,7 +1,7 @@
 'use server'
 
 import { redirect } from 'next/navigation'
-import { cookies } from 'next/headers'
+import { cookies, headers } from 'next/headers'
 import { z } from 'zod'
 
 import { createUtsavaServerClient, hasSupabaseEnv } from '@utsava/db'
@@ -105,10 +105,20 @@ export async function signInStaff(
       // stops it being stolen by one.
       httpOnly: true,
       sameSite: 'lax',
-      // Not `secure` unconditionally: this path only ever runs without Supabase, which in
-      // practice means http://localhost or a LAN address, where a secure cookie is dropped
-      // silently and the login appears to do nothing.
-      secure: process.env.NODE_ENV === 'production',
+      /*
+       * `secure` follows the REQUEST's scheme, not NODE_ENV.
+       *
+       * It used to be `process.env.NODE_ENV === 'production'`, and that was a real bug rather than
+       * a nitpick: `next start` runs with NODE_ENV=production, so a build served over
+       * http://192.168.1.x — which is exactly how this local-auth path gets used — set a Secure
+       * cookie that the browser then refused to store. Every navigation looked like a sign-out,
+       * because the session was never saved in the first place.
+       *
+       * The comment that used to sit here described that exact hazard and the code did it anyway.
+       * Deciding from the scheme cannot drift from reality the same way: https gets Secure, plain
+       * http does not, and nothing has to be remembered about which command started the server.
+       */
+      secure: await isHttpsRequest(),
       path: '/',
       maxAge: cookie.maxAge,
     })
@@ -191,6 +201,29 @@ function setupMessage(): string {
  * can write cookies; Server Components cannot, which is why the session-refresh path lives in
  * middleware instead.
  */
+/**
+ * Did this request arrive over https?
+ *
+ * `x-forwarded-proto` is what a proxy sets — Vercel, nginx, a load balancer — and the left-most
+ * entry is the original client's scheme; anything after it was appended by a later hop. With no
+ * proxy in front there is no header at all, which means a direct connection, which for this server
+ * means plain http.
+ *
+ * Erring towards "not secure" is right here and only here: this path exists solely when no Supabase
+ * is attached, so it is a local or LAN session by definition. A real deployment has Supabase
+ * configured, and that disables local auth entirely — see lib/admin-local-auth.ts.
+ */
+async function isHttpsRequest(): Promise<boolean> {
+  try {
+    const h = await headers()
+    const proto = h.get('x-forwarded-proto')
+    if (!proto) return false
+    return proto.split(',')[0]?.trim().toLowerCase() === 'https'
+  } catch {
+    return false
+  }
+}
+
 async function authClient() {
   try {
     const store = await cookies()
