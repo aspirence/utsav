@@ -237,21 +237,48 @@ function describeLink(url: string): { tone: 'idle' | 'good' | 'warn'; message: s
   if (!trimmed) {
     return {
       tone: 'idle',
-      message: 'A video file (.mp4, .webm, .mov) or a YouTube or Vimeo link.',
+      message:
+        'A page on this site like /invitation, a video file (.mp4, .webm, .mov), or a YouTube ' +
+        'or Vimeo link.',
     }
+  }
+
+  // A path on this site, checked before URL parsing because new URL() throws on one.
+  if (trimmed.startsWith('/') && !trimmed.startsWith('//')) {
+    return /\.(mp4|webm|ogv|ogg|mov|m4v)$/i.test(trimmed)
+      ? { tone: 'good', message: 'A video file on this site — it will loop silently in the phone frame.' }
+      : {
+          tone: 'good',
+          message:
+            'A page on this site — it will run live inside the phone frame, animation and all.',
+        }
   }
 
   let parsed: URL
   try {
     parsed = new URL(trimmed)
   } catch {
-    return { tone: 'warn', message: 'Not a complete link yet — it needs to start with https://' }
+    return {
+      tone: 'warn',
+      message:
+        'Not a complete link yet. Use https://… for somewhere else, or start with / for a page ' +
+        'on this site — /invitation, not http://192.168.1.20:3000/invitation.',
+    }
   }
 
   if (parsed.protocol !== 'https:') {
+    /*
+     * The most common paste is this site's own address copied out of the browser bar, which
+     * over LAN or localhost is http and gets refused. The fix is not "make it https" — it is
+     * to drop the host entirely, because it is our own page. So the message says that
+     * instead of repeating the rule.
+     */
     return {
       tone: 'warn',
-      message: 'Has to be https. An http video is blocked inside a secure page and the phone comes out empty.',
+      message:
+        `For a page on this site, paste just the path — ${parsed.pathname || '/invitation'} — ` +
+        'not the whole address. An http link is blocked inside a secure page and the phone ' +
+        'comes out empty.',
     }
   }
 

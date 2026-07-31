@@ -262,18 +262,26 @@ export function classifyPreview(url: string | null): {
   if (!url) return { kind: 'none', embedUrl: null }
 
   /*
-   * An app-served path is a video too.
+   * A PATH THIS APP SERVES. Two kinds, both legitimate:
    *
-   * new URL() throws on '/clip.webm', so everything served out of public/ used to classify
-   * as 'none' and silently fall back to the poster. Since migration 20260731150000 the
-   * column admits those paths, and a renderer that then refuses to play them would make the
-   * constraint a lie. The single-leading-slash test is the constraint's own: '//host/x.mp4'
-   * is protocol-relative and belongs to another origin, so it is not treated as local.
+   *   /clip.webm    a video file in public/ — plays in a <video>
+   *   /invitation   one of our own pages — runs in an <iframe>
+   *
+   * The second is the interesting one. The invitation preview is not a recording; it is a
+   * live page with a door that opens, music and a scroll. Filming it to put a video in the
+   * phone frame would be a worse copy of something we already own, so the frame embeds the
+   * page itself.
+   *
+   * SAME ORIGIN IS WHAT MAKES THIS SAFE. next.config.ts sets X-Frame-Options: SAMEORIGIN, so
+   * only our own pages can be framed here, and a path cannot escape to another host. The
+   * single-leading-slash test is the database constraint's own (20260731150000):
+   * '//host/x' is protocol-relative and belongs to somebody else, so it is not local and
+   * falls through to the URL parsing below.
    */
   if (url.startsWith('/') && !url.startsWith('//')) {
     return /\.(mp4|webm|ogv|ogg|mov|m4v)$/i.test(url)
       ? { kind: 'video', embedUrl: null }
-      : { kind: 'none', embedUrl: null }
+      : { kind: 'embed', embedUrl: url }
   }
 
   let parsed: URL

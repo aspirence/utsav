@@ -60,21 +60,37 @@ export type TemplateActionState =
 /**
  * A URL we are willing to put in a src attribute.
  *
- * Scheme allowlist rather than a blocklist: `javascript:`, `data:` and `blob:` all parse cleanly
- * through new URL(), and a blocklist is a list of the attacks somebody has thought of.
+ * Two forms are accepted and nothing else:
+ *
+ *   https://…      somewhere else, over TLS
+ *   /invitation    a path this app serves itself
+ *
+ * The second was added on 2026-07-31, because the thing staff most want in the phone frame
+ * is our own invitation preview — a live page with a door that opens and music, not a
+ * recording of one. Refusing it forced people to film a page we already own.
+ *
+ * `^/[^/]` is the same test the database applies (migration 20260731150000), and the second
+ * character is the point: '//evil.com/x' is protocol-relative and loads from another host,
+ * so a single leading slash is required and a double one is still refused.
+ *
+ * Scheme allowlist rather than a blocklist for the absolute form: `javascript:`, `data:` and
+ * `blob:` all parse cleanly through new URL(), and a blocklist is a list of the attacks
+ * somebody has already thought of. `http://` is refused too — an http video inside an https
+ * page is blocked as mixed content and the phone comes out empty.
  */
-function httpsUrl(label: string) {
+function srcUrl(label: string) {
   return z
     .string()
     .trim()
     .max(1000)
     .refine((v) => {
+      if (v.startsWith('/') && !v.startsWith('//')) return true
       try {
         return new URL(v).protocol === 'https:'
       } catch {
         return false
       }
-    }, `${label} has to be a full https:// link`)
+    }, `${label} has to be an https:// link or a path on this site like /invitation`)
 }
 
 
@@ -85,8 +101,8 @@ const templateSchema = z
     // Four tags is the DB constraint; more than that does not fit above the name anyway.
     tags: z.array(z.string().trim().min(1).max(24)).max(4, 'Four tags is the maximum'),
     priceRupees: z.number().int().positive('A template needs a price'),
-    videoUrl: httpsUrl('The preview link').optional(),
-    posterUrl: httpsUrl('The poster link').optional(),
+    videoUrl: srcUrl('The preview link').optional(),
+    posterUrl: srcUrl('The poster link').optional(),
     sortOrder: z.coerce.number().int().min(0).max(9999),
     isActive: z.boolean(),
   })
@@ -246,6 +262,14 @@ function shapeWarning(
   // No video at all is a choice, not a mistake — a poster-only card is a supported state.
   if (!videoUrl) {
     return { message: `${success} No preview video, so the card shows its poster.`, warn: false }
+  }
+
+  // A path on this site is embedded as-is and always works — it is our own page, framed by
+  // a page on the same origin. Nothing to warn about.
+  if (videoUrl.startsWith('/') && !videoUrl.startsWith('//')) {
+    return /\.(mp4|webm|ogv|ogg|mov|m4v)$/i.test(videoUrl)
+      ? { message: `${success} The video will loop in the phone frame.`, warn: false }
+      : { message: `${success} That page will run live inside the phone frame.`, warn: false }
   }
 
   let host = ''
