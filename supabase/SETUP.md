@@ -36,6 +36,28 @@ server-side environment, never in anything prefixed `NEXT_PUBLIC_`.
 from being a production backdoor. Step 5 is what gets you back into the console, so do not
 stop before it.
 
+**Rebuild after changing these.** The build output itself depends on whether Supabase env
+exists: with none, the discovery pages prerender static, because nothing reaches for
+`cookies()`. Add the env and the Supabase server client does reach for it, and the already-
+built static page fails at runtime with
+
+```
+Error: Page changed from static to dynamic at runtime /photographers, reason: cookies
+```
+
+`pnpm build` again and the same routes come out dynamic. This applies in both directions —
+switching Supabase off needs a rebuild too.
+
+**`hasSupabaseEnv()` only checks that the two values are present, never that they work.** A
+mistyped anon key still flips the app onto the real database and still disables the local
+login, and every read then fails at the API gateway with `Invalid API key`. Verify the key
+before relying on it:
+
+```bash
+curl -s -o /dev/null -w '%{http_code}\n' "$NEXT_PUBLIC_SUPABASE_URL/rest/v1/" \
+  -H "apikey: $NEXT_PUBLIC_SUPABASE_ANON_KEY"    # 200 = good, 401 = bad key
+```
+
 ## 3. Push the schema
 
 ```bash
