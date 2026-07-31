@@ -66,7 +66,13 @@ export async function VendorMediaPanel({ vendorSlug }: { vendorSlug: string }) {
           No photographs yet. This listing cannot go live until it has five.
         </p>
       ) : (
-        <ul className="grid gap-4 p-4 sm:grid-cols-2 lg:grid-cols-3">
+        /*
+          Denser than it was. Three columns of 4:3 on a wide screen made each photograph about
+          400px across — a size that shows off the picture and buries the job, which is scanning a
+          gallery for the one tile that is pending or has no alt text. Six columns puts the whole
+          set on one screen, which is what a check needs.
+        */
+        <ul className="grid grid-cols-2 gap-3 p-4 sm:grid-cols-3 lg:grid-cols-5 xl:grid-cols-6">
           {media.map((m) => (
             <MediaTile key={m.id} item={m} vendorSlug={vendorSlug} />
           ))}
@@ -76,9 +82,22 @@ export async function VendorMediaPanel({ vendorSlug }: { vendorSlug: string }) {
   )
 }
 
+/**
+ * One thumbnail.
+ *
+ * Compact enough that a gallery fits on a screen. Caption and style tags moved into the tile's
+ * `title` rather than staying on their own lines — at this width they truncated to nothing useful
+ * anyway, and the alt-text line is the one that carries a fault worth spotting. Hover or focus the
+ * tile and the full detail is there.
+ */
 function MediaTile({ item, vendorSlug }: { item: AdminMediaItem; vendorSlug: string }) {
+  const detail = [item.caption, item.styleTags.join(' · ')].filter(Boolean).join(' — ')
+
   return (
-    <li className="border-ink-200 overflow-hidden rounded-lg border">
+    <li
+      className="border-ink-200 overflow-hidden rounded-lg border"
+      title={detail || undefined}
+    >
       <div className="bg-ink-100 relative aspect-[4/3]">
         {item.url ? (
           // eslint-disable-next-line @next/next/no-img-element -- plan §12: no Vercel optimizer
@@ -93,14 +112,14 @@ function MediaTile({ item, vendorSlug }: { item: AdminMediaItem; vendorSlug: str
           /* storageImageUrl returned null: no Supabase configured and not a local path. Naming the
              stored value is more useful than a grey rectangle, because the stored value is the
              thing that needs fixing. */
-          <p className="text-ink-500 absolute inset-0 flex items-center justify-center px-3 text-center text-[11px] leading-relaxed">
-            Cannot resolve
-            <br />
-            <span className="text-ink-700 break-all">{item.storagePath}</span>
+          <p className="text-ink-600 absolute inset-0 flex items-center justify-center break-all px-2 text-center text-[10px] leading-tight">
+            {item.storagePath}
           </p>
         )}
 
-        <div className="absolute left-2 top-2 flex flex-wrap gap-1">
+        {/* Badges overlay the image rather than taking a row of their own — at this size a row is
+            most of the tile. */}
+        <div className="absolute left-1.5 top-1.5 flex flex-wrap gap-1">
           {item.isCover && <Pill tone="blue">cover</Pill>}
           {item.moderation !== 'approved' && (
             <Pill tone={item.moderation === 'rejected' ? 'red' : 'amber'}>{item.moderation}</Pill>
@@ -108,16 +127,18 @@ function MediaTile({ item, vendorSlug }: { item: AdminMediaItem; vendorSlug: str
         </div>
       </div>
 
-      <div className="p-3">
-        <p className={'text-sm ' + (item.altText?.trim() ? 'text-ink-800' : 'text-danger-700')}>
+      <div className="p-2">
+        {/* One line, clamped. The red state is the point: an unlabelled photograph is a listing a
+            screen-reader user cannot shop from, and it has to be visible at a glance. */}
+        <p
+          className={
+            'truncate text-xs ' + (item.altText?.trim() ? 'text-ink-700' : 'text-danger-700')
+          }
+        >
           {item.altText?.trim() || 'No alt text'}
         </p>
-        {item.caption && <p className="text-ink-500 mt-0.5 text-xs">{item.caption}</p>}
-        {item.styleTags.length > 0 && (
-          <p className="text-ink-500 mt-1.5 text-xs">{item.styleTags.join(' · ')}</p>
-        )}
 
-        <div className="mt-3 flex items-center gap-2">
+        <div className="mt-1.5 flex items-center gap-1">
           <AdminModal
             trigger="Edit"
             variant="quiet"
