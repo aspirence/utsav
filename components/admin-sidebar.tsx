@@ -109,24 +109,31 @@ export function AdminSidebar({ role }: { role: StaffRoleKind | null }) {
           (open ? 'translate-x-0' : '-translate-x-full')
         }
       >
-        {/* The real mark, knocked to white — the same treatment the footer uses on its dark band.
-            A letter in a coloured square is a placeholder, and this one had outlived being one. */}
-        <div className="flex h-[4.5rem] shrink-0 items-center gap-3 border-b border-ink-800/70 px-5">
+        {/*
+          The mark alone, knocked to white — the same treatment the footer uses on its dark band.
+
+          The "Utsava / Console" wordmark that sat beside it is gone: the artwork already
+          carries the name, so the two together said it twice.
+
+          THE ALT TEXT IS NOT OPTIONAL NOW, and this is the part that is easy to get wrong when
+          deleting the label. It used to be alt="" and aria-hidden, which was right while the
+          text next to it carried the name — a screen reader heard "Utsava Console" once, from
+          the words. With the words gone the image is the only thing identifying this panel, so
+          it has to say so out loud or the sidebar starts with nothing at all.
+
+          Larger too, at h-11. At h-9 it was sized to sit politely beside a line of type; alone
+          in a 240px rail it just looked small, and the wordmark inside the artwork was too fine
+          to read.
+        */}
+        <div className="flex h-[4.5rem] shrink-0 items-center border-b border-ink-800/70 px-5">
           {/* eslint-disable-next-line @next/next/no-img-element -- plan §12: no Vercel optimizer */}
           <img
             src="/logo.webp"
-            alt=""
+            alt="Utsava console"
             width={623}
             height={576}
-            aria-hidden="true"
-            className="h-9 w-auto shrink-0 [filter:brightness(0)_invert(1)]"
+            className="h-11 w-auto shrink-0 [filter:brightness(0)_invert(1)]"
           />
-          <span className="font-display text-[17px] leading-tight tracking-tight text-white">
-            Utsava
-            <span className="block text-[10px] font-normal uppercase tracking-[0.2em] text-ink-400">
-              Console
-            </span>
-          </span>
         </div>
 
         <nav aria-label="Sections" className="flex-1 overflow-y-auto px-3 py-4">
