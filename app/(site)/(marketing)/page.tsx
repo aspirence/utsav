@@ -234,19 +234,24 @@ export default async function HomePage() {
         </Container>
       </section>
 
-      {/* 7. Reviews - plan section 2: booking-gated is the entire claim */}
-      {/* Every one of these is backed by a completed booking, which is what earns the badge. */}
-      <ReviewsMarquee
-        reviews={reviews.map((r) => ({
-          rating: r.rating,
-          title: r.title,
-          body: r.body,
-          authorName: r.authorName,
-          sourceName: r.vendorName,
-          sourceHref: `/vendor/${r.vendorSlug}`,
-          verified: true,
-        }))}
-      />
+      {/* 7. Reviews - plan section 2: booking-gated is the entire claim.
+             Every one of these is backed by a completed booking, which is what earns the
+             badge — so the section renders only when there are some. A marketplace before
+             its first review has nothing to show here, and showing nothing is the honest
+             version of that. getRecentReviews() no longer substitutes samples. */}
+      {reviews.length > 0 && (
+        <ReviewsMarquee
+          reviews={reviews.map((r) => ({
+            rating: r.rating,
+            title: r.title,
+            body: r.body,
+            authorName: r.authorName,
+            sourceName: r.vendorName,
+            sourceHref: `/vendor/${r.vendorSlug}`,
+            verified: true,
+          }))}
+        />
+      )}
 
       {/* 8. Explore the place - plan section 12 internal linking.
              This band used to be two rows of pill links, localities and budget rungs. The

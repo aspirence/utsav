@@ -17,7 +17,7 @@ import {
   type FixtureLocality,
   type FixtureVendor,
 } from './fixtures'
-import { getServerClientOrNull } from './supabase'
+import { getPublicReadClient } from './supabase'
 
 /**
  * Read layer for the customer web surface.
@@ -42,7 +42,7 @@ import { getServerClientOrNull } from './supabase'
  * that fails the FK the moment a real database is behind it.
  */
 export async function getCityOptions(): Promise<{ id: string; name: string }[]> {
-  const supabase = await getServerClientOrNull()
+  const supabase = await getPublicReadClient()
   if (!supabase) return []
 
   const { data } = await supabase
@@ -55,7 +55,7 @@ export async function getCityOptions(): Promise<{ id: string; name: string }[]> 
 }
 
 export async function getLaunchedCities(): Promise<FixtureCity[]> {
-  const supabase = await getServerClientOrNull()
+  const supabase = await getPublicReadClient()
   if (!supabase) return CITIES
 
   const { data, error } = await supabase
@@ -74,7 +74,7 @@ export async function getLaunchedCities(): Promise<FixtureCity[]> {
 }
 
 export async function getCategories(): Promise<FixtureCategory[]> {
-  const supabase = await getServerClientOrNull()
+  const supabase = await getPublicReadClient()
   if (!supabase) return CATEGORIES
 
   const { data, error } = await supabase
@@ -127,7 +127,7 @@ export async function getCategory(slug: string): Promise<FixtureCategory | null>
 }
 
 export async function getLocalities(citySlug: string): Promise<FixtureLocality[]> {
-  const supabase = await getServerClientOrNull()
+  const supabase = await getPublicReadClient()
   if (!supabase) return LOCALITIES.filter((l) => l.citySlug === citySlug)
 
   const { data, error } = await supabase
@@ -210,7 +210,7 @@ async function discoverVendorsUncached(query: DiscoverQuery): Promise<DiscoverRe
   const page = Math.max(1, query.page ?? 1)
   const offset = (page - 1) * perPage
 
-  const supabase = await getServerClientOrNull()
+  const supabase = await getPublicReadClient()
 
   if (supabase) {
     // Plan §4/§12: one ranking definition, called through one RPC.
@@ -438,7 +438,7 @@ export interface VendorDetail {
 }
 
 export async function getVendorBySlug(slug: string): Promise<VendorDetail | null> {
-  const supabase = await getServerClientOrNull()
+  const supabase = await getPublicReadClient()
 
   if (supabase) {
     const { data, error } = await supabase
@@ -622,7 +622,7 @@ export interface HomeReview {
  * claim on the homepage is that these cannot be bought.
  */
 export async function getRecentReviews(limit = 3): Promise<HomeReview[]> {
-  const supabase = await getServerClientOrNull()
+  const supabase = await getPublicReadClient()
 
   if (supabase) {
     const { data, error } = await supabase
@@ -634,29 +634,45 @@ export async function getRecentReviews(limit = 3): Promise<HomeReview[]> {
       .order('published_at', { ascending: false })
       .limit(limit)
 
-    if (!error && data && data.length > 0) {
-      return (
-        data as unknown as {
-          rating: number
-          title: string | null
-          body: string | null
-          published_at: string
-          vendors: { slug: string; display_name: string }
-        }[]
-      ).map((r) => ({
-        vendorSlug: r.vendors.slug,
-        vendorName: r.vendors.display_name,
-        rating: r.rating,
-        title: r.title ?? '',
-        body: r.body ?? '',
-        // Plan §6: the reviewer is a real customer, but the profile is not public.
-        // A first name and initial is the most we show.
-        authorName: 'Verified customer',
-        publishedAt: r.published_at,
-      }))
-    }
+    /*
+     * NO ROWS IS AN ANSWER. THE FIXTURES ARE ONLY FOR "NO DATABASE".
+     *
+     * This used to be `if (!error && data && data.length > 0)`, so a project with a real
+     * database and no reviews yet fell through to the sample set below — and the homepage
+     * printed invented testimonials, under invented customer names, linked to real vendor
+     * profiles, each one carrying a `verified: true` badge whose entire meaning is "backed
+     * by a completed booking". The bookings table was empty. Every part of that was false.
+     *
+     * A read error returns nothing rather than throwing: this section is decorative, and a
+     * transient failure here should not take the homepage down with it. The storefront in
+     * lib/invitation-templates.ts does throw, because there the same failure would mean
+     * selling designs that do not exist — fail soft where it is cosmetic, loud where it
+     * takes money.
+     */
+    if (error || !data) return []
+
+    return (
+      data as unknown as {
+        rating: number
+        title: string | null
+        body: string | null
+        published_at: string
+        vendors: { slug: string; display_name: string }
+      }[]
+    ).map((r) => ({
+      vendorSlug: r.vendors.slug,
+      vendorName: r.vendors.display_name,
+      rating: r.rating,
+      title: r.title ?? '',
+      body: r.body ?? '',
+      // Plan §6: the reviewer is a real customer, but the profile is not public.
+      // A first name and initial is the most we show.
+      authorName: 'Verified customer',
+      publishedAt: r.published_at,
+    }))
   }
 
+  // Fixtures, reached only when no Supabase project is attached at all.
   return REVIEWS.slice(0, limit).map((r) => ({
     vendorSlug: r.vendorSlug,
     vendorName: VENDORS.find((v) => v.slug === r.vendorSlug)?.displayName ?? r.vendorSlug,
@@ -705,7 +721,7 @@ export async function getLocalityCounts(
  * profile that is in the index is also one that prerenders.
  */
 export async function getLiveVendorSlugs(): Promise<string[]> {
-  const supabase = await getServerClientOrNull()
+  const supabase = await getPublicReadClient()
 
   if (supabase) {
     const { data, error } = await supabase

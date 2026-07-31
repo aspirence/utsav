@@ -1,6 +1,6 @@
 import 'server-only'
 
-import { getServerClientOrNull } from '@/lib/admin-supabase'
+import { getPublicReadClient } from '@/lib/supabase'
 
 /**
  * The invitation storefront. Plan §2 counts digital invitations as a revenue line.
@@ -182,9 +182,17 @@ export interface InvitationTemplate {
   isDemo: boolean
 }
 
-/** Everything the storefront shows. Active rows for a visitor, all rows for staff. */
+/**
+ * Everything the storefront shows. Active rows for a visitor, all rows for staff.
+ *
+ * getPublicReadClient() rather than getServerClientOrNull(), for the reason spelled out in
+ * the block below: /invitation is statically generated, cookies() does not exist during a
+ * prerender, and a null client here means the demo set gets baked into the page. Staff
+ * still get their session — the fallback only fires when there is no request at all — so
+ * the console keeps seeing inactive rows.
+ */
 export async function getInvitationTemplates(): Promise<InvitationTemplate[]> {
-  const supabase = await getServerClientOrNull()
+  const supabase = await getPublicReadClient()
   if (!supabase) return DEMO
 
   const { data, error } = await supabase

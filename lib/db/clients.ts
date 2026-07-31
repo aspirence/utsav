@@ -90,6 +90,40 @@ export function createUtsavaServerClient(cookies: CookieAdapter) {
 }
 
 /**
+ * Sessionless public client. Anon key, no cookies, therefore no request scope needed.
+ *
+ * WHY IT EXISTS. createUtsavaServerClient() is fed from next/headers' cookies(), which is
+ * unavailable while a page is being statically generated. Every caller wrapped that in a
+ * try/catch returning null, and the public read paths treated null as "no database" and
+ * fell back to fixtures — so the discovery pages, which are exactly the pages plan §12
+ * wants prerendered, baked fake listings into static HTML the moment a real project was
+ * attached. Nothing errored; the pages just quietly showed the wrong vendors.
+ *
+ * The catalogue is anon-readable by policy, so a session adds nothing to those queries.
+ * This client is that fact made explicit.
+ *
+ * IT IS NOT A BACKDOOR. It carries the anon key, so PostgREST runs it as `anon` and every
+ * RLS policy applies unchanged — it can only ever see what a signed-out visitor sees. Use
+ * it for the public catalogue; anything user-scoped must keep the session client, or it
+ * will silently read as a stranger.
+ *
+ * Built on createServerClient with an inert cookie adapter rather than createClient, so it
+ * returns the same UtsavaClient type. A structurally different client here would resolve
+ * the schema generics differently and collapse callers to `never` — the trap documented on
+ * UtsavaClient above.
+ */
+export function createUtsavaPublicClient() {
+  const { url, anonKey } = readPublicEnv()
+
+  return createServerClient<Database>(url, anonKey, {
+    cookies: {
+      getAll: () => [],
+      setAll: () => {},
+    },
+  })
+}
+
+/**
  * Service-role client. Bypasses RLS entirely.
  *
  * Plan §6 restricts this to "money paths … in Edge Functions / route handlers with

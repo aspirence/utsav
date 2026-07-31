@@ -2,7 +2,7 @@ import 'server-only'
 
 import { storageImageUrl, type EventType } from '@/lib/db'
 
-import { getServerClientOrNull } from './supabase'
+import { getPublicReadClient } from './supabase'
 
 /**
  * Read layer for real-wedding stories (plan §5, migration 000800 "trust").
@@ -69,7 +69,7 @@ const STORY_COLUMNS =
 
 /** Published stories, newest first. */
 export async function getStories(): Promise<Story[]> {
-  const supabase = await getServerClientOrNull()
+  const supabase = await getPublicReadClient()
   if (!supabase) return FIXTURE_STORIES
 
   const { data, error } = await supabase
