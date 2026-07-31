@@ -4,8 +4,11 @@ import { notFound } from 'next/navigation'
 import { PageHeader, Panel, Pill } from '@/components/admin-ui'
 import { getAdminVendors } from '@/lib/admin-data'
 
+import { getVendorCategoryDetails } from '@/lib/admin-vendor-attributes'
+
 import { VendorDetailsForm } from '../details-form'
 import { VendorStatusControls } from '../status-controls'
+import { VendorAttributesForm } from './attributes-form'
 import { VendorMediaPanel } from './media-panel'
 
 export const metadata = { title: 'Vendor' }
@@ -18,6 +21,9 @@ export default async function AdminVendorDetailPage({
   const { slug } = await params
   const vendor = getAdminVendors().find((v) => v.slug === slug)
   if (!vendor) notFound()
+
+  // The listing's primary category decides which questions the section below asks.
+  const details = await getVendorCategoryDetails(vendor.slug, vendor.category)
 
   const blockers = [
     vendor.mediaCount < 5 ? `Only ${vendor.mediaCount} photos — needs 5` : null,
@@ -101,6 +107,32 @@ export default async function AdminVendorDetailPage({
                 establishedYear={vendor.establishedYear ?? null}
                 teamSize={vendor.teamSize ?? null}
                 travelsOutstation={vendor.travelsOutstation ?? false}
+              />
+            </div>
+          </Panel>
+
+          {/*
+            The half of a listing that differs by what it actually is.
+
+            Everything in the panel above is true of a photographer, a caterer and a banquet lawn
+            alike. This one asks a venue for its seated capacity, a caterer for its per-plate rates,
+            a makeup artist whether she travels to the venue on the morning — the questions a
+            customer decides on, which the generic fields cannot express.
+          */}
+          <Panel className="p-5">
+            <h2 className="font-display text-ink-900 text-lg">{details.categoryName} details</h2>
+            {details.isDemo && (
+              <p className="border-warning-500/40 bg-warning-50 text-warning-700 mt-3 rounded-md border px-3 py-2.5 text-sm leading-relaxed">
+                Sample answers — no Supabase instance is attached, so saving will not write
+                anything.
+              </p>
+            )}
+            <div className="mt-4">
+              <VendorAttributesForm
+                vendorSlug={vendor.slug}
+                categorySlug={details.categorySlug}
+                categoryName={details.categoryName}
+                values={details.values}
               />
             </div>
           </Panel>

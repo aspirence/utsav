@@ -267,6 +267,12 @@ export type VendorCategoryRow = {
   style_tags: string[]
   price_band_min: number | null
   price_band_max: number | null
+  /**
+   * Category-specific details — a venue's seated capacity, a caterer's per-plate rate.
+   * Added in 20260730000300. Shape lives in apps/web/lib/category-attributes.ts; the column only
+   * guarantees it is a JSON object, so a reader must not assume any particular key exists.
+   */
+  attributes: Json
 }
 
 export type PackageRow = {
