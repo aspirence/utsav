@@ -17,7 +17,7 @@ At [supabase.com/dashboard](https://supabase.com/dashboard) → **New project**.
   pooler connection strings.
 - Free tier is enough to launch on. It pauses after a week of no traffic; a request wakes it.
 
-## 2. Fill in `apps/web/.env.local`
+## 2. Fill in `.env.local`
 
 From **Project Settings → API**:
 
@@ -32,7 +32,7 @@ The service-role key bypasses RLS entirely. It belongs in `.env.local` and in th
 server-side environment, never in anything prefixed `NEXT_PUBLIC_`.
 
 **Setting `NEXT_PUBLIC_SUPABASE_URL` switches off the local admin login.** That is deliberate
-— see `apps/web/lib/admin-local-auth.ts`, where it is the one thing preventing that block
+— see `lib/admin-local-auth.ts`, where it is the one thing preventing that block
 from being a production backdoor. Step 5 is what gets you back into the console, so do not
 stop before it.
 
@@ -107,7 +107,7 @@ assume still works.
 
 ```bash
 npx supabase gen types typescript --project-id <ref> --schema public \
-  > packages/db/src/generated/database.types.ts
+  > lib/db/generated/database.types.ts
 pnpm typecheck
 ```
 

@@ -40,7 +40,7 @@ decision from the user, not a refactor.
    phone number to every vendor.
 
 6. **Money is integer paise.** Never a float, never rupees in the database. Use
-   `formatPaise` / `formatPriceBand` from `@utsava/db` for display.
+   `formatPaise` / `formatPriceBand` from `@/lib/db` for display.
 
 ## Conventions
 

@@ -20,7 +20,7 @@ pnpm dev              # http://localhost:3000
 ```
 
 The web app runs **with no database and no Docker**. Every read falls back to
-`apps/web/lib/fixtures.ts`, a fixture set mirroring `supabase/seed/03_demo.sql`, so you
+`lib/fixtures.ts`, a fixture set mirroring `supabase/seed/03_demo.sql`, so you
 get a working site immediately. Set `NEXT_PUBLIC_SUPABASE_URL` and the fallback stops
 being used.
 
@@ -32,7 +32,7 @@ Requires **Docker Desktop** (not currently installed on this machine).
 cp .env.example .env.local
 pnpm db:start          # supabase start — boots Postgres, Auth, Storage, Studio
 pnpm db:reset          # applies all migrations, then seeds
-pnpm db:types          # regenerates packages/db/src/generated/database.types.ts
+pnpm db:types          # regenerates lib/db/generated/database.types.ts
 pnpm db:test           # runs the pgTAP RLS suite
 pnpm dev
 ```
@@ -43,51 +43,63 @@ pnpm dev
 
 ## Repository shape
 
-Follows plan §4.1 exactly.
+One Next.js app at the repository root. Plan §4.1 draws a Turborepo with `apps/web`,
+`apps/admin`, `apps/vendor-app` and two shared packages; that shape earns its keep when
+several apps import the same code, and only one app was ever built. Flattened on
+2026-07-31 — see "Deviations from the plan" below.
 
 ```
-utsava/
-├─ apps/web                    # ONE Next.js app: customer site + partner PWA + admin
-│    middleware.ts             #   /admin IP allowlist + hardening headers
-│    app/layout.tsx            #   document shell only — no chrome
-│    app/(site)/               #   customer surface (route group — adds nothing to URLs)
-│      layout.tsx              #     site header + footer
-│      (marketing)/            #     home
-│      (discover)/[city]/[category]/[locality]
-│      vendor/[slug]           #     portfolio-first profile
-│      stories/                #     real-wedding galleries
-│      enquire/                #     OTP-gated enquiry flow
-│      partner/dashboard/      #     partner PWA: leads · calendar · profile · quotes
-│      p/[slug]                #     legal + the anchor-studio disclosure policy
-│    app/admin/                #   staff console at /admin — its own dark chrome
-│      page.tsx                #     launch-readiness gates (§13)
-│      moderation/             #     queue + decision screen, SLA-ordered
-│      vendors/                #     listing management + status transitions
-│      pipeline/               #     field-team onboarding board (§S3)
-│      leads/                  #     routing health + credit refunds
-│    app/api/workers/          #   notification outbox drain
-├─ apps/vendor-app             # Expo React Native, Android-first (not yet built)
-├─ packages/db                 # Supabase clients, types, zod schemas, money helpers
-├─ packages/ui                 # design system (Tailwind v4 + tokens)
+Utsava-Event-Website/
+├─ middleware.ts               # /admin IP allowlist + hardening headers
+├─ app/layout.tsx              # document shell only — no chrome
+├─ app/(site)/                 # customer surface (route group — adds nothing to URLs)
+│    layout.tsx                #   site header + footer
+│    (marketing)/              #   home
+│    (discover)/[city]/[category]/[locality]
+│    vendor/[slug]             #   portfolio-first profile
+│    stories/                  #   real-wedding galleries
+│    enquire/                  #   OTP-gated enquiry flow
+│    invitations/[slug]/book   #   curated collections + their checkout
+│    partner/dashboard/        #   partner PWA: leads · calendar · profile · quotes
+│    p/[slug]                  #   legal + the anchor-studio disclosure policy
+├─ app/admin/                  # staff console at /admin — its own dark chrome
+│    login/                    #   the gate; (console)/ below it is what the gate protects
+│    (console)/page.tsx        #   launch-readiness gates (§13)
+│    (console)/moderation/     #   queue + decision screen, SLA-ordered
+│    (console)/vendors/        #   listing management + status transitions
+│    (console)/pipeline/       #   field-team onboarding board (§S3)
+│    (console)/leads/          #   routing health + credit refunds
+│    (console)/orders/         #   invitation orders
+├─ app/api/workers/            # notification outbox drain
+├─ components/                 # app components
+│    ui/                       #   design system (Tailwind v4 + tokens)
+├─ lib/                        # server helpers, one module per concern
+│    db/                       #   Supabase clients, types, zod schemas, money helpers
+├─ public/                     # static assets
+├─ scripts/                    # image optimisation, super-admin bootstrap
 └─ supabase/
-     migrations/               # 16 PR-reviewed SQL migrations
+     migrations/               # 19 PR-reviewed SQL migrations
      seed/                     # geo · catalog · plans · demo
      tests/                    # pgTAP RLS suite
 ```
+
+`components/ui` and `lib/db` were the two workspace packages. They keep their own
+directories and barrel files, so the boundary they described is still legible in the import
+paths — `@/components/ui` and `@/lib/db` — without a package manifest to maintain.
 
 `pnpm dev` serves everything on **:3000** — the customer site at `/`, the staff console at
 `/admin`. To reach it from another device on the same network, bind to all interfaces:
 
 ```bash
-pnpm --filter @utsava/web dev -- --hostname 0.0.0.0
+pnpm dev -- --hostname 0.0.0.0
 ```
 
-### Two deviations from the plan, both deliberate
+### Deviations from the plan, all deliberate
 
 **1. The admin console is a path, not a separate deploy.** Plan §3 specifies "a separate
 deploy, SSO + IP allowlist". It now lives at `/admin` on the same origin by explicit
 product decision. The network-level isolation that implied is replaced by
-`apps/web/middleware.ts`, which enforces `ADMIN_IP_ALLOWLIST` on `/admin/*` (returning
+`middleware.ts`, which enforces `ADMIN_IP_ALLOWLIST` on `/admin/*` (returning
 404, not 403 — a 403 confirms the console exists) and sets `noindex`, `no-store`,
 `X-Frame-Options: DENY`. Set `ADMIN_IP_ALLOWLIST` in production; it is skipped when empty
 so local and preview work. **The real authorization boundary is unchanged**: it is
@@ -101,6 +113,25 @@ wrapped in `unstable_cache` and tagged `discover:{city}:{category}`, so repeat t
 never reaches Postgres and a listing edit still refreshes immediately via
 `revalidateTag`. Measured: 442 ms cold → 229 ms warm. Everything else — home, city hubs,
 vendor profiles, stories, legal pages — is statically generated.
+
+**3. No monorepo.** Plan §4.1 draws `apps/web` · `apps/admin` · `apps/vendor-app` ·
+`packages/db` · `packages/ui` under Turborepo. Two of those apps do not exist — admin is
+deviation 1 above, and the Expo vendor app is Phase 2 and can live in its own repository —
+which left a five-package workspace serving a single Next.js app. `packages/db` and
+`packages/ui` were eleven source files between them.
+
+Flattened on 2026-07-31: the app moved to the repository root, the two packages became
+`lib/db` and `components/ui`, and `pnpm-workspace.yaml`, `turbo.json` and four package
+manifests went away. What was lost is Turborepo's build cache; what was gained is that
+`pnpm dev` at the root is the whole story.
+
+Verified rather than assumed — both structures were built and served side by side, and the
+rendered markup of all 36 routes compared. Every difference was build machinery that
+changes whenever any file moves: the build id, content-hashed chunk names, RSC module
+numbers and Server Action ids (hashes of the module path). The generated stylesheet came
+out byte-identical at 92,226 bytes and 638 class selectors, which is the check that
+matters, because a wrong Tailwind `@source` path purges classes silently and shows up as an
+unstyled page rather than an error.
 
 ---
 
@@ -167,10 +198,9 @@ These are not conventions — they are constraints, and `supabase/tests/` assert
 
 ### Verified
 
-`pnpm typecheck` and `pnpm build` pass across all four workspace packages.
-**124 prerendered pages** in `apps/web`, 8 in `apps/admin`, and 40 content assertions
-covering the behaviours the plan actually commits to — including a per-card audit
-proving the contact-masking rule holds on every lead state.
+`pnpm typecheck` and `pnpm build` both pass. **132 prerendered pages** and 40 content
+assertions covering the behaviours the plan actually commits to — including a per-card
+audit proving the contact-masking rule holds on every lead state.
 
 ### Web app
 
@@ -241,9 +271,9 @@ Two blockers, in this order. Nothing else is worth doing before them.
 policy in the schema keys off `auth.uid()`, so the partner dashboard and the account area
 cannot work against real data until a session exists. Needed:
 
-- `apps/web/app/(auth)/login` — phone OTP for customers, email+password for vendor owners
-- `apps/web/middleware.ts` — Supabase session refresh (`@supabase/ssr` writes cookies
-  there; see the comment in `packages/db/src/clients.ts` about Server Components not
+- `app/(auth)/login` — phone OTP for customers, email+password for vendor owners
+- `middleware.ts` — Supabase session refresh (`@supabase/ssr` writes cookies
+  there; see the comment in `lib/db/clients.ts` about Server Components not
   being able to set them)
 - Route protection for `/partner/dashboard/**` and `/account/**`
 - The admin app needs the same, plus the SSO + IP allowlist plan §3 calls for
@@ -270,7 +300,7 @@ found and fixed 22 defects, but expect more on first execution.
 - **The SQL has never been executed.** No Docker or Postgres is available in this
   environment, so the migration pack is reviewed but not run. Expect to fix a few things
   on the first `pnpm db:reset`.
-- `packages/db/src/generated/database.types.ts` is **hand-authored** and covers only the
+- `lib/db/generated/database.types.ts` is **hand-authored** and covers only the
   read surface the web app uses. Replace it wholesale with `pnpm db:types` once the local
   stack is up; plan §9 gates CI on generated-type drift.
 - Demo media paths point at Storage objects that do not exist; the UI renders a warm

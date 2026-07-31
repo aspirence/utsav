@@ -8,11 +8,11 @@
     "node": ">=20.11.0"
   },
   "scripts": {
-    "dev": "turbo run dev",
-    "build": "turbo run build",
-    "lint": "turbo run lint",
-    "typecheck": "turbo run typecheck",
-    "test": "turbo run test",
+    "dev": "next dev --port 3000",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint",
+    "typecheck": "tsc --noEmit",
     "images": "node scripts/optimize-images.mjs",
     "format": "prettier --write \"**/*.{ts,tsx,js,jsx,json,md,sql,yaml,yml}\"",
     "format:check": "prettier --check \"**/*.{ts,tsx,js,jsx,json,md,sql,yaml,yml}\"",
@@ -21,17 +21,31 @@
     "db:reset": "supabase db reset",
     "db:diff": "supabase db diff -f",
     "db:lint": "supabase db lint",
-    "db:types": "supabase gen types typescript --local --schema public > packages/db/src/generated/database.types.ts",
+    "db:types": "supabase gen types typescript --local --schema public > lib/db/generated/database.types.ts",
     "db:test": "supabase test db",
     "db:bootstrap": "node scripts/bootstrap-super-admin.mjs"
   },
-  "devDependencies": {
+  "dependencies": {
+    "@supabase/ssr": "^0.12.3",
     "@supabase/supabase-js": "^2.48.1",
+    "clsx": "^2.1.1",
+    "next": "^15.1.6",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "tailwind-merge": "^2.6.0",
+    "three": "^0.185.1",
+    "zod": "^3.24.1"
+  },
+  "devDependencies": {
+    "@tailwindcss/postcss": "^4.0.0",
     "@types/node": "^22.10.5",
+    "@types/react": "^19.0.7",
+    "@types/react-dom": "^19.0.3",
+    "@types/three": "^0.185.1",
     "prettier": "^3.4.2",
     "prettier-plugin-tailwindcss": "^0.6.9",
     "supabase": "^2.6.8",
-    "turbo": "^2.3.3",
+    "tailwindcss": "^4.0.0",
     "typescript": "^5.7.3"
   }
 }
