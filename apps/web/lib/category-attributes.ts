@@ -38,9 +38,13 @@ export interface CategoryAttributeSet {
 /**
  * Keyed by category slug, matching supabase/seed/01_catalog.sql.
  *
- * A category with no entry gets no extra section — that is a real answer, not a gap to fill. The
- * questions worth asking about a pandit are not obvious enough to invent, and a form full of
- * fields nobody can answer teaches operators to skip the section entirely.
+ * FIVE OF THE FOURTEEN SEEDED CATEGORIES, and that is the scope on purpose. Venues, catering,
+ * decor and makeup were specified; photography is the wedge and was already here. Sets for the
+ * other nine were written and taken back out — inventing what to ask a pandit or a transport
+ * company is a product decision, not a coding one, and a form of fields nobody can answer teaches
+ * operators to skip the section entirely.
+ *
+ * A category with no entry gets a sentence instead of an empty form. That is a real answer.
  */
 export const CATEGORY_ATTRIBUTES: Record<string, CategoryAttributeSet> = {
   venues: {
@@ -130,6 +134,15 @@ export const CATEGORY_ATTRIBUTES: Record<string, CategoryAttributeSet> = {
       { key: 'sameDayEdit', label: 'Same-day edit offered', type: 'boolean' },
     ],
   },
+
+
+
+
+
+
+
+
+
 }
 
 /** Money fields are stored in paise; a UI showing them needs to know which ones. */

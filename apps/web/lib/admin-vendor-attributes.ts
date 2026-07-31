@@ -69,12 +69,10 @@ export async function getVendorCategoryDetails(
  */
 const NAME_TO_SLUG: Record<string, string> = {
   Photography: 'photography',
-  Videography: 'videography',
   Venues: 'venues',
   Catering: 'catering',
   Decor: 'decor',
   Makeup: 'makeup',
-  Mehendi: 'mehendi',
 }
 
 /**
