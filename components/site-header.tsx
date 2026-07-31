@@ -58,6 +58,10 @@ export async function SiteHeader() {
             192px the *footer* renders it at, which is the larger of the two uses, so one
             file serves both sharply. `design/source-images/logo-source.png` is the master;
             re-export from there if either size grows.
+
+            h-20 in a h-28 row. It was h-24, which is 96px of mark in 112px of header - 86%,
+            leaving 8px of air above and below, so the logo read as wedged in rather than set
+            in. 80px leaves 16px each side and the proportion stops being the thing you notice.
           */}
           {/* eslint-disable-next-line @next/next/no-img-element -- plan §12: no next/image */}
           <img
@@ -65,7 +69,7 @@ export async function SiteHeader() {
             alt="Utsava"
             width={623}
             height={576}
-            className="h-24 w-auto [filter:brightness(0)_invert(1)] group-data-[transparent]:[filter:brightness(0)_invert(1)_drop-shadow(0_1px_6px_rgb(15_12_11_/_0.7))]"
+            className="h-20 w-auto [filter:brightness(0)_invert(1)] group-data-[transparent]:[filter:brightness(0)_invert(1)_drop-shadow(0_1px_6px_rgb(15_12_11_/_0.7))]"
           />
         </Link>
 
