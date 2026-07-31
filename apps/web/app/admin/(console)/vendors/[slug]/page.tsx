@@ -6,6 +6,7 @@ import { getAdminVendors } from '@/lib/admin-data'
 
 import { VendorDetailsForm } from '../details-form'
 import { VendorStatusControls } from '../status-controls'
+import { VendorMediaPanel } from './media-panel'
 
 export const metadata = { title: 'Vendor' }
 
@@ -138,6 +139,13 @@ export default async function AdminVendorDetailPage({
           />
         </Panel>
       </div>
+
+      {/*
+        Full width, below the two columns. The gallery is the widest thing on this screen — a grid
+        of image tiles squeezed into the left column would show two per row and turn a five-photo
+        check into scrolling.
+      */}
+      <VendorMediaPanel vendorSlug={vendor.slug} />
     </>
   )
 }
