@@ -3,6 +3,7 @@ import 'server-only'
 import { unstable_cache } from 'next/cache'
 
 import { formatPerDay, formatPriceBand, storageImageUrl } from '@/lib/db'
+import type { AttributeMap } from '@/lib/category-attributes'
 import type { VendorCardData } from '@/components/ui'
 
 import {
@@ -409,6 +410,13 @@ export interface VendorDetail {
   establishedYear: number | null
   teamSize: number | null
   styleTags: string[]
+  /**
+   * The category-specific answers — a venue's seated capacity, a caterer's per-plate rates.
+   * Stored on vendor_categories (migration 20260730000300) and rendered by
+   * components/vendor-category-details.tsx against the definitions in lib/category-attributes.ts.
+   * Empty for a listing nobody has filled in yet, and for every fixture.
+   */
+  attributes: AttributeMap
   priceBandLabel: string
   ratingAvg: number | null
   ratingCount: number
@@ -495,7 +503,7 @@ export async function getVendorBySlug(slug: string): Promise<VendorDetail | null
           .limit(20),
         supabase
           .from('vendor_categories')
-          .select('style_tags, categories!inner(slug, name)')
+          .select('style_tags, attributes, categories!inner(slug, name)')
           .eq('vendor_id', v.id)
           .eq('is_primary', true)
           .maybeSingle(),
@@ -503,6 +511,7 @@ export async function getVendorBySlug(slug: string): Promise<VendorDetail | null
 
       const cat = vcats as unknown as {
         style_tags: string[]
+        attributes: AttributeMap | null
         categories: { slug: string; name: string }
       } | null
 
@@ -518,6 +527,7 @@ export async function getVendorBySlug(slug: string): Promise<VendorDetail | null
         establishedYear: v.established_year,
         teamSize: v.team_size,
         styleTags: cat?.style_tags ?? [],
+        attributes: cat?.attributes ?? {},
         priceBandLabel: formatPriceBand(v.price_band_min, v.price_band_max, { compact: false }),
         ratingAvg: v.rating_avg,
         ratingCount: v.rating_count,
@@ -568,6 +578,10 @@ export async function getVendorBySlug(slug: string): Promise<VendorDetail | null
     localityName: locality?.name ?? null,
     categorySlug: v.categorySlug,
     categoryName: category?.name ?? 'Vendor',
+    // The fixtures predate vendor_categories.attributes and carry none. The section simply
+    // does not render, which is the right outcome — inventing a seated capacity for a demo
+    // venue would put a number on the page that no operator ever typed.
+    attributes: {},
     establishedYear: v.establishedYear,
     teamSize: v.teamSize,
     styleTags: v.styleTags,

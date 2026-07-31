@@ -14,6 +14,7 @@ import {
 } from '@/components/ui'
 
 import { ShortlistButton } from '@/components/shortlist-button'
+import { VendorCategoryDetails } from '@/components/vendor-category-details'
 import { getLiveVendorSlugs, getVendorBySlug } from '@/lib/queries'
 
 type Props = { params: Promise<{ slug: string }> }
@@ -171,6 +172,21 @@ export default async function VendorPage({ params }: Props) {
                   </div>
                 ))}
             </dl>
+
+            {/*
+              What this vendor is, specifically — capacity for a venue, per-plate rates for a
+              caterer, whether a makeup artist travels on the morning. Above the packages
+              because it is what decides whether a package is worth reading at all: nobody
+              compares catering quotes before they know the veg rate.
+
+              Renders nothing when the listing has no answers, which is every listing until
+              staff fill the section in through the console.
+            */}
+            <VendorCategoryDetails
+              categorySlug={vendor.categorySlug}
+              categoryName={vendor.categoryName}
+              attributes={vendor.attributes}
+            />
 
             {/* Plan §2: package cards, normalised to per-day pricing. */}
             {vendor.packages.length > 0 && (
