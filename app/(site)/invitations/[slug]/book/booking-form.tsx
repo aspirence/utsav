@@ -30,7 +30,10 @@ import { placeInvitationOrder, type BookingState } from './actions'
  *
  * ── THE PAYMENT COPY IS AHEAD OF THE CODE, BY DECISION ────────────────────────
  * The button says "Pay ₹99 & continue" and the row beneath it says "256-bit secure payment ·
- * Secured via Razorpay", and none of that is wired yet — plan §14 puts escrow in July 2027.
+ * Secured via Cashfree". The aggregator is now real — lib/cashfree.ts creates the order and
+ * app/api/webhooks/cashfree records the payment — but it is inert until CASHFREE_APP_ID and
+ * CASHFREE_SECRET_KEY are set, and with them blank the money still changes hands over WhatsApp.
+ * So the claims are true of the code and not yet of the deployment.
  *
  * Conditional versions of both were built and removed on request, as was the line that said the
  * payment link arrives over WhatsApp. So there is now nothing on this card that tells a customer
@@ -232,9 +235,15 @@ export function BookingForm({
 
               These two are claims about a payment integration, and they are rendered whether or
               not one is configured — an explicit product decision, taken after the conditional
-              version was built and overruled twice. They become true the day RAZORPAY_KEY_ID is
-              set; until then they are ahead of the code, and whoever wires payment should check
-              this block still reads correctly rather than assuming it was always accurate.
+              version was built and overruled twice. They become true the day CASHFREE_APP_ID and
+              CASHFREE_SECRET_KEY are set; until then they are ahead of the code, and whoever
+              wires payment should check this block still reads correctly rather than assuming it
+              was always accurate.
+
+              The aggregator named here changed on 2026-07-31 from Razorpay to Cashfree — plan §4
+              left the choice to "evaluate at build". If it ever changes again, this string and
+              lib/cashfree.ts move together: a badge naming a company we do not use is worse than
+              no badge, because it is checkable.
             */}
             <div className="mt-5 flex flex-wrap items-center justify-center gap-x-4 gap-y-2 border-t border-ink-100 pt-4 text-[11px] text-ink-600">
               <span className="inline-flex items-center gap-1.5">
@@ -243,7 +252,7 @@ export function BookingForm({
               </span>
               <span className="inline-flex items-center gap-1.5">
                 <ShieldMark />
-                Secured via Razorpay
+                Secured via Cashfree
               </span>
             </div>
 

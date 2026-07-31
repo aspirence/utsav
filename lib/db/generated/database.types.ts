@@ -625,6 +625,18 @@ export type Database = {
         }
         Returns: SearchVendorResult[]
       }
+      /**
+       * The public wrapper added in 20260731170000. service_role only — a payment may be
+       * declared only by the aggregator's signed webhook, never by a client.
+       */
+      record_invitation_payment: {
+        Args: {
+          p_reference: string
+          p_payment_ref: string
+          p_paid_at?: string
+        }
+        Returns: InvitationOrderRow
+      }
     }
     Enums: {
       vendor_status: VendorStatus

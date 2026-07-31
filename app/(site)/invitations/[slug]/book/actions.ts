@@ -37,11 +37,18 @@ import { getInvitationTemplate, orderLegs } from '@/lib/invitation-templates'
  * `invitation_orders_amounts_reconcile` (booking + balance = template price), so a mistake here is
  * a rejected insert rather than a wrong invoice.
  *
- * NO PAYMENT IS TAKEN. There is no payment provider wired — plan §14 puts escrow in July 2027 —
- * so the row is created `awaiting_payment` with a null `paid_at`, and
- * `invitation_orders_paid_before_progress` will not let it advance past that without a payment
- * stamp. When Razorpay is connected, its webhook sets paid_at/payment_ref and moves the status;
- * nothing in this file should ever set them.
+ * NO PAYMENT IS TAKEN HERE, and none ever should be. The row is created `awaiting_payment` with
+ * a null `paid_at`, and `invitation_orders_paid_before_progress` will not let it advance past
+ * that without a payment stamp.
+ *
+ * The stamp comes from one place only: app/api/webhooks/cashfree, on a signature-verified
+ * server-to-server POST. Not from here, and not from the page the customer lands on after
+ * paying — that is a URL anyone can open, and a payment flow that trusts a redirect hands out
+ * free orders to whoever reads the address bar.
+ *
+ * With CASHFREE_APP_ID unset the aggregator is inert and this stays a manual flow: the order is
+ * recorded and staff send a payment link over WhatsApp. Plan §14 puts full escrow in July 2027;
+ * this is the one money path that exists before it.
  */
 
 export type BookingState =
