@@ -36,50 +36,56 @@ export async function SiteFooter() {
     // space. Padding is inside the element, so it takes the background with it.
     <footer className="bg-surface-raised pt-2 sm:pt-4">
       {/*
-        A line-art frieze across the top of the footer - baraat, band, mandap, the couple,
-        read left to right. It lives inside <footer> rather than in any page, so every
-        route gets it without having to remember.
+        A line-art frieze across the top of the footer. It lives inside <footer> rather than
+        in any page, so every route gets it without having to remember.
 
-        THE ARTWORK IS footer2, chosen on 2026-07-31. An earlier note here recorded footer2
-        as a failure, and that judgement was about a different file: the master
-        design/source-images/footer2.png is white line work on transparent, 16% of its
-        pixels *partially* so, which turned into a near-black haze when it sat on the dark
-        band. The exported public/footer2-*.webp are black line work on a transparent
-        ground, which is the opposite problem and no problem at all here - the strip they
-        sit on is surface-raised, #ffffff exactly.
+        THE ARTWORK IS footer99, from 2026-08-01, and the change is not only decorative. The
+        frieze before it was a baraat: horse, band, mandap, the couple. Utsava is an
+        all-events marketplace and photography is only the wedge (plan §11), so a wedding
+        procession across the bottom of every page quietly said the opposite. This one runs
+        wedding, engagement, anniversary, birthday, corporate — the categories the catalogue
+        actually sells, read left to right.
 
-        THE ALPHA IS GONE ANYWAY, because the lesson from that failure outlives the file it
-        came from: a frieze spanning the full width always covers whatever is behind it, so
-        the ground may as well be baked in. Flattened onto #ffffff - the same value the
-        strip already paints, so not one visible pixel moved - and the three files together
-        went from 559 KB to 233 KB. No alpha channel means no partial-alpha region for lossy
-        WebP to smear, which is what went wrong the first time.
+        THE MASTER IS TRIMMED AND FLATTENED, both for reasons the previous frieze taught:
+
+          · 48px of empty pixels sat above the artwork in the source. That is not layout, so
+            padding it away in CSS would only move the problem to whatever width the frieze
+            is next rendered at. Trimmed on alpha; the bottom needed nothing, the baseline
+            rule already runs to the edge, which is what lets it meet the dark band with no
+            seam.
+          · The alpha channel is gone. A strip that spans the full width always covers what
+            is behind it, so an alpha channel buys nothing and costs a partial-alpha region
+            for lossy WebP to smear — the exact fault that made an earlier attempt read as a
+            near-black rectangle. Flattened onto #ffffff, which is surface-raised exactly, so
+            no visible pixel moved.
+
+        2134 × 327 after trimming, or 6.53:1 — considerably wider than the 4:1 it replaces,
+        so the strip is shorter and the scenes are smaller at any given width.
 
         THREE WIDTHS, and the descriptors are the files' real pixel widths rather than the
-        sizes they were asked for. The exporter does not enlarge, so a nominal 1920 that was
-        only rendered at 1600 would make the browser pick the wrong candidate and the
-        artwork would land soft.
+        sizes they were asked for. The export uses withoutEnlargement, so a nominal 1920 that
+        had only rendered at 1600 would make the browser pick the wrong candidate and land
+        the artwork soft.
 
-        `block` kills the inline-element baseline gap - as an inline image it would leave a
+        `block` kills the inline-element baseline gap — as an inline image it would leave a
         few pixels of dark under the white frieze.
       */}
       {/* eslint-disable-next-line @next/next/no-img-element -- plan §12: no next/image */}
       <img
-        src="/footer2-1920.webp"
-        srcSet="/footer2-768.webp 768w, /footer2-1280.webp 1280w, /footer2-1920.webp 1920w"
+        src="/footer99-1920.webp"
+        srcSet="/footer99-768.webp 768w, /footer99-1280.webp 1280w, /footer99-1920.webp 1920w"
         sizes="100vw"
         alt=""
         aria-hidden="true"
         width={1920}
-        height={480}
+        height={294}
         loading="lazy"
         decoding="async"
-        // On a phone the frieze is 1920px of artwork squeezed into 375, which lands it at
-        // about 94px tall - every figure in it too small to be anything. So below `sm` it
-        // is given a real height and cropped to the centre instead: the mandap and the
-        // couple at a size you can actually see, at the cost of the pavilions at the ends.
-        // From `sm` up there is width enough to show the whole procession.
-        className="block h-[130px] w-full object-cover object-center sm:h-auto sm:object-fill"
+        // On a phone the whole strip squeezed into 375px lands at about 57px tall, which is
+        // five scenes none of which can be made out. So below `sm` it is given a real height
+        // and cropped to the centre instead: two scenes at a size you can actually read, at
+        // the cost of the ones at the ends. From `sm` up there is width enough for all five.
+        className="block h-[120px] w-full object-cover object-center sm:h-auto sm:object-fill"
       />
 
       <div className="bg-ink-900">
