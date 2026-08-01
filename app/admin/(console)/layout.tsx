@@ -2,8 +2,12 @@ import { redirect } from 'next/navigation'
 import { headers } from 'next/headers'
 
 import { AdminSidebar } from '@/components/admin-sidebar'
-import { AdminTopBar } from '@/components/admin-topbar'
-import { getStaffGate } from '@/lib/admin-auth'
+import { ConsoleShell } from '@/components/console-shell'
+import { initialsFrom } from '@/components/console-topbar'
+import { DashboardSwitcher } from '@/components/dashboard-switcher'
+import { signOutStaff } from '@/app/admin/actions'
+import { getStaffGate, roleLabel } from '@/lib/admin-auth'
+import { getViewer } from '@/lib/viewer'
 
 /**
  * The staff console proper: the gate, then the chrome.
@@ -31,15 +35,20 @@ import { getStaffGate } from '@/lib/admin-auth'
  *
  * FOUR OUTCOMES, and the last two are the ones worth arguing about:
  *
- *   anonymous → /admin/login, carrying where they were headed.
- *   locked    → /admin/login too, which explains that no login exists yet and how to make one.
- *               Locked rather than open is the safe default; locked with no explanation is a
- *               bug report, which is why the page says exactly what to set.
- *   not_staff → /admin/login, which explains it and offers a sign-out. NOT a 404: the likeliest
- *               person here is a colleague whose role has not been granted yet, and telling them
- *               "this does not exist" sends them to debug a working system. It reveals nothing —
- *               they are being shown facts about their own session.
+ *   anonymous → /login, carrying where they were headed.
+ *   locked    → /login with ?error=locked, which says no login exists yet and points at the
+ *               README. Locked rather than open is the safe default; locked with no explanation
+ *               is a bug report.
+ *   not_staff → /login with ?error=not_staff, which explains it and offers a sign-out. NOT a
+ *               404: the likeliest person here is a colleague whose role has not been granted
+ *               yet, and telling them "this does not exist" sends them to debug a working
+ *               system. It reveals nothing — they are being shown facts about their own session.
  *   staff     → the console.
+ *
+ * ALL THREE REFUSALS GO TO THE ONE LOGIN. /admin/login used to render its own dark-chromed form;
+ * it is now a redirect to /login, because plan §3 gives one human one auth identity and two
+ * forms writing to one auth.users table gave that human two doors. Which dashboard somebody
+ * lands on is decided by /dashboard reading their memberships.
  */
 export default async function ConsoleLayout({ children }: { children: React.ReactNode }) {
   const gate = await getStaffGate()
@@ -49,37 +58,53 @@ export default async function ConsoleLayout({ children }: { children: React.Reac
     // it, someone deep-linked to an enquiry would sign in and land on the dashboard, then have
     // to find their way back.
     const path = (await headers()).get('x-pathname')
-    const next = path && path.startsWith('/admin') ? `?next=${encodeURIComponent(path)}` : ''
-    redirect(`/admin/login${next}`)
+    const params = new URLSearchParams()
+    if (path && path.startsWith('/admin')) params.set('next', path)
+    // 'anonymous' gets no error: there is nothing to explain to somebody who simply is not
+    // signed in yet, and a red banner over an empty form reads as a failed attempt.
+    if (gate.state !== 'anonymous') params.set('error', gate.state)
+    redirect(`/login?${params}`)
   }
 
   // Past the redirect, so this is always a real session. Narrowed rather than defaulted: a
   // `?? null` here would quietly reintroduce the signed-out render path this change removed.
   const { identity } = gate
 
+  /**
+   * Null on the local-credential path — that session has no auth.users row, so there are no
+   * memberships to read and no other surface to switch to. The switcher renders nothing for a
+   * staff account that is only staff, which is most of them.
+   */
+  const viewer = await getViewer()
+
   return (
-    // Denser type than the customer site: a moderator working a queue needs rows per screen,
-    // not whitespace. Scoped here so it cannot leak into the public pages.
-    <div className="min-h-screen bg-ink-50 text-[0.9375rem]">
-      <AdminSidebar role={identity.role} />
-
-      {/* `lg:pl-60` rather than a flex row, because the rail is `fixed`: a position-fixed
-          sidebar is out of flow, so the content has to be inset by hand. A flex row would
-          scroll the rail away with the page, and a nav that scrolls off is one you have to
-          scroll back for. */}
-      <div className="lg:pl-60">
-        <AdminTopBar identity={identity} />
-
-        <main className="mx-auto max-w-[1500px] px-4 py-6 sm:px-6">{children}</main>
-
-        <footer className="mx-auto max-w-[1500px] px-4 pb-8 sm:px-6">
-          <p className="border-t border-ink-200 pt-5 text-xs text-ink-500">
-            {identity.isLocal
-              ? 'Local admin session — no database is attached, so every screen is showing fixtures and nothing you do here is saved.'
-              : 'Every action taken here is written to an append-only audit log with your identity attached.'}
-          </p>
-        </footer>
-      </div>
-    </div>
+    <ConsoleShell
+      sidebar={<AdminSidebar role={identity.role} />}
+      topBar={{
+        search: {
+          action: '/admin/enquiries',
+          placeholder: 'Search enquiries by name or number',
+          label: 'Search enquiries',
+        },
+        badge: identity.isLocal
+          ? { text: 'Local session — fixtures, nothing saved', tone: 'warn' }
+          : { text: 'Live data', tone: 'ok' },
+        identity: {
+          name: identity.fullName ?? identity.email ?? identity.phone ?? 'Signed in',
+          detail: roleLabel(identity.role),
+          initials: initialsFrom(identity),
+        },
+        switcher: viewer ? <DashboardSwitcher viewer={viewer} current="console" /> : undefined,
+        signOut: signOutStaff,
+        viewSiteHref: '/',
+      }}
+      footnote={
+        identity.isLocal
+          ? 'Local admin session — no database is attached, so every screen is showing fixtures and nothing you do here is saved.'
+          : 'Every action taken here is written to an append-only audit log with your identity attached.'
+      }
+    >
+      {children}
+    </ConsoleShell>
   )
 }

@@ -80,7 +80,7 @@ export default async function PartnerOverviewPage() {
         <div className="space-y-3">
           {recent.map((lead) => (
             <Link key={lead.leadId} href={`/partner/dashboard/leads/${lead.leadId}`}>
-              <Card className="transition-shadow hover:shadow-md">
+              <Card>
                 <CardBody className="flex flex-wrap items-center justify-between gap-4">
                   <div className="min-w-0">
                     <p className="font-medium text-ink-900">

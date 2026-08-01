@@ -1,6 +1,11 @@
 import Link from 'next/link'
 
-import { getMyEnquiries, getMyEvents, getMyShortlist } from '@/lib/account-queries'
+import {
+  getMyEnquiries,
+  getMyEvents,
+  getMyInvitationOrders,
+  getMyShortlist,
+} from '@/lib/account-queries'
 import { getProfile, getSessionUser } from '@/lib/auth'
 
 /**
@@ -18,18 +23,20 @@ import { getProfile, getSessionUser } from '@/lib/auth'
 export default async function AccountPage() {
   // All four in parallel. They are four independent RLS-scoped reads against one connection,
   // so waterfalling them would cost four round trips to say the same thing.
-  const [user, profile, enquiries, shortlist, events] = await Promise.all([
+  const [user, profile, enquiries, shortlist, events, invitations] = await Promise.all([
     getSessionUser(),
     getProfile(),
     getMyEnquiries(),
     getMyShortlist(),
     getMyEvents(),
+    getMyInvitationOrders(),
   ])
 
   const counts = {
     enquiries: enquiries.length,
     shortlist: shortlist.length,
     events: events.filter((e) => !e.isArchived).length,
+    invitations: invitations.length,
   }
 
   return (
@@ -83,6 +90,9 @@ export default async function AccountPage() {
             { href: '/account/enquiries', label: 'Enquiries sent', n: counts.enquiries },
             { href: '/account/shortlists', label: 'Vendors saved', n: counts.shortlist },
             { href: '/account/events', label: 'Events', n: counts.events },
+            // Counts orders, not designs browsed — the number that means something is how many
+            // cards this person actually has.
+            { href: '/account/invitations', label: 'Invitation cards', n: counts.invitations },
           ].map((row) => (
             <li key={row.href}>
               <Link

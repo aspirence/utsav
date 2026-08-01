@@ -10,8 +10,11 @@ import { createPortal } from 'react-dom'
  *
  * Below `md` the header had room for the mark and one button, so the categories were
  * simply not there - five of the site's most important routes reachable on a desktop and
- * nowhere at all on a phone. They live here now, and the "Find vendors" button comes with
- * them rather than sitting in the bar competing with the logo.
+ * nowhere at all on a phone. They live here now, alongside the account link.
+ *
+ * The "Find vendors" and "List your business" entries that used to sit under them are gone,
+ * removed from the bar and from this panel in the same change so the two do not disagree about
+ * what the header offers.
  *
  * Full screen rather than a dropdown. A panel hanging off a 112px header leaves the page
  * showing underneath it, and on a dark translucent bar that reads as a rendering fault.
@@ -88,14 +91,19 @@ export function SiteNavMobile({
     <div className="md:hidden">
       {/* Stays a hamburger in both states. The panel covers it when open and carries its
           own close control, so animating this one into an X would be animating something
-          nobody can see. */}
+          nobody can see.
+
+          THIS BUTTON IS IN THE HEADER BAR, so it needs the bar's two colour states — ink on the
+          white chrome, white over the homepage hero. Everything below it is inside the slide-in
+          panel, which is dark in both cases and does not. The bars are `bg-current`, so setting
+          the text colour is enough for the icon as well. */}
       <button
         type="button"
         onClick={() => setOpen(true)}
         aria-expanded={open}
         aria-controls="site-menu"
         aria-label="Open menu"
-        className="flex h-11 w-11 items-center justify-center rounded-md text-white transition-colors hover:bg-white/10"
+        className="flex h-11 w-11 items-center justify-center rounded-full text-ink-700 transition-colors hover:bg-ink-100 group-data-[transparent]:text-white group-data-[transparent]:hover:bg-white/10"
       >
         <span className="relative block h-4 w-6" aria-hidden="true">
           <span className="absolute left-0 top-0 block h-0.5 w-6 bg-current" />
@@ -184,31 +192,15 @@ export function SiteNavMobile({
               </ul>
 
               <div className="mt-8 w-full max-w-xs space-y-3">
-                {/* The button that used to sit in the bar. Plan §1 keeps the vendor entry
-                    point unburied, so it comes along rather than being desktop-only. */}
                 <Link
-                  href={`/${defaultCity}/photography`}
+                  // /dashboard, not /account: it resolves to whichever surface this
+                  // person's memberships give them. See lib/viewer.ts.
+                  href={signedIn ? '/dashboard' : '/login'}
                   tabIndex={open ? undefined : -1}
                   style={step(300 + categories.length * 70)}
-                  className="bg-primary-600 block rounded-md px-5 py-3.5 text-center font-medium text-white"
-                >
-                  Find vendors
-                </Link>
-                <Link
-                  href={signedIn ? '/account' : '/login'}
-                  tabIndex={open ? undefined : -1}
-                  style={step(360 + categories.length * 70)}
                   className="text-ink-100 block rounded-md border border-white/25 px-5 py-3.5 text-center font-medium"
                 >
                   {signedIn ? 'Your account' : 'Login'}
-                </Link>
-                <Link
-                  href="/partner"
-                  tabIndex={open ? undefined : -1}
-                  style={step(420 + categories.length * 70)}
-                  className="text-ink-300 block py-2 text-center text-sm"
-                >
-                  List your business
                 </Link>
               </div>
             </nav>

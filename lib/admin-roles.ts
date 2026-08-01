@@ -64,6 +64,14 @@ export function canSee(role: StaffRoleKind, href: string): boolean {
     // reason to see a customer's phone number against a payment.
     case '/admin/orders':
       return role === 'moderator' || role === 'finance'
+    /*
+     * Granting and revoking staff roles. The `super` short-circuit at the top of this function
+     * already admits the only role that may open it, so this case exists to deny everybody
+     * else — without it the `default: true` below would put the link in a moderator's rail,
+     * pointing at a page that answers notFound().
+     */
+    case '/admin/users':
+      return false
     default:
       return true
   }

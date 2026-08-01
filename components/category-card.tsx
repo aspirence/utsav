@@ -43,7 +43,7 @@ export function CategoryCard({
   imageAlt = '',
 }: CategoryCardProps) {
   return (
-    <article className="group relative min-h-[188px] overflow-hidden rounded-xl border border-ink-100 bg-surface-raised shadow-sm transition-shadow hover:shadow-lg">
+    <article className="group relative min-h-[188px] overflow-hidden rounded-xl border border-ink-100 bg-surface-raised transition-colors hover:border-ink-300">
       {/*
         Image area — fills the right, sits behind the white panel and its curve.
 

@@ -29,8 +29,8 @@ export function HowItWorks({
 }) {
   return (
     <Container className="py-14 sm:py-16">
-      <div className="rounded-[2rem] border-2 border-dotted border-primary-300/70 p-2 sm:p-2.5">
-        <div className="rounded-[1.6rem] bg-surface-raised px-5 py-12 sm:px-10 sm:py-14">
+      <div className="rounded-3xl border-2 border-dotted border-primary-300/70 p-2 sm:p-2.5">
+        <div className="rounded-3xl bg-surface-raised px-5 py-12 sm:px-10 sm:py-14">
           <div className="mx-auto max-w-2xl text-center">
             {eyebrow && (
               <p className="text-xs font-semibold uppercase tracking-[0.16em] text-primary-700/80">

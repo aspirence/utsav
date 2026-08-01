@@ -126,7 +126,7 @@ export default async function CityPage({ params }: Props) {
             <Link
               key={category.slug}
               href={`/${citySlug}/${category.slug}`}
-              className="group rounded-xl border border-ink-100 bg-surface-raised p-5 shadow-sm transition-shadow hover:shadow-md"
+              className="group rounded-xl border border-ink-100 bg-surface-raised p-5 transition-colors hover:border-ink-300"
             >
               <div className="flex items-start justify-between gap-3">
                 <h3 className="font-display text-xl text-ink-900">{category.pluralName}</h3>

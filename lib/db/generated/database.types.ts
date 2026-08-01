@@ -287,6 +287,56 @@ export type VendorRow = {
   updated_at: string
 }
 
+/**
+ * public.audit_log — mirrors 20260727000300_identity.sql.
+ *
+ * Plan §3 asks the console for an "append-only audit log", and the console's own footer promises
+ * every action taken there is written to it with the actor attached. Registered here so the
+ * screens that make privilege changes can honour that promise in typed code rather than a cast.
+ *
+ * `audit_log_select_super` restricts reads to super admins and `audit_log_insert_staff` requires
+ * `actor_id = auth.uid()` — so a client cannot write a row on somebody else's behalf, and a
+ * service-role writer has to set the actor honestly because nothing else will.
+ *
+ * There is no UPDATE or DELETE policy at all, which is what "append-only" means here.
+ */
+export type AuditLogRow = {
+  id: number
+  actor_id: string | null
+  actor_role: string | null
+  action: string
+  subject_type: string
+  subject_id: string | null
+  before_state: Record<string, unknown> | null
+  after_state: Record<string, unknown> | null
+  reason: string | null
+  ip_address: string | null
+  user_agent: string | null
+  created_at: string
+}
+
+/**
+ * Plan §3's capability source of truth: "one human, many contexts". A profile holds one row
+ * per vendor it can act for, and `app.is_vendor_member()` reads exactly this table — so the
+ * membership is the permission, and there is no role column on profiles to drift from it.
+ *
+ * `accepted_at` null means an invitation that was sent and never taken up; `revoked_at` not
+ * null means it was withdrawn. Both are still rows, and both are ignored by the RLS helper, so
+ * a reader that forgets either condition will show a dashboard whose every query is empty.
+ */
+export type VendorMemberRow = {
+  id: string
+  vendor_id: string
+  profile_id: string
+  role: VendorMemberRole
+  invited_by: string | null
+  invited_at: string
+  accepted_at: string | null
+  revoked_at: string | null
+  created_at: string
+  updated_at: string
+}
+
 export type VendorCategoryRow = {
   id: string
   vendor_id: string
@@ -590,8 +640,13 @@ export type Database = {
       >
 
       // Read-only from any client. `staff_roles_select_own` admits the holder and super
-      // admins; there is no write policy at all, by design.
+      // admins; there is no write policy at all, by design. /admin/users writes it through the
+      // service-role key, gated on being super and audited — see lib/admin-users.ts.
       staff_roles: Table<StaffRoleRow>
+
+      // Append-only. Super admins read it; any staff member may insert a row for themselves.
+      // Nothing may update or delete one.
+      audit_log: Table<AuditLogRow, Omit<Partial<AuditLogRow>, 'id' | 'created_at'>>
 
       // Reference data — public SELECT, staff-only writes (see 001300_rls_policies.sql).
       cities: Table<CityRow>
@@ -621,6 +676,9 @@ export type Database = {
       >
 
       vendors: Table<VendorRow>
+      // Read-only from a client. `vendor_members_select_member` admits fellow members;
+      // `vendor_members_write_owner` restricts every write to the vendor's owner.
+      vendor_members: Table<VendorMemberRow>
       vendor_categories: Table<VendorCategoryRow>
       // price_per_day is a generated column; excluded from Insert so it is never written.
       packages: Table<PackageRow, Omit<Partial<PackageRow>, 'price_per_day'>>

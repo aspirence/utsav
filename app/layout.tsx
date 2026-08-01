@@ -1,24 +1,35 @@
 import type { Metadata, Viewport } from 'next'
-import { Playfair_Display } from 'next/font/google'
+import { DM_Sans } from 'next/font/google'
 
 import './globals.css'
 
 /**
- * Display face. next/font downloads Playfair at build time and serves it from our own
- * origin, so there is no request to fonts.gstatic.com at runtime - plan §13 measures LCP
- * on 4G and a third-party font handshake is exactly the kind of thing that blows it.
+ * The typeface — singular.
  *
- * `display: 'swap'` means text paints in the fallback immediately and reflows when the
- * real face lands, rather than holding the headline invisible.
+ * There used to be two: Playfair Display for headings and whatever the browser resolved
+ * `Inter` to for everything else. The discovery-wall redesign replaced that pairing with one
+ * geometric humanist sans carrying the whole interface, headings included, so a page reads as
+ * one system rather than as an editorial serif sitting on top of UI text.
  *
- * Weights are deliberately light. Playfair at 600+ is heavier than the Georgia fallback it
- * replaces; 400 and 500 are what give it the thin, high-contrast look it is chosen for.
+ * DM Sans, because the reference face (Neue Plak) is not licensable here and DM Sans is its
+ * closest free equivalent — same geometric skeleton, same generous x-height, and it holds up
+ * at the 14px that most of this interface is set in.
+ *
+ * next/font downloads it at build time and serves it from our own origin, so there is no
+ * request to fonts.gstatic.com at runtime — plan §13 measures LCP on 4G and a third-party font
+ * handshake is exactly the kind of thing that blows it.
+ *
+ * `display: 'swap'` paints text in the fallback immediately and reflows when the real face
+ * lands, rather than holding the headline invisible.
+ *
+ * Three weights and no more: 400 body, 600 titles and controls, 700 headings. Every extra
+ * weight is another file on the critical path for a distinction nobody asked for.
  */
-const playfair = Playfair_Display({
+const dmSans = DM_Sans({
   subsets: ['latin'],
-  weight: ['400', '500', '600'],
+  weight: ['400', '600', '700'],
   style: ['normal', 'italic'],
-  variable: '--font-playfair',
+  variable: '--font-dm-sans',
   display: 'swap',
 })
 
@@ -54,7 +65,7 @@ export const viewport: Viewport = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en-IN" className={playfair.variable}>
+    <html lang="en-IN" className={dmSans.variable}>
       <body>{children}</body>
     </html>
   )

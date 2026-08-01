@@ -179,7 +179,7 @@ export function TemplateCollections({ items }: { items: TemplateCard[] }) {
             type="button"
             onClick={() => advance(-1)}
             aria-label="Previous template"
-            className="absolute -left-4 top-[36%] hidden h-11 w-11 items-center justify-center rounded-full bg-white text-lg text-ink-800 shadow-lg ring-1 ring-ink-200/70 transition-colors hover:text-ink-950 sm:flex"
+            className="absolute -left-4 top-[36%] hidden h-11 w-11 items-center justify-center rounded-full bg-white text-lg text-ink-800 ring-1 ring-ink-200/70 transition-colors hover:text-ink-950 sm:flex"
           >
             <span aria-hidden="true">&#8249;</span>
           </button>
@@ -187,7 +187,7 @@ export function TemplateCollections({ items }: { items: TemplateCard[] }) {
             type="button"
             onClick={() => advance(1)}
             aria-label="Next template"
-            className="absolute -right-4 top-[36%] hidden h-11 w-11 items-center justify-center rounded-full bg-white text-lg text-ink-800 shadow-lg ring-1 ring-ink-200/70 transition-colors hover:text-ink-950 sm:flex"
+            className="absolute -right-4 top-[36%] hidden h-11 w-11 items-center justify-center rounded-full bg-white text-lg text-ink-800 ring-1 ring-ink-200/70 transition-colors hover:text-ink-950 sm:flex"
           >
             <span aria-hidden="true">&#8250;</span>
           </button>

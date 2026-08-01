@@ -367,7 +367,7 @@ function Bar({ children, onClose }: { children: React.ReactNode; onClose: () => 
   return (
     <div
       ref={ref}
-      className="border-ink-200/70 bg-surface-raised relative flex flex-col rounded-3xl border shadow-[0_10px_30px_-18px_rgba(24,17,12,0.35)] sm:flex-row sm:items-stretch sm:rounded-full"
+      className="border-ink-200/70 bg-surface-raised relative flex flex-col rounded-3xl border sm:rounded-full sm:flex-row sm:items-stretch sm:rounded-full"
     >
       {children}
     </div>
@@ -435,7 +435,7 @@ function Segment({
           idea inline — the panel is mounted only while open, so the initial state is the animation.
         */
         <div
-          className="border-ink-200 bg-surface-raised absolute left-0 top-[calc(100%+0.5rem)] z-30 max-h-72 w-full min-w-[15rem] overflow-y-auto rounded-2xl border py-1.5 shadow-[0_16px_40px_-20px_rgba(24,17,12,0.45)] sm:w-auto"
+          className="border-ink-200 bg-surface-raised absolute left-0 top-[calc(100%+0.5rem)] z-30 max-h-72 w-full min-w-[15rem] overflow-y-auto rounded-lg border py-1.5 shadow-[0_16px_40px_-20px_rgba(24,17,12,0.45)] sm:w-auto"
           style={{ animation: 'u-drop 160ms cubic-bezier(0.22, 1, 0.36, 1)' }}
         >
           {children}

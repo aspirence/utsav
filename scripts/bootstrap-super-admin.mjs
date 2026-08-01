@@ -2,7 +2,7 @@
  * Create the first super admin on a fresh Supabase project.
  *
  * WHY THIS EXISTS. The console's local login (ADMIN_LOCAL_*) switches itself off the moment
- * NEXT_PUBLIC_SUPABASE_URL is set — see apps/web/lib/admin-local-auth.ts, where that is the
+ * NEXT_PUBLIC_SUPABASE_URL is set — see lib/admin-local-auth.ts, where that is the
  * single thing stopping it being a production backdoor. So attaching a database is also the
  * moment the only working login disappears, and without a staff row nobody can open /admin
  * again. This closes that gap in one step.
@@ -20,7 +20,8 @@
  *
  *   node scripts/bootstrap-super-admin.mjs <email> <password>
  *
- * Reads NEXT_PUBLIC_SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY from apps/web/.env.local.
+ * Reads NEXT_PUBLIC_SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY from .env.local at the
+ * repository root.
  */
 
 import { readFileSync } from 'node:fs'
@@ -74,10 +75,10 @@ const url = env.NEXT_PUBLIC_SUPABASE_URL
 const serviceKey = env.SUPABASE_SERVICE_ROLE_KEY
 
 if (!url || url.startsWith('your-')) {
-  die('NEXT_PUBLIC_SUPABASE_URL is not set in apps/web/.env.local.')
+  die('NEXT_PUBLIC_SUPABASE_URL is not set in .env.local.')
 }
 if (!serviceKey || serviceKey.startsWith('your-')) {
-  die('SUPABASE_SERVICE_ROLE_KEY is not set in apps/web/.env.local.')
+  die('SUPABASE_SERVICE_ROLE_KEY is not set in .env.local.')
 }
 
 const admin = createClient(url, serviceKey, {
@@ -177,7 +178,8 @@ const { error: roleError } = await admin
 if (roleError) die(`Could not grant the super role: ${roleError.message}`)
 console.log('  · super role granted\n')
 
-console.log('  Done. Sign in at /admin/login with that email and password.')
+console.log('  Done. Sign in at /login — the one login for every surface — with that email')
+console.log('  and password. /dashboard reads the staff role and lands you on /admin.')
 console.log('  Now remove ADMIN_LOCAL_EMAIL / _PASSWORD / _SECRET from .env.local —')
 console.log('  they are already inert with Supabase attached, and a dead credential in a file')
 console.log('  is one somebody will later assume still works.\n')

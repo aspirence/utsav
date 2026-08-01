@@ -92,7 +92,7 @@ export function PackageSlider({ items }: { items: PackageCard[] }) {
                         photograph rather than on a wash. */}
                     <div className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-ink-950/85 via-ink-950/40 to-transparent" />
 
-                    <span className="absolute right-4 top-4 rounded-full bg-surface-raised px-4 py-2 text-sm font-medium text-ink-900 shadow-md">
+                    <span className="absolute right-4 top-4 rounded-full bg-surface-raised px-4 py-2 text-sm font-medium text-ink-900">
                       Starts At {formatPaise(item.startsAtPaise)}
                     </span>
 

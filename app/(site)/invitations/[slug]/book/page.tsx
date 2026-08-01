@@ -72,7 +72,7 @@ export default async function BookInvitationPage({
       </nav>
 
       <div className="grid gap-10 lg:grid-cols-[minmax(0,0.8fr)_minmax(0,1.2fr)] lg:gap-14">
-        <div className="lg:sticky lg:top-28 lg:self-start">
+        <div className="lg:sticky lg:top-24 lg:self-start">
           <p className="inline-flex items-center rounded-full border border-ink-200 bg-surface-raised px-4 py-2 text-xs font-semibold uppercase tracking-[0.14em] text-ink-600">
             Premium wedding invitations
           </p>

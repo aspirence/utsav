@@ -39,6 +39,46 @@ pnpm dev
 
 `pnpm db:start` prints the local anon and service-role keys — paste them into `.env.local`.
 
+### Test logins
+
+Three dashboards, and which one you get is decided by your memberships rather than by a role
+column — plan §3, "one human = one auth identity". `/dashboard` reads them and redirects; see
+`lib/viewer.ts`. These accounts exist so all three can be opened without hand-writing rows.
+
+**One form, at `/login`, for all three.** There is no separate staff login — `/admin/login`
+redirects here. Sign in on the Email tab and `/dashboard` sends you wherever your memberships
+say you belong.
+
+| Email | Password | Lands on |
+| --- | --- | --- |
+| `dummy@utsava.test` | `DummyUtsava2026!` | `/account` — plain customer |
+| `vendor@utsava.test` | `DummyVendor2026!` | `/partner/dashboard` — owner of "Dummy Studio" |
+| `staff@utsava.test` | `DummyStaff2026!!` | `/admin` — **super admin**, full console |
+
+The super admin holds every capability in plan §3's matrix, including `/admin/users` — the
+only screen that can grant and revoke staff roles. `staff_roles` has no write policy for any
+client role, so those writes go through the service-role key behind a `requireSuper()` check
+and land in the append-only audit log with the actor attached (`lib/admin-users.ts`).
+
+For a staff account a person will actually use — password not published in a README:
+
+```bash
+# Idempotent. Re-run it to reset a forgotten password.
+pnpm db:bootstrap you@example.com 'a-password-of-at-least-12-chars'
+```
+
+**These are throwaway credentials on a throwaway listing, and this file is in git — do not
+reuse either password anywhere real, and do not add a live one here.** `vendor@utsava.test`
+owns a vendor row (`dummy-studio`) deliberately left at `status = 'draft'`, so it is invisible
+to every public query and `/vendor/dummy-studio` is a 404. Deleting that row and its
+`vendor_members` row removes the whole fixture.
+
+Recreate them against a fresh database with:
+
+```bash
+pnpm db:test-logins
+```
+
 ---
 
 ## Repository shape

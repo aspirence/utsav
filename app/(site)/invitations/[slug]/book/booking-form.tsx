@@ -67,7 +67,7 @@ export function BookingForm({
   }
 
   return (
-    <div className="overflow-hidden rounded-2xl bg-white shadow-[0_20px_60px_-30px_rgba(24,17,12,0.35)] ring-1 ring-ink-200/70">
+    <div className="overflow-hidden rounded-3xl border border-ink-200 bg-white">
       {/* Launch offer. The regular price is struck through beside it, or the discount is an
           assertion rather than a comparison. */}
       <p className="bg-danger-600 px-4 py-2.5 text-center text-sm font-semibold text-white">
@@ -224,7 +224,7 @@ export function BookingForm({
             <button
               type="submit"
               disabled={pending}
-              className="mt-5 flex w-full items-center justify-center gap-2 rounded-xl bg-primary-900 px-6 py-4 text-sm font-semibold uppercase tracking-[0.08em] text-white shadow-[0_10px_24px_-12px_rgba(103,41,33,0.7)] transition-colors hover:bg-primary-800 disabled:opacity-60"
+              className="mt-5 flex w-full items-center justify-center gap-2 rounded-full bg-primary-900 px-6 py-4 text-sm font-semibold uppercase tracking-[0.08em] text-white shadow-[0_10px_24px_-12px_rgba(103,41,33,0.7)] transition-colors hover:bg-primary-800 disabled:opacity-60"
             >
               {pending ? 'Reserving…' : `Pay ${formatPaise(bookingAmountPaise)} & continue`}
               <span aria-hidden="true">&rarr;</span>
@@ -301,7 +301,7 @@ export function BookingForm({
  */
 function Placed({ reference, message }: { reference: string; message: string }) {
   return (
-    <div className="rounded-2xl bg-white p-7 text-center shadow-[0_20px_60px_-30px_rgba(24,17,12,0.35)] ring-1 ring-success-500/40 sm:p-10">
+    <div className="rounded-3xl border border-success-500/40 bg-white p-7 text-center sm:p-10">
       {/* "Order received", not "slot reserved" — the row is awaiting_payment, and /admin/orders
           says in as many words that nothing is reserved until the money lands. */}
       <p className="text-xs font-semibold uppercase tracking-[0.14em] text-success-700">

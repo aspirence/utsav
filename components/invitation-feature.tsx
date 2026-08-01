@@ -263,7 +263,7 @@ function PhoneFrame({ children }: { children: React.ReactNode }) {
   return (
     <div className="relative">
       {/* Body: the dark bezel. */}
-      <div className="relative h-[min(76vh,680px)] aspect-[9/19.5] rounded-[2.5rem] bg-ink-950 p-2.5 shadow-2xl ring-1 ring-white/15">
+      <div className="relative h-[min(76vh,680px)] aspect-[9/19.5] rounded-[2.5rem] bg-ink-950 p-2.5 shadow-[0_28px_60px_-24px_rgba(24,17,12,0.5)] ring-1 ring-white/15">
         {/* Screen. */}
         <div className="relative h-full w-full overflow-hidden rounded-[2rem] bg-black">
           {children}

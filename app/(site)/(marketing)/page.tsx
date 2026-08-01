@@ -275,11 +275,15 @@ export default async function HomePage() {
       )}
 
       {/* 9. Quotation CTA.
-             This replaced the flat dark vendor card that stood here. The vendor entry
-             point is not lost - plan §1 puts supply tooling ahead of demand product, so
-             "List your business" is still in the header on every page and the footer
-             carries /partner and the vendor terms. What this banner does instead is give
-             the couple a single next action at the foot of the page. */}
+             This replaced the flat dark vendor card that stood here. What it does instead is
+             give the couple a single next action at the foot of the page.
+
+             THE VENDOR ENTRY POINT IS NOW THINNER THAN PLAN §1 ASKS FOR, and this is the
+             comment that used to say otherwise. "List your business" was removed from the
+             header, so /partner is reached from the footer and from the stories page rather
+             than from every page's top bar. Plan §1 puts supply tooling ahead of demand
+             product; if vendor signups matter more than the header's calm, this is the first
+             place to look. */}
       <Container className="py-14">
         <QuotationCta />
       </Container>

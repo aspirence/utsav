@@ -2,8 +2,12 @@ import 'server-only'
 
 import { formatPaise, formatPriceBand } from '@/lib/db'
 
+import { ORDER_STATUS_LABEL } from '@/lib/invitation-orders'
+
 import { getSessionUser } from '@/lib/auth'
 import { getServerClientOrNull } from '@/lib/supabase'
+
+import type { InvitationOrderStatus } from '@/lib/db'
 
 /**
  * Reads for the customer account area.
@@ -145,6 +149,64 @@ export async function getMyEnquiries(): Promise<AccountEnquiry[]> {
         respondedAt: l.responded_at,
         quotedAt: l.quoted_at,
       })),
+  }))
+}
+
+export interface AccountInvitationOrder {
+  reference: string
+  templateSlug: string
+  templateName: string
+  status: InvitationOrderStatus
+  statusLabel: string
+  /** Formatted for display. Integer paise in the database, always (plan §5). */
+  bookingLabel: string
+  balanceLabel: string
+  totalLabel: string
+  paidAt: string | null
+  createdAt: string
+}
+
+/**
+ * The cards this person has ordered.
+ *
+ * RLS DOES THE OWNERSHIP, NOT THIS FUNCTION. `invitation_orders_select_own` is
+ * `customer_id = auth.uid()`, so there is no `.eq('customer_id', me)` here — see the note at
+ * the top of this file for why a second copy of that rule is worse than none.
+ *
+ * WHICH MEANS GUEST ORDERS DO NOT APPEAR, and that is a real gap rather than an oversight.
+ * The checkout in app/(site)/invitations/[slug]/book/actions.ts writes `customer_id` from the
+ * session if there is one and null if there is not, so a card bought before signing in belongs
+ * to nobody and stays invisible here forever. Claiming those by matching contact_email would
+ * mean trusting an address nobody verified — which is exactly what the sign-up path stopped
+ * proving. The honest fix is to claim them at checkout, not to guess at them here.
+ */
+export async function getMyInvitationOrders(): Promise<AccountInvitationOrder[]> {
+  const supabase = await getServerClientOrNull()
+  if (!supabase) return []
+
+  const user = await getSessionUser()
+  if (!user) return []
+
+  const { data, error } = await supabase
+    .from('invitation_orders')
+    .select(
+      'reference, template_slug, template_name, status, booking_amount, balance_amount, template_price, paid_at, created_at',
+    )
+    .order('created_at', { ascending: false })
+
+  if (error || !data) return []
+
+  return data.map((o) => ({
+    reference: o.reference,
+    templateSlug: o.template_slug,
+    templateName: o.template_name,
+    status: o.status,
+    statusLabel: ORDER_STATUS_LABEL[o.status] ?? o.status,
+    bookingLabel: formatPaise(o.booking_amount),
+    balanceLabel: formatPaise(o.balance_amount),
+    totalLabel: formatPaise(o.template_price),
+    paidAt: o.paid_at,
+    createdAt: o.created_at,
   }))
 }
 

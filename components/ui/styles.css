@@ -5,11 +5,8 @@
  *
  * Tailwind v4: tokens live here as CSS custom properties inside @theme, which
  * generates the matching utilities (bg-primary-600, font-display, …).
- * packages/ui/src/tokens.ts mirrors these for anything computed in JS.
+ * ./tokens.ts mirrors these for anything computed in JS.
  */
-
-/* Tailwind v4 scans the importing app by default; point it at this package too. */
-@source "../../ui/src/**/*.{ts,tsx}";
 
 @theme {
   --color-ink-50: #f7f5f3;
@@ -70,16 +67,64 @@
   --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
   --font-mono: 'JetBrains Mono', ui-monospace, monospace;
 
-  --radius-sm: 0.25rem;
-  --radius-md: 0.625rem;
-  --radius-lg: 0.875rem;
-  --radius-xl: 1.25rem;
-  --radius-2xl: 1.75rem;
+  /*
+   * CORNER RADIUS IS THE MOST OPINIONATED DECISION IN THE SYSTEM, so it is a ladder rather
+   * than a smooth ramp, and every rung means something:
+   *
+   *   4px   — inputs, code chips, inline alerts. The only place sharp-ish edges survive.
+   *   20px  — tags, badges, small panels. Half of card radius, so they nest visibly softer.
+   *   40px  — content cards. The signature. A card at 8px reads as a different product.
+   *   full  — nav containers and buttons, which are pills.
+   *
+   * The two intermediate values this file used to carry (10px and 14px) are gone on purpose:
+   * they sat between rungs and made "medium-rounded" a thing designers had to choose, which is
+   * how a system drifts back to a smooth ramp. Nothing lands at 8px or 12px any more.
+   */
+  --radius-sm: 4px;
+  --radius-md: 4px;
+  --radius-lg: 20px;
+  --radius-xl: 40px;
+  --radius-2xl: 40px;
+  --radius-3xl: 40px;
 
-  --shadow-sm: 0 1px 2px 0 rgb(26 22 20 / 0.05);
-  --shadow-md: 0 4px 12px -2px rgb(26 22 20 / 0.1), 0 2px 6px -2px rgb(26 22 20 / 0.06);
-  --shadow-lg: 0 12px 28px -6px rgb(26 22 20 / 0.14), 0 4px 10px -4px rgb(26 22 20 / 0.07);
-  --shadow-xl: 0 24px 48px -12px rgb(26 22 20 / 0.2);
+  /*
+   * ELEVATION IS SURFACE COLOUR PLUS A 1px BORDER, NEVER A DROP SHADOW.
+   *
+   * A white card on the warm canvas, outlined in ink-100/200, is the whole elevation language —
+   * the 40px radius does the visual work a shadow would otherwise do. Every `shadow-*` class was
+   * removed from the components in the same change; these overrides exist so that adding one
+   * back by habit is a no-op rather than a lone raised card on a flat page.
+   *
+   * Reach for a border when you want separation. If a border is not enough, the element is
+   * probably on the wrong surface — see --color-surface-sunken.
+   *
+   * The exceptions are the phone mockups in components/template-phone.tsx and
+   * invitation-feature.tsx. Those draw a physical object rather than a UI surface, so they set an
+   * arbitrary `shadow-[…]` value that these tokens deliberately do not reach.
+   */
+  --shadow-sm: none;
+  --shadow-md: none;
+  --shadow-lg: none;
+  --shadow-xl: none;
+  --shadow-2xl: none;
+
+  /*
+   * Type scale, capped at 32px.
+   *
+   * The reference keeps almost everything between 14 and 24 and treats 32 as the largest thing
+   * on a page; the sizes below bring Tailwind's default ramp in line at the top end, where it
+   * otherwise runs to 36 and 48. Everything from --text-xs to --text-2xl already matched
+   * (12 / 14 / 16 / 18 / 24) and is left alone.
+   *
+   * Line heights come down with them: 1.2 at heading sizes, because Tailwind's default leading
+   * is tuned for reading rather than for a two-line headline.
+   */
+  --text-3xl: 2rem;
+  --text-3xl--line-height: 1.2;
+  --text-4xl: 2rem;
+  --text-4xl--line-height: 1.2;
+  --text-5xl: 2.5rem;
+  --text-5xl--line-height: 1.15;
 }
 
 @layer base {
@@ -88,20 +133,37 @@
     scroll-behavior: smooth;
   }
 
+  /*
+   * Tracking is barely positive and it is the same everywhere — 0.012em at every size, headings
+   * included. Optical tracking that tightens as type grows is the usual move and it is the
+   * opposite of what this system wants: the calm, unfussy rhythm comes from letterforms sitting
+   * a hair further apart than the face's default and never changing their mind about it.
+   *
+   * Set on body rather than on `*` so a deliberate override — the uppercase eyebrows at
+   * 0.14em — still wins by specificity rather than by fighting a universal selector.
+   */
   body {
     background-color: var(--color-surface);
     color: var(--color-ink-900);
     font-family: var(--font-sans);
     font-feature-settings: 'cv02', 'cv03', 'cv04', 'cv11';
+    letter-spacing: 0.012em;
     -webkit-font-smoothing: antialiased;
   }
 
+  /*
+   * Headings share the body's face and its tracking; only size and weight separate them.
+   *
+   * The -0.02em that used to be here was tuned for a display serif set large. Carried onto a
+   * geometric sans it collapses the counters at 24px and below, which is where most of the
+   * headings in this interface actually live.
+   */
   h1,
   h2,
   h3 {
     font-family: var(--font-display);
-    font-weight: 600;
-    letter-spacing: -0.02em;
+    font-weight: 700;
+    letter-spacing: 0.012em;
   }
 
   /* Visible focus everywhere — plan §9 requires an accessibility pass in the DoD. */

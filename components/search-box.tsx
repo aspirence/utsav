@@ -58,7 +58,7 @@ export function SearchBox({
       onSubmit={handleSubmit}
       role="search"
       className={cn(
-        'grid gap-2 rounded-xl border border-ink-100 bg-surface-raised p-2 shadow-sm',
+        'grid gap-2 rounded-full border border-ink-100 bg-surface-raised p-2',
         'sm:grid-cols-[1fr_auto_auto_auto] sm:items-center',
         className,
       )}

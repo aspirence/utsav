@@ -12,32 +12,43 @@
 /*
  * Fonts.
  *
- * The display face is Playfair Display, wired up in app/layout.tsx through next/font,
- * which self-hosts it at build time — plan §13 measures LCP on 4G, so a render-blocking
- * request to a third-party font CDN is not acceptable.
+ * ONE FACE FOR THE WHOLE INTERFACE. This used to point --font-display at Playfair Display, a
+ * high-contrast serif, while body text ran on a different stack. The discovery-wall redesign
+ * dropped that pairing: headings and body are now the same geometric sans, and hierarchy is
+ * carried by size and weight instead of by a change of voice.
  *
- * This overrides the --font-display token from packages/ui rather than editing it there,
- * because the token file is the design system and this is one app's choice of face. The
- * @theme block emits its variables into :root, so a plain :root rule after the import
- * wins, and every existing `font-display` utility picks it up with no other changes.
+ * DM Sans is wired up in app/layout.tsx through next/font, which self-hosts it at build time —
+ * plan §13 measures LCP on 4G, so a render-blocking request to a third-party font CDN is not
+ * acceptable.
  *
- * Georgia stays on the end of the stack: it is what renders in the swap window and if the
- * build ever runs without network.
+ * This overrides the tokens from components/ui rather than editing them there, because that
+ * file is the design system and this is one app's choice of face. The @theme block emits its
+ * variables into :root, so a plain :root rule after the import wins, and every existing
+ * `font-display` and `font-sans` utility picks it up with no other changes.
  *
- * Body text is still the --font-sans stack (Inter, falling back to system-ui). Self-host
- * Inter here too — including Devanagari for the plan §2 Hindi UI — when it is needed.
+ * system-ui stays on the end of both stacks: it is what renders during the swap window, and if
+ * the build ever runs without network.
  */
 :root {
-  --font-display: var(--font-playfair), Georgia, serif;
+  --font-sans: var(--font-dm-sans), ui-sans-serif, system-ui, -apple-system, sans-serif;
+  /*
+   * Kept as a token, and kept pointing at the same face. 149 call sites say `font-display`; the
+   * cheap change is to make that mean "the heading face" rather than to delete it from all of
+   * them, and it stays the one place to put headings back on a face of their own later.
+   */
+  --font-display: var(--font-dm-sans), ui-sans-serif, system-ui, -apple-system, sans-serif;
 }
 
 /*
- * Playfair is a high-contrast face: its thin strokes get muddy when it is set heavy, and
- * the whole reason for choosing it is the delicacy. 600 was tuned for Georgia, which needs
- * the weight to hold up; 500 is the equivalent here.
+ * Headings at 700 — the reference's heading weight.
+ *
+ * The rule here used to drop them to 500, because Playfair is a high-contrast face whose thin
+ * strokes muddy when set heavy. With a geometric sans that reasoning inverts: at 500 a 32px
+ * heading barely separates from the 400 body under it, and weight is now doing the work the
+ * change of face used to do.
  */
 h1,
 h2,
 h3 {
-  font-weight: 500;
+  font-weight: 700;
 }

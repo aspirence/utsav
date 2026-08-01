@@ -29,14 +29,15 @@ function loadSharp() {
     return require('sharp')
   } catch {
     const store = path.join(root, 'node_modules', '.pnpm')
-    const dir = fs.readdirSync(store).find((d) => d.startsWith('sharp@'))
+    const entries = fs.existsSync(store) ? fs.readdirSync(store) : []
+    const dir = entries.find((d) => d.startsWith('sharp@'))
     if (!dir) throw new Error('sharp not found — run `pnpm install` first')
     return require(path.join(store, dir, 'node_modules', 'sharp'))
   }
 }
 
 const SOURCE_DIR = path.join(root, 'design', 'source-images')
-const OUT_DIR = path.join(root, 'apps', 'web', 'public')
+const OUT_DIR = path.join(root, 'public')
 
 /** Widths chosen to match the `sizes="100vw"` breakpoints in the consuming component. */
 const WIDTHS = [

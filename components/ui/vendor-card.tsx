@@ -53,11 +53,16 @@ export function VendorCard({
     availableOnLabel,
   } = vendor
 
+  /*
+   * 40px radius, one hairline border, no shadow — the discovery wall's signature surface.
+   * `overflow-hidden` is load-bearing at this radius: the cover image runs to all four edges of
+   * the top of the card, and without clipping it squares those corners straight back off.
+   */
   return (
     <article
       className={cn(
-        'group relative overflow-hidden rounded-xl border border-ink-100 bg-surface-raised',
-        'shadow-sm transition-shadow hover:shadow-lg',
+        'group relative overflow-hidden rounded-3xl border border-ink-100 bg-surface-raised',
+        'transition-colors hover:border-ink-300',
         className,
       )}
     >
@@ -74,7 +79,7 @@ export function VendorCard({
         {/* Plan §2: "free on my date" is the filter customers actually use, so when it
             is applied the answer belongs on the card, not one click deeper. */}
         {availableOnLabel && (
-          <span className="absolute left-3 top-3 rounded-full bg-success-600/95 px-2.5 py-1 text-xs font-semibold text-white shadow-sm">
+          <span className="absolute left-3 top-3 rounded-lg bg-success-600/95 px-2.5 py-1 text-xs font-semibold text-white">
             {availableOnLabel}
           </span>
         )}
@@ -82,7 +87,7 @@ export function VendorCard({
 
       <div className="p-4">
         <div className="flex items-start justify-between gap-3">
-          <h3 className="font-display text-lg leading-tight text-ink-900">
+          <h3 className="font-display text-base font-semibold leading-snug text-ink-900">
             <a href={href} className="after:absolute after:inset-0 after:content-['']">
               {displayName}
             </a>

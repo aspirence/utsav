@@ -23,7 +23,7 @@ export function StoryCard({
   const when = formatEventDate(story.eventDate)
 
   return (
-    <article className="group relative overflow-hidden rounded-xl border border-ink-100 bg-surface-raised shadow-sm transition-shadow hover:shadow-lg">
+    <article className="group relative overflow-hidden rounded-xl border border-ink-100 bg-surface-raised transition-colors hover:border-ink-300">
       <MediaFrame
         src={story.coverUrl}
         alt={story.coupleNames ? `${story.coupleNames} — ${story.title}` : story.title}

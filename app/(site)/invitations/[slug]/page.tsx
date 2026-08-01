@@ -246,7 +246,7 @@ export default async function InvitationTemplatePage({
             </div>
 
             {/* Sticky on a tall screen, so the preview stays put while the copy scrolls. */}
-            <div className="lg:sticky lg:top-28 lg:order-2">
+            <div className="lg:sticky lg:top-24 lg:order-2">
               <TemplatePhone item={template} className="mx-auto w-[268px] max-w-full" />
             </div>
           </div>

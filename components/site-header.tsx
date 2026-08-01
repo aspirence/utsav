@@ -1,7 +1,6 @@
 import Link from 'next/link'
 
-import { LinkButton } from '@/components/ui'
-
+import { HeaderAccountLink } from '@/components/header-account-link'
 import { SiteHeaderShell } from '@/components/site-header-shell'
 import { SiteNavMobile } from '@/components/site-nav-mobile'
 import { getSessionUser } from '@/lib/auth'
@@ -25,11 +24,23 @@ import { getCategories, getLaunchedCities } from '@/lib/queries'
  *    `pointer-events-auto` on the nav so the overlay strip cannot swallow clicks meant for
  *    the logo or the buttons underneath it.
  *
- * COLOUR. One palette, both states. The bar is ink-900 when solid and transparent over the
- * hero, and light type works on either - so there are no per-state colour variants to keep
- * in sync any more. The shell still sets `data-transparent`, but only to switch on the
- * text-shadow the type needs when there is a photograph behind it instead of a background.
+ * COLOUR. Two states, and they are opposites: ink on white once the page has scrolled, white
+ * over the homepage hero photograph at the top. The bar used to be ink-900 in both, which meant
+ * one set of light type served both — that is gone with the white chrome, so every child that
+ * paints ink carries a `group-data-[transparent]:` variant. The shell sets that attribute; see
+ * components/site-header-shell.tsx.
+ *
+ * ANYTHING NEW ADDED TO THIS BAR NEEDS BOTH. A link with only the ink colour is invisible
+ * against the hero, and one with only the white is invisible against the white — and both bugs
+ * only show up on one route, at one scroll position.
  */
+
+/** The category links are all the same control; the classes live here rather than five times. */
+const NAV_LINK =
+  'rounded-full px-4 py-2 text-sm font-semibold transition-colors ' +
+  'text-ink-700 hover:bg-ink-100 hover:text-ink-900 ' +
+  'group-data-[transparent]:text-white group-data-[transparent]:hover:bg-white/10'
+
 export async function SiteHeader() {
   const [cities, categories, user] = await Promise.all([
     getLaunchedCities(),
@@ -37,20 +48,19 @@ export async function SiteHeader() {
     getSessionUser(),
   ])
   const defaultCity = cities[0]?.slug ?? 'lucknow'
-  // Only whether, never who. The header does not need the identity, and reading it here
-  // would put a user's phone number in the markup of every cached page on the site.
   const signedIn = Boolean(user)
 
   return (
     <SiteHeaderShell>
-      <div className="relative flex h-28 items-center justify-between gap-4 px-4 sm:px-8 lg:px-14">
+      <div className="relative flex h-20 items-center justify-between gap-4 px-4 sm:px-8 lg:px-14">
         <Link href="/" className="relative z-10 shrink-0" aria-label="Utsava — home">
           {/*
-            One asset, two appearances. Over the homepage hero the mark would be dark brown
-            and gold on a photograph, so `brightness(0) invert(1)` crushes it to a flat
-            white knockout - the standard treatment, and it needs no second file to keep in
-            sync with the first. The drop-shadow is the same idea as the text-shadow on the
-            nav links: the hero deliberately has no scrim, so anything sitting on it has to
+            One asset, two appearances. On the white bar the mark is left alone — it is dark
+            brown and gold, which is what it was drawn to be. Over the homepage hero those
+            colours disappear into the photograph, so `brightness(0) invert(1)` crushes it to a
+            flat white knockout there: the standard treatment, and it needs no second file to
+            keep in sync with the first. The drop-shadow is the same idea as the text-shadow on
+            the nav links: the hero deliberately has no scrim, so anything sitting on it has to
             carry its own separation.
 
             The source is a 500px square with ~85px of transparent margin on every side;
@@ -59,9 +69,12 @@ export async function SiteHeader() {
             file serves both sharply. `design/source-images/logo-source.png` is the master;
             re-export from there if either size grows.
 
-            h-20 in a h-28 row. It was h-24, which is 96px of mark in 112px of header - 86%,
-            leaving 8px of air above and below, so the logo read as wedged in rather than set
-            in. 80px leaves 16px each side and the proportion stops being the thing you notice.
+            h-12 in a h-20 row: 48px of mark in 80px of header, 16px of air above and below.
+
+            The row was h-28 with an h-20 mark, and 112px of chrome is a lot to give a bar that
+            holds five links — on a 667px phone viewport it was a sixth of the screen before any
+            content started. The ratio is what was tuned before and it is preserved here: keep
+            the mark at 60% of the row and it reads as set in rather than wedged in.
           */}
           {/* eslint-disable-next-line @next/next/no-img-element -- plan §12: no next/image */}
           <img
@@ -69,7 +82,7 @@ export async function SiteHeader() {
             alt="Utsava"
             width={623}
             height={576}
-            className="h-20 w-auto [filter:brightness(0)_invert(1)] group-data-[transparent]:[filter:brightness(0)_invert(1)_drop-shadow(0_1px_6px_rgb(15_12_11_/_0.7))]"
+            className="h-12 w-auto group-data-[transparent]:[filter:brightness(0)_invert(1)_drop-shadow(0_1px_6px_rgb(15_12_11_/_0.7))]"
           />
         </Link>
 
@@ -79,7 +92,7 @@ export async function SiteHeader() {
               <Link
                 key={category.slug}
                 href={`/${defaultCity}/${category.slug}`}
-                className="rounded-md px-3 py-2 text-sm font-medium text-ink-200 transition-colors hover:bg-white/10 hover:text-white"
+                className={NAV_LINK}
               >
                 {category.pluralName}
               </Link>
@@ -88,33 +101,11 @@ export async function SiteHeader() {
         </div>
 
         <div className="relative z-10 flex shrink-0 items-center gap-2">
-          {/* From md up these sit in the bar. Below that they move into the panel behind
-              the hamburger - see SiteNavMobile - because a 375px bar cannot hold the mark,
-              a link and a button without one of them losing. */}
-          <div className="hidden items-center gap-2 md:flex">
-            {/* Plan §1: "Supply tooling before demand product" — the vendor entry point
-                ships seven months before customers arrive, so it is never buried. */}
-            <Link
-              href="/partner"
-              className="rounded-md px-3 py-2 text-sm font-medium text-ink-200 transition-colors hover:bg-white/10 hover:text-white"
-            >
-              List your business
-            </Link>
-
-            {/* Plan §3 has no signup step - the first OTP creates the account - so the
-                anonymous label is "Login" and never "Sign up". Offering both would imply
-                a second path that does not exist. */}
-            <Link
-              href={signedIn ? '/account' : '/login'}
-              className="rounded-md px-3 py-2 text-sm font-medium text-ink-200 transition-colors hover:bg-white/10 hover:text-white"
-            >
-              {signedIn ? 'Your account' : 'Login'}
-            </Link>
-
-            {/* Carries its own solid background, so it needs no transparent-state variant. */}
-            <LinkButton href={`/${defaultCity}/photography`} size="sm">
-              Find vendors
-            </LinkButton>
+          {/* From md up this sits in the bar. Below that it moves into the panel behind the
+              hamburger — see SiteNavMobile — because a 375px bar cannot hold the mark and a
+              link without one of them losing. */}
+          <div className="hidden items-center md:flex">
+            <HeaderAccountLink signedIn={signedIn} initial={initialFrom(user)} />
           </div>
 
           <SiteNavMobile
@@ -126,4 +117,22 @@ export async function SiteHeader() {
       </div>
     </SiteHeaderShell>
   )
+}
+
+/**
+ * One letter for the header avatar.
+ *
+ * Falls through name → email → phone, because an account created by the first OTP has no name at
+ * all and an empty circle reads as a broken avatar rather than as missing data.
+ *
+ * ONE LETTER, NOT THE ADDRESS. The comment that used to sit on `signedIn` said the header takes
+ * "only whether, never who", so that a user's phone number never lands in the markup of a cached
+ * page. An initial keeps that promise — it is not an identifier, and it is the smallest thing
+ * that answers "whose session is this" on a shared laptop.
+ */
+function initialFrom(user: { email: string | null; phone: string | null } | null): string | null {
+  if (!user) return null
+  const source = user.email?.trim() || user.phone?.trim() || ''
+  const letter = source.replace(/[^A-Za-z0-9]/g, '').charAt(0)
+  return letter ? letter.toUpperCase() : null
 }

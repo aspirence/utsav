@@ -1,3 +1,5 @@
+import { headers } from 'next/headers'
+
 import { SiteFooter } from '@/components/site-footer'
 import { SiteHeader } from '@/components/site-header'
 
@@ -5,8 +7,30 @@ import { SiteHeader } from '@/components/site-header'
  * The customer-facing shell. Lives in a route group, so `(site)` adds nothing to any
  * URL — every public path is exactly what it was before the admin console moved in
  * under /admin.
+ *
+ * TWO SUBTREES OPT OUT OF THE CHROME: /account and /partner/dashboard. Both now render the
+ * workspace shell from components/console-shell.tsx — a full-height dark rail and their own top
+ * bar — and stacking the public header and footer around that gives two navigations, two
+ * sign-out buttons, and a footer sitting under a fixed sidebar.
+ *
+ * WHY A PATH CHECK RATHER THAN MOVING THE FILES. Lifting them out of this group into their own
+ * would be the tidier shape, and it collides with the routes that stay: `(site)/partner/page.tsx`
+ * is the public pitch at /partner and has to keep this chrome, while /partner/dashboard must not.
+ * Splitting one path segment across two route groups is the kind of thing that resolves
+ * differently between Next versions. A named list of prefixes is duller and says what it does.
+ *
+ * `x-pathname` is set by middleware.ts — a Server Component has no way to read its own URL. With
+ * that header absent the check falls through to rendering the chrome, which is the safe
+ * direction: a workspace with an extra header is ugly, a public page with none is broken.
  */
-export default function SiteLayout({ children }: { children: React.ReactNode }) {
+const BARE = ['/account', '/partner/dashboard']
+
+export default async function SiteLayout({ children }: { children: React.ReactNode }) {
+  const path = (await headers()).get('x-pathname') ?? ''
+  const bare = BARE.some((prefix) => path === prefix || path.startsWith(`${prefix}/`))
+
+  if (bare) return <>{children}</>
+
   return (
     <div className="flex min-h-screen flex-col">
       <a

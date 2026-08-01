@@ -40,7 +40,7 @@ export function HomeSearch({
   return (
     <form
       onSubmit={submit}
-      className="mt-8 rounded-xl border border-ink-100 bg-surface-raised p-3 shadow-lg sm:p-4"
+      className="mt-8 rounded-3xl border border-ink-100 bg-surface-raised p-3 sm:p-4"
     >
       <div className="grid gap-3 sm:grid-cols-[1.1fr_1fr_1fr_auto]">
         <Field label="I'm looking for" htmlFor="h-cat">

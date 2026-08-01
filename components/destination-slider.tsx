@@ -146,7 +146,7 @@ function Card({ item, inert }: { item: DestinationCard; inert: boolean }) {
         <p className="mt-3 max-w-[64%] text-sm leading-snug text-white/85">{item.blurb}</p>
       </div>
 
-      <span className="absolute bottom-5 right-5 inline-flex items-center gap-2 rounded-full bg-surface-raised py-2 pl-4 pr-2 text-sm font-medium text-ink-900 shadow-md">
+      <span className="absolute bottom-5 right-5 inline-flex items-center gap-2 rounded-full bg-surface-raised py-2 pl-4 pr-2 text-sm font-medium text-ink-900">
         View details
         <span
           aria-hidden="true"

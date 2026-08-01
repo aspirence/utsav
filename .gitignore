@@ -9,9 +9,6 @@ dist/
 build/
 *.tsbuildinfo
 
-# turbo
-.turbo/
-
 # env — never commit real keys
 .env
 .env.local
@@ -22,11 +19,6 @@ build/
 supabase/.branches/
 supabase/.temp/
 supabase/.env
-
-# expo
-.expo/
-apps/vendor-app/android/
-apps/vendor-app/ios/
 
 # testing
 coverage/

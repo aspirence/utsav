@@ -15,12 +15,12 @@ import { useEffect, useState } from 'react'
  * Two separate things are going on, and keeping them apart is what stops the bar jumping:
  *
  *  · **Overlay** - whether the header sits *on top of* the page rather than above it. It
- *    is a `-mb-28` that pulls the content up under the sticky bar by exactly its own
+ *    is a `-mb-20` that pulls the content up under the sticky bar by exactly its own
  *    height, so the hero photograph starts at the very top of the viewport. This depends
  *    only on the route and never changes while you scroll. If it toggled, the whole page
- *    would shift 112px the moment you moved.
+ *    would shift 80px the moment you moved.
  *
- *    KEEP IN SYNC: that -mb-28 has to match the `h-28` row inside SiteHeader. A mismatch
+ *    KEEP IN SYNC: that -mb-20 has to match the `h-20` row inside SiteHeader. A mismatch
  *    does not error - it just leaves a strip of page background above the hero, or crops
  *    the top off it.
  *
@@ -35,14 +35,20 @@ import { useEffect, useState } from 'react'
  * mount so a restored scroll position, or a deep link that lands mid-page, starts in the
  * right state instead of flashing transparent.
  *
- * COLOUR. The solid state is ink-900, matching the footer, so the page is bracketed by the
- * same dark band top and bottom. That simplified the header rather than complicating it:
- * both states are now dark behind light type, so the links no longer need one colour for
- * the scrolled state and another for the transparent one.
+ * COLOUR. The solid state is white — the same surface the discovery wall sits on, so the bar
+ * reads as the top of the page rather than as a dark lid on it. It was ink-900, matching the
+ * footer, on the argument that the page should be bracketed by the same band top and bottom;
+ * the redesign wants a light chrome and a photograph doing the shouting instead.
  *
- * `data-transparent` survives for exactly one thing - the text-shadow. Over the hero there
- * is no background behind the type at all, and the hero has no scrim by design, so the
- * shadow is the only thing separating the nav from the photograph.
+ * THAT COSTS THE THING THE DARK BAR BOUGHT, and it is worth being explicit about. With both
+ * states dark, the type was light in both and needed one colour. Now the two states are
+ * opposites: dark type on white when scrolled, white type over the hero photograph at the top.
+ * So `data-transparent` is load-bearing again — every child that paints ink or a logo has a
+ * `group-data-[transparent]:` variant, and a new one added without it will be white-on-white at
+ * the top of the homepage. See components/site-header.tsx.
+ *
+ * The text-shadow is still only for the transparent state. The hero has no scrim by design, so
+ * the shadow is the only thing separating the nav from the photograph.
  */
 
 const SHADOW = '0 1px 12px rgb(15 12 11 / 0.75), 0 1px 2px rgb(15 12 11 / 0.6)'
@@ -66,10 +72,10 @@ export function SiteHeaderShell({ children }: { children: React.ReactNode }) {
       data-transparent={transparent ? '' : undefined}
       className={
         'group sticky top-0 z-40 border-b transition-colors duration-300 ' +
-        (overlay ? '-mb-28 ' : '') +
+        (overlay ? '-mb-20 ' : '') +
         (transparent
           ? 'border-transparent bg-transparent'
-          : 'border-white/10 bg-ink-900/95 backdrop-blur')
+          : 'border-ink-100 bg-surface-raised/95 backdrop-blur')
       }
       style={transparent ? { textShadow: SHADOW } : undefined}
     >

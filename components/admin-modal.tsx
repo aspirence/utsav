@@ -118,7 +118,7 @@ export function AdminModal({
         // Positioned by the top layer, so no ancestor can clip it. overflow-hidden keeps the
         // scrollbar out of the rounded corners; the panel inside scrolls instead.
         className={
-          'fixed inset-0 m-auto w-[calc(100vw-2rem)] overflow-hidden rounded-xl bg-white p-0 text-ink-900 shadow-2xl backdrop:bg-ink-950/50 ' +
+          'fixed inset-0 m-auto w-[calc(100vw-2rem)] overflow-hidden rounded-3xl border border-ink-200 bg-white p-0 text-ink-900 backdrop:bg-ink-950/50 ' +
           (width === 'lg' ? 'max-w-3xl' : 'max-w-xl')
         }
         // Clicking the backdrop. The event target is the dialog itself only when the click landed

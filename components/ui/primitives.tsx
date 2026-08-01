@@ -14,13 +14,31 @@ import { cn } from './cn'
 // Button
 // ---------------------------------------------------------------------------
 
-export type ButtonVariant = 'primary' | 'secondary' | 'ghost' | 'outline' | 'danger'
+/**
+ * BUTTONS ARE PILLS, AND THE DEFAULT ONE IS OUTLINED.
+ *
+ * `primary` used to be a filled primary-600 block with a drop shadow. In the discovery-wall
+ * system the default action is a 1.5px outline in the accent with accent-coloured text, and
+ * filled buttons are the exception rather than the rule — a page of eight filled CTAs has no
+ * hierarchy left to spend, which is exactly what a marketplace listing page turns into.
+ *
+ * `solid` exists for the handful of places that genuinely need one filled button: the single
+ * committing action at the end of a flow. If a screen has two, one of them is wrong.
+ *
+ * Radius is `rounded-full` on every variant. The reference's 360px is a pill at any height this
+ * interface uses, and a pill is what the whole control layer — nav, tabs, badges, buttons —
+ * agrees on.
+ */
+export type ButtonVariant = 'primary' | 'solid' | 'secondary' | 'ghost' | 'outline' | 'danger'
 export type ButtonSize = 'sm' | 'md' | 'lg'
 
 const buttonVariants: Record<ButtonVariant, string> = {
-  primary: 'bg-primary-600 text-white hover:bg-primary-700 active:bg-primary-800 shadow-sm',
-  secondary: 'bg-ink-900 text-white hover:bg-ink-800 active:bg-ink-950 shadow-sm',
-  outline: 'border border-ink-200 bg-surface-raised text-ink-800 hover:bg-ink-50 hover:border-ink-300',
+  primary:
+    'border-[1.5px] border-primary-600 bg-transparent text-primary-700 hover:bg-primary-50 active:bg-primary-100',
+  solid: 'bg-primary-600 text-white hover:bg-primary-700 active:bg-primary-800',
+  secondary: 'bg-ink-900 text-white hover:bg-ink-800 active:bg-ink-950',
+  outline:
+    'border border-ink-200 bg-surface-raised text-ink-800 hover:bg-ink-50 hover:border-ink-300',
   ghost: 'text-ink-700 hover:bg-ink-100 hover:text-ink-900',
   danger: 'bg-danger-500 text-white hover:bg-danger-700',
 }
@@ -48,7 +66,7 @@ export function Button({
   return (
     <button
       className={cn(
-        'inline-flex items-center justify-center rounded-lg font-medium transition-colors',
+        'inline-flex items-center justify-center rounded-full font-semibold transition-colors',
         'disabled:pointer-events-none disabled:opacity-50',
         buttonVariants[variant],
         buttonSizes[size],
@@ -82,7 +100,7 @@ export function LinkButton({
     <a
       href={href}
       className={cn(
-        'inline-flex items-center justify-center rounded-lg font-medium transition-colors',
+        'inline-flex items-center justify-center rounded-full font-semibold transition-colors',
         buttonVariants[variant],
         buttonSizes[size],
         fullWidth && 'w-full',
@@ -110,6 +128,11 @@ const badgeTones: Record<BadgeTone, string> = {
   danger: 'bg-danger-50 text-danger-700',
 }
 
+/**
+ * 20px radius — half the card's 40px, which is what makes a badge sitting on a card read as
+ * nested inside it rather than as a second card. `rounded-full` would be a lozenge and would
+ * collapse the distinction between a badge and a button.
+ */
 export function Badge({
   tone = 'neutral',
   className,
@@ -119,7 +142,7 @@ export function Badge({
   return (
     <span
       className={cn(
-        'inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-xs font-medium',
+        'inline-flex items-center gap-1 rounded-lg px-2.5 py-1 text-xs font-semibold',
         badgeTones[tone],
         className,
       )}
@@ -134,12 +157,24 @@ export function Badge({
 // Card
 // ---------------------------------------------------------------------------
 
+/**
+ * The signature surface: 40px radius, white on the warm canvas, one hairline border, no shadow.
+ *
+ * `overflow-hidden` is not decoration. At 40px the corner cuts a long way in, and any child that
+ * reaches the edge — which is every card here, since they all start with a full-bleed image —
+ * squares those corners off again unless it is clipped. Without it the radius silently applies
+ * to nothing on precisely the cards it matters most on.
+ *
+ * Hover moves the border, not a shadow. Elevation in this system is surface colour plus a
+ * border, so the hover affordance has to live in the same language or it reintroduces the
+ * shadow the system removed.
+ */
 export function Card({ className, ...props }: HTMLAttributes<HTMLDivElement>) {
   return (
     <div
       className={cn(
-        'rounded-xl border border-ink-100 bg-surface-raised shadow-sm',
-        'transition-shadow hover:shadow-md',
+        'overflow-hidden rounded-3xl border border-ink-100 bg-surface-raised',
+        'transition-colors hover:border-ink-200',
         className,
       )}
       {...props}

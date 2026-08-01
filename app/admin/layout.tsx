@@ -25,8 +25,9 @@ export const dynamic = 'force-dynamic'
  * The bare /admin shell. Metadata and caching policy, and nothing else.
  *
  * THE CHROME AND THE GUARD ARE ONE LEVEL DOWN, in (console)/layout.tsx. That split exists for
- * one reason: /admin/login has to be reachable *without* passing the staff gate, and a gate in
- * this file would run on the login page too — redirecting to a page that redirects to itself.
+ * one reason: /admin/login has to be reachable *without* passing the staff gate. It is now only
+ * a redirect to /login — the one login for every surface — but the gate must still not run on
+ * it, or the refusal would redirect to a path that redirects back into the refusal.
  *
  * Route groups do not appear in the URL, so /admin, /admin/vendors and the rest are unmoved.
  * The only difference is which layout wraps them.
