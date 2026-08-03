@@ -1,5 +1,5 @@
 -- ============================================================================
--- Utsava — fix app.trg_refresh_vendor_search()
+-- Fremmo — fix app.trg_refresh_vendor_search()
 --
 -- Every insert into public.vendors failed with:
 --

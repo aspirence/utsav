@@ -1,5 +1,5 @@
 -- ============================================================================
--- Utsava — 000300 · Identity
+-- Fremmo — 000300 · Identity
 -- Plan §3: "One human = one auth identity; capabilities come from memberships, not a
 -- role column. A photographer booking a caterer for his own anniversary is one login
 -- in two contexts. The UI is a context switcher; the database enforces everything."

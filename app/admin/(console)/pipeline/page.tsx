@@ -29,7 +29,7 @@ export default function PipelinePage() {
     <>
       <PageHeader
         title="Onboarding pipeline"
-        description="Every listing on Utsava starts here. A vendor is never asked to fill in a form — a field agent visits, shoots their work, and drafts the profile with them."
+        description="Every listing on Fremmo starts here. A vendor is never asked to fill in a form — a field agent visits, shoots their work, and drafts the profile with them."
         action={
           <div className="flex gap-2">
             <Pill tone="blue">{active} active</Pill>

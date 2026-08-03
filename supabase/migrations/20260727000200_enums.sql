@@ -1,5 +1,5 @@
 -- ============================================================================
--- Utsava — 000200 · Enumerated types
+-- Fremmo — 000200 · Enumerated types
 -- Plan §5: "Status enums that drive the product". These four state machines are
 -- the product; every transition below is enforced by an RPC, never by a client UPDATE.
 -- ============================================================================

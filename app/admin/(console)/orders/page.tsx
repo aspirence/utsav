@@ -127,7 +127,10 @@ export default async function AdminOrdersPage() {
                   {/* Staff read these unmasked: unlike a vendor lead (plan §6), they are the party
                       who has to deliver the order. */}
                   <p className="mt-0.5 text-xs text-ink-500">
-                    {r.contactPhone} · {r.contactEmail}
+                    {/* Email is optional since 20260803000300 — the booking form is name +
+                        WhatsApp only. Joined rather than interpolated, so an order without one
+                        does not render a dangling "·". */}
+                    {[r.contactPhone, r.contactEmail].filter(Boolean).join(' · ')}
                   </p>
                 </div>
               ),

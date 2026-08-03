@@ -153,7 +153,7 @@ export default async function AdminVendorsPage({
                     {r.name}
                     {/* Plan §11: the disclosure follows the listing everywhere,
                         including into the staff tools. */}
-                    {r.isAnchor && <Pill tone="amber">Utsava-owned</Pill>}
+                    {r.isAnchor && <Pill tone="amber">Fremmo-owned</Pill>}
                   </p>
                   <p className="text-xs text-ink-500">
                     {r.locality}, {r.city} · {r.category}

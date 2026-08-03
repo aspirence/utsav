@@ -1,5 +1,5 @@
 -- ============================================================================
--- Utsava — 001000 · Engagement & operations
+-- Fremmo — 001000 · Engagement & operations
 -- Plan §5: "checklists, checklist_items, notifications (outbox), e_invites,
 -- onboarding_pipeline, cms_pages"
 -- Plan §7: e-invites and checklist are the declared scope valves — "e-invites and

@@ -93,7 +93,7 @@ export type SearchParams = z.infer<typeof searchParamsSchema>
  */
 export const CONSENT_VERSION = '2026-07-01'
 export const CONSENT_TEXT =
-  'I agree that Utsava may share my name, phone number and event details with up to ' +
+  'I agree that Fremmo may share my name, phone number and event details with up to ' +
   '5 matching vendors so they can respond to this enquiry, and may contact me about it ' +
   'on WhatsApp, SMS and phone.'
 

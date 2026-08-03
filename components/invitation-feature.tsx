@@ -24,7 +24,7 @@ import { useCallback, useEffect, useRef, useState } from 'react'
  * youtube-nocookie.com rather than youtube.com - it is the same player without the
  * tracking cookie on first load.
  *
- * The stat is a service promise, not a track record. Utsava has no years of history to
+ * The stat is a service promise, not a track record. Fremmo has no years of history to
  * claim yet, and plan §2 stakes the product on claims being verifiable, so a "15+ years"
  * badge here would undercut the thing that makes the reviews worth reading.
  *

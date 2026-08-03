@@ -1,3 +1,4 @@
+import { Brand } from '@/components/brand'
 import Link from 'next/link'
 
 import { HeaderAccountLink } from '@/components/header-account-link'
@@ -18,7 +19,7 @@ import { getCategories, getLaunchedCities } from '@/lib/queries'
  *
  *  · **The nav is absolutely centred, not a flex child.** `justify-between` would centre
  *    the nav between the logo and the buttons, and those two are nowhere near the same
- *    width - "Utsava" against a link plus a button - so the nav would sit visibly right of
+ *    width - "Fremmo" against a link plus a button - so the nav would sit visibly right of
  *    centre. Pinning it to left-1/2 with a -50% translate centres it on the *viewport*,
  *    which is what reads as centred. It is `pointer-events-none` on the wrapper and
  *    `pointer-events-auto` on the nav so the overlay strip cannot swallow clicks meant for
@@ -53,7 +54,7 @@ export async function SiteHeader() {
   return (
     <SiteHeaderShell>
       <div className="relative flex h-20 items-center justify-between gap-4 px-4 sm:px-8 lg:px-14">
-        <Link href="/" className="relative z-10 shrink-0" aria-label="Utsava — home">
+        <Link href="/" className="relative z-10 shrink-0" aria-label="Fremmo — home">
           {/*
             One asset, two appearances. On the white bar the mark is left alone — it is dark
             brown and gold, which is what it was drawn to be. Over the homepage hero those
@@ -77,12 +78,9 @@ export async function SiteHeader() {
             the mark at 60% of the row and it reads as set in rather than wedged in.
           */}
           {/* eslint-disable-next-line @next/next/no-img-element -- plan §12: no next/image */}
-          <img
-            src="/logo.webp"
-            alt="Utsava"
-            width={623}
-            height={576}
-            className="h-12 w-auto group-data-[transparent]:[filter:brightness(0)_invert(1)_drop-shadow(0_1px_6px_rgb(15_12_11_/_0.7))]"
+          <Brand
+            markClassName="h-9 w-auto group-data-[transparent]:[filter:brightness(0)_invert(1)_drop-shadow(0_1px_6px_rgb(15_12_11_/_0.7))]"
+            wordClassName="text-2xl text-ink-900 group-data-[transparent]:text-white group-data-[transparent]:[text-shadow:0_1px_6px_rgb(15_12_11_/_0.7)]"
           />
         </Link>
 

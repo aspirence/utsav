@@ -4,6 +4,9 @@ import { unstable_cache } from 'next/cache'
 
 import { formatPerDay, formatPriceBand, storageImageUrl } from '@/lib/db'
 import type { AttributeMap } from '@/lib/category-attributes'
+// Only getSeoRoutes() uses this, at the bottom of the file — the sitemap has to enumerate the
+// invitation catalogue and that list lives in its own module.
+import { getLiveInvitationTemplates } from '@/lib/invitation-templates'
 import type { VendorCardData } from '@/components/ui'
 
 import {
@@ -787,6 +790,24 @@ export async function getSeoRoutes(): Promise<{ url: string; priority: number }[
   // once the total passes the 50,000-URL limit.
   for (const slug of vendorSlugs) {
     routes.push({ url: `/vendor/${slug}`, priority: 0.7 })
+  }
+
+  /*
+   * The invitation storefront. Plan §2 counts it as a revenue line, and until /invitations
+   * existed there was no indexable URL for the catalogue at all — only the home page carousel
+   * and the per-template pages it linked to.
+   *
+   * The index at 0.8, level with a city+category listing: it is a commercial landing page for
+   * "digital wedding invitations", which is a query people actually type. Individual templates
+   * at 0.6, since they are one design each and the index is what should rank.
+   *
+   * Deliberately does not include /invitation — the full-screen animated demo. It is one
+   * template with no chrome, no heading structure and no internal links, so it competes with
+   * the listing for the same intent and would win nothing.
+   */
+  routes.push({ url: '/invitations', priority: 0.8 })
+  for (const template of await getLiveInvitationTemplates()) {
+    routes.push({ url: `/invitations/${template.slug}`, priority: 0.6 })
   }
 
   return routes

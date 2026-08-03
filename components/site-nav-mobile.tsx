@@ -1,5 +1,6 @@
 'use client'
 
+import { Brand } from '@/components/brand'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { useEffect, useState } from 'react'
@@ -146,25 +147,29 @@ export function SiteNavMobile({
               </span>
             </button>
 
+            {/*
+              `scrollbar-none` for the same reason the console rail carries it: this panel is a
+              dark full-screen surface, and the system scrollbar paints light over it as a pale
+              stripe down the right edge. Still scrolls — a long category list on a small phone
+              in landscape needs to.
+            */}
             <nav
               aria-label="Main"
-              className="flex flex-1 flex-col items-center overflow-y-auto px-6 pb-10 pt-16 text-center"
+              className="scrollbar-none flex flex-1 flex-col items-center overflow-y-auto px-6 pb-10 pt-16 text-center"
             >
               <Link
                 href="/"
                 tabIndex={open ? undefined : -1}
-                aria-label="Utsava — home"
+                aria-label="Fremmo — home"
                 style={step(140)}
               >
                 {/* Same knockout the header and footer use - the mark is dark brown and
                     gold on transparent, and would all but vanish on ink-900. */}
                 {/* eslint-disable-next-line @next/next/no-img-element -- plan §12: no next/image */}
-                <img
-                  src="/logo.webp"
-                  alt="Utsava"
-                  width={623}
-                  height={576}
-                  className="h-28 w-auto [filter:brightness(0)_invert(1)]"
+                <Brand
+                  className="flex-col gap-3"
+                  markClassName="h-20 w-auto [filter:brightness(0)_invert(1)]"
+                  wordClassName="text-4xl text-white"
                 />
               </Link>
 

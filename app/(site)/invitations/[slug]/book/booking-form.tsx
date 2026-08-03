@@ -13,7 +13,12 @@ import {
   UpiMark,
 } from '@/components/payment-marks'
 
-import { placeInvitationOrder, type BookingState } from './actions'
+import {
+  placeInvitationOrder,
+  saveInvitationCard,
+  type BookingState,
+  type CardState,
+} from './actions'
 
 /**
  * The booking form: your details on the left of the card, the money on the right.
@@ -63,7 +68,13 @@ export function BookingForm({
   })
 
   if (state.status === 'placed') {
-    return <Placed reference={state.reference} message={state.message} />
+    return (
+      <Placed
+        reference={state.reference}
+        message={state.message}
+        detailsToken={state.detailsToken}
+      />
+    )
   }
 
   return (
@@ -78,13 +89,22 @@ export function BookingForm({
         · first {offerSeats} couples
       </p>
 
-      <div className="bg-primary-900 px-5 py-6 text-center sm:px-8">
-        <h2 className="font-display text-2xl text-white">Start your invitation</h2>
-        <ol className="mx-auto mt-4 max-w-sm space-y-2 text-left text-sm text-white/85">
+      {/*
+        Left-aligned, not centred.
+
+        A centred heading sitting on top of a left-aligned numbered list gave the block two
+        different axes and read as two things stacked rather than one panel. The steps are the
+        content here; the heading introduces them, so it lines up with them.
+      */}
+      <div className="bg-primary-900 px-5 py-6 sm:px-8">
+        <h2 className="font-display text-xl text-white sm:text-2xl">Start your invitation</h2>
+        <ol className="mt-4 max-w-sm space-y-2 text-sm text-white/85">
           <Step n={1}>
             Book — {formatPaise(bookingAmountPaise)} confirms your design slot.
           </Step>
-          <Step n={2}>Send details — names, dates, venues and photographs.</Step>
+          {/* "next" and not "below": the wording form moved to the confirmation screen, and a
+              step pointing at a section that is no longer on this page is worse than no step. */}
+          <Step n={2}>Add your wording on the next screen, or send it on WhatsApp later.</Step>
           <Step n={3}>Approve — your draft arrives on WhatsApp.</Step>
         </ol>
       </div>
@@ -92,10 +112,13 @@ export function BookingForm({
       <form action={act}>
         <input type="hidden" name="templateSlug" value={templateSlug} />
 
-        <div className="grid gap-8 px-5 py-7 sm:px-8 lg:grid-cols-2">
+        <div className="grid gap-9 px-5 py-7 sm:px-8 sm:py-9 lg:grid-cols-2 lg:gap-10">
           <fieldset>
-            <legend className="text-xs font-semibold uppercase tracking-[0.14em] text-ink-500">
-              1. Your details
+            {/* One group now, not three. The card wording moved to the confirmation screen, so
+                everything left here is what is needed to *place* an order — a name to call you
+                and a number to send the link to. */}
+            <legend className="w-full border-b border-ink-200 pb-2 text-sm font-semibold text-ink-900">
+              Your details
             </legend>
 
             <div className="mt-5 space-y-5">
@@ -111,29 +134,17 @@ export function BookingForm({
                 />
               </Field>
 
-              <Field label="Email address" htmlFor="contactEmail" required note="Confirmation goes here">
-                <input
-                  id="contactEmail"
-                  name="contactEmail"
-                  type="email"
-                  required
-                  autoComplete="email"
-                  placeholder="you@example.com"
-                  className={INPUT}
-                />
-              </Field>
-
               <Field
                 label="WhatsApp number"
                 htmlFor="contactPhone"
                 required
-                note="Your draft link comes here"
+                note="Your draft and payment link come here"
               >
                 {/* The +91 is a label, not a value: the input holds the ten digits and
                     indianPhoneInputSchema normalises to E.164 server-side, so a pasted
                     "+91 98765 43210" and a typed "9876543210" both work. */}
-                <div className="flex items-center overflow-hidden rounded-md border border-ink-200 focus-within:border-ink-400">
-                  <span className="shrink-0 border-r border-ink-200 bg-ink-50 px-3 py-2.5 text-sm text-ink-600">
+                <div className="flex min-h-11 items-center overflow-hidden rounded-lg border border-ink-200 transition-colors focus-within:border-primary-600 focus-within:ring-2 focus-within:ring-primary-600/25">
+                  <span className="shrink-0 self-stretch border-r border-ink-200 bg-ink-50 px-3 py-2.5 text-sm leading-6 text-ink-600">
                     +91
                   </span>
                   <input
@@ -144,26 +155,23 @@ export function BookingForm({
                     inputMode="numeric"
                     autoComplete="tel-national"
                     placeholder="9876543210"
-                    className="w-full px-3 py-2.5 text-sm text-ink-900 outline-none"
+                    className="w-full bg-transparent px-3.5 py-2.5 text-base text-ink-900 outline-none placeholder:text-ink-400 sm:text-sm"
                   />
                 </div>
               </Field>
 
-              <Field label="Anything we should know?" htmlFor="notes">
-                <textarea
-                  id="notes"
-                  name="notes"
-                  rows={3}
-                  placeholder="Wedding date, city, number of events…"
-                  className={INPUT}
-                />
-              </Field>
+              {/* NO EMAIL FIELD. contact_email is nullable as of 20260803000300 and this product
+                  runs on WhatsApp — the draft link and the payment link both go to the number
+                  above. An email box here was a required field rather than a used one. */}
             </div>
           </fieldset>
 
+
           <div>
-            <p className="text-xs font-semibold uppercase tracking-[0.14em] text-ink-500">
-              2. Summary
+            {/* A <p>, not a <legend> — this block is not a fieldset, and a legend outside one is
+                invalid. Styled to match the two above so the three still read as one sequence. */}
+            <p className="w-full border-b border-ink-200 pb-2 text-sm font-semibold text-ink-900">
+              <span className="text-primary-700">3.</span> Summary
             </p>
 
             <div className="mt-5 rounded-xl border border-ink-200 bg-surface-raised p-4">
@@ -299,19 +307,43 @@ export function BookingForm({
  * what they will screenshot. The next step is spelled out rather than left as "we will be in
  * touch", which tells somebody nothing about whether to wait or to chase.
  */
-function Placed({ reference, message }: { reference: string; message: string }) {
+function Placed({
+  reference,
+  message,
+  detailsToken,
+}: {
+  reference: string
+  message: string
+  detailsToken: string
+}) {
   return (
-    <div className="rounded-3xl border border-success-500/40 bg-white p-7 text-center sm:p-10">
-      {/* "Order received", not "slot reserved" — the row is awaiting_payment, and /admin/orders
-          says in as many words that nothing is reserved until the money lands. */}
-      <p className="text-xs font-semibold uppercase tracking-[0.14em] text-success-700">
-        Order received
-      </p>
-      <p className="mt-4 font-mono text-2xl tracking-[0.1em] text-ink-900 sm:text-3xl">
-        {reference}
-      </p>
-      <p className="mx-auto mt-4 max-w-md text-sm leading-relaxed text-ink-700">{message}</p>
-      <div className="mt-7 flex flex-wrap justify-center gap-3">
+    <div className="space-y-6">
+      <div className="rounded-3xl border border-success-500/40 bg-white p-7 text-center sm:p-10">
+        {/* "Order received", not "slot reserved" — the row is awaiting_payment, and /admin/orders
+            says in as many words that nothing is reserved until the money lands. */}
+        <p className="text-xs font-semibold uppercase tracking-[0.14em] text-success-700">
+          Order received
+        </p>
+        <p className="mt-4 font-mono text-2xl tracking-[0.1em] text-ink-900 sm:text-3xl">
+          {reference}
+        </p>
+        <p className="mx-auto mt-4 max-w-md text-sm leading-relaxed text-ink-700">{message}</p>
+      </div>
+
+      {/*
+        STEP TWO, AND THIS IS WHY THE FORM ABOVE IS TWO FIELDS.
+
+        The wording used to be collected before the order existed — eight fields about the card
+        standing between somebody and a purchase they had not made yet. It is asked for here
+        instead, once there is an order to attach it to and the commitment is already made.
+
+        Optional even now. Somebody who has not settled on the names can close this page: the
+        order is placed, the reference is above, and the confirmation says the wording can come
+        over WhatsApp. What this screen removes is the *requirement*, not the option.
+      */}
+      <CardDetailsForm detailsToken={detailsToken} />
+
+      <div className="flex flex-wrap justify-center gap-3">
         <Link
           href="/"
           className="rounded-full bg-ink-900 px-5 py-2.5 text-sm font-medium text-white hover:bg-ink-800"
@@ -329,8 +361,133 @@ function Placed({ reference, message }: { reference: string; message: string }) 
   )
 }
 
+/**
+ * The card wording, asked for after checkout.
+ *
+ * Its own useActionState rather than a second branch of the booking form's: the two have
+ * different states, different validation and different failure copy, and merging them would mean
+ * one reducer where a card error could clear an order confirmation off the screen.
+ *
+ * The token travels in a hidden input. It is the authorisation for the write — see
+ * saveInvitationCard() and 20260803000300 for why it is not the reference — and it never leaves
+ * this screen: no URL carries it, so it cannot be pasted, bookmarked or shared by accident.
+ */
+function CardDetailsForm({ detailsToken }: { detailsToken: string }) {
+  const [state, act, pending] = useActionState<CardState, FormData>(saveInvitationCard, {
+    status: 'idle',
+  })
+
+  if (state.status === 'saved') {
+    return (
+      <div className="rounded-3xl border border-success-500/40 bg-white p-7 text-center sm:p-10">
+        <p className="text-xs font-semibold uppercase tracking-[0.14em] text-success-700">
+          Your card is live
+        </p>
+        <p className="mx-auto mt-3 max-w-md text-sm leading-relaxed text-ink-700">
+          {state.message}
+        </p>
+        {/* The link itself, not a "View card" button — this is the string that gets pasted into
+            WhatsApp, so it has to be selectable and readable. */}
+        <Link
+          href={`/invite/${state.cardSlug}`}
+          className="mt-4 inline-block break-all font-medium text-primary-700 underline underline-offset-4 hover:text-primary-800"
+        >
+          /invite/{state.cardSlug}
+        </Link>
+      </div>
+    )
+  }
+
+  return (
+    <div className="overflow-hidden rounded-3xl border border-ink-200 bg-white">
+      <div className="border-b border-ink-100 px-5 py-5 sm:px-8">
+        <h2 className="font-display text-lg text-ink-900">Now, the wording</h2>
+        <p className="mt-1 text-sm leading-relaxed text-ink-600">
+          Fill this in and your card goes live straight away — you will get a link you can open and
+          check. Or skip it and we will collect the details on WhatsApp.
+        </p>
+      </div>
+
+      <form action={act} className="px-5 py-6 sm:px-8">
+        <input type="hidden" name="detailsToken" value={detailsToken} />
+
+        <div className="grid gap-5 sm:grid-cols-2">
+          <Field label="Hosts" htmlFor="hosts" note="Whoever is inviting">
+            <input id="hosts" name="hosts" type="text" placeholder="Mr & Mrs Sharma" className={INPUT} />
+          </Field>
+
+          <Field label="Venue" htmlFor="venue" note="Commas become line breaks">
+            <input id="venue" name="venue" type="text" placeholder="SMC Party Plot, Surat" className={INPUT} />
+          </Field>
+
+          <Field label="Groom's name" htmlFor="groomName">
+            <input id="groomName" name="groomName" type="text" placeholder="Dhanesh" className={INPUT} />
+          </Field>
+
+          <Field label="Bride's name" htmlFor="brideName">
+            <input id="brideName" name="brideName" type="text" placeholder="Radha" className={INPUT} />
+          </Field>
+
+          <Field label="Groom's parents" htmlFor="groomParents" note="Optional">
+            <input id="groomParents" name="groomParents" type="text" className={INPUT} />
+          </Field>
+
+          <Field label="Bride's parents" htmlFor="brideParents" note="Optional">
+            <input id="brideParents" name="brideParents" type="text" className={INPUT} />
+          </Field>
+
+          <Field label="Date, as it should read" htmlFor="cardDate">
+            <input id="cardDate" name="cardDate" type="text" placeholder="Monday, 1st May" className={INPUT} />
+          </Field>
+
+          <Field label="Time" htmlFor="cardTime">
+            <input id="cardTime" name="cardTime" type="text" placeholder="9:00 p.m. onwards" className={INPUT} />
+          </Field>
+        </div>
+
+        {state.status === 'error' && (
+          <p
+            role="alert"
+            className="mt-5 rounded-md border border-danger-500/30 bg-danger-50 px-3 py-2.5 text-sm leading-relaxed text-danger-700"
+          >
+            {state.message}
+          </p>
+        )}
+
+        <button
+          type="submit"
+          disabled={pending}
+          className="mt-6 flex min-h-12 w-full items-center justify-center gap-2 rounded-full bg-primary-700 px-6 text-sm font-semibold text-white transition-colors hover:bg-primary-800 disabled:opacity-60 sm:w-auto sm:px-8"
+        >
+          {pending ? 'Saving…' : 'Save and publish my card'}
+        </button>
+      </form>
+    </div>
+  )
+}
+
+/**
+ * One control style, and three things in it are load-bearing rather than decoration.
+ *
+ * `min-h-11` is 44px. The old `py-2.5` with 14px text came out around 38px, which is under both
+ * Apple's 44px and Material's 48px minimum — on a form with eleven fields that is eleven chances
+ * to miss, on the surface where most of these get filled in.
+ *
+ * `text-base sm:text-sm` looks backwards and is not. iOS Safari zooms the viewport whenever a
+ * focused input's text is under 16px, and it does not zoom back out on blur — so a 14px field
+ * leaves somebody scrolling a form that is suddenly wider than their screen. 16px on phones
+ * costs nothing and stops that entirely; the denser 14px returns from `sm` up.
+ *
+ * A REAL FOCUS RING, not a border colour change. `focus:border-ink-400` moved the border from
+ * ink-200 to ink-400 — a contrast step invisible to most people and worth nothing to anyone
+ * navigating by keyboard. The ring is drawn in the primary colour with an offset so it reads
+ * against both the white field and the card behind it.
+ */
 const INPUT =
-  'w-full rounded-md border border-ink-200 bg-white px-3 py-2.5 text-sm text-ink-900 outline-none focus:border-ink-400'
+  'w-full min-h-11 rounded-lg border border-ink-200 bg-white px-3.5 py-2.5 text-base text-ink-900 ' +
+  'outline-none transition-colors placeholder:text-ink-400 ' +
+  'focus:border-primary-600 focus:ring-2 focus:ring-primary-600/25 ' +
+  'sm:text-sm'
 
 function Step({ n, children }: { n: number; children: React.ReactNode }) {
   return (
@@ -370,9 +527,17 @@ function Field({
             </span>
           )}
         </span>
-        {note && <span className="text-xs text-primary-700">{note}</span>}
+        {/*
+          The hint is ink-500, not primary-700.
+
+          In the accent colour it looked like a link sitting inside the label — several of these
+          read as actions ("Whoever is inviting", "Commas become line breaks") and a couple of
+          people will click one before deciding it is not clickable. A hint is quieter than the
+          label it hangs off, never louder.
+        */}
+        {note && <span className="text-xs text-ink-500">{note}</span>}
       </label>
-      <div className="mt-2">{children}</div>
+      <div className="mt-1.5">{children}</div>
     </div>
   )
 }

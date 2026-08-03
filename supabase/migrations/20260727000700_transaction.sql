@@ -1,10 +1,10 @@
 -- ============================================================================
--- Utsava — 000700 · Transaction (money)
+-- Fremmo — 000700 · Transaction (money)
 -- Plan §5: "quotes, bookings, payments, payouts, refunds, disputes — service-role
 -- writes only; money in integer paise"
 -- Plan §6: "money tables never trust the client … written only by service-role code,
 -- merely readable by their parties"
--- Plan §4: "Escrow rides a licensed payment aggregator … Utsava never holds customer money."
+-- Plan §4: "Escrow rides a licensed payment aggregator … Fremmo never holds customer money."
 -- ============================================================================
 
 create table public.quotes (

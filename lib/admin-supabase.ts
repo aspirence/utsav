@@ -2,7 +2,7 @@ import 'server-only'
 
 import { cookies } from 'next/headers'
 
-import { createUtsavaServerClient, hasSupabaseEnv, type UtsavaClient } from '@/lib/db'
+import { createFremmoServerClient, hasSupabaseEnv, type FremmoClient } from '@/lib/db'
 
 /**
  * Request-scoped Supabase client for the staff console.
@@ -18,10 +18,10 @@ import { createUtsavaServerClient, hasSupabaseEnv, type UtsavaClient } from '@/l
  * and the audit row would have no honest actor to attach. The service-role key is for the
  * routing and escrow RPCs (plan §6), not for making a moderator's decision anonymous.
  */
-export async function getServerClient(): Promise<UtsavaClient> {
+export async function getServerClient(): Promise<FremmoClient> {
   const store = await cookies()
 
-  return createUtsavaServerClient({
+  return createFremmoServerClient({
     getAll: () => store.getAll().map(({ name, value }) => ({ name, value })),
     setAll: (list) => {
       for (const { name, value, options } of list) {
@@ -32,7 +32,7 @@ export async function getServerClient(): Promise<UtsavaClient> {
 }
 
 /** Returns null instead of throwing when the console has no Supabase configured yet. */
-export async function getServerClientOrNull(): Promise<UtsavaClient | null> {
+export async function getServerClientOrNull(): Promise<FremmoClient | null> {
   if (!hasSupabaseEnv()) return null
   try {
     return await getServerClient()

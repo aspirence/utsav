@@ -163,7 +163,7 @@ export function getAdminVendors(): AdminVendor[] {
       teamSize: 4,
       travelsOutstation: true,
     }),
-    v('utsava-studio', 'Utsava Studio', 'Lucknow', 'Gomti Nagar', 'Photography', 'live', 88, 8, true, 'verified', true, 4.9, 11),
+    v('fremmo-studio', 'Fremmo Studio', 'Lucknow', 'Gomti Nagar', 'Photography', 'live', 88, 8, true, 'verified', true, 4.9, 11),
     v('saat-phere-films', 'Saat Phere Films', 'Lucknow', 'Hazratganj', 'Photography', 'live', 90, 8, true, 'verified', false, 4.8, 42),
     v('anantha-photography', 'Anantha Photography', 'Lucknow', 'Aliganj', 'Photography', 'live', 85, 8, true, 'verified', false, 4.6, 128),
     v('the-mango-tree-co', 'The Mango Tree Co.', 'Lucknow', 'Indira Nagar', 'Photography', 'live', 87, 8, true, 'submitted', false, 4.9, 31),

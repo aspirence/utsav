@@ -39,7 +39,7 @@ import { LoginForm } from './login-form'
  */
 export const metadata: Metadata = {
   title: 'Login',
-  description: 'Log in to Utsava with your email or mobile number.',
+  description: 'Log in to Fremmo with your email or mobile number.',
   robots: { index: false, follow: false },
 }
 

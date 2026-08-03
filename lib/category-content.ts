@@ -35,7 +35,7 @@ const PHOTOGRAPHY: CategoryContent = {
       a:
         `Most full-day wedding coverage in ${city} falls between ₹60,000 and ₹4 lakh, ` +
         'depending on crew size, how many days you need and whether a film is included. ' +
-        'Every listing on Utsava shows a price band up front, and every package shows a ' +
+        'Every listing on Fremmo shows a price band up front, and every package shows a ' +
         'per-day figure so a three-day quote and a one-day quote are directly comparable.',
     },
     {
@@ -51,7 +51,7 @@ const PHOTOGRAPHY: CategoryContent = {
       q: 'How many photos should I expect, and how soon?',
       a:
         'A single-day wedding usually yields 400 to 800 edited photographs. Three weeks is ' +
-        'a normal turnaround and four is common in peak season. Each package on Utsava ' +
+        'a normal turnaround and four is common in peak season. Each package on Fremmo ' +
         'states its own photo count and delivery time, so you can compare rather than guess.',
     },
     {
@@ -59,7 +59,7 @@ const PHOTOGRAPHY: CategoryContent = {
       a:
         'Six to nine months for a peak-season date, and longer for the November–February ' +
         'window. Good studios are booked out first. You can filter by your exact date on ' +
-        'Utsava to see only the photographers who are genuinely free that day.',
+        'Fremmo to see only the photographers who are genuinely free that day.',
     },
     {
       q: 'Do photographers travel for destination weddings?',

@@ -40,7 +40,7 @@ import { createClient } from 'jsr:@supabase/supabase-js@2'
  *   select cron.schedule('drain-notifications', '* * * * *', $$
  *     select net.http_post(
  *       url     := 'https://<ref>.supabase.co/functions/v1/drain-notifications',
- *       headers := jsonb_build_object('x-utsava-worker-secret', '<WORKER_SECRET>')
+ *       headers := jsonb_build_object('x-fremmo-worker-secret', '<WORKER_SECRET>')
  *     );
  *   $$);
  *
@@ -55,7 +55,7 @@ const BACKOFF_BASE_SECONDS = 60
 const BACKOFF_MAX_SECONDS = 6 * 60 * 60
 const REQUEST_TIMEOUT_MS = 10_000
 const WHATSAPP_GRAPH_VERSION = 'v21.0'
-const HEADER_NAME = 'x-utsava-worker-secret'
+const HEADER_NAME = 'x-fremmo-worker-secret'
 
 const NOTIFICATION_COLUMNS =
   'id, channel, template, payload, recipient_id, vendor_id, to_phone, to_email, ' +
@@ -311,16 +311,16 @@ function renderNotification(
   const site = (
     Deno.env.get('SITE_URL') ??
     Deno.env.get('NEXT_PUBLIC_SITE_URL') ??
-    'https://utsava.in'
+    'https://fremmo.in'
   ).replace(/\/+$/, '')
 
   switch (template) {
     case 'lead.new': {
       const on = formatEventDate(payload.event_date)
       return {
-        title: 'New enquiry on Utsava',
+        title: 'New enquiry on Fremmo',
         body:
-          `New Utsava enquiry${on ? ` for ${on}` : ''}. ` +
+          `New Fremmo enquiry${on ? ` for ${on}` : ''}. ` +
           `Open your partner dashboard to read the brief and reply: ${site}/partner/dashboard/leads`,
       }
     }
@@ -331,7 +331,7 @@ function renderNotification(
       return {
         title: 'How did it go?',
         body:
-          'Your Utsava booking is complete. A short review helps the next couple choose ' +
+          'Your Fremmo booking is complete. A short review helps the next couple choose ' +
           `well: ${site}${bookingId ? `/review/${bookingId}` : ''}`,
       }
     }
@@ -340,12 +340,12 @@ function renderNotification(
       return {
         title: 'Booking initiated',
         body:
-          `A customer has accepted your quote on Utsava${reference ? ` (${reference})` : ''}. ` +
+          `A customer has accepted your quote on Fremmo${reference ? ` (${reference})` : ''}. ` +
           `The advance is held in escrow until the shoot. Details: ${site}/partner/dashboard/quotes`,
       }
     }
     default:
-      return { title: 'Update from Utsava', body: `You have an update on Utsava: ${site}` }
+      return { title: 'Update from Fremmo', body: `You have an update on Fremmo: ${site}` }
   }
 }
 
@@ -441,7 +441,7 @@ async function sendSms(row: NotificationRow, to: string, body: string): Promise<
     { Authorization: `Bearer ${apiKey}` },
     {
       to,
-      sender: Deno.env.get('SMS_SENDER_ID') ?? 'UTSAVA',
+      sender: Deno.env.get('SMS_SENDER_ID') ?? 'FREMMO',
       message: body,
       // Gateway-side idempotency, so a retry we think failed cannot become two SMS.
       client_reference: row.id,
@@ -496,7 +496,7 @@ async function sendEmail(
     { Authorization: `Bearer ${apiKey}` },
     {
       to,
-      from: Deno.env.get('EMAIL_FROM') ?? 'no-reply@utsava.in',
+      from: Deno.env.get('EMAIL_FROM') ?? 'no-reply@fremmo.in',
       subject: title,
       text: body,
       client_reference: row.id,

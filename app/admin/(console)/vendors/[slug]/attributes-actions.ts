@@ -3,7 +3,7 @@
 import { revalidatePath } from 'next/cache'
 import { cookies } from 'next/headers'
 
-import { createUtsavaServerClient, hasSupabaseEnv, slugSchema } from '@/lib/db'
+import { createFremmoServerClient, hasSupabaseEnv, slugSchema } from '@/lib/db'
 
 import { CATEGORY_ATTRIBUTES, coerceAttributes } from '@/lib/category-attributes'
 
@@ -146,7 +146,7 @@ export async function saveVendorAttributes(
 async function staffClient() {
   try {
     const store = await cookies()
-    return createUtsavaServerClient({
+    return createFremmoServerClient({
       getAll: () => store.getAll().map(({ name, value }) => ({ name, value })),
       setAll: (list) => {
         for (const { name, value, options } of list) store.set(name, value, options)

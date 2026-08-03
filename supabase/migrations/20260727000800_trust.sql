@@ -1,5 +1,5 @@
 -- ============================================================================
--- Utsava — 000800 · Trust
+-- Fremmo — 000800 · Trust
 -- Plan §5: "reviews (FK booking_id UNIQUE — one per completed booking), review_media,
 -- moderation_queue, stories (real-wedding galleries, all-vendor tagging)"
 -- Plan §2: "booking-gated reviews" are Must-tier at launch.

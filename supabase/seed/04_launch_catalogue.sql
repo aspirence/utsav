@@ -1,8 +1,8 @@
 -- ============================================================================
--- Utsava seed — 04 · Launch catalogue (SAFE FOR A HOSTED PROJECT)
+-- Fremmo seed — 04 · Launch catalogue (SAFE FOR A HOSTED PROJECT)
 --
 -- WHY THIS EXISTS SEPARATELY FROM 03_demo.sql. That file opens by creating auth.users
--- rows whose password is `utsava123` and says, at the top, not to run it against anything
+-- rows whose password is `fremmo123` and says, at the top, not to run it against anything
 -- but a local machine. It is right to say so: on a project with a public URL those are real
 -- accounts anyone can sign into. So it stays local-only, and this file carries the part
 -- that a hosted project actually needs — inventory.

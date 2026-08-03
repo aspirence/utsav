@@ -1,4 +1,4 @@
-# Utsava
+# Fremmo
 
 All-events discovery and booking marketplace for India — weddings, social celebrations
 and corporate events, with **photography as the wedge category**.
@@ -7,7 +7,7 @@ This repository implements the architecture in `Utsava_Complete_Development_Plan
 Section references throughout the code (`plan §6`, `plan §S3`) point back to that document,
 which remains the single source of truth for scope and sequencing.
 
-> "Utsava" is a working title. Dates, estimates, prices and tool choices in the plan are
+> "Fremmo" is a working title. Dates, estimates, prices and tool choices in the plan are
 > planning assumptions to re-validate at build time.
 
 ---
@@ -51,9 +51,9 @@ say you belong.
 
 | Email | Password | Lands on |
 | --- | --- | --- |
-| `dummy@utsava.test` | `DummyUtsava2026!` | `/account` — plain customer |
-| `vendor@utsava.test` | `DummyVendor2026!` | `/partner/dashboard` — owner of "Dummy Studio" |
-| `staff@utsava.test` | `DummyStaff2026!!` | `/admin` — **super admin**, full console |
+| `dummy@fremmo.test` | `DummyFremmo2026!` | `/account` — plain customer |
+| `vendor@fremmo.test` | `DummyVendor2026!` | `/partner/dashboard` — owner of "Dummy Studio" |
+| `staff@fremmo.test` | `DummyStaff2026!!` | `/admin` — **super admin**, full console |
 
 The super admin holds every capability in plan §3's matrix, including `/admin/users` — the
 only screen that can grant and revoke staff roles. `staff_roles` has no write policy for any
@@ -68,7 +68,7 @@ pnpm db:bootstrap you@example.com 'a-password-of-at-least-12-chars'
 ```
 
 **These are throwaway credentials on a throwaway listing, and this file is in git — do not
-reuse either password anywhere real, and do not add a live one here.** `vendor@utsava.test`
+reuse either password anywhere real, and do not add a live one here.** `vendor@fremmo.test`
 owns a vendor row (`dummy-studio`) deliberately left at `status = 'draft'`, so it is invisible
 to every public query and `/vendor/dummy-studio` is a 404. Deleting that row and its
 `vendor_members` row removes the whole fixture.
@@ -89,7 +89,7 @@ several apps import the same code, and only one app was ever built. Flattened on
 2026-07-31 — see "Deviations from the plan" below.
 
 ```
-Utsava-Event-Website/
+Fremmo-Event-Website/
 ├─ middleware.ts               # /admin IP allowlist + hardening headers
 ├─ app/layout.tsx              # document shell only — no chrome
 ├─ app/(site)/                 # customer surface (route group — adds nothing to URLs)
@@ -272,15 +272,15 @@ audit proving the contact-masking rule holds on every lead state.
 | `pnpm db:test` | pgTAP RLS suite |
 | `pnpm db:lint` | Supabase schema linter |
 
-**Demo logins** (after `pnpm db:reset`) — password `utsava123`:
+**Demo logins** (after `pnpm db:reset`) — password `fremmo123`:
 
 | Email | Role |
 |---|---|
 | `priya@example.com` | customer with a completed booking + review |
-| `studio@example.com` | owner of Utsava Studio (the anchor studio) |
+| `studio@example.com` | owner of Fremmo Studio (the anchor studio) |
 | `lensai@example.com` | owner of Lightleak Studio |
-| `admin@utsava.test` | super admin |
-| `field@utsava.test` | field agent, Lucknow only |
+| `admin@fremmo.test` | super admin |
+| `field@fremmo.test` | field agent, Lucknow only |
 
 ---
 

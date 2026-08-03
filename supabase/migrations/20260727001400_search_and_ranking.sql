@@ -1,5 +1,5 @@
 -- ============================================================================
--- Utsava — 001400 · Search & ranking
+-- Fremmo — 001400 · Search & ranking
 -- Plan §4: "Postgres-native search first (FTS + pg_trgm + PostGIS ranking function);
 -- Typesense only past mechanical exit criteria (p95 > 200 ms or 50k listings)."
 -- Plan §12: "ranking isolated behind one SQL function" — that function is

@@ -1,5 +1,5 @@
 -- ============================================================================
--- Utsava seed — 01 · Category taxonomy and style tags
+-- Fremmo seed — 01 · Category taxonomy and style tags
 -- Plan §S2: "category taxonomy incl. photography style tags"
 -- Plan §11: photography is the wedge — 800 of 3,000 launch listings.
 -- ============================================================================

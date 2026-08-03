@@ -4,7 +4,7 @@ import { revalidatePath } from 'next/cache'
 import { cookies } from 'next/headers'
 import { z } from 'zod'
 
-import { createUtsavaServerClient, hasSupabaseEnv, slugSchema } from '@/lib/db'
+import { createFremmoServerClient, hasSupabaseEnv, slugSchema } from '@/lib/db'
 
 /**
  * Create a listing. Plan §S3: "the field team creates listings; the principal claims via
@@ -309,7 +309,7 @@ interface Filter {
 async function staffClient(): Promise<Writer | null> {
   try {
     const store = await cookies()
-    return createUtsavaServerClient({
+    return createFremmoServerClient({
       getAll: () => store.getAll().map(({ name, value }) => ({ name, value })),
       setAll: (list) => {
         for (const { name, value, options } of list) {

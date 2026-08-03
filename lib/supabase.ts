@@ -3,10 +3,10 @@ import 'server-only'
 import { cookies } from 'next/headers'
 
 import {
-  createUtsavaPublicClient,
-  createUtsavaServerClient,
+  createFremmoPublicClient,
+  createFremmoServerClient,
   hasSupabaseEnv,
-  type UtsavaClient,
+  type FremmoClient,
 } from '@/lib/db'
 
 /**
@@ -16,10 +16,10 @@ import {
  * client carries the caller's session, so RLS — not application code — decides what
  * comes back (plan §6).
  */
-export async function getServerClient(): Promise<UtsavaClient> {
+export async function getServerClient(): Promise<FremmoClient> {
   const store = await cookies()
 
-  return createUtsavaServerClient({
+  return createFremmoServerClient({
     getAll: () => store.getAll().map(({ name, value }) => ({ name, value })),
     setAll: (list) => {
       for (const { name, value, options } of list) {
@@ -30,7 +30,7 @@ export async function getServerClient(): Promise<UtsavaClient> {
 }
 
 /** Returns null instead of throwing when the app has no Supabase configured yet. */
-export async function getServerClientOrNull(): Promise<UtsavaClient | null> {
+export async function getServerClientOrNull(): Promise<FremmoClient | null> {
   if (!hasSupabaseEnv()) return null
   try {
     return await getServerClient()
@@ -58,13 +58,13 @@ export async function getServerClientOrNull(): Promise<UtsavaClient | null> {
  * depends on auth.uid() returns a stranger's view rather than failing. Shortlists, the
  * account area, partner dashboards and the console must keep getServerClientOrNull().
  */
-export async function getPublicReadClient(): Promise<UtsavaClient | null> {
+export async function getPublicReadClient(): Promise<FremmoClient | null> {
   if (!hasSupabaseEnv()) return null
   try {
     return await getServerClient()
   } catch {
     try {
-      return createUtsavaPublicClient()
+      return createFremmoPublicClient()
     } catch {
       return null
     }

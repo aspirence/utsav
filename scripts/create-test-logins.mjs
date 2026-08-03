@@ -8,10 +8,10 @@
  * Without this, checking the partner dashboard means hand-writing rows in the Supabase console.
  *
  * WHAT IT MAKES.
- *   1. dummy@utsava.test  — a plain customer. No memberships, so /dashboard sends it to /account.
- *   2. vendor@utsava.test — owner of a vendor named "Dummy Studio", so /dashboard sends it to
+ *   1. dummy@fremmo.test  — a plain customer. No memberships, so /dashboard sends it to /account.
+ *   2. vendor@fremmo.test — owner of a vendor named "Dummy Studio", so /dashboard sends it to
  *      /partner/dashboard.
- *   3. staff@utsava.test  — a super admin, so /dashboard sends it to /admin. It can open
+ *   3. staff@fremmo.test  — a super admin, so /dashboard sends it to /admin. It can open
  *      /admin/users and grant or revoke everybody else's roles.
  *
  * The vendor is created with `status = 'draft'` and that is not incidental. `vendors_select_live`
@@ -42,19 +42,19 @@ import { createClient } from '@supabase/supabase-js'
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..')
 
 const CUSTOMER = {
-  email: 'dummy@utsava.test',
-  password: 'DummyUtsava2026!',
+  email: 'dummy@fremmo.test',
+  password: 'DummyFremmo2026!',
   fullName: 'Dummy Customer',
 }
 
 const VENDOR_OWNER = {
-  email: 'vendor@utsava.test',
+  email: 'vendor@fremmo.test',
   password: 'DummyVendor2026!',
   fullName: 'Dummy Studio Owner',
 }
 
 const SUPER_ADMIN = {
-  email: 'staff@utsava.test',
+  email: 'staff@fremmo.test',
   // bootstrap-super-admin.mjs enforces 12 characters on the grounds that this account can
   // approve payouts. This one is a fixture and still clears that bar, so the two scripts do not
   // disagree about what a super-admin password is allowed to be.

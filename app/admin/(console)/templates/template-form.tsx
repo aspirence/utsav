@@ -238,20 +238,31 @@ function describeLink(url: string): { tone: 'idle' | 'good' | 'warn'; message: s
     return {
       tone: 'idle',
       message:
-        'A page on this site like /invitation, a video file (.mp4, .webm, .mov), or a YouTube ' +
-        'or Vimeo link.',
+        'A video file (.mp4, .webm, .mov), an image or GIF (.gif, .webp, .jpg, .png), or a ' +
+        'YouTube link. Not a page link — a preview is media, not a live page.',
     }
   }
 
   // A path on this site, checked before URL parsing because new URL() throws on one.
   if (trimmed.startsWith('/') && !trimmed.startsWith('//')) {
-    return /\.(mp4|webm|ogv|ogg|mov|m4v)$/i.test(trimmed)
-      ? { tone: 'good', message: 'A video file on this site — it will loop silently in the phone frame.' }
-      : {
-          tone: 'good',
-          message:
-            'A page on this site — it will run live inside the phone frame, animation and all.',
-        }
+    if (/\.(mp4|webm|ogv|ogg|mov|m4v)$/i.test(trimmed)) {
+      return { tone: 'good', message: 'A video file on this site — it will loop silently in the phone frame.' }
+    }
+    if (/\.(gif|webp|png|jpe?g|avif)$/i.test(trimmed)) {
+      return { tone: 'good', message: 'An image on this site — it will fill the phone frame. A GIF will animate.' }
+    }
+    /*
+     * A PAGE ON THIS SITE USED TO BE THE HEADLINE FEATURE HERE, and it is now the one thing
+     * this field refuses to do anything useful with. The card framed the page in an iframe, so
+     * the mockup showed our own header and back button inside it — a phone showing our site
+     * rather than a preview of an invitation.
+     */
+    return {
+      tone: 'warn',
+      message:
+        'That is a page, not a file. Pages are no longer shown in the card — record it as a ' +
+        'short clip or export a still, and paste that instead.',
+    }
   }
 
   let parsed: URL
@@ -260,25 +271,16 @@ function describeLink(url: string): { tone: 'idle' | 'good' | 'warn'; message: s
   } catch {
     return {
       tone: 'warn',
-      message:
-        'Not a complete link yet. Use https://… for somewhere else, or start with / for a page ' +
-        'on this site — /invitation, not http://192.168.1.20:3000/invitation.',
+      message: 'Not a complete link yet. Use https://… , or start with / for a file on this site.',
     }
   }
 
   if (parsed.protocol !== 'https:') {
-    /*
-     * The most common paste is this site's own address copied out of the browser bar, which
-     * over LAN or localhost is http and gets refused. The fix is not "make it https" — it is
-     * to drop the host entirely, because it is our own page. So the message says that
-     * instead of repeating the rule.
-     */
     return {
       tone: 'warn',
       message:
-        `For a page on this site, paste just the path — ${parsed.pathname || '/invitation'} — ` +
-        'not the whole address. An http link is blocked inside a secure page and the phone ' +
-        'comes out empty.',
+        'An http link is blocked inside a secure page and the phone comes out empty. Use https, ' +
+        'or paste just the path for a file on this site.',
     }
   }
 
@@ -286,18 +288,33 @@ function describeLink(url: string): { tone: 'idle' | 'good' | 'warn'; message: s
     return { tone: 'good', message: 'A video file — this will loop silently in the phone frame.' }
   }
 
+  if (/\.(gif|webp|png|jpe?g|avif)$/i.test(parsed.pathname)) {
+    return { tone: 'good', message: 'An image — it will fill the phone frame. A GIF will animate.' }
+  }
+
   const host = parsed.hostname.replace(/^www\./, '')
-  if (['youtube.com', 'm.youtube.com', 'youtu.be', 'vimeo.com', 'player.vimeo.com'].includes(host)) {
+
+  if (['youtube.com', 'm.youtube.com', 'youtu.be'].includes(host)) {
     return {
       tone: 'good',
-      message: `A ${host.includes('vimeo') ? 'Vimeo' : 'YouTube'} link — embedded, muted and looping, with the player controls hidden.`,
+      message: "A YouTube link — the card shows YouTube's thumbnail as a still. Paste a file link if you want it to move.",
+    }
+  }
+
+  if (['vimeo.com', 'player.vimeo.com'].includes(host)) {
+    // Vimeo thumbnails need an oEmbed round trip, which this render path does not make.
+    return {
+      tone: 'warn',
+      message:
+        'Vimeo thumbnails cannot be worked out from the link, so the card will show its poster. ' +
+        'Add a poster image, or paste a direct file link.',
     }
   }
 
   return {
     tone: 'warn',
     message:
-      'Not a recognised video file or a YouTube/Vimeo link. It will save, but the card will show the poster instead of playing.',
+      'Not a recognised video, image or YouTube link. It will save, but the card will show the poster instead.',
   }
 }
 

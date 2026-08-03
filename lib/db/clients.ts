@@ -23,7 +23,7 @@ import type { Database } from './generated/database.types'
  * *different* instantiation than the one createServerClient actually returns. Inferring
  * it keeps the two in lockstep through future supabase-js upgrades.
  */
-export type UtsavaClient = ReturnType<typeof createUtsavaServerClient>
+export type FremmoClient = ReturnType<typeof createFremmoServerClient>
 
 export interface SupabaseEnv {
   url: string
@@ -52,7 +52,7 @@ export function hasSupabaseEnv(): boolean {
  * Browser client. Anon key only — RLS is the boundary (plan §6), so this is safe to
  * ship. Use it for Realtime subscriptions and Storage uploads, not for page reads.
  */
-export function createUtsavaBrowserClient() {
+export function createFremmoBrowserClient() {
   const { url, anonKey } = readPublicEnv()
   return createBrowserClient<Database>(url, anonKey)
 }
@@ -71,7 +71,7 @@ export interface CookieAdapter {
  * RLS-scoped to that user — which is what makes plan §6's "no trusted API between
  * clients and Postgres" workable.
  */
-export function createUtsavaServerClient(cookies: CookieAdapter) {
+export function createFremmoServerClient(cookies: CookieAdapter) {
   const { url, anonKey } = readPublicEnv()
 
   return createServerClient<Database>(url, anonKey, {
@@ -92,7 +92,7 @@ export function createUtsavaServerClient(cookies: CookieAdapter) {
 /**
  * Sessionless public client. Anon key, no cookies, therefore no request scope needed.
  *
- * WHY IT EXISTS. createUtsavaServerClient() is fed from next/headers' cookies(), which is
+ * WHY IT EXISTS. createFremmoServerClient() is fed from next/headers' cookies(), which is
  * unavailable while a page is being statically generated. Every caller wrapped that in a
  * try/catch returning null, and the public read paths treated null as "no database" and
  * fell back to fixtures — so the discovery pages, which are exactly the pages plan §12
@@ -108,11 +108,11 @@ export function createUtsavaServerClient(cookies: CookieAdapter) {
  * will silently read as a stranger.
  *
  * Built on createServerClient with an inert cookie adapter rather than createClient, so it
- * returns the same UtsavaClient type. A structurally different client here would resolve
+ * returns the same FremmoClient type. A structurally different client here would resolve
  * the schema generics differently and collapse callers to `never` — the trap documented on
- * UtsavaClient above.
+ * FremmoClient above.
  */
-export function createUtsavaPublicClient() {
+export function createFremmoPublicClient() {
   const { url, anonKey } = readPublicEnv()
 
   return createServerClient<Database>(url, anonKey, {

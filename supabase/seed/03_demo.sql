@@ -1,5 +1,5 @@
 -- ============================================================================
--- Utsava seed — 03 · Demo data (LOCAL DEVELOPMENT ONLY)
+-- Fremmo seed — 03 · Demo data (LOCAL DEVELOPMENT ONLY)
 --
 -- Enough supply for discovery, ranking, routing and the trust surface to render
 -- without a live database. Media paths point at Supabase Storage objects that do not
@@ -12,7 +12,7 @@
 set search_path = public, extensions;
 
 -- ---------------------------------------------------------------------------
--- Demo auth users. Password for every account: utsava123
+-- Demo auth users. Password for every account: fremmo123
 -- ---------------------------------------------------------------------------
 
 insert into auth.users (
@@ -23,7 +23,7 @@ insert into auth.users (
 select
   '00000000-0000-0000-0000-000000000000',
   u.id, 'authenticated', 'authenticated', u.email,
-  extensions.crypt('utsava123', extensions.gen_salt('bf')), now(),
+  extensions.crypt('fremmo123', extensions.gen_salt('bf')), now(),
   '{"provider":"email","providers":["email"]}'::jsonb,
   jsonb_build_object('full_name', u.full_name),
   now(), now(), '', '', '', ''
@@ -32,8 +32,8 @@ from (values
   ('11111111-1111-4111-8111-111111111102'::uuid, 'arjun@example.com',   'Arjun Mehta'),
   ('11111111-1111-4111-8111-111111111201'::uuid, 'studio@example.com',  'Vikram Rao'),
   ('11111111-1111-4111-8111-111111111202'::uuid, 'lensai@example.com',  'Neha Kulkarni'),
-  ('11111111-1111-4111-8111-111111111901'::uuid, 'admin@utsava.test',   'Utsava Admin'),
-  ('11111111-1111-4111-8111-111111111902'::uuid, 'field@utsava.test',   'Field Agent BLR')
+  ('11111111-1111-4111-8111-111111111901'::uuid, 'admin@fremmo.test',   'Fremmo Admin'),
+  ('11111111-1111-4111-8111-111111111902'::uuid, 'field@fremmo.test',   'Field Agent BLR')
 ) as u(id, email, full_name)
 on conflict (id) do nothing;
 
@@ -42,7 +42,7 @@ select u.id, u.id,
        jsonb_build_object('sub', u.id::text, 'email', u.email),
        'email', u.email, now(), now()
 from auth.users u
-where u.email like '%@example.com' or u.email like '%@utsava.test'
+where u.email like '%@example.com' or u.email like '%@fremmo.test'
 on conflict do nothing;
 
 -- The on_auth_user_created trigger has already created profiles; top them up.
@@ -107,8 +107,8 @@ from (values
    'Bold, colour-forward wedding photography. We chase the loud moments, not the staged ones.',
    2021, 4, true, 14000000, 38000000, false),
   -- Plan §11: the founder's anchor studio, live from Oct 2026, disclosed on-platform.
-  ('utsava-studio', 'Utsava Studio', 'lucknow', 'gomti-nagar',
-   'The in-house studio operated by Utsava''s founder. Listed under a public disclosure policy: no ranking preference, overflow bookings only, and capped at roughly 5% of category bookings.',
+  ('fremmo-studio', 'Fremmo Studio', 'lucknow', 'gomti-nagar',
+   'The in-house studio operated by Fremmo''s founder. Listed under a public disclosure policy: no ranking preference, overflow bookings only, and capped at roughly 5% of category bookings.',
    2026, 3, true, 15000000, 40000000, true),
   -- Delhi NCR · photography
   ('shaadi-stories-delhi', 'Shaadi Stories', 'delhi-ncr', 'gurugram',
@@ -174,7 +174,7 @@ from (values
   ('kalyana-clicks',        'photography', array['traditional','candid']),
   ('northlight-studio',     'photography', array['portrait','pre-wedding','drone']),
   ('the-vermilion-project', 'photography', array['candid','cinematic','fine-art']),
-  ('utsava-studio',         'photography', array['candid','cinematic','pre-wedding']),
+  ('fremmo-studio',         'photography', array['candid','cinematic','pre-wedding']),
   ('shaadi-stories-delhi',  'photography', array['candid','traditional','drone']),
   ('mehfil-media',          'photography', array['candid','cinematic']),
   ('roshni-photography',    'photography', array['traditional','candid']),
@@ -248,7 +248,7 @@ from (values
    5500000, 1.0, 4, 400, 14,
    array['400 photos','Full ceremony video','Printed album'],
    array['4 crew','Album','14-day delivery'], 1),
-  ('utsava-studio', 'Wedding Day Coverage',
+  ('fremmo-studio', 'Wedding Day Coverage',
    'Candid and cinematic coverage by the in-house studio team.',
    18000000, 1.0, 3, 650, 21,
    array['650+ edited photos','Online gallery'],
@@ -334,21 +334,21 @@ on conflict (vendor_id, blocked_on) do nothing;
 insert into public.vendor_members (vendor_id, profile_id, role, accepted_at)
 select v.id, m.profile_id::uuid, 'owner', now()
 from (values
-  ('utsava-studio',    '11111111-1111-4111-8111-111111111201'),
+  ('fremmo-studio',    '11111111-1111-4111-8111-111111111201'),
   ('lightleak-studio', '11111111-1111-4111-8111-111111111202')
 ) as m(vendor_slug, profile_id)
 join public.vendors v on v.slug = m.vendor_slug
 on conflict (vendor_id, profile_id) do nothing;
 
 update public.vendors set claimed_at = now()
-where slug in ('utsava-studio', 'lightleak-studio');
+where slug in ('fremmo-studio', 'lightleak-studio');
 
 -- Subscriptions for the two claimed studios.
 insert into public.subscriptions (vendor_id, plan_id, status, billing_cycle, current_period_end)
 select v.id, p.id, 'active', 'annual', now() + interval '1 year'
 from public.vendors v
 cross join public.plans p
-where v.slug in ('utsava-studio', 'lightleak-studio') and p.slug = 'growth'
+where v.slug in ('fremmo-studio', 'lightleak-studio') and p.slug = 'growth'
 on conflict do nothing;
 
 -- ---------------------------------------------------------------------------

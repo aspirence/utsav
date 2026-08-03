@@ -3,7 +3,7 @@
 import { revalidatePath } from 'next/cache'
 import { z } from 'zod'
 
-import { formatPaise, gstOn, paiseSchema, type UtsavaClient } from '@/lib/db'
+import { formatPaise, gstOn, paiseSchema, type FremmoClient } from '@/lib/db'
 
 import { asQuotesTable, asRpcCaller, getQuoteLeadContext } from '@/lib/quote-queries'
 import { getServerClientOrNull, hasSupabaseEnv } from '@/lib/supabase'
@@ -477,7 +477,7 @@ export async function withdrawQuote(quoteId: string): Promise<QuoteState> {
  * Walks the lead to 'quoted'. Returns a sentence to append to the success message when
  * the lead could not be moved, so a partial success never reads as a clean one.
  */
-async function markLeadQuoted(supabase: UtsavaClient, leadId: string): Promise<string | null> {
+async function markLeadQuoted(supabase: FremmoClient, leadId: string): Promise<string | null> {
   const lead = await getQuoteLeadContext(leadId)
   if (!lead) return 'The lead status could not be updated — check it on the Leads screen.'
   if (lead.status === 'quoted' || lead.status === 'converted') return null

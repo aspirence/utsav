@@ -1,5 +1,5 @@
 /**
- * Utsava design tokens. Plan §S0 ships these in sprint zero; §S1 builds the system on top.
+ * Fremmo design tokens. Plan §S0 ships these in sprint zero; §S1 builds the system on top.
  *
  * Direction: the product is portfolio-first (plan §2/§S3), so the interface is a quiet
  * warm-neutral frame around other people's photographs. One saturated accent —

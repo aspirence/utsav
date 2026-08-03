@@ -2,7 +2,7 @@ import 'server-only'
 
 import { cache } from 'react'
 
-import { formatPriceBand, gstOn, rupeesToPaise, type UtsavaClient } from '@/lib/db'
+import { formatPriceBand, gstOn, rupeesToPaise, type FremmoClient } from '@/lib/db'
 
 import { getPartnerLeads, type LeadStatus } from './partner-queries'
 import { getServerClientOrNull } from './supabase'
@@ -167,7 +167,7 @@ export interface QuotesTable {
   }
 }
 
-export function asQuotesTable(client: UtsavaClient): QuotesTable {
+export function asQuotesTable(client: FremmoClient): QuotesTable {
   return client as unknown as QuotesTable
 }
 
@@ -181,7 +181,7 @@ export interface PublicRpcCaller {
   rpc(fn: string, args: Record<string, unknown>): PromiseLike<{ error: PostgrestErrorLike }>
 }
 
-export function asRpcCaller(client: UtsavaClient): PublicRpcCaller {
+export function asRpcCaller(client: FremmoClient): PublicRpcCaller {
   return client as unknown as PublicRpcCaller
 }
 

@@ -19,12 +19,12 @@ type Props = {
 export const revalidate = 3600
 
 export const metadata: Metadata = {
-  title: 'Real weddings on Utsava',
+  title: 'Real weddings on Fremmo',
   description:
     'Full accounts of real weddings and celebrations across India — the brief, the crew, ' +
     'what was delivered and when, with the vendor who shot it named on every one.',
   alternates: { canonical: '/stories' },
-  openGraph: { title: 'Real weddings on Utsava', type: 'website' },
+  openGraph: { title: 'Real weddings on Fremmo', type: 'website' },
 }
 
 export default async function StoriesPage({ searchParams }: Props) {
@@ -122,7 +122,7 @@ export default async function StoriesPage({ searchParams }: Props) {
         )}
 
         <section className="mt-14 rounded-xl border border-ink-100 bg-surface-raised p-6 sm:p-8">
-          <h2 className="font-display text-xl text-ink-900">Had your wedding shot through Utsava?</h2>
+          <h2 className="font-display text-xl text-ink-900">Had your wedding shot through Fremmo?</h2>
           <p className="mt-2 max-w-2xl text-sm text-ink-600">
             Tell us about it. Stories are published only with the couple&apos;s written consent, and
             the vendor sees the draft before it goes live.

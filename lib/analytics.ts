@@ -7,7 +7,7 @@ import {
   analyticsEventSchema,
   type AnalyticsEventName,
   type AnalyticsStage,
-  type UtsavaClient,
+  type FremmoClient,
 } from '@/lib/db'
 
 import { getServerClientOrNull, hasSupabaseEnv } from '@/lib/supabase'
@@ -349,7 +349,7 @@ interface AnalyticsSink {
   }
 }
 
-function sink(supabase: UtsavaClient): AnalyticsSink {
+function sink(supabase: FremmoClient): AnalyticsSink {
   return supabase as unknown as AnalyticsSink
 }
 
@@ -364,7 +364,7 @@ function sink(supabase: UtsavaClient): AnalyticsSink {
  * instead, which is what lets the warehouse stitch a discover session to the profile it
  * later becomes.
  */
-async function sessionProfileId(supabase: UtsavaClient): Promise<string | null> {
+async function sessionProfileId(supabase: FremmoClient): Promise<string | null> {
   try {
     const { data } = await supabase.auth.getSession()
     if (!data.session) return null
@@ -394,7 +394,7 @@ interface ResolvedRefs {
  * silently lost from the funnel.
  */
 async function resolveRefs(
-  supabase: UtsavaClient,
+  supabase: FremmoClient,
   event: {
     vendorId?: string
     vendorSlug?: string
@@ -430,7 +430,7 @@ async function resolveRefs(
  * Note `vendors_select_live` scopes the first one to live listings, which is correct —
  * a view of a paused profile is not a view of a listing.
  */
-async function lookupVendorId(supabase: UtsavaClient, slug: string): Promise<string | null> {
+async function lookupVendorId(supabase: FremmoClient, slug: string): Promise<string | null> {
   try {
     const { data, error } = await supabase
       .from('vendors')
@@ -443,7 +443,7 @@ async function lookupVendorId(supabase: UtsavaClient, slug: string): Promise<str
   }
 }
 
-async function lookupCityId(supabase: UtsavaClient, slug: string): Promise<string | null> {
+async function lookupCityId(supabase: FremmoClient, slug: string): Promise<string | null> {
   try {
     const { data, error } = await supabase
       .from('cities')
@@ -456,7 +456,7 @@ async function lookupCityId(supabase: UtsavaClient, slug: string): Promise<strin
   }
 }
 
-async function lookupCategoryId(supabase: UtsavaClient, slug: string): Promise<string | null> {
+async function lookupCategoryId(supabase: FremmoClient, slug: string): Promise<string | null> {
   try {
     const { data, error } = await supabase
       .from('categories')

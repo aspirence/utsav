@@ -1,5 +1,7 @@
 import { headers } from 'next/headers'
 
+import { BottomNavSpacer } from '@/components/bottom-nav'
+import { SiteBottomNav } from '@/components/site-bottom-nav'
 import { SiteFooter } from '@/components/site-footer'
 import { SiteHeader } from '@/components/site-header'
 
@@ -44,6 +46,15 @@ export default async function SiteLayout({ children }: { children: React.ReactNo
         {children}
       </main>
       <SiteFooter />
+
+      {/*
+        After the footer, not inside <main>. The footer has its own dark background that runs to
+        the bottom of the page, so padding <main> would leave the bar sitting on top of the
+        footer's last row — the legal links and the copyright line, which are exactly the things
+        somebody scrolls all the way down to reach.
+      */}
+      <BottomNavSpacer hideFrom="md" />
+      <SiteBottomNav />
     </div>
   )
 }

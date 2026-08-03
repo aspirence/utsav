@@ -338,13 +338,13 @@ export const VENDORS: FixtureVendor[] = [
     mediaCount: 8,
   },
   {
-    slug: 'utsava-studio',
-    displayName: 'Utsava Studio',
+    slug: 'fremmo-studio',
+    displayName: 'Fremmo Studio',
     citySlug: 'lucknow',
     localitySlug: 'gomti-nagar',
     categorySlug: 'photography',
     about:
-      "The in-house studio operated by Utsava's founder. Listed under a public disclosure policy: no ranking preference, overflow bookings only, and capped at roughly 5% of category bookings.",
+      "The in-house studio operated by Fremmo's founder. Listed under a public disclosure policy: no ranking preference, overflow bookings only, and capped at roughly 5% of category bookings.",
     establishedYear: 2026,
     teamSize: 3,
     styleTags: ['candid', 'cinematic', 'pre-wedding'],
@@ -642,7 +642,7 @@ export const PACKAGES: FixturePackage[] = [
     inclusions: ['6 crew', '2 cinema cameras', 'Drone', 'Same-day edit screening'],
   },
   {
-    vendorSlug: 'utsava-studio',
+    vendorSlug: 'fremmo-studio',
     name: 'Wedding Day Coverage',
     description: 'Candid and cinematic coverage by the in-house studio team.',
     price: 18_000_000,

@@ -1,8 +1,8 @@
 {
-  "name": "utsava",
+  "name": "fremmo",
   "version": "0.1.0",
   "private": true,
-  "description": "Utsava — all-events discovery and booking marketplace for India. Photography-first wedge.",
+  "description": "Fremmo — all-events discovery and booking marketplace for India. Photography-first wedge.",
   "packageManager": "pnpm@9.15.9",
   "engines": {
     "node": ">=20.11.0"

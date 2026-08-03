@@ -119,7 +119,7 @@ export async function submitReview(draft: ReviewDraftInput): Promise<ReviewState
     return {
       status: 'not_eligible',
       message:
-        'We could not find that booking on your account. Reviews on Utsava come from ' +
+        'We could not find that booking on your account. Reviews on Fremmo come from ' +
         'real bookings only, which is what makes them worth reading.',
     }
   }
@@ -168,7 +168,7 @@ export async function submitReview(draft: ReviewDraftInput): Promise<ReviewState
       return {
         status: 'not_eligible',
         message:
-          'Utsava could not accept this review against that booking. Please contact ' +
+          'Fremmo could not accept this review against that booking. Please contact ' +
           'support and quote your booking reference.',
       }
     }

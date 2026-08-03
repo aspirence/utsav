@@ -4,7 +4,7 @@ import { revalidatePath } from 'next/cache'
 
 import { z } from 'zod'
 
-import type { UtsavaClient } from '@/lib/db'
+import type { FremmoClient } from '@/lib/db'
 
 import { getServerClientOrNull, hasSupabaseEnv } from '@/lib/supabase'
 
@@ -156,7 +156,7 @@ function revalidateShortlist(eventId?: string): void {
  * not live, so resolving a slug for a paused listing would fail and strand a shortlist
  * row the customer can see but not remove.
  */
-async function resolveVendorId(supabase: UtsavaClient, vendor: string): Promise<string | null> {
+async function resolveVendorId(supabase: FremmoClient, vendor: string): Promise<string | null> {
   if (UUID.test(vendor)) return vendor
 
   const { data, error } = await supabase

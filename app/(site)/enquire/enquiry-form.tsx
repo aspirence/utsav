@@ -100,8 +100,14 @@ export function EnquiryForm({
         <Field label="Guests (approx.)" error={fieldErrors.guestCount}>
           <input type="number" name="guestCount" min={1} placeholder="350" className={inputClass} />
         </Field>
-        <label className="col-span-full flex items-center gap-2.5 text-sm text-ink-700">
-          <input type="checkbox" name="dateFlexible" className="h-4 w-4 rounded" />
+        {/* min-h-11 on the label, not just a bigger box: the whole row is the hit area, and a
+            20px checkbox in a 20px row is still a 20px target. */}
+        <label className="col-span-full flex min-h-11 cursor-pointer items-center gap-3 text-sm text-ink-700">
+          <input
+            type="checkbox"
+            name="dateFlexible"
+            className="h-5 w-5 shrink-0 rounded accent-primary-600 focus:outline-none focus:ring-2 focus:ring-primary-600/25"
+          />
           My dates are still flexible
         </label>
       </Fieldset>
@@ -128,9 +134,21 @@ export function EnquiryForm({
         <Fieldset legend="Any style preference?">
           <div className="col-span-full flex flex-wrap gap-2">
             {styleTags.map((tag) => (
+              /*
+                `has-[:focus-visible]` is the part that was missing, and it mattered.
+
+                The checkbox is sr-only, so the browser's own focus outline is drawn on an
+                invisible element — tabbing through these chips moved focus with nothing on
+                screen to show where it had gone. `has-[:checked]` styled the selected state and
+                nothing styled the focused one, which is a different thing and the one a keyboard
+                depends on.
+
+                min-h-11 for the same reason as every other control here: py-1.5 made a 30px
+                target, and these sit in a wrapped row where the neighbours are 8px away.
+              */
               <label
                 key={tag.slug}
-                className="cursor-pointer rounded-full border border-ink-200 bg-surface-raised px-3.5 py-1.5 text-sm text-ink-700 has-[:checked]:border-ink-900 has-[:checked]:bg-ink-900 has-[:checked]:text-white"
+                className="inline-flex min-h-11 cursor-pointer items-center rounded-full border border-ink-200 bg-surface-raised px-4 text-sm text-ink-700 transition-colors has-[:checked]:border-ink-900 has-[:checked]:bg-ink-900 has-[:checked]:text-white has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-primary-600/40 has-[:focus-visible]:ring-offset-2"
               >
                 <input
                   type="checkbox"
@@ -180,8 +198,15 @@ export function EnquiryForm({
       </Fieldset>
 
       {/* Plan §6: DPDP consent with purpose limitation, stated in full before submit. */}
-      <label className="flex items-start gap-3 rounded-lg bg-surface-sunken p-4 text-sm text-ink-700">
-        <input type="checkbox" name="consentGiven" required className="mt-0.5 h-4 w-4 rounded" />
+      {/* The consent row stays items-start — its label runs to several lines, and centring a
+          checkbox against a paragraph puts it halfway down the text. */}
+      <label className="flex cursor-pointer items-start gap-3 rounded-lg bg-surface-sunken p-4 text-sm text-ink-700">
+        <input
+          type="checkbox"
+          name="consentGiven"
+          required
+          className="mt-0.5 h-5 w-5 shrink-0 rounded accent-primary-600 focus:outline-none focus:ring-2 focus:ring-primary-600/25"
+        />
         <span>{CONSENT_TEXT}</span>
       </label>
       {fieldErrors.consentGiven && (
@@ -202,9 +227,26 @@ function SubmitButton() {
   )
 }
 
+/**
+ * One control style for every field on this form.
+ *
+ * `min-h-11` is 44px. `py-2.5` came out around 40px, which is under Apple's 44px and Material's
+ * 48px minimum — and this is the form that stands between somebody and an enquiry, filled in on
+ * a phone more often than not.
+ *
+ * A REAL FOCUS RING. This used to be `focus:outline-none` with the border stepping from ink-200
+ * to primary-500 — a change of one border colour, and the browser's own outline removed to make
+ * room for it. Removing an outline without replacing it is the standard way a form becomes
+ * unusable by keyboard: on a nine-field form there was no way to tell which field had focus.
+ *
+ * The size is left alone deliberately. These inherit the site's 16px body text, which is already
+ * at the threshold below which iOS Safari zooms the viewport on focus and does not zoom back —
+ * so there is nothing to fix and a `text-sm` here would create the problem.
+ */
 const inputClass =
-  'w-full rounded-lg border border-ink-200 bg-surface-raised px-3.5 py-2.5 text-ink-900 ' +
-  'placeholder:text-ink-400 focus:border-primary-500 focus:outline-none'
+  'w-full min-h-11 rounded-lg border border-ink-200 bg-surface-raised px-3.5 py-2.5 text-ink-900 ' +
+  'transition-colors placeholder:text-ink-400 ' +
+  'focus:border-primary-600 focus:outline-none focus:ring-2 focus:ring-primary-600/25'
 
 function Fieldset({ legend, children }: { legend: string; children: React.ReactNode }) {
   return (

@@ -1,5 +1,5 @@
 -- ============================================================================
--- Utsava seed — 02 · Subscription plans
+-- Fremmo seed — 02 · Subscription plans
 -- Plan §2: "subscription tiers & GST billing" ship by Jul 2027.
 -- Plan §10: "180 paying vendors by Mar 2028; renewal ≥ 55–60%".
 -- Amounts are integer paise (plan §5). ₹1 = 100 paise.
@@ -37,19 +37,19 @@ on conflict (slug) do nothing;
 insert into public.cms_pages (slug, title, page_type, is_published, published_at, body, meta_description)
 values
   ('privacy', 'Privacy Policy', 'legal', true, now(),
-   'How Utsava collects, uses and protects your personal data under the DPDP Act.',
-   'Utsava privacy policy and DPDP compliance.'),
+   'How Fremmo collects, uses and protects your personal data under the DPDP Act.',
+   'Fremmo privacy policy and DPDP compliance.'),
   ('terms', 'Terms of Use', 'legal', true, now(),
-   'The terms governing use of the Utsava platform by customers and vendors.',
-   'Utsava terms of use.'),
+   'The terms governing use of the Fremmo platform by customers and vendors.',
+   'Fremmo terms of use.'),
   ('vendor-terms', 'Vendor Agreement', 'legal', true, now(),
-   'Listing, lead, subscription and payout terms for vendors on Utsava.',
-   'Utsava vendor agreement.'),
+   'Listing, lead, subscription and payout terms for vendors on Fremmo.',
+   'Fremmo vendor agreement.'),
   -- Plan §11/§12: the channel-conflict mitigation is a published, public policy.
-  ('anchor-studio-policy', 'Our Studio on Utsava', 'policy', true, now(),
-   'Utsava''s founder operates a photography studio that lists on this platform. '
+  ('anchor-studio-policy', 'Our Studio on Fremmo', 'policy', true, now(),
+   'Fremmo''s founder operates a photography studio that lists on this platform. '
    'It carries a disclosure badge, is ranked by exactly the same SQL as every other '
    'listing with no boost of any kind, takes overflow work only, and is capped at '
    'roughly 5% of bookings in its category. This page explains the rules and how we audit them.',
-   'How Utsava handles the founder-owned studio listed on the platform.')
+   'How Fremmo handles the founder-owned studio listed on the platform.')
 on conflict (slug) do nothing;

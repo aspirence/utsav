@@ -69,7 +69,7 @@ export function isCashfreeConfigured(): boolean {
 // ---------------------------------------------------------------------------
 
 export interface CreateOrderInput {
-  /** Our own reference, e.g. UTS-INV-A1B2C3. Becomes Cashfree's order_id. */
+  /** Our own reference, e.g. FRM-INV-A1B2C3. Becomes Cashfree's order_id. */
   reference: string
   amountPaise: number
   customer: {
@@ -113,7 +113,7 @@ export class CashfreeError extends Error {
  * Create a payment order and return the session the checkout needs.
  *
  * MONEY CROSSES A UNIT BOUNDARY HERE, which is the one thing in this file worth reading
- * twice. Everything inside Utsava is integer paise (plan §5); Cashfree's `order_amount` is
+ * twice. Everything inside Fremmo is integer paise (plan §5); Cashfree's `order_amount` is
  * rupees as a decimal number. paiseToRupees does that conversion in one place, and the
  * amount is asserted to survive the round trip — a float that arrives back as 149899.99999
  * paise is a reconciliation ticket months later, and it is cheaper to refuse to send it.
@@ -258,8 +258,8 @@ export function verifyCashfreeWebhook(
  * about equal-length inputs, not about secrecy.
  */
 function constantTimeEqual(a: string, b: string): boolean {
-  const ha = createHmac('sha256', 'utsava-compare').update(a).digest()
-  const hb = createHmac('sha256', 'utsava-compare').update(b).digest()
+  const ha = createHmac('sha256', 'fremmo-compare').update(a).digest()
+  const hb = createHmac('sha256', 'fremmo-compare').update(b).digest()
   return timingSafeEqual(ha, hb)
 }
 

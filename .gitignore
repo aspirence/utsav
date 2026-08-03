@@ -4,6 +4,9 @@ node_modules/
 
 # builds
 .next/
+# Alternate build dirs from NEXT_DIST_DIR — see distDir in next.config.ts. A verification build
+# uses one of these so it does not corrupt the running dev server's .next.
+.next-*/
 out/
 dist/
 build/

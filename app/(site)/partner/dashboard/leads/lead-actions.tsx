@@ -89,7 +89,7 @@ export function LeadWorkActions({
   const whatsappHref =
     contactVisible && contactPhone
       ? `https://wa.me/${contactPhone.replace(/\D/g, '')}?text=${encodeURIComponent(
-          `Hello ${contactFirstName}, this is Lightleak Studio replying to your enquiry on Utsava.`,
+          `Hello ${contactFirstName}, this is Lightleak Studio replying to your enquiry on Fremmo.`,
         )}`
       : null
 

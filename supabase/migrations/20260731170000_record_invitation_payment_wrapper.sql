@@ -1,5 +1,5 @@
 -- ============================================================================
--- Utsava — a PostgREST-reachable wrapper for app.record_invitation_payment()
+-- Fremmo — a PostgREST-reachable wrapper for app.record_invitation_payment()
 --
 -- 20260730000200 put the payment recorder in the `app` schema, which PostgREST does not
 -- expose, so there was no way to call it from a route handler. That was fine while nothing

@@ -140,9 +140,12 @@ export default async function AdminTemplatesPage() {
 /**
  * What the card will actually render, named plainly.
  *
- * "Video" / "Embed" / "Poster only" rather than a green tick, because the interesting case is
- * the third one — a link that saved fine and still does not move. A tick would call that
+ * "Video" / "Image" / "Poster only" rather than a green tick, because the interesting case is
+ * the third one — a link that saved fine and still shows nothing. A tick would call that
  * success.
+ *
+ * There is no "embed" any more. A preview is media — a video file, an image or a GIF — never a
+ * framed page or a third-party player; see PreviewKind in lib/invitation-templates.ts.
  */
 function PreviewCell({ template }: { template: InvitationTemplate }) {
   if (template.preview === 'video') {
@@ -154,11 +157,14 @@ function PreviewCell({ template }: { template: InvitationTemplate }) {
     )
   }
 
-  if (template.preview === 'embed') {
+  if (template.preview === 'image') {
     return (
       <div>
-        <Pill tone="blue">embed</Pill>
-        <p className="mt-1 max-w-[22rem] truncate text-xs text-ink-500">{template.videoUrl}</p>
+        <Pill tone="blue">image</Pill>
+        {/* imageUrl, not videoUrl: for a YouTube link the two differ — what was pasted is the
+            watch URL, what renders is the derived thumbnail, and the second is the useful one
+            when a card looks wrong. */}
+        <p className="mt-1 max-w-[22rem] truncate text-xs text-ink-500">{template.imageUrl}</p>
       </div>
     )
   }
@@ -170,7 +176,7 @@ function PreviewCell({ template }: { template: InvitationTemplate }) {
       </Pill>
       <p className="mt-1 max-w-[22rem] text-xs text-ink-500">
         {template.videoUrl
-          ? 'That link is not a video file or a YouTube/Vimeo URL, so it cannot play.'
+          ? 'That link is not a video file, an image, a GIF or a YouTube URL, so nothing renders. Vimeo links need a poster image alongside them.'
           : template.posterUrl
             ? 'No video link — the card shows a still image.'
             : 'No video and no poster: this card renders an empty phone.'}

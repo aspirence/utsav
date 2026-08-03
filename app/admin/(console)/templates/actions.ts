@@ -4,7 +4,7 @@ import { revalidatePath } from 'next/cache'
 import { cookies } from 'next/headers'
 import { z } from 'zod'
 
-import { createUtsavaServerClient, hasSupabaseEnv, slugSchema } from '@/lib/db'
+import { createFremmoServerClient, hasSupabaseEnv, slugSchema } from '@/lib/db'
 
 /**
  * Invitation templates: create, edit, publish, retire.
@@ -235,7 +235,7 @@ type WriteError = { code?: string; message: string }
 async function staffClient() {
   try {
     const store = await cookies()
-    return createUtsavaServerClient({
+    return createFremmoServerClient({
       getAll: () => store.getAll().map(({ name, value }) => ({ name, value })),
       setAll: (list) => {
         for (const { name, value, options } of list) store.set(name, value, options)
@@ -264,12 +264,21 @@ function shapeWarning(
     return { message: `${success} No preview video, so the card shows its poster.`, warn: false }
   }
 
-  // A path on this site is embedded as-is and always works — it is our own page, framed by
-  // a page on the same origin. Nothing to warn about.
+  // A path on this site. A media file works; a page does not, since the card stopped framing
+  // live pages — see PreviewKind in lib/invitation-templates.ts.
   if (videoUrl.startsWith('/') && !videoUrl.startsWith('//')) {
-    return /\.(mp4|webm|ogv|ogg|mov|m4v)$/i.test(videoUrl)
-      ? { message: `${success} The video will loop in the phone frame.`, warn: false }
-      : { message: `${success} That page will run live inside the phone frame.`, warn: false }
+    if (/\.(mp4|webm|ogv|ogg|mov|m4v)$/i.test(videoUrl)) {
+      return { message: `${success} The video will loop in the phone frame.`, warn: false }
+    }
+    if (/\.(gif|webp|png|jpe?g|avif)$/i.test(videoUrl)) {
+      return { message: `${success} The image will fill the phone frame.`, warn: false }
+    }
+    return {
+      message:
+        `${success} But that is a page, not a media file, and pages are no longer shown in the ` +
+        'card — it will fall back to the poster. Record a short clip or export a still instead.',
+      warn: true,
+    }
   }
 
   let host = ''
@@ -282,18 +291,36 @@ function shapeWarning(
     return { message: success, warn: false }
   }
 
-  const isFile = /\.(mp4|webm|ogv|ogg|mov|m4v)$/i.test(path)
-  const isEmbed = ['youtube.com', 'm.youtube.com', 'youtu.be', 'vimeo.com', 'player.vimeo.com'].includes(host)
+  const isVideo = /\.(mp4|webm|ogv|ogg|mov|m4v)$/i.test(path)
+  const isImage = /\.(gif|webp|png|jpe?g|avif)$/i.test(path)
+  const isYouTube = ['youtube.com', 'm.youtube.com', 'youtu.be'].includes(host)
+  const isVimeo = ['vimeo.com', 'player.vimeo.com'].includes(host)
 
-  if (isFile || isEmbed) {
-    return { message: `${success} The preview will play on the home page.`, warn: false }
+  if (isVideo) return { message: `${success} The preview will play on the home page.`, warn: false }
+  if (isImage) return { message: `${success} The image will fill the phone frame.`, warn: false }
+
+  // A still, not a player. Worth saying plainly, because "YouTube link accepted" would otherwise
+  // read as "it will play".
+  if (isYouTube) {
+    return {
+      message: `${success} The card will show YouTube's thumbnail as a still — paste a direct file link if you want it to move.`,
+      warn: false,
+    }
+  }
+
+  if (isVimeo) {
+    return {
+      message:
+        `${success} But a Vimeo thumbnail cannot be derived from the link, so the card will show ` +
+        'its poster. Add a poster image, or paste a direct file link.',
+      warn: true,
+    }
   }
 
   return {
     message:
-      `${success} But that link is not a video file (.mp4, .webm, .mov) and not a YouTube or ` +
-      'Vimeo link, so the card will show its poster instead of playing. Paste a direct file link ' +
-      'if you want it to move.',
+      `${success} But that link is not a video file, an image or a YouTube link, so the card ` +
+      'will show its poster instead. Paste a direct file link if you want it to move.',
     warn: true,
   }
 }

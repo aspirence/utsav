@@ -1,5 +1,5 @@
 -- ============================================================================
--- Utsava seed — 00 · Geography
+-- Fremmo seed — 00 · Geography
 -- Plan §1: public launch April 2027 in Lucknow + Delhi NCR.
 -- Plan §14 FY29: "8-city scale-out (config-driven launches)" — the rest are seeded
 -- dark (is_launched = false) so a launch is a flag flip, not a data migration.

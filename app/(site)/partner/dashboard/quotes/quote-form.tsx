@@ -338,7 +338,7 @@ export function QuoteForm({
             </div>
 
             <p className="text-xs text-ink-500">
-              Prices are in rupees. Utsava stores them as whole paise, so nothing is lost to
+              Prices are in rupees. Fremmo stores them as whole paise, so nothing is lost to
               rounding between here and the customer&rsquo;s screen.
             </p>
           </CardBody>

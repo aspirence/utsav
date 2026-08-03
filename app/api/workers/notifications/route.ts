@@ -77,7 +77,7 @@ const STALE_SENDING_MS = 5 * 60 * 1000
 const BACKOFF_BASE_SECONDS = 60
 const BACKOFF_MAX_SECONDS = 6 * 60 * 60
 
-const HEADER_NAME = 'x-utsava-worker-secret'
+const HEADER_NAME = 'x-fremmo-worker-secret'
 
 // ---------------------------------------------------------------------------
 // Input

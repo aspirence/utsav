@@ -72,6 +72,23 @@ export function canSee(role: StaffRoleKind, href: string): boolean {
      */
     case '/admin/users':
       return false
+    /*
+     * Resellers: who is paid a share of invitation revenue, at what rate, and what has been
+     * settled. Same answer as /admin/users above, for the same two reasons.
+     *
+     * The `super` short-circuit at the top already admits the only role that may open it, so this
+     * case exists to deny everybody else — without it the `default: true` below would put the
+     * link in a moderator's or a finance rail, pointing at a page that answers notFound().
+     *
+     * Finance is the tempting exception and is deliberately not made one. Every screen behind
+     * this link can *change* what a partner is owed — the rate, the assignment, the settlement
+     * stamp — and lib/resellers.ts gates all three on requireSuper() before it picks up the
+     * service-role key. A link that opens a page whose every control is refused is worse than no
+     * link. If finance should read the ledger, that is a read-only screen and a policy decision,
+     * not a `return role === 'finance'` here.
+     */
+    case '/admin/resellers':
+      return false
     default:
       return true
   }

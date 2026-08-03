@@ -1,5 +1,5 @@
 -- ============================================================================
--- Utsava — 000500 · Catalog (supply)
+-- Fremmo — 000500 · Catalog (supply)
 -- Plan §5: "categories, vendors, vendor_members, vendor_categories, packages, media,
 -- vendor_faqs — style tags live on vendor_categories/packages"
 -- Plan §11: the photography wedge rides these existing epics — style taxonomy (S2),

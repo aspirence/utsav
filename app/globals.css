@@ -52,3 +52,135 @@ h2,
 h3 {
   font-weight: 700;
 }
+
+/* ===========================================================================
+ * Phone behaviour.
+ *
+ * Everything below exists because a page that is merely *responsive* still does not feel like
+ * an app. Reflowing at 390px is the floor; these are the handful of browser defaults that
+ * otherwise give the web away on every interaction.
+ * ======================================================================== */
+
+html {
+  /*
+   * iOS inflates text in landscape on any block it decides is the "main" column, which silently
+   * breaks a layout that was tuned in portrait. This is the only way to refuse it, and it does
+   * not stop the user's own zoom — that stays available, as it must.
+   */
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
+body {
+  /*
+   * The grey flash on every tap. Mobile Safari and Chrome paint a highlight rectangle over any
+   * tapped link, which reads as a rendering artefact next to the deliberate :active states on
+   * our own controls. Removing it is only safe *because* those states exist — without them
+   * there would be no tap feedback at all.
+   */
+  -webkit-tap-highlight-color: transparent;
+
+  /*
+   * Stop the rubber-band overscroll chaining to the document.
+   *
+   * `contain` and not `none`: none would also kill pull-to-refresh, which people genuinely use
+   * on a browser tab. contain keeps pull-to-refresh working at the top of the page while
+   * stopping a scroll that started inside a modal or a filter rail from dragging the whole page
+   * behind it.
+   */
+  overscroll-behavior-y: contain;
+
+  /*
+   * A safety net, not a fix. `clip` rather than `hidden` because hidden makes the body a scroll
+   * container, which breaks `position: sticky` on every descendant and silently disables the
+   * sticky headers this same change adds.
+   *
+   * Anything that overflows horizontally is still a bug to find and fix at its source — this
+   * only stops one stray element shifting the entire page sideways in the meantime.
+   */
+  overflow-x: clip;
+}
+
+/*
+ * Safe-area utilities.
+ *
+ * These resolve to 0px on every device without a notch or a home indicator, so they are safe to
+ * apply unconditionally — there is no need to branch on platform.
+ *
+ * THEY RESOLVE TO 0px EVERYWHERE unless app/layout.tsx sets `viewportFit: 'cover'`. That is the
+ * switch that lets the document extend under the system UI and makes these insets meaningful.
+ */
+@utility pt-safe {
+  padding-top: env(safe-area-inset-top);
+}
+@utility pb-safe {
+  padding-bottom: env(safe-area-inset-bottom);
+}
+@utility pl-safe {
+  padding-left: env(safe-area-inset-left);
+}
+@utility pr-safe {
+  padding-right: env(safe-area-inset-right);
+}
+
+/*
+ * Room for the bottom bar.
+ *
+ * The bar is 3.25rem plus whatever the home indicator needs. Any scroll container whose last
+ * element must stay tappable adds this — see components/bottom-nav.tsx, which explains why a
+ * spacer element is usually the better choice than padding.
+ */
+@utility pb-bottom-nav {
+  padding-bottom: calc(3.25rem + env(safe-area-inset-bottom));
+}
+
+/*
+ * Hide a scrollbar without disabling the scrolling.
+ *
+ * `overflow: auto` stays, so the wheel, a trackpad, a touch drag, Page Down and a keyboard
+ * focus moving out of view all still scroll the element. Only the painted bar goes.
+ *
+ * FOR CONTAINED PANELS, NEVER THE PAGE. On the dark console rail macOS paints a light thumb
+ * that reads as a stray divider against ink-900, and the rail's own content is a short list
+ * whose extent is obvious. The document's scrollbar is a different matter — it is the only
+ * indication of how far through a long page you are, and hiding it is a real usability loss
+ * rather than a tidy-up.
+ */
+@utility scrollbar-none {
+  scrollbar-width: none;
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+/*
+ * Momentum scrolling for horizontal rails, with the scrollbar hidden.
+ *
+ * A category rail that scrolls without inertia is the single most obvious tell that something
+ * is a web page. Carries its own copy of the hiding rules rather than composing scrollbar-none:
+ * Tailwind utilities do not nest, and a rail that silently kept its scrollbar because the
+ * composition was wrong would be worse than two lines of duplication.
+ */
+@utility scroll-rail {
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+/*
+ * Respect the setting. Anyone who has asked their OS for less motion gets no slide, no
+ * staggered menu and no scale-on-press — plan §13's accessibility line, and the transforms this
+ * change adds are exactly the kind that trigger vestibular symptoms.
+ */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

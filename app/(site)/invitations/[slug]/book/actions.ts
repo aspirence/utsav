@@ -6,9 +6,18 @@ import { revalidatePath } from 'next/cache'
 import { cookies } from 'next/headers'
 import { z } from 'zod'
 
+import type { Json } from '@/lib/db'
+
+import {
+  CARD_CONTENT_VERSION,
+  cardContentSchema,
+  cardSlug,
+  type ParsedCardContent,
+} from '@/lib/invitation-card'
+
 import {
   createAdminClient,
-  createUtsavaServerClient,
+  createFremmoServerClient,
   hasSupabaseEnv,
   indianPhoneInputSchema,
   slugSchema,
@@ -53,22 +62,80 @@ import { getInvitationTemplate, orderLegs } from '@/lib/invitation-templates'
 
 export type BookingState =
   | { status: 'idle' }
-  | { status: 'placed'; reference: string; message: string }
+  /**
+   * `detailsToken` is how the confirmation screen writes the card wording back.
+   *
+   * Returned once, to the session that just placed the order, and never stored in the browser
+   * beyond this state object. Deliberately not the reference: a reference is printed, read out
+   * and pasted into chats, so it identifies an order rather than authorising a write to it —
+   * see 20260803000300.
+   */
+  | {
+      status: 'placed'
+      reference: string
+      message: string
+      cardSlug?: string
+      detailsToken: string
+    }
   | { status: 'error'; message: string }
   | { status: 'unconfigured'; message: string }
 
+/**
+ * The card's wording, collected at checkout rather than on WhatsApp afterwards.
+ *
+ * IT USED TO BE COLLECTED BY A PERSON. The confirmation message still said "we will message you
+ * on WhatsApp […] to collect your names, dates and photographs", because there was nowhere to put
+ * them: invitation_orders held contact details and amounts and nothing about the card. Migration
+ * 20260801000200 added `card_content`, and this is what fills it.
+ *
+ * OPTIONAL AS A WHOLE, REQUIRED AS A UNIT. Somebody who has not settled on wording yet should
+ * still be able to reserve the design — that was the entire flow until now. So an empty form
+ * places an order with no content, exactly as before, and a filled one places a card that can be
+ * published. What is not allowed is half: a card with a groom and no date renders wrong, and
+ * `superRefine` below is where that is refused rather than discovered at publish time.
+ */
+const cardSchema = z.object({
+  hosts: z.string().trim().max(64).optional(),
+  groomName: z.string().trim().max(24).optional(),
+  groomParents: z.string().trim().max(64).optional(),
+  brideName: z.string().trim().max(24).optional(),
+  brideParents: z.string().trim().max(64).optional(),
+  cardDate: z.string().trim().max(48).optional(),
+  cardTime: z.string().trim().max(32).optional(),
+  venue: z.string().trim().max(120).optional(),
+})
+
+/**
+ * Two fields to place an order.
+ *
+ * IT USED TO BE ELEVEN. Four contact fields and then the entire card — hosts, venue, both sets
+ * of parents, the couple, the date and the time — all demanded before the order existed. That is
+ * the whole content of the product, asked of somebody who has not yet decided to buy it.
+ *
+ * The card wording now comes after checkout, on the confirmation screen, through
+ * saveInvitationCard() below. Same fields, same validation, asked once there is an order to
+ * attach them to.
+ *
+ * NO EMAIL. contact_email is nullable as of 20260803000300 and this form no longer collects it.
+ * WhatsApp is the channel this product actually uses: the draft link goes there, the payment
+ * link goes there, and contact_phone is still `not null`. Email was a required field rather than
+ * a used one.
+ */
 const bookingSchema = z.object({
   templateSlug: slugSchema,
   contactName: z.string().trim().min(2, 'Please enter your name').max(120),
-  contactEmail: z
-    .string()
-    .trim()
-    .toLowerCase()
-    .email('That email address does not look right')
-    .max(254),
   contactPhone: indianPhoneInputSchema,
-  notes: z.string().trim().max(1000).optional(),
 })
+
+/** Everything the artwork needs to render a line. Parents are the only optional part. */
+const REQUIRED_CARD_FIELDS = [
+  'hosts',
+  'groomName',
+  'brideName',
+  'cardDate',
+  'cardTime',
+  'venue',
+] as const
 
 export async function placeInvitationOrder(
   _prev: BookingState,
@@ -77,9 +144,7 @@ export async function placeInvitationOrder(
   const parsed = bookingSchema.safeParse({
     templateSlug: text(form.get('templateSlug')),
     contactName: text(form.get('contactName')),
-    contactEmail: text(form.get('contactEmail')),
     contactPhone: text(form.get('contactPhone')),
-    notes: text(form.get('notes')),
   })
 
   if (!parsed.success) {
@@ -145,23 +210,46 @@ export async function placeInvitationOrder(
    */
   const customerId = await currentUserId()
 
-  const { error } = await admin.from('invitation_orders').insert({
-    reference,
-    template_id: template.isDemo ? null : template.id,
-    template_slug: template.slug,
-    template_name: template.name,
-    template_price: template.pricePaise,
-    booking_amount: bookingPaise,
-    balance_amount: balancePaise,
-    status: 'awaiting_payment',
-    contact_name: d.contactName,
-    contact_email: d.contactEmail,
-    contact_phone: d.contactPhone,
-    customer_id: customerId,
-    notes: d.notes ?? null,
-  })
+  /*
+   * The card, if they filled it in. superRefine has already refused a half-filled one, so this is
+   * all-or-nothing by the time it gets here.
+   *
+   * PUBLISHED IMMEDIATELY, BEFORE THE MONEY LANDS, AND THAT IS DELIBERATE. The order is inserted
+   * `awaiting_payment` and nothing is reserved until the booking amount arrives — but the card
+   * itself is what the customer just wrote, and holding their own words hostage to a payment
+   * teaches them nothing except that the link is broken. Nothing about the published card implies
+   * the order is paid; /account/invitations shows the real status beside it.
+   */
+  /*
+   * No card content at insert. The order is created from a name and a number; the wording is
+   * written afterwards by saveInvitationCard(), from the confirmation screen.
+   *
+   * A LONG COMMENT USED TO LIVE HERE arguing that the card should be published immediately,
+   * before the money lands, because "holding their own words hostage to a payment teaches them
+   * nothing except that the link is broken". That reasoning still holds and still applies — it
+   * has simply moved to saveInvitationCard(), which is now the thing that publishes.
+   */
+  const { data: inserted, error } = await admin
+    .from('invitation_orders')
+    .insert({
+      reference,
+      template_id: template.isDemo ? null : template.id,
+      template_slug: template.slug,
+      template_name: template.name,
+      template_price: template.pricePaise,
+      booking_amount: bookingPaise,
+      balance_amount: balancePaise,
+      status: 'awaiting_payment',
+      contact_name: d.contactName,
+      contact_phone: d.contactPhone,
+      customer_id: customerId,
+    })
+    // details_token is defaulted by the database and never travels from the browser, so it has
+    // to be read back here — this is the one moment it is available to anybody.
+    .select('details_token')
+    .single()
 
-  if (error) return { status: 'error', message: explain(error) }
+  if (error || !inserted) return { status: 'error', message: explain(error) }
 
   revalidatePath('/admin/orders')
 
@@ -172,14 +260,17 @@ export async function placeInvitationOrder(
    * "nothing is reserved for them until it lands". Telling the customer the opposite on the same
    * fact is the two halves of the product disagreeing, and the customer is the half that would
    * find out late.
+   *
+   * The message no longer promises to collect the wording over WhatsApp, because the screen this
+   * returns to now asks for it directly.
    */
   return {
     status: 'placed',
     reference,
+    detailsToken: inserted.details_token,
     message:
-      `We have your details under ${reference}. Your design slot is held once the booking amount ` +
-      'reaches us — we will message you on WhatsApp with the payment link and to collect your ' +
-      'names, dates and photographs.',
+      `We have your order under ${reference}. Your design slot is held once the booking amount ` +
+      'reaches us — we will message you on WhatsApp with the payment link.',
   }
 }
 
@@ -188,28 +279,69 @@ export async function placeInvitationOrder(
 // ---------------------------------------------------------------------------
 
 /**
- * UTS-INV-XXXXXX, matching invitation_orders_reference_format.
+ * FRM-INV-XXXXXX, matching invitation_orders_reference_format.
  *
  * Random rather than sequential: a sequential reference tells every customer how many orders we
- * have taken, and "UTS-INV-000003" on a launch week is not a number to hand out. Crockford-ish
+ * have taken, and "FRM-INV-000003" on a launch week is not a number to hand out. Crockford-ish
  * alphabet with I, O, 1 and 0 removed, because this gets read aloud on the phone.
  *
  * Six characters from a 32-symbol alphabet is ~1e9 combinations; the unique index is what
  * actually guarantees no collision, and a duplicate surfaces as a 23505 the caller reports.
  */
+/**
+ * The form's flat fields, as the card's nested shape.
+ *
+ * Returns null when nothing was filled in — superRefine has already refused the half-filled case,
+ * so the only two states reaching here are "all of it" and "none of it".
+ *
+ * The fixed lines are not asked for and not editable. "request your gracious presence" and the
+ * occasion wording are the artwork's voice; a free-text box there would let somebody put a
+ * paragraph where two measured lines belong, and the wipe timing in invitation-3d was tuned to
+ * these lengths. cardContentSchema's defaults are what fill them.
+ */
+function cardContent(
+  card: Record<string, string | undefined>,
+): ParsedCardContent | null {
+  if (!card.hosts || !card.groomName || !card.brideName) return null
+  if (!card.cardDate || !card.cardTime || !card.venue) return null
+
+  const parsed = cardContentSchema.safeParse({
+    hosts: card.hosts,
+    occasionLines: ['on the auspicious occasion of', 'the wedding of'],
+    groom: { name: card.groomName, ...(card.groomParents ? { parents: card.groomParents } : {}) },
+    bride: { name: card.brideName, ...(card.brideParents ? { parents: card.brideParents } : {}) },
+    date: card.cardDate,
+    time: card.cardTime,
+    // The venue arrives as one field and renders as up to three lines. Splitting on the comma is
+    // what a person writing "SMC Party Plot, Athwalines, Surat" already means by it.
+    venueLines: card.venue
+      .split(',')
+      .map((part, index, all) => (index === all.length - 1 ? part.trim() : `${part.trim()},`))
+      .filter((part) => part.length > 1)
+      .slice(0, 3),
+  })
+
+  return parsed.success ? parsed.data : null
+}
+
+/** Absolute, because this sentence gets copied into WhatsApp. */
+function siteUrl(): string {
+  return (process.env.NEXT_PUBLIC_SITE_URL ?? '').replace(/\/+$/, '')
+}
+
 function orderReference(): string {
   const alphabet = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'
   const bytes = randomBytes(6)
   let out = ''
   for (const byte of bytes) out += alphabet[byte % alphabet.length]
-  return `UTS-INV-${out}`
+  return `FRM-INV-${out}`
 }
 
 /** The signed-in user, if any. Uses the caller's cookies, not the service-role client. */
 async function currentUserId(): Promise<string | null> {
   try {
     const store = await cookies()
-    const supabase = createUtsavaServerClient({
+    const supabase = createFremmoServerClient({
       getAll: () => store.getAll().map(({ name, value }) => ({ name, value })),
       // A read-only adapter. This action must not rotate anybody's session as a side effect of
       // taking an order.
@@ -256,4 +388,121 @@ function explain(error: { code?: string; message: string }): string {
     return 'That email address does not look right.'
   }
   return `Could not place the order: ${error.message}`
+}
+
+// ---------------------------------------------------------------------------
+// Step two: the card wording, after the order exists
+// ---------------------------------------------------------------------------
+
+export type CardState =
+  | { status: 'idle' }
+  | { status: 'saved'; cardSlug: string; message: string }
+  | { status: 'error'; message: string }
+
+/**
+ * Write the card wording onto an order that has already been placed.
+ *
+ * WHY THIS IS A SECOND ACTION AND NOT A LONGER FORM. Everything here used to be collected before
+ * the order existed — eleven fields between a customer and a booking, of which eight were the
+ * contents of the product rather than anything needed to sell it. Now the order is created from
+ * a name and a number, and this fills in the rest from the confirmation screen.
+ *
+ * THE TOKEN IS THE AUTHORISATION, AND IT IS NOT THE REFERENCE. A reference is printed, read out
+ * on WhatsApp and quoted to support — it names an order, it does not prove you placed it. The
+ * token is minted by the database at insert, returned exactly once to the session that placed
+ * the order, and required by app.save_invitation_card(). See 20260803000300 for the whole
+ * argument.
+ *
+ * The token is validated as a uuid here before it reaches Postgres. That is not defence in depth
+ * for its own sake: a malformed uuid makes the RPC raise a type error rather than the clean
+ * "no editable order" the caller knows how to render.
+ *
+ * PUBLISHED AS SOON AS IT IS WRITTEN, BEFORE THE MONEY LANDS. That was true when this lived in
+ * the booking action and it is still true: the card is what the customer just wrote, and holding
+ * their own words hostage to a payment teaches them nothing except that the link is broken.
+ * Nothing about a published card implies the order is paid — /account/invitations shows the real
+ * status beside it, and the confirmation copy says the slot is held once the amount reaches us.
+ */
+export async function saveInvitationCard(
+  _prev: CardState,
+  form: FormData,
+): Promise<CardState> {
+  const parsed = z
+    .object({ token: z.string().uuid('That link is not valid any more.'), card: cardSchema })
+    .superRefine((value, ctx) => {
+      // Whole card or nothing, exactly as before — a card with a groom and no date renders
+      // wrong, and this is where that is refused rather than discovered at publish time.
+      const filled = REQUIRED_CARD_FIELDS.filter((key) => value.card[key])
+      if (filled.length !== REQUIRED_CARD_FIELDS.length) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: ['card'],
+          message:
+            'Please fill in the hosts, both names, the date, the time and the venue — the card ' +
+            'needs all of them to read properly.',
+        })
+      }
+    })
+    .safeParse({
+      token: text(form.get('detailsToken')),
+      card: {
+        hosts: text(form.get('hosts')),
+        groomName: text(form.get('groomName')),
+        groomParents: text(form.get('groomParents')),
+        brideName: text(form.get('brideName')),
+        brideParents: text(form.get('brideParents')),
+        cardDate: text(form.get('cardDate')),
+        cardTime: text(form.get('cardTime')),
+        venue: text(form.get('venue')),
+      },
+    })
+
+  if (!parsed.success) {
+    return { status: 'error', message: parsed.error.issues[0]?.message ?? 'Check those details.' }
+  }
+
+  const admin = adminOrNull()
+  if (!admin) {
+    return {
+      status: 'error',
+      message:
+        'Your order is safe, but the wording could not be saved just now. We will collect it on ' +
+        'WhatsApp instead.',
+    }
+  }
+
+  const card = cardContent(parsed.data.card)
+  if (!card) {
+    return { status: 'error', message: 'Please fill in the whole card.' }
+  }
+
+  const slug = cardSlug(card.groom.name, card.bride.name)
+
+  const { data, error } = await admin.rpc('save_invitation_card', {
+    p_token: parsed.data.token,
+    p_content: card as unknown as Json,
+    p_version: CARD_CONTENT_VERSION,
+    p_slug: slug,
+  })
+
+  if (error || !data) {
+    return {
+      status: 'error',
+      message:
+        'That link is no longer editable. If your invitation has already been delivered, message ' +
+        'us on WhatsApp and we will change the wording for you.',
+    }
+  }
+
+  // The card is public the moment it is written, so the page showing it has to be revalidated or
+  // the customer opens their own link and sees the empty state they just filled in.
+  revalidatePath(`/invite/${data.public_slug ?? slug}`)
+  revalidatePath('/account/invitations')
+  revalidatePath('/admin/orders')
+
+  return {
+    status: 'saved',
+    cardSlug: data.public_slug ?? slug,
+    message: 'Your card is live. Open it, and share it when you are happy with it.',
+  }
 }

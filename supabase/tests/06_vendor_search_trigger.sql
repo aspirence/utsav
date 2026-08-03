@@ -1,5 +1,5 @@
 -- ============================================================================
--- Utsava — app.trg_refresh_vendor_search() fires on all three of its tables
+-- Fremmo — app.trg_refresh_vendor_search() fires on all three of its tables
 --
 -- The regression this pins: 20260727001400 read the vendor key with one CASE over
 -- tg_table_name, which fails to plan on public.vendors because PL/pgSQL resolves

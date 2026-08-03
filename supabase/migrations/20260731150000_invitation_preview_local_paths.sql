@@ -1,5 +1,5 @@
 -- ============================================================================
--- Utsava — allow app-served paths in invitation preview media
+-- Fremmo — allow app-served paths in invitation preview media
 --
 -- 20260730000100 required poster_url and video_url to start with `https://`, written when
 -- the only source was a URL an operator pasted from somewhere else — the table comment

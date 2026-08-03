@@ -4,7 +4,7 @@ import { revalidatePath } from 'next/cache'
 import { cookies } from 'next/headers'
 import { z } from 'zod'
 
-import { createUtsavaServerClient, hasSupabaseEnv, slugSchema } from '@/lib/db'
+import { createFremmoServerClient, hasSupabaseEnv, slugSchema } from '@/lib/db'
 
 import { storeImage } from '@/lib/image-upload'
 
@@ -256,7 +256,7 @@ export async function deleteVendorMedia(
 async function staffClient() {
   try {
     const store = await cookies()
-    return createUtsavaServerClient({
+    return createFremmoServerClient({
       getAll: () => store.getAll().map(({ name, value }) => ({ name, value })),
       setAll: (list) => {
         for (const { name, value, options } of list) store.set(name, value, options)

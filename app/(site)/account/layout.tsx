@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import { headers } from 'next/headers'
 
+import type { BottomNavItem } from '@/components/bottom-nav'
 import { ConsoleShell } from '@/components/console-shell'
 import {
   ConsoleSidebar,
@@ -73,6 +74,29 @@ const NAV_GROUPS: ConsoleNavGroup[] = [
   },
 ]
 
+/**
+ * The phone tab bar. Five of the seven, and the two left out are deliberate.
+ *
+ * Profile is reachable from the top bar's own identity block on every screen, so spending a
+ * scarce slot on it would buy a second route to somewhere you can already reach. The drawer
+ * behind the hamburger still carries everything.
+ *
+ * Invitations earns its slot despite being the newest: plan §2 puts the storefront in the Must
+ * tier, and the comment above records that it was once reachable from the homepage and nowhere
+ * else. A revenue line with no route to it is the failure that was just fixed; burying it in a
+ * drawer on the surface most people use would half-repeat it.
+ *
+ * `exact` on /account only — it is a prefix of all five others, so prefix-matching it would
+ * leave Overview lit on every screen in the section.
+ */
+const BOTTOM_NAV: BottomNavItem[] = [
+  { href: '/account', label: 'Overview', icon: <IconGrid />, exact: true },
+  { href: '/account/enquiries', label: 'Enquiries', icon: <IconInbox /> },
+  { href: '/account/shortlists', label: 'Saved', icon: <IconHeart /> },
+  { href: '/account/events', label: 'Events', icon: <IconCalendar /> },
+  { href: '/account/invitations', label: 'Cards', icon: <IconCard /> },
+]
+
 export default async function AccountLayout({ children }: { children: React.ReactNode }) {
   // Set by middleware; Next gives a Server Component no way to read its own path. Falling back
   // to /account keeps the gate working if the header is ever absent — it just returns you to the
@@ -89,7 +113,7 @@ export default async function AccountLayout({ children }: { children: React.Reac
         <ConsoleSidebar
           groups={NAV_GROUPS}
           rootHref="/account"
-          brand="Utsava account"
+          brand="Fremmo account"
           footer={{ href: '/', label: 'Visit site' }}
         />
       }
@@ -109,6 +133,7 @@ export default async function AccountLayout({ children }: { children: React.Reac
         signOut,
         viewSiteHref: '/',
       }}
+      bottomNav={BOTTOM_NAV}
       footnote="Your enquiries, saved vendors, events and invitation cards. Only you can see this — every read here runs under your own session."
     >
       {children}

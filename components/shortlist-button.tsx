@@ -6,7 +6,7 @@ import { cn } from '@/components/ui'
 
 import { toggleShortlist } from '@/app/actions/shortlist'
 
-const STORAGE_KEY = 'utsava.shortlist.v1'
+const STORAGE_KEY = 'fremmo.shortlist.v1'
 
 /**
  * Save-for-later on a vendor card or profile. Plan §10 counts `shortlist_added` as a

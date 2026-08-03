@@ -1,3 +1,4 @@
+import { Brand } from '@/components/brand'
 import Link from 'next/link'
 
 import { Container } from '@/components/ui'
@@ -40,7 +41,7 @@ export async function SiteFooter() {
         in any page, so every route gets it without having to remember.
 
         THE ARTWORK IS footer99, from 2026-08-01, and the change is not only decorative. The
-        frieze before it was a baraat: horse, band, mandap, the couple. Utsava is an
+        frieze before it was a baraat: horse, band, mandap, the couple. Fremmo is an
         all-events marketplace and photography is only the wedge (plan §11), so a wedding
         procession across the bottom of every page quietly said the opposite. This one runs
         wedding, engagement, anniversary, birthday, corporate — the categories the catalogue
@@ -128,18 +129,16 @@ export async function SiteFooter() {
 
             {/* ── Centre: the mark ─────────────────────────────────────── */}
             <div className="order-1 col-span-2 flex flex-col items-center text-center lg:order-2 lg:col-span-1">
-              <Link href="/" aria-label="Utsava — home">
+              <Link href="/" aria-label="Fremmo — home">
                 {/* Same white knockout the header uses over the hero. The mark is dark brown
                   and gold on transparent, so on ink-900 the wordmark would all but vanish
                   while the lotus survived. One asset, two appearances - no second file to
                   keep in sync. */}
                 {/* eslint-disable-next-line @next/next/no-img-element -- plan §12: no next/image */}
-                <img
-                  src="/logo.webp"
-                  alt="Utsava"
-                  width={623}
-                  height={576}
-                  className="h-40 w-auto [filter:brightness(0)_invert(1)]"
+                <Brand
+                  className="flex-col gap-4"
+                  markClassName="h-24 w-auto [filter:brightness(0)_invert(1)]"
+                  wordClassName="text-5xl text-white"
                 />
               </Link>
               <p className="text-ink-300 mt-3 max-w-xs text-sm leading-relaxed">
@@ -178,7 +177,7 @@ export async function SiteFooter() {
                     href="/p/anchor-studio-policy"
                     className="text-ink-200 text-sm hover:text-white"
                   >
-                    Our studio on Utsava
+                    Our studio on Fremmo
                   </Link>
                 </li>
               </ul>
@@ -187,7 +186,7 @@ export async function SiteFooter() {
 
           <div className="text-ink-300 mt-6 flex flex-col-reverse items-center gap-4 border-t border-white/15 pt-4 text-xs sm:flex-row sm:justify-between">
             <p>
-              © {new Date().getFullYear()} Utsava. Working title. Prices shown are vendor-declared
+              © {new Date().getFullYear()} Fremmo. Working title. Prices shown are vendor-declared
               bands.
             </p>
 

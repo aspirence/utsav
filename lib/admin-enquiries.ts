@@ -206,7 +206,7 @@ const DEMO: AdminEnquiry[] = [
       lead(2, 'lightleak-studio', 'Lightleak Studio', 'responded', true, true),
       lead(3, 'the-mango-tree-co', 'The Mango Tree Co.', 'viewed', true),
       lead(4, 'anantha-photography', 'Anantha Photography', 'routed'),
-      lead(5, 'utsava-studio', 'Utsava Studio', 'routed'),
+      lead(5, 'fremmo-studio', 'Fremmo Studio', 'routed'),
     ],
     isDemo: true,
   },

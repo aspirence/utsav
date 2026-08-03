@@ -31,7 +31,7 @@ import { useResponsivePerPage } from '@/components/use-paged-loop'
  *     one frame is not always enough for the browser to have committed the transform-less
  *     paint — with one, the snap-back animates and the row visibly rewinds.
  *   · A timer matched to the CSS duration, not onTransitionEnd. That event bubbles, and the
- *     card has its own hover transform, so a mouse passing over the row would fire it.
+ *     card's price face has its own transition, so a mouse passing over the row would fire it.
  *   · No side effects inside a state updater. StrictMode calls updaters twice.
  */
 
@@ -45,13 +45,44 @@ export interface TemplateCard extends PhonePreview {
 const SLIDE_MS = 620
 const HOLD_MS = 2600
 
+/**
+ * How far a finger has to travel before it counts as a swipe rather than a tap that wandered.
+ *
+ * 40px, not a fraction of the card. A percentage threshold means the gesture needs a longer
+ * push on a big phone than a small one for the same intent, which is backwards — the finger is
+ * the same size either way.
+ */
+const SWIPE_MIN_PX = 40
+
+/** Below this the drag has no committed direction yet. Stops a 2px jitter picking an axis. */
+const AXIS_LOCK_PX = 6
+
 export function TemplateCollections({ items }: { items: TemplateCard[] }) {
-  const perView = useResponsivePerPage(1, 2, 4)
+  /*
+   * Two on a phone, not one.
+   *
+   * A single 200px phone on a 390px screen left half the row empty and made the section read as
+   * one enormous product rather than a collection. At two the cards come out ~170px wide, which
+   * still carries the device frame legibly — the frame is this section's signature, and the
+   * heading above promises "see it running on a phone".
+   */
+  const perView = useResponsivePerPage(2, 2, 4)
   const count = items.length
 
   const [index, setIndex] = useState(0)
   const [animate, setAnimate] = useState(true)
   const [paused, setPaused] = useState(false)
+
+  /*
+   * Live drag offset, in pixels.
+   *
+   * The track follows the finger while it is down rather than jumping at the end. That is the
+   * difference between a carousel that feels like a native pager and one that feels like a
+   * button being pressed at a distance — the content should be attached to the thumb.
+   */
+  const [drag, setDrag] = useState(0)
+  const touchStart = useRef<{ x: number; y: number } | null>(null)
+  const axis = useRef<'undecided' | 'x' | 'y'>('undecided')
 
   // Enough cards to fill the window after the last one, or the track runs out mid-slide.
   const enoughToLoop = count > perView
@@ -110,6 +141,61 @@ export function TemplateCollections({ items }: { items: TemplateCard[] }) {
 
   const track = enoughToLoop ? [...items, ...items] : items
 
+  /**
+   * Swipe.
+   *
+   * THERE WAS NO WAY TO ADVANCE THIS ON A PHONE. The arrows are `hidden sm:flex`, so below 640px
+   * the row autoplayed and accepted no input at all — you waited, or you left. That is the single
+   * biggest thing separating this from an app, and two cards per row makes it worse rather than
+   * better, because now there is visibly more to reach.
+   *
+   * `touch-pan-y` on the track is what makes this cooperate with the page instead of fighting it:
+   * the browser keeps vertical scrolling for itself and hands us horizontal movement, so no
+   * preventDefault is needed and the page never feels sticky under a thumb travelling down it.
+   * The axis lock below is the JavaScript half of the same idea — a diagonal drag that is mostly
+   * vertical is somebody scrolling past, not somebody browsing templates.
+   */
+  const onTouchStart = (event: React.TouchEvent) => {
+    const touch = event.touches[0]
+    if (!touch) return
+    touchStart.current = { x: touch.clientX, y: touch.clientY }
+    axis.current = 'undecided'
+    setPaused(true)
+  }
+
+  const onTouchMove = (event: React.TouchEvent) => {
+    const origin = touchStart.current
+    const touch = event.touches[0]
+    if (!origin || !touch) return
+
+    const dx = touch.clientX - origin.x
+    const dy = touch.clientY - origin.y
+
+    if (axis.current === 'undecided') {
+      if (Math.abs(dx) < AXIS_LOCK_PX && Math.abs(dy) < AXIS_LOCK_PX) return
+      axis.current = Math.abs(dx) > Math.abs(dy) ? 'x' : 'y'
+    }
+    if (axis.current !== 'x') return
+
+    // Nothing to slide to when the list fits. Rubber-banding a track that cannot move reads as
+    // broken, so the finger simply does nothing.
+    if (!enoughToLoop) return
+    setDrag(dx)
+  }
+
+  const onTouchEnd = () => {
+    const travelled = drag
+
+    touchStart.current = null
+    axis.current = 'undecided'
+    setDrag(0)
+    setPaused(false)
+
+    // Batched with setDrag(0) above, so the transform moves to the new index *with* the
+    // transition restored rather than snapping back first and animating second.
+    if (Math.abs(travelled) > SWIPE_MIN_PX) advance(travelled < 0 ? 1 : -1)
+  }
+
   return (
     <div
       className="relative"
@@ -127,30 +213,48 @@ export function TemplateCollections({ items }: { items: TemplateCard[] }) {
         frame of wrong layout on every breakpoint change.
       */}
       {/*
-        `-my-5 py-5` is the fix for the hover clip, not decoration.
+        `-my-5 py-5` is the fix for the shadow clip, not decoration.
 
         The clipping box has to hide the cards sliding in and out sideways, but `overflow-hidden`
-        clips vertically too — so the 6px lift on hover sheared the top off the phone, and its
-        shadow with it. The padding gives 20px of room inside the clip box and the negative margin
-        takes the same 20px back out of the layout, so nothing below moves.
+        clips vertically too, and the phone's drop shadow spills past the frame on every edge —
+        without the padding it is sheared off square against the top of the row. The padding gives
+        20px of room inside the clip box and the negative margin takes the same 20px back out of
+        the layout, so nothing below moves.
+      */}
+      {/*
+        --gap moved out of the inline style and into a class so it can change at a breakpoint.
+        An inline custom property beats any class that sets the same one, so these cannot both
+        exist — 1.5rem between two ~170px cards on a phone is a tenth of the row spent on
+        nothing.
       */}
       <div
-        className="-my-5 overflow-hidden py-5"
+        className="-my-5 overflow-hidden py-5 [--gap:0.75rem] sm:[--gap:1.5rem]"
         style={
           {
-            '--gap': '1.5rem',
             '--per': String(perView),
             '--card': 'calc((100% - (var(--per) - 1) * var(--gap)) / var(--per))',
           } as React.CSSProperties
         }
       >
         <div
-          className="flex"
+          className="flex touch-pan-y"
+          onTouchStart={onTouchStart}
+          onTouchMove={onTouchMove}
+          onTouchEnd={onTouchEnd}
+          onTouchCancel={onTouchEnd}
           style={{
             gap: 'var(--gap)',
-            // One step is a card plus a gap.
-            transform: `translate3d(calc(${-index} * (var(--card) + var(--gap))), 0, 0)`,
-            transition: animate ? `transform ${SLIDE_MS}ms cubic-bezier(0.22, 1, 0.36, 1)` : 'none',
+            // One step is a card plus a gap, plus however far the finger has dragged.
+            transform: `translate3d(calc(${-index} * (var(--card) + var(--gap)) + ${drag}px), 0, 0)`,
+            /*
+             * No transition while a finger is down. A transition during a drag makes the track
+             * lag behind the thumb by its own duration, which reads as the page being slow
+             * rather than as the content being held.
+             */
+            transition:
+              animate && drag === 0
+                ? `transform ${SLIDE_MS}ms cubic-bezier(0.22, 1, 0.36, 1)`
+                : 'none',
           }}
         >
           {track.map((item, i) => {
@@ -172,6 +276,42 @@ export function TemplateCollections({ items }: { items: TemplateCard[] }) {
           })}
         </div>
       </div>
+
+      {/*
+        Position dots — phones only, where the arrows are not rendered.
+
+        `sm:hidden` mirrors the arrows' `hidden sm:flex` exactly: above 640px the arrows say
+        there is more and the dots would be a second, quieter copy of the same message.
+
+        One dot per card rather than per page, because the track advances one card at a time —
+        four dots against an eight-card list that steps singly would sit still for half its
+        moves and look broken.
+
+        Decorative, and marked so. Every template is reachable by swiping or by the arrows, and
+        a screen reader has the full list in the track itself; announcing eight unlabelled dots
+        adds nothing it cannot already reach.
+      */}
+      {enoughToLoop && (
+        <ul
+          aria-hidden="true"
+          className="mt-6 flex items-center justify-center gap-1.5 sm:hidden"
+        >
+          {items.map((item, i) => (
+            <li
+              key={item.slug}
+              className={
+                'h-1.5 rounded-full transition-all duration-300 ' +
+                // The live card is wider rather than merely darker: at 6px a colour change
+                // alone is close to invisible, and this stays legible for anyone who cannot
+                // separate the two tones.
+                (i === (((index % count) + count) % count)
+                  ? 'w-4 bg-primary-600'
+                  : 'w-1.5 bg-ink-300')
+              }
+            />
+          ))}
+        </ul>
+      )}
 
       {enoughToLoop && (
         <>
@@ -213,15 +353,18 @@ function TemplateFigure({ item }: { item: TemplateCard }) {
           ~435px, which reads as a phone rather than as a pillar. Centred in the card so the
           four stay evenly spaced.
         */}
-        <TemplatePhone
-          item={item}
-          className="mx-auto w-full max-w-[200px] transition-transform duration-500 group-hover:-translate-y-1.5"
-        />
+        <TemplatePhone item={item} className="mx-auto w-full max-w-[200px]" />
       </Link>
 
-      <figcaption className="mt-5 text-center">
+      {/*
+        The caption is set for a ~280px desktop card. At ~170px on a phone the tracking alone
+        pushed a three-tag row onto three lines, so both the size and the letter-spacing step
+        down — tracking is a proportion of the type size and does not survive being shrunk
+        without being retuned.
+      */}
+      <figcaption className="mt-3 text-center sm:mt-5">
         {item.tags.length > 0 && (
-          <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-primary-700/80">
+          <p className="text-[10px] font-semibold uppercase tracking-[0.1em] text-primary-700/80 sm:text-[11px] sm:tracking-[0.16em]">
             {item.tags.map((tag, i) => (
               <span key={tag}>
                 {i > 0 && <span aria-hidden="true"> &middot; </span>}
@@ -231,7 +374,12 @@ function TemplateFigure({ item }: { item: TemplateCard }) {
           </p>
         )}
 
-        <h3 className="mt-2 line-clamp-2 min-h-[3.5rem] font-display text-xl leading-snug text-ink-900">
+        {/*
+          The reserved height keeps the four price rows on one line as the names wrap to
+          different depths. It has to shrink with the type or it reserves space for a third line
+          that can no longer occur.
+        */}
+        <h3 className="mt-1.5 line-clamp-2 min-h-[2.75rem] font-display text-base leading-snug text-ink-900 sm:mt-2 sm:min-h-[3.5rem] sm:text-xl">
           {item.name}
         </h3>
 

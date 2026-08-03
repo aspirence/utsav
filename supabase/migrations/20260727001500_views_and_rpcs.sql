@@ -1,5 +1,5 @@
 -- ============================================================================
--- Utsava — 001500 · Masking views and state-machine RPCs
+-- Fremmo — 001500 · Masking views and state-machine RPCs
 --
 -- Plan §6: "Cross-table writes (route a lead, accept a quote, transition escrow) are
 -- SECURITY DEFINER functions or service-role server actions; the service-role key

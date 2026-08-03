@@ -3,10 +3,10 @@ import type { Metadata } from 'next'
 import { Badge, Card, CardBody, Container, LinkButton, SectionHeading } from '@/components/ui'
 
 export const metadata: Metadata = {
-  title: 'List your business on Utsava',
+  title: 'List your business on Fremmo',
   description:
     'Verified enquiries with a budget and a date, capped at five vendors, with honest ' +
-    'dashboards. List your photography, venue, decor or catering business on Utsava.',
+    'dashboards. List your photography, venue, decor or catering business on Fremmo.',
 }
 
 /**

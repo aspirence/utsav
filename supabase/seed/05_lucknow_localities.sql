@@ -1,5 +1,5 @@
 -- ============================================================================
--- Utsava seed — 05 · Photographers in the remaining Lucknow localities
+-- Fremmo seed — 05 · Photographers in the remaining Lucknow localities
 --
 -- WHAT THIS FIXES. The home page's "Every corner of Lucknow" band lists localities that
 -- have photographers, ordered by how many — getLocalityCounts() drops any with a count of

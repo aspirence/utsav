@@ -7,6 +7,7 @@ import {
   IconPeople,
   IconPulse,
   IconReceipt,
+  IconShare,
   IconShield,
   IconStore,
   type ConsoleNavGroup,
@@ -55,6 +56,7 @@ const GROUPS: ConsoleNavGroup[] = [
       { href: '/admin/moderation', label: 'Moderation', icon: <IconShield /> },
       { href: '/admin/pipeline', label: 'Pipeline', icon: <IconFlow /> },
       { href: '/admin/leads', label: 'Routing health', icon: <IconPulse /> },
+      { href: '/admin/resellers', label: 'Resellers', icon: <IconShare /> },
       { href: '/admin/users', label: 'Team', icon: <IconPeople /> },
     ],
   },
@@ -77,7 +79,7 @@ export function AdminSidebar({ role }: { role: StaffRoleKind | null }) {
     <ConsoleSidebar
       groups={groups}
       rootHref="/admin"
-      brand="Utsava console"
+      brand="Fremmo console"
       footer={{ href: '/', label: 'Visit site' }}
     />
   )

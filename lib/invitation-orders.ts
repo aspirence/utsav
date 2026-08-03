@@ -28,7 +28,8 @@ export interface AdminInvitationOrder {
   bookingAmountPaise: number
   balancePaise: number
   contactName: string
-  contactEmail: string
+  /** Null on orders placed after 20260803000300 — the booking form is name + WhatsApp only. */
+  contactEmail: string | null
   contactPhone: string
   paidAt: string | null
   paymentRef: string | null
@@ -240,7 +241,7 @@ function order(
 
 const DEMO: AdminInvitationOrder[] = [
   order(
-    'UTS-INV-K7M2QP',
+    'FRM-INV-K7M2QP',
     '2026-07-30T04:20:00.000Z',
     'awaiting_payment',
     'Divine Kedarnath Elegance',
@@ -249,7 +250,7 @@ const DEMO: AdminInvitationOrder[] = [
     { notes: 'Wedding on 14 Feb 2027 in Dehradun. Three events.' },
   ),
   order(
-    'UTS-INV-9XJ4TB',
+    'FRM-INV-9XJ4TB',
     '2026-07-29T11:05:00.000Z',
     'booked',
     'The Modern Rajputana',
@@ -259,7 +260,7 @@ const DEMO: AdminInvitationOrder[] = [
   ),
   // Paid a week ago and still has not sent anything — the row a person should be chasing.
   order(
-    'UTS-INV-4FQ8HD',
+    'FRM-INV-4FQ8HD',
     '2026-07-23T06:40:00.000Z',
     'details_received',
     'Taj Mahal Elegance',
@@ -273,7 +274,7 @@ const DEMO: AdminInvitationOrder[] = [
     },
   ),
   order(
-    'UTS-INV-2WPL5N',
+    'FRM-INV-2WPL5N',
     '2026-07-20T15:15:00.000Z',
     'delivered',
     'Punjabi Phulkari',
@@ -283,7 +284,7 @@ const DEMO: AdminInvitationOrder[] = [
   ),
   // Refunded. Kept, not deleted — the record of a payment somebody made does not get removed.
   order(
-    'UTS-INV-8CTR3Y',
+    'FRM-INV-8CTR3Y',
     '2026-07-18T09:00:00.000Z',
     'refunded',
     'Vibrant Heritage',

@@ -1,5 +1,5 @@
 -- ============================================================================
--- Utsava — public.invitation_payments is readable by staff and writable by nobody
+-- Fremmo — public.invitation_payments is readable by staff and writable by nobody
 --
 -- CLAUDE.md's second non-negotiable: money tables carry SELECT policies and nothing else.
 -- This one is the ledger behind every invitation payment, so the assertions are about who

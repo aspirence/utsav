@@ -1,5 +1,5 @@
 /**
- * Utsava design system — primitives. Plan §S1 "design system v1".
+ * Fremmo design system — primitives. Plan §S1 "design system v1".
  *
  * Everything here is a Server Component by default: no hooks, no event handlers.
  * Plan §4 puts all reads in Server Components, so the common case must not force a
@@ -204,7 +204,7 @@ export function Rating({
 }) {
   if (value == null || !count) {
     return (
-      <span className={cn('text-xs font-medium text-ink-500', className)}>New on Utsava</span>
+      <span className={cn('text-xs font-medium text-ink-500', className)}>New on Fremmo</span>
     )
   }
 

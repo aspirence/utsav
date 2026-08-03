@@ -1,5 +1,5 @@
 -- ============================================================================
--- Utsava — 001200 · Authorization helpers
+-- Fremmo — 001200 · Authorization helpers
 -- Plan §3: "capabilities come from memberships, not a role column … The UI is a
 -- context switcher; the database enforces everything."
 -- Plan §6: "RLS is the authorization model — there is no trusted API between clients

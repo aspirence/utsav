@@ -3,7 +3,7 @@
 import { revalidatePath } from 'next/cache'
 import { z } from 'zod'
 
-import { packageSchema, rupeesToPaise, type UtsavaClient } from '@/lib/db'
+import { packageSchema, rupeesToPaise, type FremmoClient } from '@/lib/db'
 
 import { getServerClientOrNull, hasSupabaseEnv } from '@/lib/supabase'
 
@@ -212,7 +212,7 @@ function readPackageForm(formData: FormData) {
 }
 
 interface Ready {
-  supabase: UtsavaClient
+  supabase: FremmoClient
   vendorId: string
 }
 
@@ -257,7 +257,7 @@ async function prepare(): Promise<Ready | { state: PackageState }> {
   return { supabase, vendorId: membership.vendorId }
 }
 
-async function categoryId(supabase: UtsavaClient, slug: string): Promise<string | null> {
+async function categoryId(supabase: FremmoClient, slug: string): Promise<string | null> {
   const { data } = await supabase.from('categories').select('id').eq('slug', slug).maybeSingle()
   return data?.id ?? null
 }
@@ -298,7 +298,7 @@ interface MembershipClient {
 
 /** Plan §3: one human, many contexts — oldest accepted membership until a switcher exists. */
 async function activeMembership(
-  supabase: UtsavaClient,
+  supabase: FremmoClient,
 ): Promise<{ vendorId: string; role: VendorMembershipRow['role'] } | null> {
   const { data: auth } = await supabase.auth.getUser()
   if (!auth.user) return null

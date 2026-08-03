@@ -73,7 +73,7 @@ export function OtpStep({
 
   return (
     <Card>
-      <CardBody className="p-8">
+      <CardBody className="p-5 sm:p-8">
         <Badge tone="accent" className="mb-4">
           One last step
         </Badge>
@@ -81,7 +81,7 @@ export function OtpStep({
         <p className="mt-2 text-ink-600">{message ?? `We sent a 6-digit code to ${phone}.`}</p>
         <p className="mt-4 rounded-lg bg-surface-sunken p-4 text-sm text-ink-600">
           Until you enter this code your enquiry stays unverified and is not sent to any
-          vendor. That is deliberate — it is what keeps the vendors on Utsava responsive.
+          vendor. That is deliberate — it is what keeps the vendors on Fremmo responsive.
         </p>
 
         <form action={formAction} className="mt-5">
@@ -92,7 +92,7 @@ export function OtpStep({
             <span className="sr-only">6-digit verification code</span>
             <input
               name="token"
-              className="w-full rounded-lg border border-ink-200 bg-surface-raised px-4 py-3 text-center font-mono text-2xl tracking-[0.4em] text-ink-900 placeholder:text-ink-300 focus:border-primary-500 focus:outline-none"
+              className="w-full rounded-lg border border-ink-200 bg-surface-raised px-4 py-3 text-center font-mono text-2xl tracking-[0.4em] text-ink-900 placeholder:text-ink-300 focus:border-primary-600 focus:outline-none focus:ring-2 focus:ring-primary-600/25"
               inputMode="numeric"
               autoComplete="one-time-code"
               pattern="[0-9]*"
@@ -155,7 +155,7 @@ function VerifiedPanel({
 }) {
   return (
     <Card>
-      <CardBody className="p-8">
+      <CardBody className="p-5 sm:p-8">
         <Badge tone="success" className="mb-4">
           Verified
         </Badge>

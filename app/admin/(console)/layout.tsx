@@ -2,12 +2,54 @@ import { redirect } from 'next/navigation'
 import { headers } from 'next/headers'
 
 import { AdminSidebar } from '@/components/admin-sidebar'
+import type { BottomNavItem } from '@/components/bottom-nav'
 import { ConsoleShell } from '@/components/console-shell'
+import {
+  IconGrid,
+  IconInbox,
+  IconReceipt,
+  IconShield,
+  IconStore,
+} from '@/components/console-sidebar'
 import { initialsFrom } from '@/components/console-topbar'
 import { DashboardSwitcher } from '@/components/dashboard-switcher'
 import { signOutStaff } from '@/app/admin/actions'
 import { getStaffGate, roleLabel } from '@/lib/admin-auth'
+import { canSee } from '@/lib/admin-roles'
 import { getViewer } from '@/lib/viewer'
+
+import type { StaffRoleKind } from '@/lib/db'
+
+/**
+ * The console's phone tab bar — the five queues, filtered to what this role may open.
+ *
+ * IT RUNS THROUGH canSee() FOR THE SAME REASON THE RAIL DOES, and with the same caveat: this is
+ * courtesy, not security. Every page behind these links is governed by its own policies, so a
+ * field agent who types /admin/moderation reaches a screen whose queries return nothing rather
+ * than somebody else's queue. Filtering here only saves them a pointless tap.
+ *
+ * A role that can open fewer than five gets fewer than five tabs, and the row simply spreads —
+ * which is correct. Padding it out to five with links that lead nowhere would be worse than a
+ * short bar.
+ *
+ * Pipeline, Routing health, Templates, Team and Resellers are not here and are not meant to be.
+ * They are read-and-decide screens rather than queues worked all day, they are the ones most
+ * likely to be opened on a laptop, and the drawer behind the hamburger still carries every one
+ * of them.
+ */
+function bottomNavFor(role: StaffRoleKind): BottomNavItem[] {
+  const all: BottomNavItem[] = [
+    // `exact`, because /admin is a prefix of every other console route — without it the
+    // Dashboard tab stays lit on all of them.
+    { href: '/admin', label: 'Dashboard', icon: <IconGrid />, exact: true },
+    { href: '/admin/enquiries', label: 'Enquiries', icon: <IconInbox /> },
+    { href: '/admin/orders', label: 'Orders', icon: <IconReceipt /> },
+    { href: '/admin/vendors', label: 'Vendors', icon: <IconStore /> },
+    { href: '/admin/moderation', label: 'Moderation', icon: <IconShield /> },
+  ]
+
+  return all.filter((item) => canSee(role, item.href))
+}
 
 /**
  * The staff console proper: the gate, then the chrome.
@@ -98,6 +140,7 @@ export default async function ConsoleLayout({ children }: { children: React.Reac
         signOut: signOutStaff,
         viewSiteHref: '/',
       }}
+      bottomNav={bottomNavFor(identity.role)}
       footnote={
         identity.isLocal
           ? 'Local admin session — no database is attached, so every screen is showing fixtures and nothing you do here is saved.'

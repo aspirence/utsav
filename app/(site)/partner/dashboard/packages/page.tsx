@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
 
-import { formatPaise, formatPerDay, type UtsavaClient } from '@/lib/db'
+import { formatPaise, formatPerDay, type FremmoClient } from '@/lib/db'
 import { Badge, Card, CardBody } from '@/components/ui'
 
 import { PACKAGES } from '@/lib/fixtures'
@@ -52,7 +52,7 @@ export default async function PartnerPackagesPage({
     return (
       <Notice
         title="No listing linked to this account yet"
-        body="Packages belong to a listing. Ask whoever set up your studio on Utsava to invite this number as an owner or manager, then this screen will open."
+        body="Packages belong to a listing. Ask whoever set up your studio on Fremmo to invite this number as an owner or manager, then this screen will open."
       />
     )
   }
@@ -453,7 +453,7 @@ interface MembershipClient {
 }
 
 /** Plan §3: one human, many contexts — oldest accepted membership until a switcher exists. */
-async function activeVendorId(supabase: UtsavaClient): Promise<string | null> {
+async function activeVendorId(supabase: FremmoClient): Promise<string | null> {
   const { data: auth } = await supabase.auth.getUser()
   if (!auth.user) return null
 

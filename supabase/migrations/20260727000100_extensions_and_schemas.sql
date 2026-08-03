@@ -1,5 +1,5 @@
 -- ============================================================================
--- Utsava — 000100 · Extensions, schemas and shared trigger utilities
+-- Fremmo — 000100 · Extensions, schemas and shared trigger utilities
 -- Plan §4: "Postgres-native search first (FTS + pg_trgm + PostGIS ranking function)"
 -- ============================================================================
 

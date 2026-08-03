@@ -119,7 +119,7 @@ export default async function VendorPage({ params }: Props) {
             {vendor.isAnchorStudio && (
               <div className="mt-5 rounded-lg border border-accent-200 bg-accent-50 p-4">
                 <p className="text-sm font-semibold text-accent-900">
-                  This studio is owned by Utsava
+                  This studio is owned by Fremmo
                 </p>
                 <p className="mt-1 text-sm text-accent-800">
                   It is ranked by exactly the same algorithm as every other listing, with no
@@ -239,11 +239,11 @@ export default async function VendorPage({ params }: Props) {
             <section className="mt-12">
               <SectionHeading
                 title="Reviews"
-                description="Only customers with a completed booking on Utsava can leave a review."
+                description="Only customers with a completed booking on Fremmo can leave a review."
               />
               {vendor.reviews.length === 0 ? (
                 <p className="mt-5 rounded-lg border border-dashed border-ink-200 p-6 text-sm text-ink-600">
-                  No reviews yet. This listing is new to Utsava.
+                  No reviews yet. This listing is new to Fremmo.
                 </p>
               ) : (
                 <div className="mt-6 space-y-5">

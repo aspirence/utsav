@@ -3,6 +3,12 @@
 import dynamic from 'next/dynamic'
 import { useCallback, useEffect, useRef, useState } from 'react'
 
+import {
+  DEMO_CARD_CONTENT,
+  linesFor,
+  type InvitationCardContent,
+} from './content'
+
 /**
  * The invitation experience: the three.js scene, plus the wording as real DOM over it.
  *
@@ -23,7 +29,15 @@ const Scene = dynamic(() => import('./scene'), {
 
 const clamp01 = (v: number) => (v < 0 ? 0 : v > 1 ? 1 : v)
 
-export function Invitation3D() {
+/**
+ * `content` defaults to the demo wording so /invitation — the public showcase, which has no order
+ * behind it — keeps working untouched. A real invitation passes its own.
+ */
+export function Invitation3D({
+  content = DEMO_CARD_CONTENT,
+}: {
+  content?: InvitationCardContent
+} = {}) {
   const [t, setT] = useState(0)
 
   /*
@@ -41,7 +55,7 @@ export function Invitation3D() {
   return (
     <div className="relative h-full w-full overflow-hidden bg-[#2a1f16]">
       <Scene onTime={setT} loop={loop} />
-      <Wording t={t} />
+      <Wording t={t} content={content} />
       <Music />
     </div>
   )
@@ -180,30 +194,9 @@ const START = GANESHA.in + GANESHA.hold + GANESHA.out + 0.3
 const GAP = 0.34
 const WIPE = 0.55
 
-type Line = { t: string; cls?: string; gap?: number; hidden?: boolean }
+function Wording({ t, content }: { t: number; content: InvitationCardContent }) {
+  const lines = linesFor(content)
 
-const LINES: Line[] = [
-  { t: 'R&D', cls: 'font-display text-[7vh] leading-none text-[#2b2119]', hidden: true },
-
-  { t: 'Mrs. Ramilaben & Mr. Manoj Kumar', gap: 2.4 },
-  { t: 'request your gracious presence' },
-  { t: 'on the auspicious occasion of' },
-  { t: 'the wedding of their grandson' },
-
-  { t: 'Dhanesh', cls: 'font-display text-[2.6vh] italic leading-tight', gap: 2.4 },
-  { t: '(S/o. Mrs. Gita & Mr. Mahesh Kumar)', cls: 'text-[1.35vh] leading-snug' },
-  { t: 'with', gap: 1 },
-  { t: 'Radha', cls: 'font-display text-[2.6vh] italic leading-tight', gap: 0.8 },
-  { t: '(D/o. Mrs. Kailashben & Mr. Randhir Jariwala)', cls: 'text-[1.35vh] leading-snug' },
-
-  { t: 'on Monday, 1st May', gap: 2.6 },
-  { t: '9:00 p.m. onwards' },
-  { t: 'at' },
-  { t: 'SMC Party Plot,' },
-  { t: 'Athwalines, Surat, India.' },
-]
-
-function Wording({ t }: { t: number }) {
   // In, hold, out - a single value so the motif never sits behind the wording.
   const gIn = clamp01((t - GANESHA.in) / 1.1)
   const gOut = clamp01((t - (GANESHA.in + GANESHA.hold)) / GANESHA.out)
@@ -232,7 +225,7 @@ function Wording({ t }: { t: number }) {
         className="w-[min(46vh,20rem)] text-center text-[#3a2f24]"
         style={{ marginTop: '2vh' }}
       >
-        {LINES.map((line, i) => {
+        {lines.map((line, i) => {
           const p = clamp01((t - (START + i * GAP)) / WIPE)
           return (
             <p

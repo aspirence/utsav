@@ -56,6 +56,16 @@ export default async function AccountInvitationsPage() {
                   {/* The reference is what support asks for, so it is selectable text in a
                       monospace face rather than a styled badge nobody can copy cleanly. */}
                   <p className="mt-0.5 font-mono text-xs text-ink-500">{order.reference}</p>
+                  {order.publicSlug && (
+                    // The whole point of the card. Shown as the link itself rather than as
+                    // "View card", because this is the string that gets copied into WhatsApp.
+                    <Link
+                      href={`/invite/${order.publicSlug}`}
+                      className="mt-1 inline-block break-all text-xs text-primary-700 underline underline-offset-2 hover:text-primary-800"
+                    >
+                      /invite/{order.publicSlug}
+                    </Link>
+                  )}
                 </div>
 
                 <div className="mt-3 flex items-center gap-4 sm:mt-0 sm:shrink-0">

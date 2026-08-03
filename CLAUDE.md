@@ -1,4 +1,4 @@
-# Utsava — working notes for Claude Code
+# Fremmo — working notes for Claude Code
 
 All-events discovery and booking marketplace for India, photography-first.
 `Utsava_Complete_Development_Plan_v2.pdf` at the repo root is the source of truth for
@@ -69,7 +69,7 @@ decision from the user, not a refactor.
   vendor's own media upload.
 - **`@supabase/ssr` must track `@supabase/supabase-js`.** Older ssr versions instantiate
   `SupabaseClient` with the pre-2.5x three-generic signature and resolve the schema to
-  `never`. `UtsavaClient` is derived via `ReturnType<typeof createUtsavaServerClient>` so
+  `never`. `FremmoClient` is derived via `ReturnType<typeof createFremmoServerClient>` so
   it can't drift.
 
 ## Verifying a change

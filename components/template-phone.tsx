@@ -9,19 +9,24 @@ import { useEffect, useRef, useState } from 'react'
  * lazy-play rules rather than two that drift. The product page renders one large phone; the
  * slider renders four small ones. Same component, different `className`.
  *
- * WHY THE PREVIEWS ARE LAZY. Four autoplaying videos above the fold is a broken page, not a
- * rich one — plan §13 sets an LCP gate and §12 makes media cost explicit. So `preload="none"`,
- * no `autoPlay` attribute, and an IntersectionObserver that plays what is on screen and pauses
- * what is not. Iframes get a `src` only once seen: an iframe with a src is a full page load,
- * and four YouTube players cost more than the rest of the home page together.
+ * WHY THE PREVIEWS ARE LAZY. Six autoplaying videos above the fold is a broken page, not a rich
+ * one — plan §13 sets an LCP gate and §12 makes media cost explicit. So `preload="none"`, no
+ * `autoPlay` attribute, and an IntersectionObserver that plays what is on screen and pauses what
+ * is not. Stills and GIFs are fetched only once the card has been seen, and then kept.
+ *
+ * A PREVIEW IS ALWAYS MEDIA — a video, an image or a GIF. It was once possible for it to be an
+ * <iframe> around a live page, and that is gone: see the note on PreviewKind in
+ * lib/invitation-templates.ts for what it looked like when a phone mockup framed our own header
+ * and back button.
  */
 
 export interface PhonePreview {
   name: string
-  /** 'video' → a direct file, 'embed' → an iframe, 'none' → poster only. */
-  preview: 'video' | 'embed' | 'none'
+  /** 'video' → a direct file, 'image' → a still or GIF, 'none' → poster only. */
+  preview: 'video' | 'image' | 'none'
   videoUrl: string | null
-  embedUrl: string | null
+  /** For 'image': a direct image/GIF, or a thumbnail derived from a link. */
+  imageUrl: string | null
   posterUrl: string | null
 }
 
@@ -30,6 +35,7 @@ export function TemplatePhone({
   className,
   showIsland = true,
   compact = false,
+  eager = false,
 }: {
   item: PhonePreview
   className?: string
@@ -44,8 +50,23 @@ export function TemplatePhone({
    * with it, because a 3px bezel on a 110px frame is proportionally three times too thick.
    */
   compact?: boolean
+  /**
+   * This phone is its page's LCP element, so its still is fetched with the document rather than
+   * waited for.
+   *
+   * The lazy machinery exists so six previews do not all fetch at once, and the one the page is
+   * measured on was never the problem it was written for: the hero image was rendering
+   * `loading="lazy"` behind an IntersectionObserver that cannot fire until the client bundle
+   * hydrates. Plan §13 gates launch on LCP, so the browser being told to deprioritise that one
+   * element is the expensive default.
+   *
+   * IT DOES NOT TOUCH PLAY/PAUSE. Only the `mounted` latch and the loading hints. Forcing
+   * `active` true as well would mean a video preview that never pauses when it scrolls away,
+   * which is the opposite of what the observer is for. Exactly one phone per page should set this.
+   */
+  eager?: boolean
 }) {
-  const { ref, seen } = useOnScreen<HTMLDivElement>()
+  const { ref, seen, everSeen } = useOnScreen<HTMLDivElement>()
 
   const r = compact
     ? { outer: 'rounded-[1.05rem]', mid: 'rounded-[0.95rem]', screen: 'rounded-[0.8rem]', pad: 'p-[1.5px]' }
@@ -76,7 +97,7 @@ export function TemplatePhone({
         <div
           className={`relative aspect-[1206/2622] overflow-hidden ${r.screen} bg-ink-900`}
         >
-          <Preview item={item} active={seen} />
+          <Preview item={item} active={seen} mounted={everSeen || eager} eager={eager} />
 
           {showIsland && (
             /*
@@ -95,7 +116,20 @@ export function TemplatePhone({
   )
 }
 
-function Preview({ item, active }: { item: PhonePreview; active: boolean }) {
+function Preview({
+  item,
+  active,
+  mounted,
+  eager = false,
+}: {
+  item: PhonePreview
+  /** On screen right now. Drives play/pause. */
+  active: boolean
+  /** Has been on screen at least once. Latched, so media is fetched once and then kept. */
+  mounted: boolean
+  /** The LCP still — fetch it with the document instead of deferring it. */
+  eager?: boolean
+}) {
   const video = useRef<HTMLVideoElement>(null)
 
   /**
@@ -128,48 +162,33 @@ function Preview({ item, active }: { item: PhonePreview; active: boolean }) {
     )
   }
 
-  if (item.preview === 'embed' && item.embedUrl) {
-    return active ? (
-      <EmbedPreview name={item.name} url={item.embedUrl} />
+  /*
+   * A still or a GIF.
+   *
+   * `mounted` rather than `active`, so it is fetched once when the card first comes into view
+   * and then left alone — the same latch the video path relies on. An <img> that unmounted every
+   * time the row scrolled off would re-request on every pass; a GIF would also restart from
+   * frame one, which looks like a stutter rather than a loop.
+   *
+   * Native `loading="lazy"` is not enough on its own here: it defers the fetch but the element
+   * still mounts, and the latch is what keeps the decode from being thrown away and redone.
+   */
+  if (item.preview === 'image' && item.imageUrl) {
+    return mounted ? (
+      <img
+        src={item.imageUrl}
+        alt={`${item.name} invitation preview`}
+        loading={eager ? 'eager' : 'lazy'}
+        fetchPriority={eager ? 'high' : undefined}
+        decoding="async"
+        className="h-full w-full object-cover"
+      />
     ) : (
-      <Poster item={item} />
+      <Poster item={item} eager={eager} />
     )
   }
 
-  return <Poster item={item} />
-}
-
-/**
- * An embedded page in the phone.
- *
- * OUR OWN PAGES ARE ASKED TO LOOP, with ?loop=1 appended. The invitation honours it by
- * replaying its film from the top; a page that does not understand the parameter ignores an
- * unknown query string, which is the right outcome for anything else we might embed here.
- *
- * AN EARLIER VERSION LOOPED BY REMOUNTING THIS IFRAME ON A TIMER, and it was wrong twice
- * over. It reloaded the page rather than replaying the animation — a fresh document, a fresh
- * WebGL context, a visible blank. And the interval was nine seconds, taken from the opening
- * phase table in invitation-3d/scene.tsx, against a film whose DUR is 17.5: it cut the thing
- * off before half of it had played and the wording was never reached at all. A loop belongs
- * where the clock is, which is inside the page.
- *
- * YouTube and Vimeo embeds are left exactly as they came. They already repeat through their
- * own URL parameters, and classifyPreview() has built those in.
- */
-function EmbedPreview({ name, url }: { name: string; url: string }) {
-  const isOwnPage = url.startsWith('/') && !url.startsWith('//')
-  const src = isOwnPage ? `${url}${url.includes('?') ? '&' : '?'}loop=1` : url
-
-  return (
-    <iframe
-      src={src}
-      title={`${name} preview`}
-      loading="lazy"
-      allow="autoplay; encrypted-media; picture-in-picture"
-      referrerPolicy="strict-origin-when-cross-origin"
-      className="h-full w-full border-0"
-    />
-  )
+  return <Poster item={item} eager={eager} />
 }
 
 /**
@@ -179,13 +198,14 @@ function EmbedPreview({ name, url }: { name: string; url: string }) {
  * storageImageUrl rather than next/image. The empty state names what is missing instead of
  * showing a grey box, because the person most likely to see it is whoever has to fix it.
  */
-function Poster({ item }: { item: PhonePreview }) {
+function Poster({ item, eager = false }: { item: PhonePreview; eager?: boolean }) {
   if (item.posterUrl) {
     return (
       <img
         src={item.posterUrl}
         alt={`${item.name} invitation preview`}
-        loading="lazy"
+        loading={eager ? 'eager' : 'lazy'}
+        fetchPriority={eager ? 'high' : undefined}
         decoding="async"
         className="h-full w-full object-cover"
       />
@@ -195,7 +215,7 @@ function Poster({ item }: { item: PhonePreview }) {
   return (
     <div className="flex h-full w-full items-center justify-center px-4 text-center">
       <p className="text-xs leading-relaxed text-ink-400">
-        No preview yet — add a video link in the console.
+        No preview yet — add a video, image or GIF link in the console.
       </p>
     </div>
   )
@@ -211,6 +231,7 @@ function Poster({ item }: { item: PhonePreview }) {
 function useOnScreen<T extends HTMLElement>() {
   const ref = useRef<T>(null)
   const [seen, setSeen] = useState(false)
+  const [everSeen, setEverSeen] = useState(false)
 
   useEffect(() => {
     const el = ref.current
@@ -218,12 +239,16 @@ function useOnScreen<T extends HTMLElement>() {
 
     if (typeof IntersectionObserver === 'undefined') {
       setSeen(true)
+      setEverSeen(true)
       return
     }
 
     const observer = new IntersectionObserver(
       (entries) => {
-        for (const entry of entries) setSeen(entry.isIntersecting)
+        for (const entry of entries) {
+          setSeen(entry.isIntersecting)
+          if (entry.isIntersecting) setEverSeen(true)
+        }
       },
       { rootMargin: '200px', threshold: 0.1 },
     )
@@ -232,5 +257,5 @@ function useOnScreen<T extends HTMLElement>() {
     return () => observer.disconnect()
   }, [])
 
-  return { ref, seen }
+  return { ref, seen, everSeen }
 }

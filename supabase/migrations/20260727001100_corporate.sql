@@ -1,5 +1,5 @@
 -- ============================================================================
--- Utsava — 001100 · Corporate (Phase 2)
+-- Fremmo — 001100 · Corporate (Phase 2)
 -- Plan §5: "corporate_orgs, corporate_members, rfps, rfp_invites, rfp_bids"
 -- Plan §5: "corporate (Phase 2) ends in the same vendor graph" — an RFP bid resolves
 -- to the same vendors/quotes/bookings tables, not a parallel universe.

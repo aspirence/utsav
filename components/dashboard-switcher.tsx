@@ -1,6 +1,6 @@
 import Link from 'next/link'
 
-import { DASHBOARDS, type Viewer } from '@/lib/viewer'
+import { DASHBOARDS, type DashboardKind, type Viewer } from '@/lib/viewer'
 
 /**
  * The hat switcher, shown only to people wearing more than one.
@@ -31,8 +31,13 @@ export function DashboardSwitcher({
   className,
 }: {
   viewer: Viewer
-  /** Which surface is being rendered — shown as the selected pill rather than a link. */
-  current: 'console' | 'partner' | 'account'
+  /**
+   * Which surface is being rendered — shown as the selected pill rather than a link.
+   *
+   * Keyed to DASHBOARDS rather than a hand-written union, so adding a fifth surface to that map
+   * is one edit rather than two that can disagree. `DASHBOARDS[current]` is the only use.
+   */
+  current: DashboardKind
   className?: string
 }) {
   const surfaces = surfacesFor(viewer)
@@ -88,6 +93,24 @@ function surfacesFor(viewer: Viewer): Surface[] {
         viewer.vendors.length === 1
           ? (viewer.vendors[0]?.name ?? 'Your business')
           : `${viewer.vendors.length} businesses`,
+    })
+  }
+  /*
+   * The reseller statement, offered whatever its status.
+   *
+   * A suspended or closed reseller still gets the link, matching `homeFor()`: their record reads
+   * back under resellers_select_self precisely so the portal can *tell* them they are suspended,
+   * and hiding the entry would take away the page that answers the question. It is the database
+   * that locks them out — app.my_reseller_id() filters on `status = 'active'` — not this list.
+   *
+   * The detail is the code rather than a count, because the code is the string we ask them to
+   * quote when they write in about a statement.
+   */
+  if (viewer.reseller) {
+    out.push({
+      href: DASHBOARDS.reseller,
+      label: 'Reseller',
+      detail: `${viewer.reseller.displayName} · ${viewer.reseller.code}`,
     })
   }
   out.push({ href: DASHBOARDS.account, label: 'Account', detail: 'Your bookings and saves' })

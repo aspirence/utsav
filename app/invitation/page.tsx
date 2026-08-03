@@ -83,7 +83,7 @@ export default function InvitationPage() {
         href="/"
         className="absolute left-4 top-4 z-10 rounded-full bg-[#2a1f16]/70 px-4 py-2 text-sm text-white/90 backdrop-blur-sm transition-colors hover:bg-[#2a1f16] hover:text-white"
       >
-        &larr; Utsava
+        &larr; Fremmo
       </Link>
     </main>
   )

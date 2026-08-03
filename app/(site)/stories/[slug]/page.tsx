@@ -202,7 +202,7 @@ export default async function StoryPage({ params }: Props) {
                   {/* Plan §11/§12: the disclosure follows the studio everywhere it appears. */}
                   {vendor.isAnchorStudio && (
                     <p className="mt-5 border-t border-ink-100 pt-4 text-xs text-ink-500">
-                      This studio is owned by Utsava and ranked with no preference of any kind.{' '}
+                      This studio is owned by Fremmo and ranked with no preference of any kind.{' '}
                       <Link href="/p/anchor-studio-policy" className="underline underline-offset-2">
                         Read the policy
                       </Link>

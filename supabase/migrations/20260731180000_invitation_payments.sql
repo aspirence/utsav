@@ -1,5 +1,5 @@
 -- ============================================================================
--- Utsava — public.invitation_payments: every payment event, kept
+-- Fremmo — public.invitation_payments: every payment event, kept
 --
 -- WHY A TABLE AND NOT MORE COLUMNS ON THE ORDER. invitation_orders holds one payment_ref
 -- and one paid_at, which can only ever describe the attempt that worked. Real orders are

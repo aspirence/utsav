@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import { headers } from 'next/headers'
 import { redirect } from 'next/navigation'
 
+import type { BottomNavItem } from '@/components/bottom-nav'
 import { ConsoleShell } from '@/components/console-shell'
 import {
   ConsoleSidebar,
@@ -55,6 +56,28 @@ const NAV_GROUPS: ConsoleNavGroup[] = [
       { href: '/partner/dashboard/profile', label: 'Profile', icon: <IconUser /> },
     ],
   },
+]
+
+/**
+ * The phone tab bar — the four screens a vendor works, plus the way back to the overview.
+ *
+ * This is the surface where the bar matters most. A photographer reads a lead standing in
+ * somebody's front room, on a phone, and the drawer-only navigation meant two taps between
+ * Leads and Quotes — the two screens the whole job alternates between.
+ *
+ * Profile and Packages are edit-once-a-month screens, so Packages takes the fifth slot over
+ * Profile: a package price changes far more often than a listing bio, and Profile is reachable
+ * from the top bar's identity block anyway.
+ *
+ * The Leads tab claims /partner/dashboard/leads/[id] by prefix, which is what keeps it lit while
+ * you are reading one lead rather than dropping the bar back to no selection.
+ */
+const BOTTOM_NAV: BottomNavItem[] = [
+  { href: '/partner/dashboard', label: 'Overview', icon: <IconGrid />, exact: true },
+  { href: '/partner/dashboard/leads', label: 'Leads', icon: <IconInbox /> },
+  { href: '/partner/dashboard/quotes', label: 'Quotes', icon: <IconReceipt /> },
+  { href: '/partner/dashboard/calendar', label: 'Calendar', icon: <IconCalendar /> },
+  { href: '/partner/dashboard/packages', label: 'Packages', icon: <IconBox /> },
 ]
 
 /** owner ⊃ manager ⊃ responder, per the comment on public.vendor_members. */
@@ -120,7 +143,7 @@ export default async function PartnerDashboardLayout({
         <ConsoleSidebar
           groups={NAV_GROUPS}
           rootHref="/partner/dashboard"
-          brand="Utsava partner"
+          brand="Fremmo partner"
           footer={{ href: '/', label: 'Visit site' }}
         />
       }
@@ -145,6 +168,7 @@ export default async function PartnerDashboardLayout({
         signOut,
         viewSiteHref: vendor ? `/vendor/${vendor.slug}` : '/',
       }}
+      bottomNav={BOTTOM_NAV}
       footnote={
         hasSupabaseEnv()
           ? 'Customer contact details are unmasked only on leads you have accepted — that boundary lives in the database, not in this page.'

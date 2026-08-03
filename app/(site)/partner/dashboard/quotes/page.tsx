@@ -133,7 +133,7 @@ export default async function PartnerQuotesPage({
         <CardBody>
           <p className="text-sm text-ink-600">
             <strong className="font-semibold text-ink-800">How acceptance works.</strong> When a
-            customer accepts, Utsava creates the booking and asks them for the advance only —
+            customer accepts, Fremmo creates the booking and asks them for the advance only —
             never the full amount. The balance stays with them until you have delivered. You
             cannot accept on their behalf, and neither can we.
           </p>

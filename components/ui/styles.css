@@ -1,7 +1,7 @@
 @import 'tailwindcss';
 
 /*
- * Utsava design system v1 — plan §S1.
+ * Fremmo design system v1 — plan §S1.
  *
  * Tailwind v4: tokens live here as CSS custom properties inside @theme, which
  * generates the matching utilities (bg-primary-600, font-display, …).

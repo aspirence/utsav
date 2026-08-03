@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
 
 export const metadata: Metadata = {
-  title: { default: 'Utsava Admin', template: '%s · Utsava Admin' },
+  title: { default: 'Fremmo Admin', template: '%s · Fremmo Admin' },
   // Plan §3 keeps the staff console off the public web. It now shares an origin with the
   // customer site, so this — plus the Disallow in robots.ts and the X-Robots-Tag header
   // set by middleware.ts — is what keeps it out of the index.

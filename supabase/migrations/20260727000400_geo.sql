@@ -1,5 +1,5 @@
 -- ============================================================================
--- Utsava — 000400 · Geography
+-- Fremmo — 000400 · Geography
 -- Plan §5: "cities, localities (PostGIS; locality = the SEO unit)"
 -- Plan §4: the discovery route is (discover)/[city]/[category]/[locality], and the
 -- programmatic SEO page engine generates one ISR page per live combination.

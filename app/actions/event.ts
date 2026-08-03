@@ -4,7 +4,7 @@ import { revalidatePath } from 'next/cache'
 
 import { z } from 'zod'
 
-import { eventTypeSchema, paiseSchema, slugSchema, type UtsavaClient } from '@/lib/db'
+import { eventTypeSchema, paiseSchema, slugSchema, type FremmoClient } from '@/lib/db'
 
 import { getServerClientOrNull, hasSupabaseEnv } from '@/lib/supabase'
 
@@ -246,7 +246,7 @@ function columnsFor(draft: EventDraft, place: ResolvedPlace): Record<string, unk
 
 /** Slugs are what the form has; the table stores ids. */
 async function resolvePlace(
-  supabase: UtsavaClient,
+  supabase: FremmoClient,
   citySlug?: string,
   localitySlug?: string,
 ): Promise<ResolvedPlace> {
@@ -258,7 +258,7 @@ async function resolvePlace(
     .eq('slug', citySlug)
     .maybeSingle()
 
-  if (!city) return { cityId: null, localityId: null, error: 'That city is not on Utsava yet.' }
+  if (!city) return { cityId: null, localityId: null, error: 'That city is not on Fremmo yet.' }
   if (!localitySlug) return { cityId: city.id, localityId: null }
 
   const { data: locality } = await supabase

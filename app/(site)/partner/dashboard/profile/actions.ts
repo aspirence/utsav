@@ -3,7 +3,7 @@
 import { revalidatePath } from 'next/cache'
 import { z } from 'zod'
 
-import { rupeesToPaise, slugSchema, vendorProfileSchema, type UtsavaClient } from '@/lib/db'
+import { rupeesToPaise, slugSchema, vendorProfileSchema, type FremmoClient } from '@/lib/db'
 
 import { getServerClientOrNull, hasSupabaseEnv } from '@/lib/supabase'
 
@@ -172,7 +172,7 @@ export async function updateVendorProfile(
       status: 'saved',
       message:
         'Your details are saved. Style tags need a primary category first — ask your ' +
-        'Utsava contact to set one, then add them here.',
+        'Fremmo contact to set one, then add them here.',
     }
   }
 
@@ -221,7 +221,7 @@ interface MembershipClient {
  * UI can say why a responder cannot save, rather than letting RLS reject it silently.
  */
 async function activeMembership(
-  supabase: UtsavaClient,
+  supabase: FremmoClient,
 ): Promise<{ vendorId: string; role: VendorMembershipRow['role'] } | null> {
   const { data: auth } = await supabase.auth.getUser()
   if (!auth.user) return null
@@ -248,7 +248,7 @@ function writeErrorMessage(error: { code?: string; message: string }): string {
   if (error.code === '42501') {
     return (
       'The database refused that change. Ratings, response times and your listing status ' +
-      'are set by Utsava, not from this screen.'
+      'are set by Fremmo, not from this screen.'
     )
   }
   return `Could not save your listing: ${error.message}`

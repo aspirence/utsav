@@ -31,7 +31,7 @@ import { createClient } from 'jsr:@supabase/supabase-js@2'
  *   select cron.schedule('expire-leads', '*\/15 * * * *', $$
  *     select net.http_post(
  *       url     := 'https://<ref>.supabase.co/functions/v1/expire-leads',
- *       headers := jsonb_build_object('x-utsava-worker-secret', '<WORKER_SECRET>')
+ *       headers := jsonb_build_object('x-fremmo-worker-secret', '<WORKER_SECRET>')
  *     );
  *   $$);
  *
@@ -40,7 +40,7 @@ import { createClient } from 'jsr:@supabase/supabase-js@2'
  * function returns the PostgREST error verbatim rather than pretending it swept anything.
  */
 
-const HEADER_NAME = 'x-utsava-worker-secret'
+const HEADER_NAME = 'x-fremmo-worker-secret'
 
 Deno.serve(async (request: Request) => {
   const secret = Deno.env.get('WORKER_SECRET')

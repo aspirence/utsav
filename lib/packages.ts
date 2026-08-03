@@ -6,7 +6,7 @@ import { PLACE_ART } from '@/lib/place-art'
 /**
  * Wedding packages, Lucknow only.
  *
- * Deliberately one city. The reference this follows listed several, but Utsava has no
+ * Deliberately one city. The reference this follows listed several, but Fremmo has no
  * supply outside its launch cities, and a card for a city where nobody can be booked is a
  * dead end with a price on it. Each entry here is a *place within Lucknow* instead, which
  * is the real choice a couple makes once they have picked the city.

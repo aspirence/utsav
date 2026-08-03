@@ -17,14 +17,14 @@ interface RecentEnquiry {
 }
 
 const RECENT: RecentEnquiry[] = [
-  { id: 'UTS-E-4821', customer: 'Ananya I.', category: 'Photography', city: 'Lucknow', routed: 5, responded: 2, status: 'routed', minutesAgo: 14 },
-  { id: 'UTS-E-4820', customer: 'Rohit M.', category: 'Venues', city: 'Delhi NCR', routed: 5, responded: 4, status: 'routed', minutesAgo: 52 },
-  { id: 'UTS-E-4819', customer: 'Meera R.', category: 'Photography', city: 'Lucknow', routed: 5, responded: 5, status: 'routed', minutesAgo: 96 },
-  { id: 'UTS-E-4818', customer: 'Karthik I.', category: 'Makeup', city: 'Lucknow', routed: 3, responded: 1, status: 'routed', minutesAgo: 140 },
-  { id: 'UTS-E-4817', customer: 'Deepa S.', category: 'Catering', city: 'Lucknow', routed: 5, responded: 0, status: 'routed', minutesAgo: 190 },
-  { id: 'UTS-E-4816', customer: '—', category: 'Photography', city: 'Delhi NCR', routed: 0, responded: 0, status: 'pending_otp', minutesAgo: 210 },
-  { id: 'UTS-E-4815', customer: 'Lakshmi S.', category: 'Photography', city: 'Lucknow', routed: 5, responded: 3, status: 'routed', minutesAgo: 265 },
-  { id: 'UTS-E-4814', customer: '—', category: 'Decor', city: 'Lucknow', routed: 0, responded: 0, status: 'spam', minutesAgo: 300 },
+  { id: 'FRM-E-4821', customer: 'Ananya I.', category: 'Photography', city: 'Lucknow', routed: 5, responded: 2, status: 'routed', minutesAgo: 14 },
+  { id: 'FRM-E-4820', customer: 'Rohit M.', category: 'Venues', city: 'Delhi NCR', routed: 5, responded: 4, status: 'routed', minutesAgo: 52 },
+  { id: 'FRM-E-4819', customer: 'Meera R.', category: 'Photography', city: 'Lucknow', routed: 5, responded: 5, status: 'routed', minutesAgo: 96 },
+  { id: 'FRM-E-4818', customer: 'Karthik I.', category: 'Makeup', city: 'Lucknow', routed: 3, responded: 1, status: 'routed', minutesAgo: 140 },
+  { id: 'FRM-E-4817', customer: 'Deepa S.', category: 'Catering', city: 'Lucknow', routed: 5, responded: 0, status: 'routed', minutesAgo: 190 },
+  { id: 'FRM-E-4816', customer: '—', category: 'Photography', city: 'Delhi NCR', routed: 0, responded: 0, status: 'pending_otp', minutesAgo: 210 },
+  { id: 'FRM-E-4815', customer: 'Lakshmi S.', category: 'Photography', city: 'Lucknow', routed: 5, responded: 3, status: 'routed', minutesAgo: 265 },
+  { id: 'FRM-E-4814', customer: '—', category: 'Decor', city: 'Lucknow', routed: 0, responded: 0, status: 'spam', minutesAgo: 300 },
 ]
 
 /**

@@ -8,7 +8,7 @@ import type { VendorCardData } from '@/components/ui'
  * This replaced a plain three-up grid of vendor cards. The grid showed the same six
  * listings that the category page shows one click later, so it repeated itself and said
  * nothing. This version uses the space to make the one claim that actually distinguishes
- * Utsava - how the ranking works - and shows four pieces of work as evidence.
+ * Fremmo - how the ranking works - and shows four pieces of work as evidence.
  *
  * The ranking bullets are not marketing copy. They are the literal inputs to
  * app.vendor_rank(): portfolio completeness, a Bayesian review score, response speed and
@@ -17,7 +17,7 @@ import type { VendorCardData } from '@/components/ui'
  * outright - subscription tier is not an input, and there is a pgTAP test that fails the
  * build if anyone makes it one.
  *
- * Anything Utsava owns still carries its disclosure badge here, exactly as it does on the
+ * Anything Fremmo owns still carries its disclosure badge here, exactly as it does on the
  * card and the profile.
  */
 export function FeaturedVendorsPanel({
@@ -162,7 +162,7 @@ export function FeaturedVendorsPanel({
 
                 {/* Plan section 11/12: the disclosure follows the listing everywhere. */}
                 {vendor.isAnchorStudio && (
-                  <p className="mt-1.5 text-[11px] text-accent-200">Utsava-owned · no ranking preference</p>
+                  <p className="mt-1.5 text-[11px] text-accent-200">Fremmo-owned · no ranking preference</p>
                 )}
               </div>
             </Link>

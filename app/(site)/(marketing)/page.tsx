@@ -11,7 +11,7 @@ import { InvitationFeature } from '@/components/invitation-feature'
 import { PackageSlider } from '@/components/package-slider'
 import { QuotationCta } from '@/components/quotation-cta'
 import { ReviewsMarquee } from '@/components/reviews-marquee'
-import { TemplateCollections } from '@/components/template-collections'
+import { TemplateGrid } from '@/components/template-grid'
 import { TypeSlider } from '@/components/type-slider'
 import { WeddingExplainer } from '@/components/wedding-explainer'
 import { getCategoryContent } from '@/lib/category-content'
@@ -182,9 +182,36 @@ export default async function HomePage() {
           title="Curated Collections"
           description="Hand-crafted templates, each one a blank canvas for your own names, dates and traditions. Tap any card to see it running on a phone."
         />
+        {/*
+          Six in a grid, then the way to the rest.
+
+          This was a four-up auto-rotating carousel. It hid everything past the fourth card
+          behind a timer, and below 640px its arrows were not rendered at all — a phone got a
+          row that moved on its own and took no input. The grid shows more, moves less, and
+          ships no JavaScript: TemplateGrid is a Server Component where the carousel could not
+          be.
+
+          Six rather than all of them, because this is the home page and the section after it
+          still has to be reached. /invitations carries the full catalogue with filters.
+        */}
         <div className="mt-10">
-          <TemplateCollections items={templates} />
+          <TemplateGrid items={templates} limit={6} />
         </div>
+
+        {templates.length > 6 && (
+          <div className="mt-10 flex justify-center">
+            <Link
+              href="/invitations"
+              // The visible label is two words; the accessible name says what "all" is. A
+              // screen reader reads links out of their surrounding section, so "View all" on
+              // its own lands with no idea what it leads to.
+              aria-label={`View all ${templates.length} invitations`}
+              className="inline-flex min-h-11 items-center rounded-full bg-ink-900 px-7 text-sm font-semibold text-white transition-colors hover:bg-ink-800"
+            >
+              View all
+            </Link>
+          </div>
+        )}
       </Container>
 
       {/* 4. Wedding invitations - illustration left, the argument right */}

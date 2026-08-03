@@ -80,7 +80,7 @@ Database**. In this order:
 | `seed/02_plans.sql` | subscription plans | yes |
 | `seed/03_demo.sql` | demo vendors, packages, reviews | **no** |
 
-`03_demo.sql` creates `auth.users` rows whose password is `utsava123`, and says so at the
+`03_demo.sql` creates `auth.users` rows whose password is `fremmo123`, and says so at the
 top. On a project with a public URL those are real accounts anyone can sign into. Local only.
 
 Two consequences of skipping it, both expected:

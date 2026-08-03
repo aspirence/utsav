@@ -208,7 +208,7 @@ const FIXTURE_STORIES: Story[] = [
       'Priya and Arjun capped the guest list at 180 and asked for one thing: no one interrupting the rituals.',
     body: `The ceremony started at 6.40 a.m. because that was the muhurtham, and by 7.15 most of the family had stopped noticing the two photographers in the room.
 
-Priya had shortlisted five studios on Utsava and sent one enquiry. Three replied the same morning. She picked Lightleak Studio because their gallery had more grandmothers in it than couples — which, she said afterwards, is how you can tell somebody is actually watching the wedding instead of directing it.
+Priya had shortlisted five studios on Fremmo and sent one enquiry. Three replied the same morning. She picked Lightleak Studio because their gallery had more grandmothers in it than couples — which, she said afterwards, is how you can tell somebody is actually watching the wedding instead of directing it.
 
 The brief was small. Two photographers, one day, no separate video crew, no staged couple portraits after the ceremony. The family wanted to eat breakfast together and leave by noon, and they did.
 

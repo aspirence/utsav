@@ -4,7 +4,7 @@ import { revalidatePath } from 'next/cache'
 import { cookies } from 'next/headers'
 import { z } from 'zod'
 
-import { createUtsavaServerClient, hasSupabaseEnv } from '@/lib/db'
+import { createFremmoServerClient, hasSupabaseEnv } from '@/lib/db'
 
 /**
  * Lead credit refunds. Plan §12: junk leads are "the single biggest threat to renewal",
@@ -165,7 +165,7 @@ interface StaffClient {
 async function staffClient(): Promise<StaffClient | null> {
   try {
     const store = await cookies()
-    return createUtsavaServerClient({
+    return createFremmoServerClient({
       getAll: () => store.getAll().map(({ name, value }) => ({ name, value })),
       setAll: (list) => {
         for (const { name, value, options } of list) {

@@ -72,9 +72,9 @@ export function renderNotification(
     case 'lead.new': {
       const on = formatEventDate(payload.event_date)
       return {
-        title: 'New enquiry on Utsava',
+        title: 'New enquiry on Fremmo',
         body:
-          `New Utsava enquiry${on ? ` for ${on}` : ''}. ` +
+          `New Fremmo enquiry${on ? ` for ${on}` : ''}. ` +
           `Open your partner dashboard to read the brief and reply: ${site}/partner/dashboard/leads`,
       }
     }
@@ -87,7 +87,7 @@ export function renderNotification(
       return {
         title: 'How did it go?',
         body:
-          'Your Utsava booking is complete. A short review helps the next couple choose ' +
+          'Your Fremmo booking is complete. A short review helps the next couple choose ' +
           `well: ${site}${bookingId ? `/review/${bookingId}` : ''}`,
       }
     }
@@ -97,7 +97,7 @@ export function renderNotification(
       return {
         title: 'Booking initiated',
         body:
-          `A customer has accepted your quote on Utsava${reference ? ` (${reference})` : ''}. ` +
+          `A customer has accepted your quote on Fremmo${reference ? ` (${reference})` : ''}. ` +
           `The advance is held in escrow until the shoot. Details: ${site}/partner/dashboard/quotes`,
       }
     }
@@ -107,8 +107,8 @@ export function renderNotification(
       // this build has no copy for), not a customer's problem. Send something honest
       // rather than a raw template key.
       return {
-        title: 'Update from Utsava',
-        body: `You have an update on Utsava: ${site}`,
+        title: 'Update from Fremmo',
+        body: `You have an update on Fremmo: ${site}`,
       }
     }
   }
@@ -186,7 +186,7 @@ export async function sendWhatsApp(message: OutboundMessage): Promise<DispatchRe
       template: {
         name: whatsappTemplateName(message.template),
         language: { code: 'en' },
-        // Utsava's approved templates take one body variable, so the whole rendered
+        // Fremmo's approved templates take one body variable, so the whole rendered
         // sentence goes in as {{1}} and the copy above stays the single source of truth.
         components: [{ type: 'body', parameters: [{ type: 'text', text: message.body }] }],
       },
@@ -222,7 +222,7 @@ export async function sendSms(message: OutboundMessage): Promise<DispatchResult>
   }
 
   const dltTemplateId = process.env.SMS_DLT_TEMPLATE_ID
-  const senderId = process.env.SMS_SENDER_ID ?? 'UTSAVA'
+  const senderId = process.env.SMS_SENDER_ID ?? 'FREMMO'
 
   return postJson(
     endpoint,
@@ -295,7 +295,7 @@ export async function sendEmail(message: OutboundMessage): Promise<DispatchResul
     { Authorization: `Bearer ${apiKey}` },
     {
       to: message.to,
-      from: process.env.EMAIL_FROM ?? 'no-reply@utsava.in',
+      from: process.env.EMAIL_FROM ?? 'no-reply@fremmo.in',
       subject: message.title,
       text: message.body,
       client_reference: message.id,

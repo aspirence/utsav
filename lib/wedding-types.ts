@@ -11,7 +11,7 @@ import type { SliderCard } from '@/components/type-slider'
  * They are real segments in both launch cities; putting them back is a content call, not
  * a code one.
  *
- * Plan section 1 calls Utsava an all-events marketplace "for India" - and India does not
+ * Plan section 1 calls Fremmo an all-events marketplace "for India" - and India does not
  * have one wedding, it has a few dozen. A Tamil muhurtham at 5am and a Punjabi baraat at
  * 8pm need different things from a photographer, a caterer and a venue, and a couple
  * searching will describe their wedding by its tradition long before they describe it by

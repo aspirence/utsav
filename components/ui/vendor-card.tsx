@@ -140,7 +140,7 @@ export function VendorCard({
             <svg className="h-3.5 w-3.5 fill-accent-500" viewBox="0 0 20 20" aria-hidden="true">
               <path d="M10 2a8 8 0 100 16 8 8 0 000-16zm.9 12H9.1v-1.8h1.8V14zm0-3.2H9.1V6h1.8v4.8z" />
             </svg>
-            Utsava-owned studio · ranked with no preference
+            Fremmo-owned studio · ranked with no preference
           </a>
         )}
       </div>

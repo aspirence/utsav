@@ -278,7 +278,7 @@ export function ProfileForm({
       <div className="flex items-center gap-3">
         <SaveButton />
         <p className="text-xs text-ink-500">
-          Your rating, response time and profile score are calculated by Utsava and cannot
+          Your rating, response time and profile score are calculated by Fremmo and cannot
           be edited here.
         </p>
       </div>

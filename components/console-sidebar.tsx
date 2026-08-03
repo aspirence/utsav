@@ -1,5 +1,6 @@
 'use client'
 
+import { Brand } from '@/components/brand'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { useState, type ReactNode } from 'react'
@@ -84,27 +85,38 @@ export function ConsoleSidebar({
         }
       >
         {/*
-          The mark alone, knocked to white — the same treatment the footer uses on its dark band.
-          The wordmark that sat beside it is gone: the artwork already carries the name, so the
-          two together said it twice.
+          The lockup, knocked to white — the same treatment the footer uses on its dark band.
 
-          THE ALT TEXT IS NOT OPTIONAL, and it is the part that is easy to get wrong when the
-          label is deleted. It used to be alt="" and aria-hidden, which was right while the text
-          next to it carried the name. With the words gone the image is the only thing
-          identifying this panel, so it has to say so out loud or the rail starts with nothing.
+          This used to be the old single-image lockup with alt={brand}, and a long comment here
+          argued the alt text was load-bearing because the artwork was the only thing naming the
+          panel. That reasoning retired with the artwork: <Brand> renders the name as real text,
+          so the mark is decorative and the accessible name comes from the DOM.
+
+          `brand` still says which surface this is — "Fremmo console", "Fremmo partner" — and it
+          is now sr-only. Printing it beside a lockup that already reads "Fremmo" would set the
+          word twice in one 72px header; a screen reader still gets the distinction.
         */}
         <div className="flex h-[4.5rem] shrink-0 items-center border-b border-ink-800/70 px-5">
-          {/* eslint-disable-next-line @next/next/no-img-element -- plan §12: no Vercel optimizer */}
-          <img
-            src="/logo.webp"
-            alt={brand}
-            width={623}
-            height={576}
-            className="h-11 w-auto shrink-0 [filter:brightness(0)_invert(1)]"
+          <Brand
+            markClassName="h-8 w-auto [filter:brightness(0)_invert(1)]"
+            wordClassName="text-xl text-white"
           />
+          <span className="sr-only">{brand}</span>
         </div>
 
-        <nav aria-label="Sections" className="flex-1 overflow-y-auto px-3 py-4">
+        {/*
+          `scrollbar-none` and not `overflow-hidden`: the rail still scrolls, it just does not
+          paint a bar. macOS renders one in the system light theme regardless of the surface
+          under it, so on ink-900 it came out as a pale vertical line hard against the rail's
+          right edge — it read as a misplaced divider rather than as a scrollbar.
+
+          The nav keeps `overflow-y-auto`, so a role with enough sections to overflow can still
+          reach them by wheel, trackpad, touch, or by tabbing to a link below the fold.
+        */}
+        <nav
+          aria-label="Sections"
+          className="scrollbar-none flex-1 overflow-y-auto px-3 py-4"
+        >
           {groups.map((group, index) => (
             <div key={group.label ?? `group-${index}`} className="mb-5 last:mb-0">
               {/*
@@ -127,26 +139,27 @@ export function ConsoleSidebar({
                         onClick={() => setOpen(false)}
                         aria-current={active ? 'page' : undefined}
                         className={
-                          'group relative flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm transition-colors ' +
+                          // `relative` went with the active bar — it was only there to position
+                          // it, and nothing inside this link is absolutely positioned any more.
+                          'group flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm transition-colors ' +
                           (active
                             ? 'bg-gradient-to-r from-ink-800 to-ink-800/40 font-semibold text-white'
                             : 'font-medium text-ink-300 hover:bg-ink-800/50 hover:text-white')
                         }
                       >
                         {/*
-                          The active bar is its own element rather than an inset shadow, so it can
-                          be rounded and inset from the row's edges — a full-height square bar
-                          butts into the rows above and below and reads as a rendering seam.
+                          NO ACTIVE BAR. There was a 3px primary-500 rule down the left edge of
+                          the selected row; it is gone by request.
 
-                          Two cues, not one: aria-current tells assistive tech, and the bar plus
-                          the fill means the state never rests on colour alone.
+                          What carries the state now is the background fill and `font-semibold`
+                          against the `font-medium` of every other row. The weight is the part
+                          worth protecting — it is the one cue that survives for somebody who
+                          cannot separate the fill from the rail behind it, so the state still
+                          does not rest on colour alone. aria-current carries it for assistive
+                          tech either way.
+
+                          If the fill is ever softened, put a non-colour cue back before doing it.
                         */}
-                        {active && (
-                          <span
-                            aria-hidden="true"
-                            className="absolute left-0 top-1/2 h-5 w-[3px] -translate-y-1/2 rounded-r-full bg-primary-500"
-                          />
-                        )}
                         <span
                           className={
                             'shrink-0 transition-colors ' +
@@ -291,6 +304,17 @@ export function IconPeople() {
       <circle cx="9" cy="8" r="3.2" />
       <path d="M3 19a6 6 0 0112 0" />
       <path d="M16 5.2a3.2 3.2 0 010 5.6M17.5 19a6 6 0 00-2.2-4.6" />
+    </svg>
+  )
+}
+
+/** A percent sign — a share of a sale, which is the whole of what a reseller is. */
+export function IconShare() {
+  return (
+    <svg {...S}>
+      <circle cx="7.5" cy="7.5" r="2.2" />
+      <circle cx="16.5" cy="16.5" r="2.2" />
+      <path d="M18 6L6 18" />
     </svg>
   )
 }

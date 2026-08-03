@@ -162,7 +162,7 @@ export async function verifyCode(_prev: AuthState, form: FormData): Promise<Auth
   revalidatePath('/', 'layout')
 
   // Only ever a path on this origin. An open redirect here would let a phishing link land
-  // someone on an attacker's page carrying a fresh Utsava session.
+  // someone on an attacker's page carrying a fresh Fremmo session.
   redirect(safeNext(parsed.data.next))
 }
 
@@ -198,7 +198,7 @@ export async function signOut() {
 // NO ENUMERATION, same as the console. Every sign-in failure says the same sentence whether
 // the address is unknown, the password is wrong or the account is unconfirmed. Supabase
 // distinguishes those; passing it through would turn this form into a way to test whether
-// somebody has an Utsava account.
+// somebody has an Fremmo account.
 // ---------------------------------------------------------------------------
 
 /** Supabase Auth's own floor is 6. Eight, because this one is chosen by the public. */
@@ -224,7 +224,7 @@ const signUpSchema = z.object({
 
 /**
  * One sentence for every sign-up failure — a taken address, a malformed one, a missing
- * service-role key. Saying which would answer "does this person have an Utsava account?" to
+ * service-role key. Saying which would answer "does this person have an Fremmo account?" to
  * anybody who asks, which is the same leak REFUSED exists to close on the sign-in side.
  */
 const SIGNUP_REFUSED =
@@ -379,7 +379,7 @@ export async function signUpWithEmail(
     /*
      * createUser is candid where signUp is not: a taken address comes back as a plain "already
      * registered" error rather than the decoy user signUp returns. That candour must not reach
-     * the screen — it would turn this form into a way to test who has an Utsava account — so
+     * the screen — it would turn this form into a way to test who has an Fremmo account — so
      * every failure here, taken address or malformed one, gets the same sentence below.
      */
     if (error || !data.user) return { mode: 'signup', error: SIGNUP_REFUSED }

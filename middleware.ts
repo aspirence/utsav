@@ -1,6 +1,6 @@
 import { NextResponse, type NextRequest } from 'next/server'
 
-import { createUtsavaServerClient, hasSupabaseEnv } from '@/lib/db'
+import { createFremmoServerClient, hasSupabaseEnv } from '@/lib/db'
 
 /**
  * Edge middleware.
@@ -102,7 +102,7 @@ async function refreshSession(request: NextRequest): Promise<NextResponse> {
   // Through @/lib/db rather than @supabase/ssr directly. pnpm's strict layout means a
   // transitive dependency is not resolvable from here, and going through the package keeps
   // one typed factory instead of a second client configured slightly differently.
-  const supabase = createUtsavaServerClient({
+  const supabase = createFremmoServerClient({
     getAll: () => request.cookies.getAll().map(({ name, value }) => ({ name, value })),
     setAll: (list) => {
       for (const { name, value } of list) request.cookies.set(name, value)

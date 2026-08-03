@@ -42,7 +42,7 @@ export default async function AdminVendorDetailPage({
         description={`${vendor.locality}, ${vendor.city} · ${vendor.category}`}
         action={
           <div className="flex gap-2">
-            {vendor.isAnchor && <Pill tone="amber">Utsava-owned studio</Pill>}
+            {vendor.isAnchor && <Pill tone="amber">Fremmo-owned studio</Pill>}
             <Pill tone={vendor.status === 'live' ? 'green' : 'neutral'}>
               {vendor.status.replace(/_/g, ' ')}
             </Pill>

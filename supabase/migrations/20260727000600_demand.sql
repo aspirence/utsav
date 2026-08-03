@@ -1,5 +1,5 @@
 -- ============================================================================
--- Utsava — 000600 · Demand spine
+-- Fremmo — 000600 · Demand spine
 -- Plan §5: "The demand spine (green) is the product: events → enquiries → leads →
 -- quotes → bookings."
 -- Plan §1: "Lead quality is an engineering feature: OTP verification, budget and date

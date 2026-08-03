@@ -44,6 +44,20 @@ export type VendorMemberRole = 'owner' | 'manager' | 'responder'
 
 export type StaffRoleKind = 'field_agent' | 'moderator' | 'finance' | 'super'
 
+/**
+ * Resellers — 20260803000100.
+ *
+ * NOT a member of StaffRoleKind, and that separation is a security boundary rather than a
+ * modelling preference. app.is_staff() with no arguments passes for any staff row, so a
+ * 'reseller' value in that union would grant read access to everything guarded by a bare
+ * is_staff() — the raw webhook payloads in invitation_payments among them. The migration
+ * header and supabase/tests/10_reseller_commissions.sql both spell this out.
+ */
+export type ResellerStatus = 'active' | 'suspended' | 'closed'
+
+/** pending → payable → paid, or reversed. See the migration for what each transition means. */
+export type ResellerCommissionStatus = 'pending' | 'payable' | 'paid' | 'reversed'
+
 export type MediaKind = 'image' | 'video'
 
 export type StoryStatus = 'draft' | 'pending_review' | 'published' | 'archived'
@@ -170,14 +184,184 @@ export type InvitationOrderRow = {
   balance_amount: number
   status: InvitationOrderStatus
   contact_name: string
-  contact_email: string
+  /**
+   * Nullable since 20260803000300. The booking form asks for a name and a WhatsApp number only;
+   * contact_phone is the channel the draft and payment links actually go to.
+   */
+  contact_email: string | null
   contact_phone: string
   customer_id: string | null
   payment_ref: string | null
   paid_at: string | null
   notes: string | null
+  /**
+   * What the card says. Added in 20260801000200. Shape owned by lib/invitation-card.ts and
+   * pinned by card_content_version; the column only guarantees it is a JSON object.
+   */
+  card_content: Record<string, unknown> | null
+  card_content_version: number | null
+  /** The unlisted public URL segment. Deliberately not `reference`, which is read out loud. */
+  public_slug: string | null
+  published_at: string | null
+  /**
+   * Attribution, added in 20260803000100. Both are resolved and frozen by a BEFORE INSERT
+   * trigger from the customer's live reseller assignment — never by a caller. Writing them
+   * from application code has no effect: the trigger overwrites whatever is supplied, and the
+   * column guard refuses a later change.
+   */
+  reseller_id: string | null
+  /** Basis points in force when the order was placed. 250 = 2.5%. */
+  reseller_commission_bps: number | null
+  /**
+   * Bearer token for the post-checkout details form — 20260803000300.
+   *
+   * NEVER SEND THIS TO A BROWSER except as the one-time return value of placeInvitationOrder(),
+   * to the session that just created the row. It authorises a write to the card wording, so
+   * putting it in a page a customer can link to or screenshot defeats the point of it not being
+   * the reference.
+   */
+  details_token: string
   created_at: string
   updated_at: string
+}
+
+/**
+ * public.resellers — an external commercial partner. Migration 20260803000100.
+ *
+ * Service-role write only. The console writes it after requireSuper(), exactly as staff_roles
+ * are written; there is no client INSERT or UPDATE policy.
+ */
+export type ResellerRow = {
+  id: string
+  profile_id: string
+  display_name: string
+  /** Human-quotable on a statement: FRM-RS-XXX. */
+  code: string
+  /** Basis points, not percent. 250 = 2.5%. */
+  commission_bps: number
+  status: ResellerStatus
+  contact_email: string | null
+  contact_phone: string | null
+  notes: string | null
+  created_by: string | null
+  created_at: string
+  updated_at: string
+}
+
+/**
+ * public.reseller_customers — account ownership.
+ *
+ * A row with `released_at: null` means every future invitation order by that customer is
+ * attributed to that reseller. Releasing stops future attribution and retracts nothing.
+ */
+export type ResellerCustomerRow = {
+  id: string
+  reseller_id: string
+  customer_id: string
+  assigned_by: string | null
+  assigned_at: string
+  released_at: string | null
+  release_reason: string | null
+  created_at: string
+  updated_at: string
+}
+
+/**
+ * public.reseller_commissions — the money. Plan §5 rules apply in full.
+ *
+ * Every row is written by app.accrue_reseller_commission(), a trigger on invitation_orders
+ * that fires off the paid_at transition. There is no client write policy and there must never
+ * be one: a reseller who could insert here would pay themselves.
+ */
+export type ResellerCommissionRow = {
+  id: string
+  reseller_id: string
+  order_id: string
+  /** Copied from the order, which froze it at insert. Not read live from the reseller. */
+  rate_bps: number
+  /** Integer paise the rate was applied to. Stored, not recomputed — see the migration. */
+  base_amount: number
+  amount: number
+  status: ResellerCommissionStatus
+  earned_at: string
+  payable_at: string | null
+  paid_at: string | null
+  reversed_at: string | null
+  reversal_reason: string | null
+  settlement_ref: string | null
+  created_at: string
+  updated_at: string
+}
+
+/**
+ * public.my_reseller — the reseller's own record, safe columns only.
+ *
+ * public.resellers carries NO self-select policy: a reseller reading the base table gets
+ * nothing. This view is how they read themselves, and it withholds `notes` and `created_by` —
+ * the staff record *about* the partner rather than the partner's own data.
+ *
+ * NEVER ADD `notes` OR `created_by` HERE. That is the entire reason the view exists; the
+ * migration's policy section explains why a column-level revoke could not do the job instead.
+ *
+ * Returns a suspended reseller's row, unlike app.my_reseller_id(), so the dashboard can tell
+ * somebody they are suspended rather than showing them an empty screen.
+ */
+export type MyResellerRow = {
+  id: string
+  display_name: string
+  code: string
+  commission_bps: number
+  status: ResellerStatus
+  contact_email: string | null
+  contact_phone: string | null
+  created_at: string
+}
+
+/**
+ * public.reseller_orders — what a reseller may see of an order they earned on.
+ *
+ * A masked view with definer semantics, the same construction as public.vendor_leads and for
+ * the same reason. Its `reseller_id = app.my_reseller_id()` clause is the authorization
+ * boundary, not a filter.
+ *
+ * NEVER ADD contact_email OR contact_phone HERE. A reseller with the customer's phone number
+ * can take the relationship off-platform, which is the disintermediation risk plan §11 exists
+ * to manage. A first name is enough to recognise your own introduction on a statement.
+ */
+export type ResellerOrderRow = {
+  order_id: string
+  reference: string
+  template_slug: string
+  template_name: string
+  template_price: number
+  status: InvitationOrderStatus
+  created_at: string
+  paid_at: string | null
+  reseller_id: string
+  customer_first_name: string
+  commission_rate_bps: number | null
+  commission_amount: number | null
+  commission_status: ResellerCommissionStatus | null
+  commission_earned_at: string | null
+  commission_paid_at: string | null
+}
+
+/**
+ * public.invitation_cards — the published invitation, for anonymous readers.
+ *
+ * The only object granted to `anon` that reads invitation_orders. It carries no contact detail
+ * and no amount, and its `published_at is not null` clause is the authorization boundary rather
+ * than a filter — see supabase/tests/09_invitation_cards.sql, which asserts both by absence.
+ *
+ * NEVER ADD A CONTACT OR AMOUNT COLUMN HERE. The link is forwarded to every guest by design.
+ */
+export type InvitationCardRow = {
+  public_slug: string
+  template_slug: string
+  template_name: string
+  card_content: Record<string, unknown> | null
+  card_content_version: number | null
+  published_at: string
 }
 
 /**
@@ -675,6 +859,22 @@ export type Database = {
         Omit<Partial<InvitationPaymentRow>, 'id' | 'created_at' | 'updated_at' | 'received_at'>
       >
 
+      /*
+       * Resellers and their money. All three are read-only from any client — SELECT policies
+       * and nothing else, per CLAUDE.md's second non-negotiable. resellers and
+       * reseller_customers are written by /admin/resellers under the service-role key after
+       * requireSuper(); reseller_commissions is written only by the accrual trigger.
+       */
+      resellers: Table<ResellerRow, Omit<Partial<ResellerRow>, 'id' | 'created_at' | 'updated_at'>>
+      reseller_customers: Table<
+        ResellerCustomerRow,
+        Omit<Partial<ResellerCustomerRow>, 'id' | 'created_at' | 'updated_at'>
+      >
+      reseller_commissions: Table<
+        ResellerCommissionRow,
+        Omit<Partial<ResellerCommissionRow>, 'id' | 'created_at' | 'updated_at'>
+      >
+
       vendors: Table<VendorRow>
       // Read-only from a client. `vendor_members_select_member` admits fellow members;
       // `vendor_members_write_owner` restricts every write to the vendor's owner.
@@ -701,6 +901,9 @@ export type Database = {
     }
     Views: {
       vendor_leads: View<VendorLeadRow>
+      invitation_cards: View<InvitationCardRow>
+      reseller_orders: View<ResellerOrderRow>
+      my_reseller: View<MyResellerRow>
     }
     Functions: {
       search_vendors: {
@@ -727,6 +930,21 @@ export type Database = {
           p_reference: string
           p_payment_ref: string
           p_paid_at?: string
+        }
+        Returns: InvitationOrderRow
+      }
+      /**
+       * Writes the card wording onto one order — 20260803000300.
+       *
+       * Keyed on details_token, not on the reference. service_role only: the token is the
+       * authorisation, and only the server action ever holds one.
+       */
+      save_invitation_card: {
+        Args: {
+          p_token: string
+          p_content: Json
+          p_version: number
+          p_slug: string
         }
         Returns: InvitationOrderRow
       }

@@ -1,5 +1,5 @@
 -- ============================================================================
--- Utsava — 001300 · Row Level Security policies
+-- Fremmo — 001300 · Row Level Security policies
 --
 -- Plan §6 golden rules, implemented literally:
 --   1. default-deny on every table                       → RLS enabled in each schema

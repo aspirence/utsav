@@ -32,7 +32,7 @@ import { hasSupabaseEnv } from '@/lib/db'
  * the only way in.
  */
 
-const COOKIE = 'utsava_admin_local'
+const COOKIE = 'fremmo_admin_local'
 
 /** Eight hours. A working day, and short enough that a forgotten browser is not a standing key. */
 const TTL_MS = 8 * 60 * 60 * 1000
@@ -187,7 +187,7 @@ function sign(data: string, secret: string): string {
  * length without needing to pad or truncate anything.
  */
 function constantTimeEqual(a: string, b: string): boolean {
-  const ha = createHmac('sha256', 'utsava-compare').update(a).digest()
-  const hb = createHmac('sha256', 'utsava-compare').update(b).digest()
+  const ha = createHmac('sha256', 'fremmo-compare').update(a).digest()
+  const hb = createHmac('sha256', 'fremmo-compare').update(b).digest()
   return timingSafeEqual(ha, hb)
 }

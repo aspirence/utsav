@@ -79,8 +79,8 @@ export function TrackView({
 // First-party identifiers
 // ---------------------------------------------------------------------------
 
-const ANONYMOUS_KEY = 'utsava.aid.v1'
-const SESSION_KEY = 'utsava.sid.v1'
+const ANONYMOUS_KEY = 'fremmo.aid.v1'
+const SESSION_KEY = 'fremmo.sid.v1'
 
 /**
  * A guest has no profile — plan §2 puts the account behind the enquiry, not in front of

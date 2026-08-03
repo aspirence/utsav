@@ -1,5 +1,5 @@
 -- ============================================================================
--- Utsava — 001600 · Public RPC wrappers
+-- Fremmo — 001600 · Public RPC wrappers
 --
 -- The `app` schema is deliberately NOT exposed through PostgREST (config.toml
 -- api.schemas is ["public", "graphql_public"]), because it holds the trusted helpers

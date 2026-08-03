@@ -54,7 +54,7 @@ values (
   'wedding',
   'Ananya Iyer', '+919000000010', 'ananya@test.local',
   'verified', now(),
-  'I agree that Utsava may share these details with up to 5 matching vendors.', 'v1'
+  'I agree that Fremmo may share these details with up to 5 matching vendors.', 'v1'
 );
 
 insert into public.leads (id, enquiry_id, vendor_id, routed_seq, status)

@@ -19,16 +19,16 @@ interface StaticPage {
 
 const PAGES: Record<string, StaticPage> = {
   'anchor-studio-policy': {
-    title: 'Our studio on Utsava',
+    title: 'Our studio on Fremmo',
     intro:
-      "Utsava's founder operates a photography studio that lists on this platform. " +
+      "Fremmo's founder operates a photography studio that lists on this platform. " +
       'We think you should know that before you use it, so here is exactly how it works ' +
       'and how we keep ourselves honest.',
     sections: [
       {
         heading: 'It is disclosed everywhere it appears',
         body:
-          'Utsava Studio carries a visible badge on its profile, on every search result card, ' +
+          'Fremmo Studio carries a visible badge on its profile, on every search result card, ' +
           'and in every enquiry it receives. There is no version of this platform where you ' +
           'encounter it without being told who owns it.',
       },
@@ -61,7 +61,7 @@ const PAGES: Record<string, StaticPage> = {
   privacy: {
     title: 'Privacy Policy',
     intro:
-      'How Utsava collects, uses and protects your personal data under the Digital Personal ' +
+      'How Fremmo collects, uses and protects your personal data under the Digital Personal ' +
       'Data Protection Act.',
     sections: [
       {
@@ -97,12 +97,12 @@ const PAGES: Record<string, StaticPage> = {
   },
   terms: {
     title: 'Terms of Use',
-    intro: 'The terms governing use of the Utsava platform by customers and vendors.',
+    intro: 'The terms governing use of the Fremmo platform by customers and vendors.',
     sections: [
       {
-        heading: 'What Utsava is',
+        heading: 'What Fremmo is',
         body:
-          'Utsava is a discovery and booking marketplace. Contracts for services are between ' +
+          'Fremmo is a discovery and booking marketplace. Contracts for services are between ' +
           'you and the vendor. We are not a party to them.',
       },
       {
@@ -114,7 +114,7 @@ const PAGES: Record<string, StaticPage> = {
       {
         heading: 'Reviews',
         body:
-          'Only a customer with a completed booking made through Utsava can leave a review, and ' +
+          'Only a customer with a completed booking made through Fremmo can leave a review, and ' +
           'exactly one review per booking. Vendors have a right of reply. Vendors cannot edit, ' +
           'hide or remove a review.',
       },
@@ -122,7 +122,7 @@ const PAGES: Record<string, StaticPage> = {
   },
   'vendor-terms': {
     title: 'Vendor Agreement',
-    intro: 'Listing, lead, subscription and payout terms for vendors on Utsava.',
+    intro: 'Listing, lead, subscription and payout terms for vendors on Fremmo.',
     sections: [
       {
         heading: 'Leads',

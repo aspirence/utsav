@@ -71,7 +71,19 @@ export default async function BookInvitationPage({
         <span className="text-ink-900">Book</span>
       </nav>
 
-      <div className="grid gap-10 lg:grid-cols-[minmax(0,0.8fr)_minmax(0,1.2fr)] lg:gap-14">
+      {/*
+        The form gets more of the row than it did.
+
+        0.8fr / 1.2fr put the form in about 57% of a 1216px container, and the form splits itself
+        into two columns inside that — which left each field about 300px wide, so "Groom's
+        parents" and "Date, as it should read" wrapped their own labels. The reassurance column is
+        four short blocks and a thumbnail; it does not need 43%.
+
+        Fixed 340px rather than a second fraction: the left column's content has a natural width
+        and stops benefiting from more, while every extra pixel on the right is a field that fits
+        on one line.
+      */}
+      <div className="grid gap-10 lg:grid-cols-[340px_minmax(0,1fr)] lg:gap-12 xl:gap-16">
         <div className="lg:sticky lg:top-24 lg:self-start">
           <p className="inline-flex items-center rounded-full border border-ink-200 bg-surface-raised px-4 py-2 text-xs font-semibold uppercase tracking-[0.14em] text-ink-600">
             Premium wedding invitations

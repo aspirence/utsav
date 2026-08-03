@@ -1,5 +1,5 @@
 -- ============================================================================
--- Utsava — 000900 · Monetisation
+-- Fremmo — 000900 · Monetisation
 -- Plan §5: "plans, subscriptions, subscription_invoices (GST-ready)"
 -- Plan §10: "180 paying vendors by Mar 2028; renewal ≥ 55–60%" — renewal is the
 -- model's most sensitive assumption (§1), so the renewal signals live here.

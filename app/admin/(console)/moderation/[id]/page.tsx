@@ -96,7 +96,7 @@ export default async function ModerationItemPage({
                 same people as everyone else. Saying so here is a guardrail against the
                 obvious temptation. */}
             <p className="mt-4 border-t border-ink-100 pt-3 text-xs text-ink-500">
-              Utsava-owned listings go through this queue on identical terms. If this item
+              Fremmo-owned listings go through this queue on identical terms. If this item
               belongs to the anchor studio, escalate rather than deciding it yourself.
             </p>
           </Panel>

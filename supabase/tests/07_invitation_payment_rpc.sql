@@ -1,5 +1,5 @@
 -- ============================================================================
--- Utsava — public.record_invitation_payment() is reachable, and only by service_role
+-- Fremmo — public.record_invitation_payment() is reachable, and only by service_role
 --
 -- CLAUDE.md: "Add a pgTAP test in the same PR for anything touching leads, money or
 -- reviews." This wrapper is the single path by which an order becomes paid, so its grant

@@ -164,6 +164,13 @@ export interface AccountInvitationOrder {
   totalLabel: string
   paidAt: string | null
   createdAt: string
+  /** The unlisted public link, once the card has been published. Null while there is no card. */
+  publicSlug: string | null
+}
+
+/** Part of the pre-migration shim above. Delete with it. */
+function cardLink(row: Record<string, unknown>): string | null {
+  return row.published_at && typeof row.public_slug === 'string' ? row.public_slug : null
 }
 
 /**
@@ -187,12 +194,29 @@ export async function getMyInvitationOrders(): Promise<AccountInvitationOrder[]>
   const user = await getSessionUser()
   if (!user) return []
 
-  const { data, error } = await supabase
+  const BASE =
+    'reference, template_slug, template_name, status, booking_amount, balance_amount, template_price, paid_at, created_at'
+
+  /*
+   * TEMPORARY, AND DELETABLE THE DAY THE MIGRATION LANDS.
+   *
+   * `public_slug` and `published_at` arrive in 20260801000200, which cannot be applied from this
+   * environment — there is no Docker and the CLI is not linked. Selecting a column PostgREST does
+   * not know about fails the whole query with 42703, which would empty this list for everybody who
+   * already has orders: a page that worked before the change would show "nothing ordered yet".
+   *
+   * So the card columns are asked for, and their absence is treated as "no card" rather than as
+   * "no orders". Once `supabase db push` has run, delete the fallback and inline the full select —
+   * it is a compatibility shim for one unapplied migration, not a pattern.
+   */
+  const withCard = await supabase
     .from('invitation_orders')
-    .select(
-      'reference, template_slug, template_name, status, booking_amount, balance_amount, template_price, paid_at, created_at',
-    )
+    .select(`${BASE}, public_slug, published_at`)
     .order('created_at', { ascending: false })
+
+  const { data, error } = withCard.error
+    ? await supabase.from('invitation_orders').select(BASE).order('created_at', { ascending: false })
+    : withCard
 
   if (error || !data) return []
 
@@ -207,6 +231,12 @@ export async function getMyInvitationOrders(): Promise<AccountInvitationOrder[]>
     totalLabel: formatPaise(o.template_price),
     paidAt: o.paid_at,
     createdAt: o.created_at,
+    // Only a published card has a reachable link. An order carrying a slug but no published_at
+    // cannot exist — invitation_orders_published_is_complete refuses it — but reading both is
+    // what makes that guarantee visible here rather than assumed.
+    // The narrow select has neither column; the wide one has both. One cast at the boundary
+    // rather than two shapes threaded through the mapper, and it goes when the shim does.
+    publicSlug: cardLink(o),
   }))
 }
 

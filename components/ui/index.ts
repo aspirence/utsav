@@ -1,5 +1,5 @@
 /**
- * @/components/ui — the Utsava design system.
+ * @/components/ui — the Fremmo design system.
  * Plan §4.1: "packages/ui — design system (Tailwind + shadcn/ui)".
  */
 

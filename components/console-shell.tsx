@@ -1,5 +1,6 @@
 import type { ReactNode } from 'react'
 
+import { BottomNav, BottomNavSpacer, type BottomNavItem } from '@/components/bottom-nav'
 import { ConsoleTopBar, type ConsoleTopBarProps } from '@/components/console-topbar'
 
 /**
@@ -23,6 +24,7 @@ export function ConsoleShell({
   sidebar,
   topBar,
   footnote,
+  bottomNav,
   children,
 }: {
   /**
@@ -34,6 +36,19 @@ export function ConsoleShell({
   topBar: ConsoleTopBarProps
   /** The one line under the content. Says what this surface is, or warns about its state. */
   footnote: string
+  /**
+   * The phone tab bar: this surface's four or five most-used destinations.
+   *
+   * OPTIONAL, AND THE FALLBACK IS THE OLD BEHAVIOUR. A surface that passes nothing keeps the
+   * hamburger drawer it already had and loses nothing — which is what lets this be added to the
+   * shell before every caller has been given its items.
+   *
+   * Below `lg` the rail is a drawer behind a hamburger (see console-sidebar.tsx), so a
+   * workspace on a phone is one tap from any screen but zero taps from none. That is fine for a
+   * settings page and wrong for the four screens somebody moves between all day. The bar carries
+   * those; the drawer keeps carrying the rest.
+   */
+  bottomNav?: BottomNavItem[]
   children: ReactNode
 }) {
   return (
@@ -48,7 +63,21 @@ export function ConsoleShell({
         <footer className="mx-auto max-w-[1500px] px-4 pb-8 sm:px-6">
           <p className="border-t border-ink-200 pt-5 text-xs text-ink-500">{footnote}</p>
         </footer>
+
+        {/*
+          The spacer sits inside the scrolling column, after the footnote, so the last line of
+          every page clears the bar. Padding <main> instead would leave the footnote underneath
+          it — and the footnote is where the "no database attached" warning goes.
+
+          `lg` on both, matching the rail's own breakpoint: the bar has to vanish exactly where
+          the sidebar appears, or a wide phone in landscape gets both at once.
+        */}
+        {bottomNav && bottomNav.length > 0 && <BottomNavSpacer hideFrom="lg" />}
       </div>
+
+      {bottomNav && bottomNav.length > 0 && (
+        <BottomNav items={bottomNav} hideFrom="lg" label="Workspace" />
+      )}
     </div>
   )
 }

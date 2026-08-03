@@ -3,7 +3,7 @@
 import { revalidatePath } from 'next/cache'
 import { z } from 'zod'
 
-import type { UtsavaClient } from '@/lib/db'
+import type { FremmoClient } from '@/lib/db'
 
 import { getBlockedDates } from '@/lib/partner-queries'
 import { getServerClientOrNull, hasSupabaseEnv } from '@/lib/supabase'
@@ -333,7 +333,7 @@ export async function loadVendorAvailability(): Promise<AvailabilitySnapshot> {
 // ---------------------------------------------------------------------------
 
 type VendorSession =
-  | { ok: true; supabase: UtsavaClient; vendorId: string }
+  | { ok: true; supabase: FremmoClient; vendorId: string }
   | { ok: false; state: CalendarState }
 
 async function requireVendorSession(): Promise<VendorSession> {
@@ -382,7 +382,7 @@ async function requireVendorSession(): Promise<VendorSession> {
  * local structural type rather than widened to `any`, so nothing untyped leaves the
  * function. The filters mirror app.is_vendor_member(): active, accepted, not revoked.
  */
-async function resolveVendorId(supabase: UtsavaClient): Promise<string | null> {
+async function resolveVendorId(supabase: FremmoClient): Promise<string | null> {
   try {
     const {
       data: { user },
@@ -427,7 +427,7 @@ type MembershipLookup = {
  * A year's worth of blocks from the first of the current month, so the grid can render
  * the whole of this month — including days already past — without a second query.
  */
-async function readDays(supabase: UtsavaClient, vendorId: string): Promise<AvailabilityDay[]> {
+async function readDays(supabase: FremmoClient, vendorId: string): Promise<AvailabilityDay[]> {
   const windowStart = `${todayInIndia().slice(0, 7)}-01`
 
   const { data, error } = await supabase
