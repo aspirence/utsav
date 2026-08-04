@@ -71,6 +71,13 @@ export function SiteHeaderShell({ children }: { children: React.ReactNode }) {
     <header
       data-transparent={transparent ? '' : undefined}
       className={
+        // Every fragment ends in a space. It used to be `overlay ? '-mb-20' : ''` with none,
+        // which welded the two fragments into `-mb-20border-transparent` — one class that does
+        // not exist, in place of two that do. Both were lost, and the visible half of that was
+        // the overlay: with no -mb-20 the bar stopped sitting on the hero and painted the page's
+        // cream surface instead, while data-transparent went on knocking the type white. White
+        // on cream, at the top of the homepage only, which is the one place the bar is meant to
+        // disappear. Keep the trailing spaces.
         'group sticky top-0 z-40 border-b transition-colors duration-300 ' +
         (overlay ? '-mb-20 ' : '') +
         (transparent

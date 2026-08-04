@@ -45,8 +45,9 @@ export async function DiscoverView({
 
   const styles = toArray(searchParams.styles)
   const freeOn = typeof searchParams.freeOn === 'string' ? searchParams.freeOn : undefined
-  const sort = (typeof searchParams.sort === 'string' ? searchParams.sort : 'relevance') as
-    | DiscoverQuery['sort']
+  const sort = (
+    typeof searchParams.sort === 'string' ? searchParams.sort : 'relevance'
+  ) as DiscoverQuery['sort']
   const page = Number(searchParams.page ?? 1) || 1
   const budgetMax = numParam(searchParams.budgetMax)
   const minRating = numParam(searchParams.minRating)
@@ -87,9 +88,9 @@ export async function DiscoverView({
 
   return (
     <>
-      <div className="border-b border-ink-100 bg-surface-sunken/60">
+      <div className="border-ink-100 bg-surface-sunken/60 border-b">
         <Container className="py-8 sm:py-10">
-          <nav aria-label="Breadcrumb" className="mb-3 text-sm text-ink-500">
+          <nav aria-label="Breadcrumb" className="text-ink-500 mb-3 text-sm">
             <Link href="/" className="hover:text-ink-800">
               Home
             </Link>
@@ -105,8 +106,8 @@ export async function DiscoverView({
             )}
           </nav>
 
-          <h1 className="text-3xl text-ink-900 sm:text-4xl">{heading}</h1>
-          <p className="mt-2 text-ink-600">
+          <h1 className="text-ink-900 text-3xl sm:text-4xl">{heading}</h1>
+          <p className="text-ink-600 mt-2">
             {total} {total === 1 ? 'listing' : 'listings'}
             {category?.description ? ` · ${category.description}` : ''}
           </p>
@@ -139,9 +140,7 @@ export async function DiscoverView({
 
           {freeOn && (
             <p className="mt-4">
-              <Badge tone="success">
-                Showing only vendors free on {formatDate(freeOn)}
-              </Badge>
+              <Badge tone="success">Showing only vendors free on {formatDate(freeOn)}</Badge>
             </p>
           )}
         </Container>
@@ -149,15 +148,15 @@ export async function DiscoverView({
 
       <Container className="py-10">
         {vendors.length === 0 ? (
-          <div className="rounded-xl border border-dashed border-ink-200 p-12 text-center">
-            <p className="font-display text-xl text-ink-900">Nothing matches those filters yet</p>
-            <p className="mx-auto mt-2 max-w-md text-sm text-ink-600">
-              We are still onboarding {category?.pluralName.toLowerCase()} in this area.
-              Try removing a style filter, or browse the whole city.
+          <div className="border-ink-200 rounded-xl border border-dashed p-12 text-center">
+            <p className="font-display text-ink-900 text-xl">Nothing matches those filters yet</p>
+            <p className="text-ink-600 mx-auto mt-2 max-w-md text-sm">
+              We are still onboarding {category?.pluralName.toLowerCase()} in this area. Try
+              removing a style filter, or browse the whole city.
             </p>
             <Link
               href={`/${citySlug}/${categorySlug}`}
-              className="mt-5 inline-block text-sm font-medium text-primary-700 hover:text-primary-800"
+              className="text-primary-700 hover:text-primary-800 mt-5 inline-block text-sm font-medium"
             >
               See all {category?.pluralName.toLowerCase()} in {city?.name} →
             </Link>
@@ -200,8 +199,8 @@ function FilterChip({ href, active, label }: { href: string; active: boolean; la
       href={href}
       className={
         active
-          ? 'rounded-full bg-ink-900 px-3.5 py-1.5 text-sm font-medium text-white'
-          : 'rounded-full border border-ink-200 bg-surface-raised px-3.5 py-1.5 text-sm text-ink-700 transition-colors hover:border-ink-300 hover:text-ink-900'
+          ? 'bg-ink-900 rounded-full px-3.5 py-1.5 text-sm font-medium text-white'
+          : 'border-ink-200 bg-surface-raised text-ink-700 hover:border-ink-300 hover:text-ink-900 rounded-full border px-3.5 py-1.5 text-sm transition-colors'
       }
     >
       {label}

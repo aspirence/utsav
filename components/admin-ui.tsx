@@ -18,8 +18,8 @@ export function PageHeader({
   return (
     <div className="mb-6 flex flex-wrap items-start justify-between gap-4">
       <div>
-        <h1 className="font-display text-2xl text-ink-900">{title}</h1>
-        {description && <p className="mt-1 max-w-3xl text-sm text-ink-600">{description}</p>}
+        <h1 className="font-display text-ink-900 text-2xl">{title}</h1>
+        {description && <p className="text-ink-600 mt-1 max-w-3xl text-sm">{description}</p>}
       </div>
       {action}
     </div>
@@ -28,9 +28,7 @@ export function PageHeader({
 
 export function Panel({ children, className }: { children: ReactNode; className?: string }) {
   return (
-    <div className={`rounded-lg border border-ink-200 bg-white ${className ?? ''}`}>
-      {children}
-    </div>
+    <div className={`border-ink-200 rounded-lg border bg-white ${className ?? ''}`}>{children}</div>
   )
 }
 
@@ -58,22 +56,20 @@ export function StatBar({
   return (
     <div className="p-4">
       <div className="flex items-baseline justify-between gap-3">
-        <span className="text-sm font-medium text-ink-800">{label}</span>
-        <span className="tabular-nums text-sm text-ink-500">
-          <strong className="font-semibold text-ink-900">{value.toLocaleString('en-IN')}</strong>
+        <span className="text-ink-800 text-sm font-medium">{label}</span>
+        <span className="text-ink-500 text-sm tabular-nums">
+          <strong className="text-ink-900 font-semibold">{value.toLocaleString('en-IN')}</strong>
           {' / '}
           {target.toLocaleString('en-IN')}
           {unit ? ` ${unit}` : ''}
         </span>
       </div>
-      <div className="mt-2 h-2 overflow-hidden rounded-full bg-ink-100">
+      <div className="bg-ink-100 mt-2 h-2 overflow-hidden rounded-full">
         <div className={`h-full rounded-full ${tone}`} style={{ width: `${pct}%` }} />
       </div>
       <div className="mt-1.5 flex items-center justify-between text-xs">
         <span className="text-ink-500">{hint ?? ''}</span>
-        <span className={pct >= 100 ? 'font-medium text-success-700' : 'text-ink-500'}>
-          {pct}%
-        </span>
+        <span className={pct >= 100 ? 'text-success-700 font-medium' : 'text-ink-500'}>{pct}%</span>
       </div>
     </div>
   )
@@ -98,19 +94,19 @@ export function AdminTable<T>({
   rowKey: (row: T) => string
 }) {
   if (rows.length === 0) {
-    return <div className="p-8 text-center text-sm text-ink-500">{empty}</div>
+    return <div className="text-ink-500 p-8 text-center text-sm">{empty}</div>
   }
 
   return (
     <div className="overflow-x-auto">
       <table className="w-full text-sm">
         <thead>
-          <tr className="border-b border-ink-200 text-left">
+          <tr className="border-ink-200 border-b text-left">
             {columns.map((c) => (
               <th
                 key={c.key}
                 scope="col"
-                className={`whitespace-nowrap px-4 py-2.5 text-xs font-semibold uppercase tracking-wide text-ink-500 ${
+                className={`text-ink-500 px-4 py-2.5 text-xs font-semibold tracking-wide whitespace-nowrap uppercase ${
                   c.align === 'right' ? 'text-right' : ''
                 }`}
               >
@@ -121,7 +117,7 @@ export function AdminTable<T>({
         </thead>
         <tbody>
           {rows.map((row) => (
-            <tr key={rowKey(row)} className="border-b border-ink-100 last:border-0 hover:bg-ink-50">
+            <tr key={rowKey(row)} className="border-ink-100 hover:bg-ink-50 border-b last:border-0">
               {columns.map((c) => (
                 <td
                   key={c.key}
@@ -154,7 +150,7 @@ export function Pill({
   }
   return (
     <span
-      className={`inline-flex items-center whitespace-nowrap rounded-full px-2 py-0.5 text-xs font-medium ${tones[tone]}`}
+      className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium whitespace-nowrap ${tones[tone]}`}
     >
       {children}
     </span>

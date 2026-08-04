@@ -80,10 +80,7 @@ export interface AuthState {
 }
 
 /** Step one: ask the auth server to text a code. */
-export async function requestCode(
-  _prev: AuthState,
-  form: FormData,
-): Promise<AuthState> {
+export async function requestCode(_prev: AuthState, form: FormData): Promise<AuthState> {
   const parsed = phoneSchema.safeParse({
     phone: text(form.get('phone')),
     next: text(form.get('next')),
@@ -447,7 +444,6 @@ async function isHttpsRequest(): Promise<boolean> {
     return false
   }
 }
-
 
 /**
  * Supabase's auth errors are written for developers. These are the ones a real user

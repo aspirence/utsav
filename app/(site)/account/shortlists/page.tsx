@@ -23,14 +23,14 @@ export default async function ShortlistsPage() {
   if (saved.length === 0) {
     return (
       <div className="max-w-prose">
-        <h2 className="font-display text-xl text-ink-900">Nothing saved yet</h2>
-        <p className="mt-3 leading-relaxed text-ink-700">
-          Tap Shortlist on any vendor and they turn up here. Anything you saved before
-          signing in stays on that device until you save it again.
+        <h2 className="font-display text-ink-900 text-xl">Nothing saved yet</h2>
+        <p className="text-ink-700 mt-3 leading-relaxed">
+          Tap Shortlist on any vendor and they turn up here. Anything you saved before signing in
+          stays on that device until you save it again.
         </p>
         <Link
           href="/lucknow/photography"
-          className="mt-6 inline-flex items-center gap-2 rounded-md bg-primary-600 px-5 py-3 font-medium text-white transition-colors hover:bg-primary-700"
+          className="bg-primary-600 hover:bg-primary-700 mt-6 inline-flex items-center gap-2 rounded-md px-5 py-3 font-medium text-white transition-colors"
         >
           Browse photographers
           <span aria-hidden="true">&rarr;</span>
@@ -41,7 +41,7 @@ export default async function ShortlistsPage() {
 
   return (
     <div>
-      <h2 className="font-display text-xl text-ink-900">
+      <h2 className="font-display text-ink-900 text-xl">
         {saved.length} {saved.length === 1 ? 'vendor' : 'vendors'} saved
       </h2>
 
@@ -49,16 +49,16 @@ export default async function ShortlistsPage() {
         {saved.map((s) => (
           <li
             key={s.id}
-            className="flex flex-col rounded-2xl border border-ink-100 bg-surface-raised p-5"
+            className="border-ink-100 bg-surface-raised flex flex-col rounded-2xl border p-5"
           >
             <Link
               href={`/vendor/${s.vendorSlug}`}
-              className="font-display text-lg leading-tight text-ink-900 hover:text-primary-700"
+              className="font-display text-ink-900 hover:text-primary-700 text-lg leading-tight"
             >
               {s.vendorName}
             </Link>
 
-            <p className="mt-1 text-sm text-ink-600">
+            <p className="text-ink-600 mt-1 text-sm">
               {[s.localityName, s.cityName].filter(Boolean).join(', ') || '—'}
             </p>
 
@@ -68,12 +68,10 @@ export default async function ShortlistsPage() {
               </div>
             )}
 
-            <p className="mt-3 text-sm text-ink-700">{s.priceBandLabel}</p>
+            <p className="text-ink-700 mt-3 text-sm">{s.priceBandLabel}</p>
 
             {s.note && (
-              <p className="mt-3 border-l-2 border-ink-200 pl-3 text-sm text-ink-600">
-                {s.note}
-              </p>
+              <p className="border-ink-200 text-ink-600 mt-3 border-l-2 pl-3 text-sm">{s.note}</p>
             )}
 
             {/* mt-auto so the button sits on the floor of every card whatever the copy above

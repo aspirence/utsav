@@ -56,7 +56,7 @@ export function FreeOnDateFilter({
 
   return (
     <div className={cn('flex flex-wrap items-center gap-2', className)}>
-      <label className="inline-flex items-center gap-2 rounded-full border border-ink-200 bg-surface-raised py-1 pl-3.5 pr-1.5 text-sm text-ink-700">
+      <label className="border-ink-200 bg-surface-raised text-ink-700 inline-flex items-center gap-2 rounded-full border py-1 pr-1.5 pl-3.5 text-sm">
         <span className="whitespace-nowrap">Free on</span>
         <input
           type="date"
@@ -65,7 +65,7 @@ export function FreeOnDateFilter({
           onChange={handleChange}
           disabled={pending}
           aria-label="Show only vendors free on this date"
-          className="rounded-full bg-transparent px-1 py-1 text-sm text-ink-900 focus:outline-none"
+          className="text-ink-900 rounded-full bg-transparent px-1 py-1 text-sm focus:outline-none"
         />
       </label>
 
@@ -74,13 +74,13 @@ export function FreeOnDateFilter({
           type="button"
           onClick={() => go(undefined)}
           disabled={pending}
-          className="rounded-full px-3 py-1.5 text-sm font-medium text-ink-500 transition-colors hover:text-ink-800 disabled:opacity-60"
+          className="text-ink-500 hover:text-ink-800 rounded-full px-3 py-1.5 text-sm font-medium transition-colors disabled:opacity-60"
         >
           Clear date
         </button>
       )}
 
-      {pending && <span className="text-xs text-ink-500">Checking availability…</span>}
+      {pending && <span className="text-ink-500 text-xs">Checking availability…</span>}
     </div>
   )
 }

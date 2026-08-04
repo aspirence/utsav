@@ -63,10 +63,10 @@ export function EnquiryForm({
   return (
     <form action={formAction} className="space-y-8">
       {state.status === 'error' && (
-        <p className="rounded-lg bg-danger-50 px-4 py-3 text-sm text-danger-700">{state.message}</p>
+        <p className="bg-danger-50 text-danger-700 rounded-lg px-4 py-3 text-sm">{state.message}</p>
       )}
       {state.status === 'unconfigured' && (
-        <p className="rounded-lg bg-warning-50 px-4 py-3 text-sm text-warning-700">
+        <p className="bg-warning-50 text-warning-700 rounded-lg px-4 py-3 text-sm">
           {state.message}
         </p>
       )}
@@ -102,11 +102,11 @@ export function EnquiryForm({
         </Field>
         {/* min-h-11 on the label, not just a bigger box: the whole row is the hit area, and a
             20px checkbox in a 20px row is still a 20px target. */}
-        <label className="col-span-full flex min-h-11 cursor-pointer items-center gap-3 text-sm text-ink-700">
+        <label className="text-ink-700 col-span-full flex min-h-11 cursor-pointer items-center gap-3 text-sm">
           <input
             type="checkbox"
             name="dateFlexible"
-            className="h-5 w-5 shrink-0 rounded accent-primary-600 focus:outline-none focus:ring-2 focus:ring-primary-600/25"
+            className="accent-primary-600 focus:ring-primary-600/25 h-5 w-5 shrink-0 rounded focus:ring-2 focus:outline-none"
           />
           My dates are still flexible
         </label>
@@ -148,7 +148,7 @@ export function EnquiryForm({
               */
               <label
                 key={tag.slug}
-                className="inline-flex min-h-11 cursor-pointer items-center rounded-full border border-ink-200 bg-surface-raised px-4 text-sm text-ink-700 transition-colors has-[:checked]:border-ink-900 has-[:checked]:bg-ink-900 has-[:checked]:text-white has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-primary-600/40 has-[:focus-visible]:ring-offset-2"
+                className="border-ink-200 bg-surface-raised text-ink-700 has-[:checked]:border-ink-900 has-[:checked]:bg-ink-900 has-[:focus-visible]:ring-primary-600/40 inline-flex min-h-11 cursor-pointer items-center rounded-full border px-4 text-sm transition-colors has-[:checked]:text-white has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-offset-2"
               >
                 <input
                   type="checkbox"
@@ -188,9 +188,7 @@ export function EnquiryForm({
             name="message"
             rows={3}
             placeholder={
-              vendorName
-                ? `Tell ${vendorName} about your event…`
-                : 'Tell vendors about your event…'
+              vendorName ? `Tell ${vendorName} about your event…` : 'Tell vendors about your event…'
             }
             className={inputClass}
           />
@@ -200,17 +198,17 @@ export function EnquiryForm({
       {/* Plan §6: DPDP consent with purpose limitation, stated in full before submit. */}
       {/* The consent row stays items-start — its label runs to several lines, and centring a
           checkbox against a paragraph puts it halfway down the text. */}
-      <label className="flex cursor-pointer items-start gap-3 rounded-lg bg-surface-sunken p-4 text-sm text-ink-700">
+      <label className="bg-surface-sunken text-ink-700 flex cursor-pointer items-start gap-3 rounded-lg p-4 text-sm">
         <input
           type="checkbox"
           name="consentGiven"
           required
-          className="mt-0.5 h-5 w-5 shrink-0 rounded accent-primary-600 focus:outline-none focus:ring-2 focus:ring-primary-600/25"
+          className="accent-primary-600 focus:ring-primary-600/25 mt-0.5 h-5 w-5 shrink-0 rounded focus:ring-2 focus:outline-none"
         />
         <span>{CONSENT_TEXT}</span>
       </label>
       {fieldErrors.consentGiven && (
-        <p className="text-sm text-danger-700">{fieldErrors.consentGiven[0]}</p>
+        <p className="text-danger-700 text-sm">{fieldErrors.consentGiven[0]}</p>
       )}
 
       <SubmitButton />
@@ -251,7 +249,7 @@ const inputClass =
 function Fieldset({ legend, children }: { legend: string; children: React.ReactNode }) {
   return (
     <fieldset>
-      <legend className="mb-4 font-display text-xl text-ink-900">{legend}</legend>
+      <legend className="font-display text-ink-900 mb-4 text-xl">{legend}</legend>
       <div className="grid gap-4 sm:grid-cols-2">{children}</div>
     </fieldset>
   )
@@ -272,10 +270,10 @@ function Field({
 }) {
   return (
     <label className={`block ${className ?? ''}`}>
-      <span className="mb-1.5 block text-sm font-medium text-ink-800">{label}</span>
+      <span className="text-ink-800 mb-1.5 block text-sm font-medium">{label}</span>
       {children}
-      {hint && !error && <span className="mt-1 block text-xs text-ink-500">{hint}</span>}
-      {error && <span className="mt-1 block text-xs text-danger-700">{error[0]}</span>}
+      {hint && !error && <span className="text-ink-500 mt-1 block text-xs">{hint}</span>}
+      {error && <span className="text-danger-700 mt-1 block text-xs">{error[0]}</span>}
     </label>
   )
 }

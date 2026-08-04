@@ -41,7 +41,7 @@ export function EventForm({ cities }: { cities: { id: string; name: string }[] }
       <button
         type="button"
         onClick={() => setOpen(true)}
-        className="rounded-md bg-primary-600 px-5 py-3 font-medium text-white transition-colors hover:bg-primary-700"
+        className="bg-primary-600 hover:bg-primary-700 rounded-md px-5 py-3 font-medium text-white transition-colors"
       >
         Add an event
       </button>
@@ -49,17 +49,14 @@ export function EventForm({ cities }: { cities: { id: string; name: string }[] }
   }
 
   return (
-    <form
-      action={act}
-      className="rounded-2xl border border-ink-100 bg-surface-raised p-6"
-    >
+    <form action={act} className="border-ink-100 bg-surface-raised rounded-2xl border p-6">
       <div className="grid gap-5 sm:grid-cols-2">
         <Field label="What is it?" htmlFor="eventType">
           <select
             id="eventType"
             name="eventType"
             defaultValue="wedding"
-            className="w-full rounded-md border border-ink-200 bg-surface px-3.5 py-3 text-ink-900 outline-none focus:border-ink-400"
+            className="border-ink-200 bg-surface text-ink-900 focus:border-ink-400 w-full rounded-md border px-3.5 py-3 outline-none"
           >
             {TYPE_LABELS.map(([value, label]) => (
               <option key={value} value={value}>
@@ -75,7 +72,7 @@ export function EventForm({ cities }: { cities: { id: string; name: string }[] }
             name="name"
             type="text"
             placeholder="Radha & Dhanesh"
-            className="w-full rounded-md border border-ink-200 bg-surface px-3.5 py-3 text-ink-900 outline-none focus:border-ink-400 placeholder:text-ink-400"
+            className="border-ink-200 bg-surface text-ink-900 focus:border-ink-400 placeholder:text-ink-400 w-full rounded-md border px-3.5 py-3 outline-none"
           />
         </Field>
 
@@ -84,9 +81,9 @@ export function EventForm({ cities }: { cities: { id: string; name: string }[] }
             id="eventDate"
             name="eventDate"
             type="date"
-            className="w-full rounded-md border border-ink-200 bg-surface px-3.5 py-3 text-ink-900 outline-none focus:border-ink-400"
+            className="border-ink-200 bg-surface text-ink-900 focus:border-ink-400 w-full rounded-md border px-3.5 py-3 outline-none"
           />
-          <label className="mt-2 flex items-center gap-2 text-sm text-ink-600">
+          <label className="text-ink-600 mt-2 flex items-center gap-2 text-sm">
             <input type="checkbox" name="dateFlexible" className="h-4 w-4" />
             Not fixed yet
           </label>
@@ -96,7 +93,7 @@ export function EventForm({ cities }: { cities: { id: string; name: string }[] }
           <select
             id="cityId"
             name="cityId"
-            className="w-full rounded-md border border-ink-200 bg-surface px-3.5 py-3 text-ink-900 outline-none focus:border-ink-400"
+            className="border-ink-200 bg-surface text-ink-900 focus:border-ink-400 w-full rounded-md border px-3.5 py-3 outline-none"
           >
             <option value="">Not decided</option>
             {cities.map((c) => (
@@ -114,7 +111,7 @@ export function EventForm({ cities }: { cities: { id: string; name: string }[] }
             type="number"
             min={1}
             placeholder="400"
-            className="w-full rounded-md border border-ink-200 bg-surface px-3.5 py-3 text-ink-900 outline-none focus:border-ink-400 placeholder:text-ink-400"
+            className="border-ink-200 bg-surface text-ink-900 focus:border-ink-400 placeholder:text-ink-400 w-full rounded-md border px-3.5 py-3 outline-none"
           />
         </Field>
 
@@ -126,7 +123,7 @@ export function EventForm({ cities }: { cities: { id: string; name: string }[] }
               type="text"
               inputMode="numeric"
               placeholder="3,00,000"
-              className="w-full rounded-md border border-ink-200 bg-surface px-3.5 py-3 text-ink-900 outline-none focus:border-ink-400 placeholder:text-ink-400"
+              className="border-ink-200 bg-surface text-ink-900 focus:border-ink-400 placeholder:text-ink-400 w-full rounded-md border px-3.5 py-3 outline-none"
             />
             <span className="text-ink-500">to</span>
             <input
@@ -135,7 +132,7 @@ export function EventForm({ cities }: { cities: { id: string; name: string }[] }
               inputMode="numeric"
               placeholder="5,00,000"
               aria-label="Upper budget, in rupees"
-              className="w-full rounded-md border border-ink-200 bg-surface px-3.5 py-3 text-ink-900 outline-none focus:border-ink-400 placeholder:text-ink-400"
+              className="border-ink-200 bg-surface text-ink-900 focus:border-ink-400 placeholder:text-ink-400 w-full rounded-md border px-3.5 py-3 outline-none"
             />
           </div>
         </Field>
@@ -147,7 +144,7 @@ export function EventForm({ cities }: { cities: { id: string; name: string }[] }
           name="notes"
           rows={3}
           placeholder="Two functions, both at the same venue…"
-          className="w-full rounded-md border border-ink-200 bg-surface px-3.5 py-3 text-ink-900 outline-none focus:border-ink-400 placeholder:text-ink-400"
+          className="border-ink-200 bg-surface text-ink-900 focus:border-ink-400 placeholder:text-ink-400 w-full rounded-md border px-3.5 py-3 outline-none"
         />
       </Field>
 
@@ -155,14 +152,14 @@ export function EventForm({ cities }: { cities: { id: string; name: string }[] }
         <button
           type="submit"
           disabled={pending}
-          className="rounded-md bg-primary-600 px-5 py-3 font-medium text-white transition-colors hover:bg-primary-700 disabled:opacity-60"
+          className="bg-primary-600 hover:bg-primary-700 rounded-md px-5 py-3 font-medium text-white transition-colors disabled:opacity-60"
         >
           {pending ? 'Saving…' : 'Save event'}
         </button>
         <button
           type="button"
           onClick={() => setOpen(false)}
-          className="px-3 py-3 text-sm text-ink-600 hover:text-ink-900"
+          className="text-ink-600 hover:text-ink-900 px-3 py-3 text-sm"
         >
           Cancel
         </button>
@@ -171,7 +168,7 @@ export function EventForm({ cities }: { cities: { id: string; name: string }[] }
       {state.error && (
         <p
           role="alert"
-          className="mt-4 rounded-md border border-danger-500/30 bg-danger-50 px-3.5 py-2.5 text-sm text-danger-700"
+          className="border-danger-500/30 bg-danger-50 text-danger-700 mt-4 rounded-md border px-3.5 py-2.5 text-sm"
         >
           {state.error}
         </p>
@@ -193,7 +190,7 @@ function Field({
 }) {
   return (
     <div className={className}>
-      <label htmlFor={htmlFor} className="block text-sm font-medium text-ink-800">
+      <label htmlFor={htmlFor} className="text-ink-800 block text-sm font-medium">
         {label}
       </label>
       <div className="mt-2">{children}</div>

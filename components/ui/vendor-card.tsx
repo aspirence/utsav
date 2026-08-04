@@ -61,8 +61,8 @@ export function VendorCard({
   return (
     <article
       className={cn(
-        'group relative overflow-hidden rounded-3xl border border-ink-100 bg-surface-raised',
-        'transition-colors hover:border-ink-300',
+        'group border-ink-100 bg-surface-raised relative overflow-hidden rounded-3xl border',
+        'hover:border-ink-300 transition-colors',
         className,
       )}
     >
@@ -79,7 +79,7 @@ export function VendorCard({
         {/* Plan §2: "free on my date" is the filter customers actually use, so when it
             is applied the answer belongs on the card, not one click deeper. */}
         {availableOnLabel && (
-          <span className="absolute left-3 top-3 rounded-lg bg-success-600/95 px-2.5 py-1 text-xs font-semibold text-white">
+          <span className="bg-success-600/95 absolute top-3 left-3 rounded-lg px-2.5 py-1 text-xs font-semibold text-white">
             {availableOnLabel}
           </span>
         )}
@@ -87,7 +87,7 @@ export function VendorCard({
 
       <div className="p-4">
         <div className="flex items-start justify-between gap-3">
-          <h3 className="font-display text-base font-semibold leading-snug text-ink-900">
+          <h3 className="font-display text-ink-900 text-base leading-snug font-semibold">
             <a href={href} className="after:absolute after:inset-0 after:content-['']">
               {displayName}
             </a>
@@ -96,7 +96,7 @@ export function VendorCard({
         </div>
 
         {(localityName || cityName) && (
-          <p className="mt-1 text-sm text-ink-500">
+          <p className="text-ink-500 mt-1 text-sm">
             {[localityName, cityName].filter(Boolean).join(', ')}
           </p>
         )}
@@ -108,25 +108,21 @@ export function VendorCard({
                 {tag.replace(/-/g, ' ')}
               </Badge>
             ))}
-            {styleTags.length > 3 && (
-              <Badge tone="neutral">+{styleTags.length - 3}</Badge>
-            )}
+            {styleTags.length > 3 && <Badge tone="neutral">+{styleTags.length - 3}</Badge>}
           </div>
         )}
 
-        <div className="mt-4 flex items-end justify-between gap-3 border-t border-ink-100 pt-3">
+        <div className="border-ink-100 mt-4 flex items-end justify-between gap-3 border-t pt-3">
           <div>
             {priceBandLabel && (
-              <p className="text-sm font-semibold text-ink-900">{priceBandLabel}</p>
+              <p className="text-ink-900 text-sm font-semibold">{priceBandLabel}</p>
             )}
             {/* Plan §2: the per-day figure is what makes two packages comparable. */}
-            {perDayLabel && <p className="text-xs text-ink-500">{perDayLabel}</p>}
+            {perDayLabel && <p className="text-ink-500 text-xs">{perDayLabel}</p>}
           </div>
 
           {respondsInLabel && (
-            <span className="shrink-0 text-xs font-medium text-success-700">
-              {respondsInLabel}
-            </span>
+            <span className="text-success-700 shrink-0 text-xs font-medium">{respondsInLabel}</span>
           )}
         </div>
 
@@ -135,9 +131,9 @@ export function VendorCard({
         {isAnchorStudio && (
           <a
             href="/p/anchor-studio-policy"
-            className="relative z-10 mt-3 flex items-center gap-1.5 text-xs text-ink-500 underline decoration-ink-300 underline-offset-2 hover:text-ink-700"
+            className="text-ink-500 decoration-ink-300 hover:text-ink-700 relative z-10 mt-3 flex items-center gap-1.5 text-xs underline underline-offset-2"
           >
-            <svg className="h-3.5 w-3.5 fill-accent-500" viewBox="0 0 20 20" aria-hidden="true">
+            <svg className="fill-accent-500 h-3.5 w-3.5" viewBox="0 0 20 20" aria-hidden="true">
               <path d="M10 2a8 8 0 100 16 8 8 0 000-16zm.9 12H9.1v-1.8h1.8V14zm0-3.2H9.1V6h1.8v4.8z" />
             </svg>
             Fremmo-owned studio · ranked with no preference

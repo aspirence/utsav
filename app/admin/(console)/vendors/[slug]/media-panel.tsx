@@ -61,9 +61,7 @@ export async function VendorMediaPanel({
         <Pill tone={live === media.length ? 'green' : 'amber'}>{live} approved and public</Pill>
         {/* The count that a moderator can actually act on — an unlabelled photograph is one a
             screen-reader user cannot shop from. */}
-        <Pill tone={missingAlt === 0 ? 'green' : 'red'}>
-          {missingAlt} without alt text
-        </Pill>
+        <Pill tone={missingAlt === 0 ? 'green' : 'red'}>{missingAlt} without alt text</Pill>
       </div>
 
       {isDemo && (
@@ -112,10 +110,7 @@ function MediaTile({
   const detail = [item.caption, item.styleTags.join(' · ')].filter(Boolean).join(' — ')
 
   return (
-    <li
-      className="border-ink-200 overflow-hidden rounded-lg border"
-      title={detail || undefined}
-    >
+    <li className="border-ink-200 overflow-hidden rounded-lg border" title={detail || undefined}>
       <div className="bg-ink-100 relative aspect-[4/3]">
         {item.url ? (
           // eslint-disable-next-line @next/next/no-img-element -- plan §12: no Vercel optimizer
@@ -130,14 +125,14 @@ function MediaTile({
           /* storageImageUrl returned null: no Supabase configured and not a local path. Naming the
              stored value is more useful than a grey rectangle, because the stored value is the
              thing that needs fixing. */
-          <p className="text-ink-600 absolute inset-0 flex items-center justify-center break-all px-2 text-center text-[10px] leading-tight">
+          <p className="text-ink-600 absolute inset-0 flex items-center justify-center px-2 text-center text-[10px] leading-tight break-all">
             {item.storagePath}
           </p>
         )}
 
         {/* Badges overlay the image rather than taking a row of their own — at this size a row is
             most of the tile. */}
-        <div className="absolute left-1.5 top-1.5 flex flex-wrap gap-1">
+        <div className="absolute top-1.5 left-1.5 flex flex-wrap gap-1">
           {item.isCover && <Pill tone="blue">cover</Pill>}
           {item.moderation !== 'approved' && (
             <Pill tone={item.moderation === 'rejected' ? 'red' : 'amber'}>{item.moderation}</Pill>

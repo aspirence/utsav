@@ -3,11 +3,7 @@
 import dynamic from 'next/dynamic'
 import { useCallback, useEffect, useRef, useState } from 'react'
 
-import {
-  DEMO_CARD_CONTENT,
-  linesFor,
-  type InvitationCardContent,
-} from './content'
+import { DEMO_CARD_CONTENT, linesFor, type InvitationCardContent } from './content'
 
 /**
  * The invitation experience: the three.js scene, plus the wording as real DOM over it.
@@ -135,7 +131,7 @@ function Music() {
           autoplay, is the difference between a page with a silent icon in the corner and
           a page someone knows has a soundtrack. It disappears the moment it starts. */}
       {!on && (
-        <span className="pointer-events-none absolute right-16 top-4 z-10 rounded-full bg-[#2a1f16]/70 px-3 py-2 text-xs text-white/85 backdrop-blur-sm">
+        <span className="pointer-events-none absolute top-4 right-16 z-10 rounded-full bg-[#2a1f16]/70 px-3 py-2 text-xs text-white/85 backdrop-blur-sm">
           Tap for music
         </span>
       )}
@@ -145,7 +141,7 @@ function Music() {
         onClick={toggle}
         aria-label={on ? 'Turn the music off' : 'Turn the music on'}
         aria-pressed={on}
-        className="absolute right-4 top-4 z-10 flex h-10 w-10 items-center justify-center rounded-full bg-[#2a1f16]/70 text-white/90 backdrop-blur-sm transition-colors hover:bg-[#2a1f16] hover:text-white"
+        className="absolute top-4 right-4 z-10 flex h-10 w-10 items-center justify-center rounded-full bg-[#2a1f16]/70 text-white/90 backdrop-blur-sm transition-colors hover:bg-[#2a1f16] hover:text-white"
       >
         <svg viewBox="0 0 24 24" className="h-5 w-5 fill-current" aria-hidden="true">
           <path d="M4 9v6h4l5 4V5L8 9H4z" />
@@ -221,10 +217,7 @@ function Wording({ t, content }: { t: number; content: InvitationCardContent }) 
         }}
       />
 
-      <div
-        className="w-[min(46vh,20rem)] text-center text-[#3a2f24]"
-        style={{ marginTop: '2vh' }}
-      >
+      <div className="w-[min(46vh,20rem)] text-center text-[#3a2f24]" style={{ marginTop: '2vh' }}>
         {lines.map((line, i) => {
           const p = clamp01((t - (START + i * GAP)) / WIPE)
           return (

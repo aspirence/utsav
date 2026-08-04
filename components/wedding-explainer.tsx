@@ -31,11 +31,14 @@ export function WeddingExplainer({
   posterSrc?: string | null
 }) {
   return (
-    <section className="relative isolate overflow-hidden bg-primary-800">
+    <section className="bg-primary-800 relative isolate overflow-hidden">
       {/* Left panel: solid wedding red, running to the left edge of the viewport.
           Only rendered as a separate block on large screens - below that the section
           background colour already covers the whole width. */}
-      <div className="absolute inset-y-0 left-0 hidden w-1/2 bg-primary-800 lg:block" aria-hidden="true" />
+      <div
+        className="bg-primary-800 absolute inset-y-0 left-0 hidden w-1/2 lg:block"
+        aria-hidden="true"
+      />
 
       {/* Right: the video, untouched. No scrim, no gradient. */}
       <div className="absolute inset-y-0 right-0 hidden w-1/2 lg:block" aria-hidden="true">
@@ -78,7 +81,7 @@ export function WeddingExplainer({
           <div className="order-2 max-w-xl lg:order-none">
             {/* Marigold on red - the design system's celebration colour, and the only
                 thing in the palette that holds its own against primary-800. */}
-            <p className="text-xs font-semibold uppercase tracking-[0.14em] text-accent-300">
+            <p className="text-accent-300 text-xs font-semibold tracking-[0.14em] uppercase">
               Planning a wedding in India
             </p>
 
@@ -88,22 +91,21 @@ export function WeddingExplainer({
 
             <div className="mt-5 space-y-4 leading-relaxed text-white/85">
               <p>
-                A wedding here is a week. Haldi in the morning light. Mehendi that runs
-                past midnight. A sangeet everybody rehearses for and nobody quite gets
-                right. The muhurtham itself, before the sun is properly up. And a
-                reception where the same four hundred people arrive again, in different
-                clothes.
+                A wedding here is a week. Haldi in the morning light. Mehendi that runs past
+                midnight. A sangeet everybody rehearses for and nobody quite gets right. The
+                muhurtham itself, before the sun is properly up. And a reception where the same four
+                hundred people arrive again, in different clothes.
               </p>
               <p>
-                Each of those needs different people. Most families end up booking eight
-                to twelve vendors across six months, usually while holding down a job, and
-                usually on a WhatsApp thread with forty relatives in it. The photographer
-                tends to go first, because the good ones are gone eleven months out.
+                Each of those needs different people. Most families end up booking eight to twelve
+                vendors across six months, usually while holding down a job, and usually on a
+                WhatsApp thread with forty relatives in it. The photographer tends to go first,
+                because the good ones are gone eleven months out.
               </p>
               <p className="font-medium text-white">
-                That is the whole job we do: get you to the right five, free on your date
-                and inside your budget, so the rest of the year is about the wedding
-                rather than the spreadsheet.
+                That is the whole job we do: get you to the right five, free on your date and inside
+                your budget, so the rest of the year is about the wedding rather than the
+                spreadsheet.
               </p>
             </div>
 
@@ -116,7 +118,7 @@ export function WeddingExplainer({
               {FUNCTIONS.map((f) => (
                 <li
                   key={f}
-                  className="whitespace-nowrap rounded-full border border-white/30 px-2 py-1 text-[11px] text-white/90 sm:px-3.5 sm:py-1.5 sm:text-sm"
+                  className="rounded-full border border-white/30 px-2 py-1 text-[11px] whitespace-nowrap text-white/90 sm:px-3.5 sm:py-1.5 sm:text-sm"
                 >
                   {f}
                 </li>

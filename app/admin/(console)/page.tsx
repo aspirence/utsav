@@ -83,13 +83,13 @@ export default async function AdminDashboardPage() {
           <div className="flex flex-wrap gap-2">
             <Link
               href="/admin/vendors/new"
-              className="rounded-md border border-ink-300 bg-white px-4 py-2.5 text-sm font-medium text-ink-800 transition-colors hover:bg-ink-50"
+              className="border-ink-300 text-ink-800 hover:bg-ink-50 rounded-md border bg-white px-4 py-2.5 text-sm font-medium transition-colors"
             >
               New listing
             </Link>
             <Link
               href="/admin/enquiries"
-              className="rounded-md bg-ink-900 px-4 py-2.5 text-sm font-medium text-white transition-colors hover:bg-ink-800"
+              className="bg-ink-900 hover:bg-ink-800 rounded-md px-4 py-2.5 text-sm font-medium text-white transition-colors"
             >
               Open enquiries
             </Link>
@@ -99,12 +99,7 @@ export default async function AdminDashboardPage() {
 
       {/* ── KPI row ──────────────────────────────────────────────────────── */}
       <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-        <StatTile
-          label="Enquiries"
-          value={enquiries.length}
-          hint="All time"
-          icon={<IconInbox />}
-        />
+        <StatTile label="Enquiries" value={enquiries.length} hint="All time" icon={<IconInbox />} />
         <StatTile
           label="Awaiting OTP"
           value={stalled}
@@ -133,8 +128,8 @@ export default async function AdminDashboardPage() {
       {/* ── Charts ───────────────────────────────────────────────────────── */}
       <div className="mt-5 grid gap-5 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)]">
         <Panel className="p-5">
-          <h2 className="font-display text-lg text-ink-900">Where enquiries end up</h2>
-          <p className="mt-1 text-sm text-ink-600">
+          <h2 className="font-display text-ink-900 text-lg">Where enquiries end up</h2>
+          <p className="text-ink-600 mt-1 text-sm">
             The gate that matters is the first one: an enquiry that never gets verified never
             reaches a vendor, and no credit is charged for it.
           </p>
@@ -148,8 +143,8 @@ export default async function AdminDashboardPage() {
         </Panel>
 
         <Panel className="p-5">
-          <h2 className="font-display text-lg text-ink-900">Enquiries per week</h2>
-          <p className="mt-1 text-sm text-ink-600">
+          <h2 className="font-display text-ink-900 text-lg">Enquiries per week</h2>
+          <p className="text-ink-600 mt-1 text-sm">
             Last six weeks. The tallest week is labelled; the rest carry the shape.
           </p>
           <div className="mt-6">
@@ -160,9 +155,9 @@ export default async function AdminDashboardPage() {
 
       {/* ── Recent enquiries ─────────────────────────────────────────────── */}
       <Panel className="mt-5">
-        <div className="flex flex-wrap items-center justify-between gap-3 border-b border-ink-200 px-4 py-3">
-          <h2 className="font-display text-lg text-ink-900">Latest enquiries</h2>
-          <Link href="/admin/enquiries" className="text-sm text-primary-700 hover:underline">
+        <div className="border-ink-200 flex flex-wrap items-center justify-between gap-3 border-b px-4 py-3">
+          <h2 className="font-display text-ink-900 text-lg">Latest enquiries</h2>
+          <Link href="/admin/enquiries" className="text-primary-700 text-sm hover:underline">
             See all {enquiries.length} &rarr;
           </Link>
         </div>
@@ -178,11 +173,11 @@ export default async function AdminDashboardPage() {
                 <div>
                   <Link
                     href={`/admin/enquiries/${r.id}`}
-                    className="font-medium text-ink-900 hover:text-primary-700"
+                    className="text-ink-900 hover:text-primary-700 font-medium"
                   >
                     {r.contactName}
                   </Link>
-                  <p className="mt-0.5 text-xs text-ink-500">
+                  <p className="text-ink-500 mt-0.5 text-xs">
                     {r.categoryName} · {[r.localityName, r.cityName].filter(Boolean).join(', ')}
                   </p>
                 </div>
@@ -238,7 +233,7 @@ export default async function AdminDashboardPage() {
                 <Link
                   href={`/admin/enquiries/${r.id}`}
                   aria-label={`Open the enquiry from ${r.contactName}`}
-                  className="inline-flex h-8 w-8 items-center justify-center rounded-md border border-ink-200 text-ink-600 transition-colors hover:border-ink-300 hover:text-ink-900"
+                  className="border-ink-200 text-ink-600 hover:border-ink-300 hover:text-ink-900 inline-flex h-8 w-8 items-center justify-center rounded-md border transition-colors"
                 >
                   <span aria-hidden="true">→</span>
                 </Link>
@@ -249,18 +244,18 @@ export default async function AdminDashboardPage() {
       </Panel>
 
       {/* ── Launch gates ─────────────────────────────────────────────────── */}
-      <h2 className="mt-8 font-display text-lg text-ink-900">Launch readiness</h2>
-      <p className="mt-1 max-w-3xl text-sm text-ink-600">
-        Go/no-go gates for the April 2027 public launch. Targets come straight from the
-        development plan §13 — nothing here is a stretch goal.
+      <h2 className="font-display text-ink-900 mt-8 text-lg">Launch readiness</h2>
+      <p className="text-ink-600 mt-1 max-w-3xl text-sm">
+        Go/no-go gates for the April 2027 public launch. Targets come straight from the development
+        plan §13 — nothing here is a stretch goal.
       </p>
 
       <div className="mt-4 grid gap-5 lg:grid-cols-2">
         <Panel>
-          <h3 className="border-b border-ink-200 px-4 py-3 font-display text-base text-ink-900">
+          <h3 className="border-ink-200 font-display text-ink-900 border-b px-4 py-3 text-base">
             Supply
           </h3>
-          <div className="divide-y divide-ink-100">
+          <div className="divide-ink-100 divide-y">
             {supply.map((g) => (
               <StatBar key={g.label} {...g} />
             ))}
@@ -268,10 +263,10 @@ export default async function AdminDashboardPage() {
         </Panel>
 
         <Panel>
-          <h3 className="border-b border-ink-200 px-4 py-3 font-display text-base text-ink-900">
+          <h3 className="border-ink-200 font-display text-ink-900 border-b px-4 py-3 text-base">
             Funnel &amp; performance
           </h3>
-          <div className="divide-y divide-ink-100">
+          <div className="divide-ink-100 divide-y">
             {funnel.map((g) => (
               <StatBar key={g.label} {...g} />
             ))}
@@ -280,8 +275,8 @@ export default async function AdminDashboardPage() {
       </div>
 
       <Panel className="mt-5">
-        <div className="flex items-center justify-between border-b border-ink-200 px-4 py-3">
-          <h3 className="font-display text-base text-ink-900">Category coverage</h3>
+        <div className="border-ink-200 flex items-center justify-between border-b px-4 py-3">
+          <h3 className="font-display text-ink-900 text-base">Category coverage</h3>
           {shortfalls.length > 0 ? (
             <Pill tone="red">{shortfalls.length} below the 50-listing floor</Pill>
           ) : (
@@ -296,7 +291,7 @@ export default async function AdminDashboardPage() {
             {
               key: 'category',
               header: 'Category',
-              render: (r) => <span className="font-medium text-ink-900">{r.category}</span>,
+              render: (r) => <span className="text-ink-900 font-medium">{r.category}</span>,
             },
             {
               key: 'live',

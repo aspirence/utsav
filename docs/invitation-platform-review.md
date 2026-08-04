@@ -15,14 +15,14 @@ would go wrong if it were followed literally.
 The report assumes 10–50 templates, up to 100,000 invitations, and an existing content model to
 migrate. None of that is true here, and the gap is not incremental.
 
-| The report assumes | What exists |
-| --- | --- |
-| 10–50 reviewed R3F template components, resolved through a registry | **One** scene, `components/invitation-3d/` (794 lines), mounted on exactly one route |
+| The report assumes                                                                            | What exists                                                                                                                                                      |
+| --------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 10–50 reviewed R3F template components, resolved through a registry                           | **One** scene, `components/invitation-3d/` (794 lines), mounted on exactly one route                                                                             |
 | `TemplateVersion` carrying `schema`, `uiSchema`, `editPolicy`, `assetManifest`, `rendererKey` | `invitation_templates` is a **storefront catalogue row** — `slug`, `name`, `tags`, `price`, `video_url`, `poster_url`. It describes a preview video, not a scene |
-| Per-invitation content JSON, drafts, revisions, publications | Nothing. `invitation_orders` holds `contact_name/email/phone`, the two payment legs, a status and a `notes` field |
-| `/invite/[slug]` public published route | Does not exist |
-| Schema-generated editor, workflow states, asset pipeline, audit | None of it exists |
-| Hardcoded templates to migrate away from | See below — worse than hardcoded |
+| Per-invitation content JSON, drafts, revisions, publications                                  | Nothing. `invitation_orders` holds `contact_name/email/phone`, the two payment legs, a status and a `notes` field                                                |
+| `/invite/[slug]` public published route                                                       | Does not exist                                                                                                                                                   |
+| Schema-generated editor, workflow states, asset pipeline, audit                               | None of it exists                                                                                                                                                |
+| Hardcoded templates to migrate away from                                                      | See below — worse than hardcoded                                                                                                                                 |
 
 **The demo is not a template.** `components/invitation-3d/index.tsx` carries one specific
 family's wording as a literal array:
@@ -34,7 +34,7 @@ family's wording as a literal array:
 
 So there is no `content` boundary to generalise — there is one artwork with one family's names
 compiled into it. The report's "Migration from hardcoded templates" section assumes a renderer
-that already takes inputs. That step has to be *created*, not migrated.
+that already takes inputs. That step has to be _created_, not migrated.
 
 **Nothing behind the order is automated, and the code says so.** From
 `lib/invitation-templates.ts`:
@@ -44,33 +44,33 @@ that already takes inputs. That step has to be *created*, not migrated.
 
 That is the honest current state: a customer buys a design, and a human makes the card. Every
 piece of the report's machinery exists to remove that human. Worth being explicit about, because
-it means the first increment has a *business* payoff (stop doing it by hand) rather than an
+it means the first increment has a _business_ payoff (stop doing it by hand) rather than an
 architectural one.
 
 ---
 
 ## 2. Verdict by section
 
-| Report section | Verdict | Note |
-| --- | --- | --- |
-| Code-owned renderers, data-owned content | **Adopt** | The central idea, and correct. Never store executable scene code in a table |
-| Pin invitations to an exact `templateVersionId` | **Adopt** | Cheap now, impossible to retrofit later |
-| Immutable publication snapshot separate from draft | **Adopt** | Matches how `invitation_orders` already treats a paid order as a record, not a mutable row |
-| JSON Schema for per-template content | **Adopt with change** | See conflict 2 |
-| `x-ui` / `x-editPolicy` annotations | **Adopt** | Standard-compliant use of annotations; keeps one source of truth for form and permission |
-| Object storage + CDN, direct upload | **Adopt with change** | See section 4 |
-| Two independent controls: *who may edit* and *is it frozen* | **Adopt** | Genuinely good. Collapsing these into one enum is the bug it predicts |
-| Structured schema-generated editor over WYSIWYG | **Adopt** | Correct for this product and this team size |
-| Guided visual editing (`data-field-path`) | **Defer** | Right idea, wrong time — needs an editor first |
-| Server shell + lazy client canvas | **Adopt with change** | See conflict 3 |
-| ISR / `generateStaticParams` for public invitations | **Adopt with change** | See conflict 3 — does not work here today |
-| Application-level authorisation as the boundary | **Reject as written** | See conflict 1 |
-| `Template` / `TemplateVersion` / `Invitation` / `InvitationRevision` / `Publication` / `Asset` / `AuditEvent` | **Adopt, staged** | Six tables on day one for one template is cost without benefit. `AuditEvent` already exists as `public.audit_log` |
-| Optimistic saving with revision conflict detection | **Defer** | Belongs with the editor |
-| Workflow state machine (DRAFT → … → ARCHIVED) | **Defer, then adopt** | Not until two parties actually edit |
-| Template kill switch / fallback mode | **Adopt early** | Cheapest insurance in the whole report |
-| Testing pyramid, visual regression, permission matrix | **Adopt** | With one addition — see section 4 |
-| OpenTelemetry instrumentation | **Defer** | No collector in this stack yet |
+| Report section                                                                                                | Verdict               | Note                                                                                                              |
+| ------------------------------------------------------------------------------------------------------------- | --------------------- | ----------------------------------------------------------------------------------------------------------------- |
+| Code-owned renderers, data-owned content                                                                      | **Adopt**             | The central idea, and correct. Never store executable scene code in a table                                       |
+| Pin invitations to an exact `templateVersionId`                                                               | **Adopt**             | Cheap now, impossible to retrofit later                                                                           |
+| Immutable publication snapshot separate from draft                                                            | **Adopt**             | Matches how `invitation_orders` already treats a paid order as a record, not a mutable row                        |
+| JSON Schema for per-template content                                                                          | **Adopt with change** | See conflict 2                                                                                                    |
+| `x-ui` / `x-editPolicy` annotations                                                                           | **Adopt**             | Standard-compliant use of annotations; keeps one source of truth for form and permission                          |
+| Object storage + CDN, direct upload                                                                           | **Adopt with change** | See section 4                                                                                                     |
+| Two independent controls: _who may edit_ and _is it frozen_                                                   | **Adopt**             | Genuinely good. Collapsing these into one enum is the bug it predicts                                             |
+| Structured schema-generated editor over WYSIWYG                                                               | **Adopt**             | Correct for this product and this team size                                                                       |
+| Guided visual editing (`data-field-path`)                                                                     | **Defer**             | Right idea, wrong time — needs an editor first                                                                    |
+| Server shell + lazy client canvas                                                                             | **Adopt with change** | See conflict 3                                                                                                    |
+| ISR / `generateStaticParams` for public invitations                                                           | **Adopt with change** | See conflict 3 — does not work here today                                                                         |
+| Application-level authorisation as the boundary                                                               | **Reject as written** | See conflict 1                                                                                                    |
+| `Template` / `TemplateVersion` / `Invitation` / `InvitationRevision` / `Publication` / `Asset` / `AuditEvent` | **Adopt, staged**     | Six tables on day one for one template is cost without benefit. `AuditEvent` already exists as `public.audit_log` |
+| Optimistic saving with revision conflict detection                                                            | **Defer**             | Belongs with the editor                                                                                           |
+| Workflow state machine (DRAFT → … → ARCHIVED)                                                                 | **Defer, then adopt** | Not until two parties actually edit                                                                               |
+| Template kill switch / fallback mode                                                                          | **Adopt early**       | Cheapest insurance in the whole report                                                                            |
+| Testing pyramid, visual regression, permission matrix                                                         | **Adopt**             | With one addition — see section 4                                                                                 |
+| OpenTelemetry instrumentation                                                                                 | **Defer**             | No collector in this stack yet                                                                                    |
 
 ---
 
@@ -81,36 +81,36 @@ architectural one.
 **Report:** "Role-based access alone is insufficient […] application-level checks are still needed
 for field paths and workflow transitions", with PostgreSQL RLS as one layer among several.
 
-**This repository:** `CLAUDE.md` non-negotiable #1 — *"RLS is the authorization model. Plan §6:
+**This repository:** `CLAUDE.md` non-negotiable #1 — _"RLS is the authorization model. Plan §6:
 there is no trusted API between clients and Postgres for reads. Do not add a REST/tRPC layer to
-work around a policy. Fix the policy and add a pgTAP assertion."*
+work around a policy. Fix the policy and add a pgTAP assertion."_
 
 These are not the same claim, and read carelessly the report licenses exactly what the
 non-negotiable forbids.
 
-**Resolution.** Field-path checks are an *addition above* RLS, never a replacement for it.
+**Resolution.** Field-path checks are an _addition above_ RLS, never a replacement for it.
 The rule to write down:
 
 - Which **rows** a caller may read or write is decided by a policy, tested in pgTAP.
 - Which **paths inside a content document** a caller may change is decided in the server action,
   because Postgres cannot express "may edit `/couple/partnerOne` but not `/theme/animationLevel`"
   without unreasonable contortion.
-- A field-path check may only ever *narrow*. If deleting the whole check would let somebody read
+- A field-path check may only ever _narrow_. If deleting the whole check would let somebody read
   or write another person's row, the policy is wrong and the check is hiding it.
 
 There is precedent already: `/admin/users` writes `staff_roles` with the service-role key behind
 `requireSuper()`, because that table deliberately has no write policy at all. `lib/admin-users.ts`
-says so out loud, including that this is the one path where the application check *is* the
+says so out loud, including that this is the one path where the application check _is_ the
 boundary. Any content-path check should carry the same warning.
 
 ### Conflict 2 — zod versus JSON Schema
 
 **Report:** JSON Schema Draft 2020-12 with Ajv.
 
-**This repository:** *"Each feature owns one zod-validated `actions.ts`."*
+**This repository:** _"Each feature owns one zod-validated `actions.ts`."_
 
 **Resolution: the report wins, and the reason should be recorded so nobody "fixes" it later.**
-A per-template schema has to be *stored*, versioned and shipped to a form generator. A zod schema
+A per-template schema has to be _stored_, versioned and shipped to a form generator. A zod schema
 is TypeScript — it cannot live in a `jsonb` column. This is the one case the convention did not
 anticipate.
 
@@ -138,7 +138,7 @@ responses for `/[city]/[category]` and `/vendor/[slug]` — the HTML differs, so
 being discarded. The cause is the session read in the site header: the layout touches `cookies()`,
 which bails the whole subtree out of static serving.
 
-So following the report literally would produce an invitation route that *looks* statically
+So following the report literally would produce an invitation route that _looks_ statically
 generated in the build table and is dynamic in production.
 
 **Resolution.** A public invitation route must sit **outside** the `(site)` layout — no header, no
@@ -177,7 +177,7 @@ float, never rupees (plan §5). More importantly `invitation_orders_amounts_reco
 `booking + balance = template_price`, and `lib/invitation-templates.ts` derives both legs from one
 function specifically because an earlier version computed them separately and broke that
 constraint for any template cheaper than the booking fee. **No content or version layer may
-recompute either leg.** A version pin must capture the price *as ordered*, which
+recompute either leg.** A version pin must capture the price _as ordered_, which
 `invitation_orders.template_price` already does.
 
 **Storage.** The report specifies S3 presigned URLs and multipart upload. Here it is Supabase
@@ -192,8 +192,8 @@ is banned. Two consequences:
   inspection, no variants. The report's `modelAsset` and `audioAsset` are further off than they
   look.
 
-**Tests.** `CLAUDE.md`: *"Add a pgTAP test in the same PR for anything touching leads, money or
-reviews."* Invitation orders and payments already have three (`05`, `07`, `08`). Any new table
+**Tests.** `CLAUDE.md`: _"Add a pgTAP test in the same PR for anything touching leads, money or
+reviews."_ Invitation orders and payments already have three (`05`, `07`, `08`). Any new table
 here touches money by adjacency and needs the same treatment — in particular, that a customer can
 read their own invitation content and nobody else's, asserted in SQL rather than in a TypeScript
 test that mocks the client.

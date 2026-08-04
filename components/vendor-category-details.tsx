@@ -49,15 +49,15 @@ export function VendorCategoryDetails({
 
   return (
     <section className="mt-12">
-      <h2 className="font-display text-2xl text-ink-900">{categoryName} details</h2>
-      <p className="mt-1.5 max-w-2xl text-sm leading-relaxed text-ink-600">{set.intro}</p>
+      <h2 className="font-display text-ink-900 text-2xl">{categoryName} details</h2>
+      <p className="text-ink-600 mt-1.5 max-w-2xl text-sm leading-relaxed">{set.intro}</p>
 
       {facts.length > 0 && (
-        <dl className="mt-6 grid grid-cols-2 gap-x-6 gap-y-5 border-t border-ink-100 pt-6 sm:grid-cols-3 lg:grid-cols-4">
+        <dl className="border-ink-100 mt-6 grid grid-cols-2 gap-x-6 gap-y-5 border-t pt-6 sm:grid-cols-3 lg:grid-cols-4">
           {facts.map((f) => (
             <div key={f.key}>
-              <dt className="text-xs uppercase tracking-wide text-ink-500">{f.label}</dt>
-              <dd className="mt-1 font-display text-lg leading-snug text-ink-900">
+              <dt className="text-ink-500 text-xs tracking-wide uppercase">{f.label}</dt>
+              <dd className="font-display text-ink-900 mt-1 text-lg leading-snug">
                 {formatValue(f, attributes[f.key]!)}
               </dd>
             </div>
@@ -66,17 +66,14 @@ export function VendorCategoryDetails({
       )}
 
       {flags.length > 0 && (
-        <ul className="mt-6 flex flex-wrap gap-x-6 gap-y-2.5 border-t border-ink-100 pt-6 text-sm">
+        <ul className="border-ink-100 mt-6 flex flex-wrap gap-x-6 gap-y-2.5 border-t pt-6 text-sm">
           {flags.map((f) => {
             const on = attributes[f.key] === true
             return (
-              <li key={f.key} className="flex items-center gap-2 text-ink-700">
+              <li key={f.key} className="text-ink-700 flex items-center gap-2">
                 {/* aria-hidden on the glyph: the yes/no is already carried by the text that
                     follows it, and a screen reader announcing "check mark" adds nothing. */}
-                <span
-                  aria-hidden="true"
-                  className={on ? 'text-success-700' : 'text-ink-500'}
-                >
+                <span aria-hidden="true" className={on ? 'text-success-700' : 'text-ink-500'}>
                   {on ? '✓' : '✕'}
                 </span>
                 <span className={on ? '' : 'text-ink-500'}>

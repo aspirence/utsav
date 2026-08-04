@@ -21,7 +21,15 @@
 
 export type AttributeField =
   | { key: string; label: string; type: 'text'; hint?: string; max?: number }
-  | { key: string; label: string; type: 'number'; hint?: string; min?: number; max?: number; unit?: string }
+  | {
+      key: string
+      label: string
+      type: 'number'
+      hint?: string
+      min?: number
+      max?: number
+      unit?: string
+    }
   /** Typed in rupees, stored as integer paise. */
   | { key: string; label: string; type: 'money'; hint?: string }
   | { key: string; label: string; type: 'boolean'; hint?: string }
@@ -52,18 +60,66 @@ export const CATEGORY_ATTRIBUTES: Record<string, CategoryAttributeSet> = {
       'What a couple needs before they will come and see it. Capacity and catering rules decide ' +
       'most shortlists before anyone visits.',
     fields: [
-      { key: 'seatedCapacity', label: 'Seated capacity', type: 'number', min: 1, max: 20000, unit: 'guests', hint: 'Dining-style seating, not theatre.' },
-      { key: 'floatingCapacity', label: 'Floating capacity', type: 'number', min: 1, max: 50000, unit: 'guests' },
-      { key: 'halls', label: 'Halls or lawns', type: 'number', min: 1, max: 50, hint: 'Separate bookable spaces on the property.' },
-      { key: 'rooms', label: 'Guest rooms', type: 'number', min: 0, max: 2000, hint: 'Zero if there is no stay.' },
+      {
+        key: 'seatedCapacity',
+        label: 'Seated capacity',
+        type: 'number',
+        min: 1,
+        max: 20000,
+        unit: 'guests',
+        hint: 'Dining-style seating, not theatre.',
+      },
+      {
+        key: 'floatingCapacity',
+        label: 'Floating capacity',
+        type: 'number',
+        min: 1,
+        max: 50000,
+        unit: 'guests',
+      },
+      {
+        key: 'halls',
+        label: 'Halls or lawns',
+        type: 'number',
+        min: 1,
+        max: 50,
+        hint: 'Separate bookable spaces on the property.',
+      },
+      {
+        key: 'rooms',
+        label: 'Guest rooms',
+        type: 'number',
+        min: 0,
+        max: 2000,
+        hint: 'Zero if there is no stay.',
+      },
       { key: 'parking', label: 'Parking', type: 'number', min: 0, max: 5000, unit: 'cars' },
-      { key: 'venueType', label: 'Type', type: 'select', options: ['Banquet hall', 'Lawn', 'Farmhouse', 'Resort', 'Hotel', 'Heritage property', 'Destination'] },
+      {
+        key: 'venueType',
+        label: 'Type',
+        type: 'select',
+        options: [
+          'Banquet hall',
+          'Lawn',
+          'Farmhouse',
+          'Resort',
+          'Hotel',
+          'Heritage property',
+          'Destination',
+        ],
+      },
       { key: 'rentPerDay', label: 'Rent per day', type: 'money', hint: 'Space only, before food.' },
       { key: 'inHouseCatering', label: 'In-house catering', type: 'boolean' },
       { key: 'outsideCateringAllowed', label: 'Outside caterer allowed', type: 'boolean' },
       { key: 'outsideDecorAllowed', label: 'Outside decorator allowed', type: 'boolean' },
       { key: 'alcoholAllowed', label: 'Alcohol permitted', type: 'boolean' },
-      { key: 'amenities', label: 'Amenities', type: 'tags', max: 10, hint: 'Comma-separated — generator, valet, bridal room, lift.' },
+      {
+        key: 'amenities',
+        label: 'Amenities',
+        type: 'tags',
+        max: 10,
+        hint: 'Comma-separated — generator, valet, bridal room, lift.',
+      },
     ],
   },
 
@@ -74,10 +130,28 @@ export const CATEGORY_ATTRIBUTES: Record<string, CategoryAttributeSet> = {
     fields: [
       { key: 'vegPerPlate', label: 'Veg, per plate', type: 'money' },
       { key: 'nonVegPerPlate', label: 'Non-veg, per plate', type: 'money' },
-      { key: 'minGuests', label: 'Minimum guests', type: 'number', min: 1, max: 10000, unit: 'guests' },
-      { key: 'cuisines', label: 'Cuisines', type: 'tags', max: 12, hint: 'Awadhi, Mughlai, South Indian, Continental, Chaat.' },
+      {
+        key: 'minGuests',
+        label: 'Minimum guests',
+        type: 'number',
+        min: 1,
+        max: 10000,
+        unit: 'guests',
+      },
+      {
+        key: 'cuisines',
+        label: 'Cuisines',
+        type: 'tags',
+        max: 12,
+        hint: 'Awadhi, Mughlai, South Indian, Continental, Chaat.',
+      },
       { key: 'liveCounters', label: 'Live counters', type: 'boolean' },
-      { key: 'jainSatvik', label: 'Jain / satvik available', type: 'boolean', hint: 'Prepared separately, not just labelled.' },
+      {
+        key: 'jainSatvik',
+        label: 'Jain / satvik available',
+        type: 'boolean',
+        hint: 'Prepared separately, not just labelled.',
+      },
       { key: 'barService', label: 'Bar service', type: 'boolean' },
       { key: 'servingStaffIncluded', label: 'Serving staff included', type: 'boolean' },
       { key: 'tastingAvailable', label: 'Tasting session offered', type: 'boolean' },
@@ -90,14 +164,41 @@ export const CATEGORY_ATTRIBUTES: Record<string, CategoryAttributeSet> = {
       'What they build and what it costs to start. Decorators are shortlisted on style and on ' +
       'whether the flowers are real.',
     fields: [
-      { key: 'setups', label: 'Setups offered', type: 'tags', max: 12, hint: 'Mandap, stage, entrance, haldi, sangeet, car decor.' },
-      { key: 'startingPrice', label: 'Starting price', type: 'money', hint: 'The smallest job they will take.' },
-      { key: 'flowerType', label: 'Flowers', type: 'select', options: ['Fresh only', 'Artificial only', 'Both'] },
+      {
+        key: 'setups',
+        label: 'Setups offered',
+        type: 'tags',
+        max: 12,
+        hint: 'Mandap, stage, entrance, haldi, sangeet, car decor.',
+      },
+      {
+        key: 'startingPrice',
+        label: 'Starting price',
+        type: 'money',
+        hint: 'The smallest job they will take.',
+      },
+      {
+        key: 'flowerType',
+        label: 'Flowers',
+        type: 'select',
+        options: ['Fresh only', 'Artificial only', 'Both'],
+      },
       { key: 'lighting', label: 'Lighting included', type: 'boolean' },
-      { key: 'themes', label: 'Themes', type: 'tags', max: 10, hint: 'Royal, minimal, floral, boho, traditional.' },
+      {
+        key: 'themes',
+        label: 'Themes',
+        type: 'tags',
+        max: 10,
+        hint: 'Royal, minimal, floral, boho, traditional.',
+      },
       { key: 'setupHours', label: 'Setup time', type: 'number', min: 1, max: 168, unit: 'hours' },
       { key: 'noticeDays', label: 'Notice needed', type: 'number', min: 0, max: 365, unit: 'days' },
-      { key: 'venueTieUps', label: 'Works at any venue', type: 'boolean', hint: 'Untick if they are tied to particular properties.' },
+      {
+        key: 'venueTieUps',
+        label: 'Works at any venue',
+        type: 'boolean',
+        hint: 'Untick if they are tied to particular properties.',
+      },
     ],
   },
 
@@ -106,17 +207,53 @@ export const CATEGORY_ATTRIBUTES: Record<string, CategoryAttributeSet> = {
       'Bridal work is booked on the morning of, so travel and timing are as decisive as the ' +
       'price. Trials are what most couples decide on.',
     fields: [
-      { key: 'bridalPrice', label: 'Bridal package', type: 'money', hint: 'One bride, one function.' },
+      {
+        key: 'bridalPrice',
+        label: 'Bridal package',
+        type: 'money',
+        hint: 'One bride, one function.',
+      },
       { key: 'partyPrice', label: 'Party or guest makeup', type: 'money', hint: 'Per person.' },
-      { key: 'products', label: 'Product brands', type: 'tags', max: 10, hint: 'What they work with — MAC, Bobbi Brown, Huda.' },
-      { key: 'techniques', label: 'Techniques', type: 'tags', max: 8, hint: 'HD, airbrush, natural, dewy.' },
+      {
+        key: 'products',
+        label: 'Product brands',
+        type: 'tags',
+        max: 10,
+        hint: 'What they work with — MAC, Bobbi Brown, Huda.',
+      },
+      {
+        key: 'techniques',
+        label: 'Techniques',
+        type: 'tags',
+        max: 8,
+        hint: 'HD, airbrush, natural, dewy.',
+      },
       { key: 'trialAvailable', label: 'Trial available', type: 'boolean' },
-      { key: 'trialPrice', label: 'Trial charge', type: 'money', hint: 'Leave blank if the trial is free.' },
+      {
+        key: 'trialPrice',
+        label: 'Trial charge',
+        type: 'money',
+        hint: 'Leave blank if the trial is free.',
+      },
       { key: 'travelsToVenue', label: 'Travels to the venue', type: 'boolean' },
       { key: 'hairIncluded', label: 'Hair styling included', type: 'boolean' },
       { key: 'drapingIncluded', label: 'Saree / dupatta draping included', type: 'boolean' },
-      { key: 'teamSize', label: 'Artists on the day', type: 'number', min: 1, max: 50, unit: 'artists' },
-      { key: 'hoursPerBride', label: 'Time per bride', type: 'number', min: 1, max: 12, unit: 'hours' },
+      {
+        key: 'teamSize',
+        label: 'Artists on the day',
+        type: 'number',
+        min: 1,
+        max: 50,
+        unit: 'artists',
+      },
+      {
+        key: 'hoursPerBride',
+        label: 'Time per bride',
+        type: 'number',
+        min: 1,
+        max: 12,
+        unit: 'hours',
+      },
     ],
   },
 
@@ -125,24 +262,37 @@ export const CATEGORY_ATTRIBUTES: Record<string, CategoryAttributeSet> = {
       'The generic listing fields already cover most of this category. These are the few a couple ' +
       'asks that the price band does not answer.',
     fields: [
-      { key: 'deliveryDays', label: 'Delivery time', type: 'number', min: 1, max: 365, unit: 'days', hint: 'Full edited gallery, not the teaser.' },
-      { key: 'editedPhotos', label: 'Edited photographs', type: 'number', min: 1, max: 5000, hint: 'Typical count for a full day.' },
-      { key: 'crewSize', label: 'Crew on the day', type: 'number', min: 1, max: 50, unit: 'people' },
+      {
+        key: 'deliveryDays',
+        label: 'Delivery time',
+        type: 'number',
+        min: 1,
+        max: 365,
+        unit: 'days',
+        hint: 'Full edited gallery, not the teaser.',
+      },
+      {
+        key: 'editedPhotos',
+        label: 'Edited photographs',
+        type: 'number',
+        min: 1,
+        max: 5000,
+        hint: 'Typical count for a full day.',
+      },
+      {
+        key: 'crewSize',
+        label: 'Crew on the day',
+        type: 'number',
+        min: 1,
+        max: 50,
+        unit: 'people',
+      },
       { key: 'droneAvailable', label: 'Drone available', type: 'boolean' },
       { key: 'albumIncluded', label: 'Printed album included', type: 'boolean' },
       { key: 'rawHandover', label: 'Hands over raw files', type: 'boolean' },
       { key: 'sameDayEdit', label: 'Same-day edit offered', type: 'boolean' },
     ],
   },
-
-
-
-
-
-
-
-
-
 }
 
 /** Money fields are stored in paise; a UI showing them needs to know which ones. */
@@ -189,7 +339,7 @@ const DEFAULT_MEDIA: MediaVocabulary = {
     'Comma-separated, eight at most. These are what the style filter on the discovery page ' +
     'searches, so they should match the category’s taxonomy.',
   tagsPlaceholder: 'candid, traditional',
-    altPlaceholder: 'Bride and groom during the pheras',
+  altPlaceholder: 'Bride and groom during the pheras',
   captionPlaceholder: 'Gomti Nagar, December 2026',
 }
 
@@ -198,8 +348,7 @@ const MEDIA_BY_CATEGORY: Record<string, MediaVocabulary> = {
 
   venues: {
     heading: 'Venue photos',
-    description:
-      'What a couple sees before deciding to visit. Plan §13 gates going live on five.',
+    description: 'What a couple sees before deciding to visit. Plan §13 gates going live on five.',
     noun: 'photo',
     empty: 'No photos yet. A venue nobody can see is a venue nobody books, and five is the floor.',
     tagsLabel: 'Which space',

@@ -40,7 +40,7 @@ export function HomeSearch({
   return (
     <form
       onSubmit={submit}
-      className="mt-8 rounded-3xl border border-ink-100 bg-surface-raised p-3 sm:p-4"
+      className="border-ink-100 bg-surface-raised mt-8 rounded-3xl border p-3 sm:p-4"
     >
       <div className="grid gap-3 sm:grid-cols-[1.1fr_1fr_1fr_auto]">
         <Field label="I'm looking for" htmlFor="h-cat">
@@ -88,7 +88,7 @@ export function HomeSearch({
           <button
             type="submit"
             disabled={pending}
-            className="h-12 w-full rounded-lg bg-primary-600 px-7 font-medium text-white transition-colors hover:bg-primary-700 disabled:opacity-60 sm:w-auto"
+            className="bg-primary-600 hover:bg-primary-700 h-12 w-full rounded-lg px-7 font-medium text-white transition-colors disabled:opacity-60 sm:w-auto"
           >
             {pending ? 'Searching…' : 'Search'}
           </button>
@@ -115,9 +115,12 @@ function Field({
 }) {
   return (
     <div className="flex flex-col gap-1">
-      <label htmlFor={htmlFor} className="flex items-center gap-1.5 text-xs font-medium text-ink-500">
+      <label
+        htmlFor={htmlFor}
+        className="text-ink-500 flex items-center gap-1.5 text-xs font-medium"
+      >
         {label}
-        {hint && <span className="font-normal text-ink-400">· {hint}</span>}
+        {hint && <span className="text-ink-400 font-normal">· {hint}</span>}
       </label>
       {children}
     </div>

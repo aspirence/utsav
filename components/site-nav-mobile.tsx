@@ -104,10 +104,10 @@ export function SiteNavMobile({
         aria-expanded={open}
         aria-controls="site-menu"
         aria-label="Open menu"
-        className="flex h-11 w-11 items-center justify-center rounded-full text-ink-700 transition-colors hover:bg-ink-100 group-data-[transparent]:text-white group-data-[transparent]:hover:bg-white/10"
+        className="text-ink-700 hover:bg-ink-100 flex h-11 w-11 items-center justify-center rounded-full transition-colors group-data-[transparent]:text-white group-data-[transparent]:hover:bg-white/10"
       >
         <span className="relative block h-4 w-6" aria-hidden="true">
-          <span className="absolute left-0 top-0 block h-0.5 w-6 bg-current" />
+          <span className="absolute top-0 left-0 block h-0.5 w-6 bg-current" />
           <span className="absolute bottom-0 left-0 block h-0.5 w-6 bg-current" />
         </span>
       </button>
@@ -124,13 +124,11 @@ export function SiteNavMobile({
             // dropped on the page.
             className={
               'bg-ink-900 fixed inset-0 z-[60] flex origin-top-right flex-col ' +
-              'transition-[transform,opacity,visibility] ' +
+              'transition-[transform,opacity,visibility]' +
               // Expo-out: most of the travel happens early and it settles for a long
               // while, which is what reads as "arriving" rather than "snapping".
-              'duration-[600ms] ease-[cubic-bezier(0.22,1,0.36,1)] ' +
-              (open
-                ? 'visible translate-x-0 opacity-100'
-                : 'invisible translate-x-full opacity-0')
+              'duration-[600ms] ease-[cubic-bezier(0.22,1,0.36,1)]' +
+              (open ? 'visible translate-x-0 opacity-100' : 'invisible translate-x-full opacity-0')
             }
           >
             <button
@@ -139,11 +137,11 @@ export function SiteNavMobile({
               tabIndex={open ? undefined : -1}
               aria-label="Close menu"
               style={step(120)}
-              className="absolute right-4 top-6 flex h-11 w-11 items-center justify-center rounded-md text-white hover:bg-white/10"
+              className="absolute top-6 right-4 flex h-11 w-11 items-center justify-center rounded-md text-white hover:bg-white/10"
             >
               <span className="relative block h-6 w-6" aria-hidden="true">
-                <span className="absolute left-0 top-1/2 block h-0.5 w-6 -translate-y-1/2 rotate-45 bg-current" />
-                <span className="absolute left-0 top-1/2 block h-0.5 w-6 -translate-y-1/2 -rotate-45 bg-current" />
+                <span className="absolute top-1/2 left-0 block h-0.5 w-6 -translate-y-1/2 rotate-45 bg-current" />
+                <span className="absolute top-1/2 left-0 block h-0.5 w-6 -translate-y-1/2 -rotate-45 bg-current" />
               </span>
             </button>
 
@@ -155,7 +153,7 @@ export function SiteNavMobile({
             */}
             <nav
               aria-label="Main"
-              className="scrollbar-none flex flex-1 flex-col items-center overflow-y-auto px-6 pb-10 pt-16 text-center"
+              className="flex flex-1 scrollbar-none flex-col items-center overflow-y-auto px-6 pt-16 pb-10 text-center"
             >
               <Link
                 href="/"
@@ -163,19 +161,19 @@ export function SiteNavMobile({
                 aria-label="Fremmo — home"
                 style={step(140)}
               >
-                {/* Same knockout the header and footer use - the mark is dark brown and
-                    gold on transparent, and would all but vanish on ink-900. */}
-                {/* eslint-disable-next-line @next/next/no-img-element -- plan §12: no next/image */}
+                {/* Same knockout the footer uses: the marigold gradient would sink into
+                    ink-900, so `mono` paints the whole lockup in one inherited white. */}
                 <Brand
-                  className="flex-col gap-3"
-                  markClassName="h-20 w-auto [filter:brightness(0)_invert(1)]"
-                  wordClassName="text-4xl text-white"
+                  mono
+                  className="flex-col gap-3 text-white"
+                  markClassName="h-20 w-auto"
+                  wordClassName="text-4xl"
                 />
               </Link>
 
               <p
                 style={step(240)}
-                className="text-accent-300 mt-8 text-xs font-semibold uppercase tracking-[0.14em]"
+                className="text-accent-300 mt-8 text-xs font-semibold tracking-[0.14em] uppercase"
               >
                 Browse
               </p>

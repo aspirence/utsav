@@ -6,12 +6,7 @@ import { useFormStatus } from 'react-dom'
 import { formatPaise, formatPerDay, rupeesToPaise } from '@/lib/db'
 import { Button, Card, CardBody } from '@/components/ui'
 
-import {
-  createPackage,
-  deactivatePackage,
-  updatePackage,
-  type PackageState,
-} from './actions'
+import { createPackage, deactivatePackage, updatePackage, type PackageState } from './actions'
 
 /**
  * Plan §S4's package card, from the vendor's side.
@@ -72,9 +67,7 @@ export function PackageForm({
     { status: 'idle' },
   )
 
-  const [categorySlug, setCategorySlug] = useState(
-    values.categorySlug || categories[0]?.slug || '',
-  )
+  const [categorySlug, setCategorySlug] = useState(values.categorySlug || categories[0]?.slug || '')
   const [priceRupees, setPriceRupees] = useState(paiseToRupeeInput(values.price))
   const [durationDays, setDurationDays] = useState(String(values.durationDays))
 
@@ -87,22 +80,22 @@ export function PackageForm({
       {values.id && <input type="hidden" name="packageId" value={values.id} />}
 
       {(state.status === 'created' || state.status === 'saved') && state.message && (
-        <p className="rounded-lg bg-success-50 px-4 py-3 text-sm text-success-700">
+        <p className="bg-success-50 text-success-700 rounded-lg px-4 py-3 text-sm">
           {state.message}
         </p>
       )}
       {state.status === 'error' && state.message && (
-        <p className="rounded-lg bg-danger-50 px-4 py-3 text-sm text-danger-700">{state.message}</p>
+        <p className="bg-danger-50 text-danger-700 rounded-lg px-4 py-3 text-sm">{state.message}</p>
       )}
       {state.status === 'unconfigured' && state.message && (
-        <p className="rounded-lg bg-warning-50 px-4 py-3 text-sm text-warning-700">
+        <p className="bg-warning-50 text-warning-700 rounded-lg px-4 py-3 text-sm">
           {state.message}
         </p>
       )}
 
       <Card>
         <CardBody className="space-y-4">
-          <h2 className="font-display text-lg text-ink-900">What is in it</h2>
+          <h2 className="font-display text-ink-900 text-lg">What is in it</h2>
 
           <div className="grid gap-4 sm:grid-cols-2">
             <Field
@@ -141,8 +134,9 @@ export function PackageForm({
               hint={
                 category
                   ? `Most ${category.name.toLowerCase()} listings quote ${
-                      PRICING_UNITS.find((u) => u.value === category.pricingUnit)?.label.toLowerCase() ??
-                      'per day'
+                      PRICING_UNITS.find(
+                        (u) => u.value === category.pricingUnit,
+                      )?.label.toLowerCase() ?? 'per day'
                     }.`
                   : undefined
               }
@@ -161,7 +155,11 @@ export function PackageForm({
               </select>
             </Field>
 
-            <Field label="Description" error={state.fieldErrors?.description} className="sm:col-span-2">
+            <Field
+              label="Description"
+              error={state.fieldErrors?.description}
+              className="sm:col-span-2"
+            >
               <textarea
                 name="description"
                 rows={3}
@@ -177,7 +175,7 @@ export function PackageForm({
 
       <Card>
         <CardBody className="space-y-4">
-          <h2 className="font-display text-lg text-ink-900">Price</h2>
+          <h2 className="font-display text-ink-900 text-lg">Price</h2>
 
           <div className="grid gap-4 sm:grid-cols-2">
             <Field label="Total price (₹)" error={state.fieldErrors?.price}>
@@ -216,14 +214,12 @@ export function PackageForm({
           {/* The number customers actually compare on. Same expression as the generated
               column: (price / greatest(duration_days, 0.5)), rounded the way Postgres
               rounds a numeric cast to bigint. */}
-          <div className="rounded-lg bg-surface-sunken px-4 py-3">
-            <p className="text-xs uppercase tracking-wide text-ink-500">
-              Customers compare this
-            </p>
-            <p className="mt-1 font-display text-2xl text-ink-900">
+          <div className="bg-surface-sunken rounded-lg px-4 py-3">
+            <p className="text-ink-500 text-xs tracking-wide uppercase">Customers compare this</p>
+            <p className="font-display text-ink-900 mt-1 text-2xl">
               {perDay == null ? '—' : formatPerDay(perDay)}
             </p>
-            <p className="mt-1 text-sm text-ink-600">
+            <p className="text-ink-600 mt-1 text-sm">
               {perDay == null
                 ? 'Enter a price and a duration to see your per-day figure.'
                 : `${formatPaise(rupeesToPaise(Number(priceRupees)), { compact: false })} over ${
@@ -236,7 +232,7 @@ export function PackageForm({
 
       <Card>
         <CardBody className="space-y-4">
-          <h2 className="font-display text-lg text-ink-900">The detail couples ask for</h2>
+          <h2 className="font-display text-ink-900 text-lg">The detail couples ask for</h2>
 
           <div className="grid gap-4 sm:grid-cols-3">
             <Field label="Crew size" error={state.fieldErrors?.crewSize}>
@@ -275,12 +271,12 @@ export function PackageForm({
 
           {category && category.styleTags.length > 0 && (
             <div>
-              <p className="mb-2 text-sm font-medium text-ink-800">Styles in this package</p>
+              <p className="text-ink-800 mb-2 text-sm font-medium">Styles in this package</p>
               <div className="flex flex-wrap gap-2">
                 {category.styleTags.map((tag) => (
                   <label
                     key={tag.slug}
-                    className="cursor-pointer rounded-full border border-ink-200 bg-surface-raised px-3.5 py-1.5 text-sm text-ink-700 has-[:checked]:border-ink-900 has-[:checked]:bg-ink-900 has-[:checked]:text-white"
+                    className="border-ink-200 bg-surface-raised text-ink-700 has-[:checked]:border-ink-900 has-[:checked]:bg-ink-900 cursor-pointer rounded-full border px-3.5 py-1.5 text-sm has-[:checked]:text-white"
                   >
                     <input
                       type="checkbox"
@@ -294,7 +290,7 @@ export function PackageForm({
                 ))}
               </div>
               {state.fieldErrors?.styleTags && (
-                <p className="mt-1 text-xs text-danger-700">{state.fieldErrors.styleTags[0]}</p>
+                <p className="text-danger-700 mt-1 text-xs">{state.fieldErrors.styleTags[0]}</p>
               )}
             </div>
           )}
@@ -326,7 +322,7 @@ export function PackageForm({
       </Card>
 
       {mode === 'edit' && (
-        <label className="flex items-center gap-2.5 text-sm text-ink-700">
+        <label className="text-ink-700 flex items-center gap-2.5 text-sm">
           <input
             type="checkbox"
             name="isActive"
@@ -367,7 +363,7 @@ export function DeactivatePackageButton({
   })
 
   if (state.status === 'deactivated') {
-    return <p className="text-xs text-ink-500">{state.message}</p>
+    return <p className="text-ink-500 text-xs">{state.message}</p>
   }
 
   return (
@@ -375,7 +371,7 @@ export function DeactivatePackageButton({
       <input type="hidden" name="packageId" value={packageId} />
       <HideButton />
       {state.message && state.status !== 'idle' && (
-        <p className="mt-1 text-xs text-danger-700">{state.message}</p>
+        <p className="text-danger-700 mt-1 text-xs">{state.message}</p>
       )}
       <span className="sr-only">{packageName}</span>
     </form>
@@ -412,10 +408,10 @@ function Field({
 }) {
   return (
     <label className={`block ${className ?? ''}`}>
-      <span className="mb-1.5 block text-sm font-medium text-ink-800">{label}</span>
+      <span className="text-ink-800 mb-1.5 block text-sm font-medium">{label}</span>
       {children}
-      {hint && !error && <span className="mt-1 block text-xs text-ink-500">{hint}</span>}
-      {error && <span className="mt-1 block text-xs text-danger-700">{error[0]}</span>}
+      {hint && !error && <span className="text-ink-500 mt-1 block text-xs">{hint}</span>}
+      {error && <span className="text-danger-700 mt-1 block text-xs">{error[0]}</span>}
     </label>
   )
 }

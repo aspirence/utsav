@@ -74,7 +74,7 @@ export default async function AdminEnquiriesPage({
       />
 
       {all[0]?.isDemo && (
-        <p className="rounded-md border border-warning-500/40 bg-warning-50 px-4 py-3 text-sm text-warning-700">
+        <p className="border-warning-500/40 bg-warning-50 text-warning-700 rounded-md border px-4 py-3 text-sm">
           No database is attached, so these are demo rows. Nothing here is a real customer.
         </p>
       )}
@@ -82,7 +82,7 @@ export default async function AdminEnquiriesPage({
       {/* Plain counts, not StatBar. StatBar renders progress against a stated target -
           right for plan §13's "3,000 live listings" gates, wrong here: there is no target
           number of enquiries to hit, and inventing one would make the bar decoration. */}
-      <Panel className="grid grid-cols-2 divide-ink-100 sm:grid-cols-4 sm:divide-x">
+      <Panel className="divide-ink-100 grid grid-cols-2 sm:grid-cols-4 sm:divide-x">
         <Count label="Total" value={all.length} />
         <Count label="Awaiting OTP" value={unrouted} hint="Never verified, so never sent" />
         <Count label="Routed" value={byStatus.routed ?? 0} />
@@ -123,11 +123,11 @@ export default async function AdminEnquiriesPage({
                 <div>
                   <Link
                     href={`/admin/enquiries/${r.id}`}
-                    className="font-medium text-ink-900 hover:text-primary-700"
+                    className="text-ink-900 hover:text-primary-700 font-medium"
                   >
                     {r.contactName}
                   </Link>
-                  <p className="mt-0.5 text-xs text-ink-500">
+                  <p className="text-ink-500 mt-0.5 text-xs">
                     {r.categoryName} · {[r.localityName, r.cityName].filter(Boolean).join(', ')}
                   </p>
                 </div>
@@ -139,7 +139,7 @@ export default async function AdminEnquiriesPage({
               render: (r) => (
                 <div className="text-sm">
                   <p className="text-ink-800">{titleCase(r.eventType)}</p>
-                  <p className="mt-0.5 text-xs text-ink-500">
+                  <p className="text-ink-500 mt-0.5 text-xs">
                     {r.eventDate ? shortDate(r.eventDate) : r.dateFlexible ? 'Flexible' : '—'}
                     {r.guestCount ? ` · ${r.guestCount} guests` : ''}
                   </p>
@@ -149,7 +149,7 @@ export default async function AdminEnquiriesPage({
             {
               key: 'budget',
               header: 'Budget',
-              render: (r) => <span className="text-sm text-ink-700">{r.budgetLabel ?? '—'}</span>,
+              render: (r) => <span className="text-ink-700 text-sm">{r.budgetLabel ?? '—'}</span>,
             },
             {
               key: 'status',
@@ -164,7 +164,7 @@ export default async function AdminEnquiriesPage({
             {
               key: 'when',
               header: 'Received',
-              render: (r) => <span className="text-xs text-ink-500">{shortDate(r.createdAt)}</span>,
+              render: (r) => <span className="text-ink-500 text-xs">{shortDate(r.createdAt)}</span>,
             },
           ]}
         />
@@ -183,18 +183,18 @@ export default async function AdminEnquiriesPage({
 function RoutedSummary({ enquiry }: { enquiry: AdminEnquiry }) {
   const n = enquiry.routedVendors.length
   if (n === 0) {
-    return <span className="text-xs text-ink-400">Not routed</span>
+    return <span className="text-ink-400 text-xs">Not routed</span>
   }
   const replied = enquiry.routedVendors.filter(
     (v) => v.status === 'responded' || v.status === 'quoted' || v.status === 'converted',
   ).length
 
   return (
-    <span className="text-sm text-ink-700">
+    <span className="text-ink-700 text-sm">
       {replied} of {n} replied
       {/* The cap is a database constraint, not a policy someone can override — worth
           surfacing when a row is at the ceiling. */}
-      {n === 5 && <span className="ml-1 text-xs text-ink-400">(at cap)</span>}
+      {n === 5 && <span className="text-ink-400 ml-1 text-xs">(at cap)</span>}
     </span>
   )
 }
@@ -202,11 +202,11 @@ function RoutedSummary({ enquiry }: { enquiry: AdminEnquiry }) {
 function Count({ label, value, hint }: { label: string; value: number; hint?: string }) {
   return (
     <div className="p-4">
-      <p className="text-xs font-semibold uppercase tracking-[0.14em] text-ink-500">{label}</p>
-      <p className="mt-1 font-display text-2xl tabular-nums text-ink-900">
+      <p className="text-ink-500 text-xs font-semibold tracking-[0.14em] uppercase">{label}</p>
+      <p className="font-display text-ink-900 mt-1 text-2xl tabular-nums">
         {value.toLocaleString('en-IN')}
       </p>
-      {hint && <p className="mt-0.5 text-xs text-ink-500">{hint}</p>}
+      {hint && <p className="text-ink-500 mt-0.5 text-xs">{hint}</p>}
     </div>
   )
 }
@@ -224,7 +224,7 @@ function FilterRow({
 }) {
   return (
     <div className="flex flex-wrap items-center gap-2">
-      <span className="text-xs font-semibold uppercase tracking-[0.14em] text-ink-500">
+      <span className="text-ink-500 text-xs font-semibold tracking-[0.14em] uppercase">
         {label}
       </span>
       {options.map((o) => (

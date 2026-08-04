@@ -111,7 +111,8 @@ export async function updateVendorProfile(
   if (membership.role === 'responder') {
     return {
       status: 'error',
-      message: 'Responders can reply to leads but cannot edit the listing. Ask an owner or manager.',
+      message:
+        'Responders can reply to leads but cannot edit the listing. Ask an owner or manager.',
     }
   }
 

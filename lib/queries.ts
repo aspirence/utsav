@@ -198,15 +198,11 @@ export interface DiscoverResult {
 export async function discoverVendors(query: DiscoverQuery): Promise<DiscoverResult> {
   const key = JSON.stringify(query)
 
-  return unstable_cache(
-    () => discoverVendorsUncached(query),
-    ['discover', key],
-    {
-      revalidate: 3600,
-      // Tagged by city+category so a single listing edit does not flush the whole index.
-      tags: ['discover', `discover:${query.citySlug}:${query.categorySlug ?? 'all'}`],
-    },
-  )()
+  return unstable_cache(() => discoverVendorsUncached(query), ['discover', key], {
+    revalidate: 3600,
+    // Tagged by city+category so a single listing edit does not flush the whole index.
+    tags: ['discover', `discover:${query.citySlug}:${query.categorySlug ?? 'all'}`],
+  })()
 }
 
 async function discoverVendorsUncached(query: DiscoverQuery): Promise<DiscoverResult> {

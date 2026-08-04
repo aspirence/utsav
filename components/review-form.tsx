@@ -76,8 +76,8 @@ export function ReviewForm({
           <Badge tone="success" className="mb-3">
             Review received
           </Badge>
-          <h2 className="font-display text-xl text-ink-900">Thank you</h2>
-          <p className="mt-2 text-ink-600">{state.message}</p>
+          <h2 className="font-display text-ink-900 text-xl">Thank you</h2>
+          <p className="text-ink-600 mt-2">{state.message}</p>
         </CardBody>
       </Card>
     )
@@ -86,10 +86,10 @@ export function ReviewForm({
   return (
     <Card className={className}>
       <CardBody className="p-6 sm:p-8">
-        <h2 className="font-display text-xl text-ink-900">How was {vendorName}?</h2>
-        <p className="mt-2 text-sm text-ink-600">
-          Only customers with a completed booking can review, which is why these reviews are
-          worth reading. Yours goes to a moderator before it appears on the profile.
+        <h2 className="font-display text-ink-900 text-xl">How was {vendorName}?</h2>
+        <p className="text-ink-600 mt-2 text-sm">
+          Only customers with a completed booking can review, which is why these reviews are worth
+          reading. Yours goes to a moderator before it appears on the profile.
         </p>
 
         <form onSubmit={handleSubmit} className="mt-6 space-y-7">
@@ -104,8 +104,8 @@ export function ReviewForm({
             size="lg"
           />
 
-          <fieldset className="space-y-4 rounded-lg bg-surface-sunken p-4">
-            <legend className="px-1 text-sm font-medium text-ink-800">
+          <fieldset className="bg-surface-sunken space-y-4 rounded-lg p-4">
+            <legend className="text-ink-800 px-1 text-sm font-medium">
               A little more detail (optional)
             </legend>
             {SUB_RATINGS.map((sub) => (
@@ -121,7 +121,7 @@ export function ReviewForm({
           </fieldset>
 
           <label className="block">
-            <span className="mb-1.5 block text-sm font-medium text-ink-800">
+            <span className="text-ink-800 mb-1.5 block text-sm font-medium">
               Headline (optional)
             </span>
             <input
@@ -134,7 +134,7 @@ export function ReviewForm({
           </label>
 
           <label className="block">
-            <span className="mb-1.5 block text-sm font-medium text-ink-800">Your review</span>
+            <span className="text-ink-800 mb-1.5 block text-sm font-medium">Your review</span>
             <textarea
               value={body}
               onChange={(e) => setBody(e.target.value)}
@@ -159,7 +159,7 @@ export function ReviewForm({
           </label>
 
           {state.status === 'error' && state.fieldErrors?.body && (
-            <p className="text-sm text-danger-700">{state.fieldErrors.body[0]}</p>
+            <p className="text-danger-700 text-sm">{state.fieldErrors.body[0]}</p>
           )}
 
           <Button type="submit" size="lg" fullWidth disabled={!canSubmit}>
@@ -210,15 +210,15 @@ function StarPicker({
   return (
     <fieldset>
       <div className="flex flex-wrap items-baseline justify-between gap-x-3">
-        <legend className="text-sm font-medium text-ink-800">{label}</legend>
-        {hint && <span className="text-xs text-ink-500">{hint}</span>}
+        <legend className="text-ink-800 text-sm font-medium">{label}</legend>
+        {hint && <span className="text-ink-500 text-xs">{hint}</span>}
       </div>
       <div className="mt-1.5 flex gap-1" onMouseLeave={() => setHovered(0)}>
         {[1, 2, 3, 4, 5].map((star) => (
           <label
             key={star}
             onMouseEnter={() => setHovered(star)}
-            className="cursor-pointer rounded p-0.5 focus-within:ring-2 focus-within:ring-primary-500"
+            className="focus-within:ring-primary-500 cursor-pointer rounded p-0.5 focus-within:ring-2"
           >
             <input
               type="radio"

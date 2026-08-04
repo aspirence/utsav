@@ -71,12 +71,37 @@ export function TemplateGrid({
      * wider cell does not make a wider phone. At four across the cell is about 286px and the
      * 200px phone simply centres in it. The extra width becomes gutter, not device.
      *
-     * `items-start` so a two-line name does not stretch its neighbour's cell; each caption sits
-     * under its own phone.
+     * ── RULED CELLS, NOT FLOATING CARDS ─────────────────────────────────────────
+     * The cells used to be separated by gaps. They are separated by shared rules now, which is
+     * the catalogue-sheet look the section was asked for: every product sits in its own box and
+     * the boxes touch.
+     *
+     * EVERY CELL CARRIES A WHOLE BORDER, and `-mr-px -mb-px` pulls each one a pixel over its
+     * neighbour so the two touching edges collapse into a single 1px rule. This is the old
+     * border-collapse trick and it is here for a specific reason: the alternative — top and
+     * left on the container, right and bottom on each cell — draws every rule once too, but
+     * only works when the grid is a full rectangle.
+     *
+     * IT NEVER IS. The home page passes six into a four-column row, and /invitations passes
+     * however many templates exist. With the container-edge version, the bottom rule of the
+     * last full row runs the whole width while the short row beneath fills only part of it, so
+     * the line juts out into empty space with nothing under it. Boxing each cell means a short
+     * row is simply fewer boxes, which is what the reference does and what reads as deliberate.
+     *
+     * `gap-0` is load-bearing and is not the default here: any gap separates the borders and
+     * the grid draws every internal rule twice, at double weight.
+     *
+     * NO `items-start` ANY MORE. It let each cell take its own height, which was right when they
+     * floated and is wrong now: ragged cell heights would break every horizontal rule into
+     * steps. The cells stretch, and TemplateGridCard pushes its button down with `mt-auto` so
+     * the buttons still line up across a row no matter how deep the names wrap.
      */
-    <ul className="grid grid-cols-2 items-start gap-x-3 gap-y-8 sm:grid-cols-3 sm:gap-x-6 sm:gap-y-10 lg:grid-cols-4">
+    <ul className="grid grid-cols-2 gap-0 sm:grid-cols-3 lg:grid-cols-4">
       {shown.map((item) => (
-        <li key={item.slug}>
+        <li
+          key={item.slug}
+          className="border-ink-200 -mr-px -mb-px border p-4 sm:p-5"
+        >
           <TemplateGridCard item={item} />
         </li>
       ))}
@@ -95,56 +120,73 @@ export function TemplateGridCard({ item }: { item: TemplateGridItem }) {
   const href = `/invitations/${item.slug}`
 
   return (
-    <figure className="group">
+    // `h-full` and a column: the cell stretches to its row, and the button is pushed to the
+    // bottom of whatever height that turns out to be. See the grid's note on ruled cells.
+    <figure className="group flex h-full flex-col">
       {/*
-        The whole phone is the link. Somebody who wants to see a template taps its picture;
-        making them find a small button underneath is a worse version of the same journey.
+        The whole phone is the link to the detail page. Somebody who wants to *see* a template
+        taps its picture; making them find a small button underneath is a worse version of the
+        same journey. Buying is the separate, explicit action below.
 
         `block` so the anchor is the size of what it contains — an inline anchor around a block
         child gives a hit area the height of a line of text, which is the classic version of
         "the picture is not clickable on my phone".
       */}
-      <Link href={href} className="block" aria-label={`${item.name}, ${formatPaise(item.pricePaise)}`}>
+      <Link
+        href={href}
+        className="block"
+        aria-label={`${item.name}, ${formatPaise(item.pricePaise)}`}
+      >
         <TemplatePhone item={item} className="mx-auto w-full max-w-[200px]" />
       </Link>
 
-      <figcaption className="mt-3 text-center sm:mt-5">
-        {item.tags.length > 0 && (
-          /*
-            Tracking steps down with the size. Letter-spacing is a proportion of the type size
-            and does not survive being shrunk without being retuned — at 0.16em a three-tag row
-            wrapped to three lines in a 170px column.
-          */
-          <p className="text-[10px] font-semibold uppercase tracking-[0.1em] text-primary-700/80 sm:text-[11px] sm:tracking-[0.16em]">
-            {item.tags.map((tag, i) => (
-              <span key={tag}>
-                {i > 0 && <span aria-hidden="true"> &middot; </span>}
-                {tag}
-              </span>
-            ))}
-          </p>
-        )}
-
+      <figcaption className="mt-3 flex flex-1 flex-col text-center sm:mt-4">
         {/*
-          The reserved height keeps the price rows aligned across a row as names wrap to
-          different depths. It shrinks with the type, or it reserves room for a third line that
-          can no longer occur.
+          THE TAG ROW IS GONE — it read "ROYAL · VIBRANT · NEW" above every name. Removed by
+          request. `tags` stays on the item because the filters on /invitations and the detail
+          page both still use it; this card just no longer prints it.
+
+          The name keeps `line-clamp-2` but has lost its reserved min-height. That height existed
+          to hold the price rows level across a row while the cells were free-standing. The cells
+          stretch now and `mt-auto` on the button does that job properly, so reserving space for
+          a second line under a one-line name is just a gap.
         */}
-        <h3 className="mt-1.5 line-clamp-2 min-h-[2.75rem] font-display text-base leading-snug text-ink-900 sm:mt-2 sm:min-h-[3.5rem] sm:text-xl">
+        <h3 className="font-display text-ink-900 line-clamp-2 text-base leading-snug sm:text-lg">
           {item.name}
         </h3>
 
         {/*
-          The price, plain.
-
-          There was a hover flip here that turned it into an "Order now" button. It is gone with
-          the carousel: hover does not exist on the surface this section is mostly read on, and
-          the whole card is already a link to a page whose primary action is ordering. One
-          decision, one target.
+          The gap above the button lives here as `mb-3`, not on the button itself. `mt-auto`
+          eats any margin-top it is given, so the button cannot carry its own minimum gap — on
+          the tallest card in a row there is no slack for `auto` to expand into and the button
+          would sit hard against the price.
         */}
-        <p className="mt-2 text-base tabular-nums text-ink-800 sm:text-lg">
+        <p className="text-ink-800 mt-1.5 mb-3 text-base font-semibold tabular-nums sm:text-lg">
           {formatPaise(item.pricePaise)}
         </p>
+
+        {/*
+          Buy now, straight to the order form — the card's second and only other action.
+
+          SQUARE ON PURPOSE. Every other button on the site is `rounded-full`; this one is
+          explicitly `rounded-none` because the section was asked for flat. It is written out
+          rather than left off so that the next person to touch it can see the corner is a
+          decision and not an omission.
+
+          `mt-auto` is what lines the buttons up across a row: it eats whatever slack the cell
+          has, so a card with a one-line name and one with a two-line name still put their
+          buttons on the same baseline.
+
+          The label is two words; the accessible name carries the product, because a screen
+          reader can pull a link out of its surrounding card and "Buy now" alone names nothing.
+        */}
+        <Link
+          href={`${href}/book`}
+          aria-label={`Buy ${item.name}, ${formatPaise(item.pricePaise)}`}
+          className="bg-ink-900 hover:bg-primary-700 mt-auto flex min-h-11 items-center justify-center rounded-none px-4 text-xs font-semibold tracking-[0.08em] text-white uppercase transition-colors sm:text-sm"
+        >
+          Buy now
+        </Link>
       </figcaption>
     </figure>
   )

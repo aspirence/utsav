@@ -45,8 +45,7 @@ const BUCKET = 'vendor-media'
 type Detected = { ext: 'jpg' | 'png' | 'webp'; mime: string }
 
 export type UploadResult =
-  | { ok: true; storagePath: string; where: 'storage' | 'local' }
-  | { ok: false; message: string }
+  { ok: true; storagePath: string; where: 'storage' | 'local' } | { ok: false; message: string }
 
 /**
  * Validate the bytes and store them.

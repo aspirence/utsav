@@ -56,31 +56,36 @@ export async function SiteHeader() {
       <div className="relative flex h-20 items-center justify-between gap-4 px-4 sm:px-8 lg:px-14">
         <Link href="/" className="relative z-10 shrink-0" aria-label="Fremmo — home">
           {/*
-            One asset, two appearances. On the white bar the mark is left alone — it is dark
-            brown and gold, which is what it was drawn to be. Over the homepage hero those
-            colours disappear into the photograph, so `brightness(0) invert(1)` crushes it to a
-            flat white knockout there: the standard treatment, and it needs no second file to
-            keep in sync with the first. The drop-shadow is the same idea as the text-shadow on
-            the nav links: the hero deliberately has no scrim, so anything sitting on it has to
-            carry its own separation.
+            One mark, two appearances. On the white bar the iris keeps its marigold-to-terracotta
+            gradient, which is what it was drawn to be. Over the hero it is crushed to a flat
+            white knockout instead.
 
-            The source is a 500px square with ~85px of transparent margin on every side;
-            it is trimmed to its alpha bounding box and exported at 576px tall - 3x the
-            192px the *footer* renders it at, which is the larger of the two uses, so one
-            file serves both sharply. `design/source-images/logo-source.png` is the master;
-            re-export from there if either size grows.
+            THE KNOCKOUT IS BECAUSE THE HERO ROTATES, and that is the whole argument — see
+            components/hero-background.tsx, which cycles three photographs. Keeping the gradient
+            was tried and looked good over the lavender sunset frame, where marigold is close to
+            the complement of the background. It falls apart on the amber frame: warm gold on
+            warm gold, with a string of lights running right through it. A mark that is legible
+            on one slide of three is not legible. White is the one value that survives all of
+            them, so the mark gives up its colour for the eighty pixels it spends over a photo.
 
-            h-12 in a h-20 row: 48px of mark in 80px of header, 16px of air above and below.
+            Do not re-litigate this against a single screenshot. Check all three frames.
 
-            The row was h-28 with an h-20 mark, and 112px of chrome is a lot to give a bar that
-            holds five links — on a 667px phone viewport it was a sixth of the screen before any
-            content started. The ratio is what was tuned before and it is preserved here: keep
-            the mark at 60% of the row and it reads as set in rather than wedged in.
+            The drop-shadow is the same idea as the text-shadow on the nav links: the hero
+            deliberately has no scrim, so anything sitting on it has to carry its own separation.
+
+            This is also the one place that still knocks out with a filter rather than
+            <Brand mono>. The footer and the console rail are always dark, so they can pass the
+            prop; here the treatment depends on `data-transparent`, and a CSS variant is the only
+            thing that can switch on a state the parent sets at runtime.
+
+            h-9 in a h-20 row: 36px of mark in 80px of header. The row was h-28 with an h-20
+            mark, and 112px of chrome is a lot to give a bar that holds five links — on a 667px
+            phone viewport it was a sixth of the screen before any content started. Keep the mark
+            at roughly 45% of the row and it reads as set in rather than wedged in.
           */}
-          {/* eslint-disable-next-line @next/next/no-img-element -- plan §12: no next/image */}
           <Brand
             markClassName="h-9 w-auto group-data-[transparent]:[filter:brightness(0)_invert(1)_drop-shadow(0_1px_6px_rgb(15_12_11_/_0.7))]"
-            wordClassName="text-2xl text-ink-900 group-data-[transparent]:text-white group-data-[transparent]:[text-shadow:0_1px_6px_rgb(15_12_11_/_0.7)]"
+            wordClassName="text-ink-900 text-2xl group-data-[transparent]:text-white group-data-[transparent]:[text-shadow:0_1px_6px_rgb(15_12_11_/_0.7)]"
           />
         </Link>
 
@@ -106,11 +111,7 @@ export async function SiteHeader() {
             <HeaderAccountLink signedIn={signedIn} initial={initialFrom(user)} />
           </div>
 
-          <SiteNavMobile
-            categories={categories}
-            defaultCity={defaultCity}
-            signedIn={signedIn}
-          />
+          <SiteNavMobile categories={categories} defaultCity={defaultCity} signedIn={signedIn} />
         </div>
       </div>
     </SiteHeaderShell>

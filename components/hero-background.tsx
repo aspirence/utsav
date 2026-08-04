@@ -162,7 +162,7 @@ export function HeroBackground() {
           alt=""
           fetchPriority="low"
           decoding="async"
-          className="absolute left-0 top-0 h-px w-px opacity-0"
+          className="absolute top-0 left-0 h-px w-px opacity-0"
         />
       )}
 

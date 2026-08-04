@@ -38,35 +38,35 @@ export function ContactLine({ lead }: { lead: PartnerLead }) {
       <p className="text-sm">
         <a
           href={`tel:${lead.contactPhone}`}
-          className="font-medium text-ink-900 underline underline-offset-2"
+          className="text-ink-900 font-medium underline underline-offset-2"
         >
           {lead.contactPhone}
         </a>
-        {lead.contactEmail && <span className="ml-3 text-ink-500">{lead.contactEmail}</span>}
+        {lead.contactEmail && <span className="text-ink-500 ml-3">{lead.contactEmail}</span>}
       </p>
     )
   }
 
   if (lead.creditRefundedAt) {
     return (
-      <p className="text-sm text-ink-500">
-        Credit refunded — contact details withdrawn. This lead does not count against your
-        response rate.
+      <p className="text-ink-500 text-sm">
+        Credit refunded — contact details withdrawn. This lead does not count against your response
+        rate.
       </p>
     )
   }
 
   if (lead.status === 'expired') {
     return (
-      <p className="text-sm text-ink-500">
+      <p className="text-ink-500 text-sm">
         Expired unworked. Contact details are no longer available.
       </p>
     )
   }
 
   return (
-    <p className="flex items-center gap-1.5 text-sm text-ink-500">
-      <svg className="h-3.5 w-3.5 fill-ink-400" viewBox="0 0 20 20" aria-hidden="true">
+    <p className="text-ink-500 flex items-center gap-1.5 text-sm">
+      <svg className="fill-ink-400 h-3.5 w-3.5" viewBox="0 0 20 20" aria-hidden="true">
         <path d="M14 8V6a4 4 0 10-8 0v2H5v9h10V8h-1zm-6-2a2 2 0 114 0v2H8V6z" />
       </svg>
       +91 •••• ••••• — open the lead to see the number

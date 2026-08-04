@@ -143,7 +143,10 @@ interface StaffClient {
   from: (table: 'audit_log' | 'staff_roles') => {
     insert: (values: Record<string, unknown>) => PromiseLike<{ error: WriteError }>
     select: (columns: string) => {
-      eq: (column: string, value: string) => {
+      eq: (
+        column: string,
+        value: string,
+      ) => {
         is: (
           column: string,
           value: null,

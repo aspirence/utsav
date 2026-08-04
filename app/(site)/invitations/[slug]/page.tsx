@@ -337,7 +337,7 @@ export default async function InvitationTemplatePage({
         {/* A 6px diagonal weave at 3% — visible as texture, invisible as lines. */}
         <div
           aria-hidden="true"
-          className="absolute inset-0 -z-10 opacity-[0.035] [background-image:repeating-linear-gradient(45deg,var(--color-ink-900)_0px,var(--color-ink-900)_1px,transparent_1px,transparent_6px)]"
+          className="absolute inset-0 -z-10 [background-image:repeating-linear-gradient(45deg,var(--color-ink-900)_0px,var(--color-ink-900)_1px,transparent_1px,transparent_6px)] opacity-[0.035]"
         />
         {/* Hairline where the section hands over to the one below. */}
         <div aria-hidden="true" className="bg-ink-200/60 absolute inset-x-0 bottom-0 -z-10 h-px" />
@@ -355,7 +355,10 @@ export default async function InvitationTemplatePage({
           <nav aria-label="Breadcrumb" className="text-ink-600 mb-6 text-sm sm:mb-8">
             <ol className="flex flex-wrap items-center gap-x-1">
               <li>
-                <Link href="/" className="hover:text-ink-900 inline-flex min-h-11 items-center pr-1">
+                <Link
+                  href="/"
+                  className="hover:text-ink-900 inline-flex min-h-11 items-center pr-1"
+                >
                   Home
                 </Link>
               </li>
@@ -375,7 +378,7 @@ export default async function InvitationTemplatePage({
               </li>
               {/* Truncated rather than wrapped: a long name pushing the crumb onto three lines
                   costs more than it tells you, and the <h1> underneath says it in full. */}
-              <li className="text-ink-900 min-w-0 max-w-[14rem] truncate" aria-current="page">
+              <li className="text-ink-900 max-w-[14rem] min-w-0 truncate" aria-current="page">
                 {template.name}
               </li>
             </ol>
@@ -445,7 +448,7 @@ export default async function InvitationTemplatePage({
             */}
             <div className="min-w-0 lg:col-start-1 lg:row-start-1">
               {template.tags.length > 0 && (
-                <ul className="text-primary-700 flex flex-wrap items-center gap-x-3 gap-y-1 text-[11px] font-semibold uppercase tracking-[0.22em]">
+                <ul className="text-primary-700 flex flex-wrap items-center gap-x-3 gap-y-1 text-[11px] font-semibold tracking-[0.22em] uppercase">
                   {template.tags.map((tag, i) => (
                     <li key={tag} className="flex items-center gap-3">
                       {i > 0 && (
@@ -508,7 +511,7 @@ export default async function InvitationTemplatePage({
               */}
               <div className="mt-6 flex flex-nowrap items-end gap-x-5 sm:mt-7 sm:gap-x-7">
                 <div className="min-w-0">
-                  <p className="text-ink-500 text-[10px] font-semibold uppercase tracking-[0.2em]">
+                  <p className="text-ink-500 text-[10px] font-semibold tracking-[0.2em] uppercase">
                     Available at
                   </p>
                   <p className="font-display text-ink-900 mt-1 text-[2rem] leading-none tabular-nums sm:text-4xl">
@@ -516,7 +519,7 @@ export default async function InvitationTemplatePage({
                   </p>
                 </div>
                 <div className="border-ink-300/70 min-w-0 self-stretch border-l pl-5 sm:pl-7">
-                  <p className="text-ink-500 text-[10px] font-semibold uppercase tracking-[0.2em]">
+                  <p className="text-ink-500 text-[10px] font-semibold tracking-[0.2em] uppercase">
                     You pay
                   </p>
                   <p className="font-display text-ink-800 mt-1 text-[15px] leading-snug tabular-nums">
@@ -545,7 +548,6 @@ export default async function InvitationTemplatePage({
               the whole width rather than the 60% the identity block sits in.
             */}
             <div className="col-span-2 min-w-0 lg:col-span-1 lg:col-start-1 lg:row-start-2">
-
               {/*
                 THE BUTTON COMES BEFORE THE FEATURE LIST.
 
@@ -570,7 +572,7 @@ export default async function InvitationTemplatePage({
                 */}
                 <Link
                   href={`/invitations/${template.slug}/book`}
-                  className="bg-primary-700 hover:bg-primary-800 ring-primary-700/25 group inline-flex h-14 w-full items-center justify-center gap-3 px-9 text-[13px] font-semibold uppercase tracking-[0.2em] text-white ring-1 ring-offset-2 transition-colors active:scale-[0.99] sm:w-auto sm:justify-start"
+                  className="bg-primary-700 hover:bg-primary-800 ring-primary-700/25 group inline-flex h-14 w-full items-center justify-center gap-3 px-9 text-[13px] font-semibold tracking-[0.2em] text-white uppercase ring-1 ring-offset-2 transition-colors active:scale-[0.99] sm:w-auto sm:justify-start"
                 >
                   Order now
                   <span
@@ -651,7 +653,7 @@ export default async function InvitationTemplatePage({
                 well without the weight, and the diamond bullet ties back to the rule above.
               */}
               <section className="mt-10">
-                <h2 className="text-ink-500 border-ink-300/70 border-t pt-3 text-[10px] font-semibold uppercase tracking-[0.2em]">
+                <h2 className="text-ink-500 border-ink-300/70 border-t pt-3 text-[10px] font-semibold tracking-[0.2em] uppercase">
                   What is included
                 </h2>
                 <ul className="mt-1 grid sm:grid-cols-2 sm:gap-x-10">
@@ -703,7 +705,6 @@ export default async function InvitationTemplatePage({
                 <Fact label="One link" note="Works on any phone" divided />
               </dl>
             </div>
-
           </div>
         </Container>
       </section>
@@ -889,7 +890,7 @@ export default async function InvitationTemplatePage({
         <div className="border-ink-200 sticky bottom-[calc(3.25rem+env(safe-area-inset-bottom))] z-30 border-t bg-white/95 px-4 py-3 backdrop-blur md:hidden">
           <div className="flex items-center gap-3">
             <div className="min-w-0">
-              <p className="text-ink-500 text-[10px] font-semibold uppercase tracking-[0.16em]">
+              <p className="text-ink-500 text-[10px] font-semibold tracking-[0.16em] uppercase">
                 Pay today
               </p>
               <p className="font-display text-ink-900 truncate text-lg leading-tight tabular-nums">
@@ -914,7 +915,7 @@ export default async function InvitationTemplatePage({
             <Link
               href={`/invitations/${template.slug}/book`}
               aria-label={`Order ${template.name}`}
-              className="bg-primary-700 hover:bg-primary-800 ml-auto inline-flex min-h-12 flex-1 items-center justify-center gap-2 px-6 text-[13px] font-semibold uppercase tracking-[0.16em] text-white transition-transform active:scale-[0.98]"
+              className="bg-primary-700 hover:bg-primary-800 ml-auto inline-flex min-h-12 flex-1 items-center justify-center gap-2 px-6 text-[13px] font-semibold tracking-[0.16em] text-white uppercase transition-transform active:scale-[0.98]"
             >
               Order now
               <span aria-hidden="true">&rarr;</span>
@@ -964,7 +965,7 @@ export default async function InvitationTemplatePage({
             <Link
               href={`/invitations/${template.slug}/book`}
               aria-label={`Order ${template.name}`}
-              className="bg-primary-700 hover:bg-primary-800 ml-auto inline-flex h-12 shrink-0 items-center gap-2 px-8 text-[13px] font-semibold uppercase tracking-[0.16em] text-white transition-colors active:scale-[0.99]"
+              className="bg-primary-700 hover:bg-primary-800 ml-auto inline-flex h-12 shrink-0 items-center gap-2 px-8 text-[13px] font-semibold tracking-[0.16em] text-white uppercase transition-colors active:scale-[0.99]"
             >
               Order now
               <span aria-hidden="true">&rarr;</span>
@@ -1040,13 +1041,11 @@ function Fact({ label, note, divided }: { label: string; note: string; divided?:
      */
     <div
       className={
-        divided
-          ? 'border-ink-200 border-t pt-3 sm:border-l sm:border-t-0 sm:pl-4 sm:pt-0'
-          : ''
+        divided ? 'border-ink-200 border-t pt-3 sm:border-t-0 sm:border-l sm:pt-0 sm:pl-4' : ''
       }
     >
       <dt className="font-display text-ink-900 text-lg leading-none">{label}</dt>
-      <dd className="text-ink-600 mt-1.5 text-[10px] uppercase tracking-[0.16em]">{note}</dd>
+      <dd className="text-ink-600 mt-1.5 text-[10px] tracking-[0.16em] uppercase">{note}</dd>
     </div>
   )
 }

@@ -49,11 +49,11 @@ column — plan §3, "one human = one auth identity". `/dashboard` reads them an
 redirects here. Sign in on the Email tab and `/dashboard` sends you wherever your memberships
 say you belong.
 
-| Email | Password | Lands on |
-| --- | --- | --- |
-| `dummy@fremmo.test` | `DummyFremmo2026!` | `/account` — plain customer |
+| Email                | Password           | Lands on                                       |
+| -------------------- | ------------------ | ---------------------------------------------- |
+| `dummy@fremmo.test`  | `DummyFremmo2026!` | `/account` — plain customer                    |
 | `vendor@fremmo.test` | `DummyVendor2026!` | `/partner/dashboard` — owner of "Dummy Studio" |
-| `staff@fremmo.test` | `DummyStaff2026!!` | `/admin` — **super admin**, full console |
+| `staff@fremmo.test`  | `DummyStaff2026!!` | `/admin` — **super admin**, full console       |
 
 The super admin holds every capability in plan §3's matrix, including `/admin/users` — the
 only screen that can grant and revoke staff roles. `staff_roles` has no write policy for any
@@ -182,23 +182,23 @@ unstyled page rather than an error.
 15 migrations covering ~45 tables across the nine domains in plan §5, plus RLS, search
 and the state-machine RPCs.
 
-| Migration | Contents |
-|---|---|
-| `000100` | extensions (postgis, pg_trgm, pgmq), `app` schema, `app.paise` domain |
-| `000200` | the four status enums that drive the product (§5) |
-| `000300` | identity — profiles, staff_roles, append-only audit_log |
-| `000400` | geo — cities, localities (locality = the SEO unit) |
-| `000500` | catalog — vendors, packages, media, style tags, availability, `vendor_private` |
-| `000600` | demand spine — events → enquiries → leads (5-vendor cap) → activities |
-| `000700` | money — quotes, bookings, payments, payouts, refunds, disputes |
-| `000800` | trust — booking-gated reviews, moderation queue, real-wedding stories |
-| `000900` | monetisation — plans, subscriptions, GST-ready invoices |
-| `001000` | ops — checklists, notifications outbox, e-invites, onboarding pipeline, analytics |
-| `001100` | corporate Phase 2 — orgs, RFPs, bids (shipped dark) |
-| `001200` | authorization helpers — the predicates every policy is built from |
-| `001300` | **RLS policies** — plan §6's matrix, table by table |
-| `001400` | search & ranking — FTS + trigram + PostGIS, one ranking function |
-| `001500` | contact-masking view + state-machine RPCs |
+| Migration | Contents                                                                          |
+| --------- | --------------------------------------------------------------------------------- |
+| `000100`  | extensions (postgis, pg_trgm, pgmq), `app` schema, `app.paise` domain             |
+| `000200`  | the four status enums that drive the product (§5)                                 |
+| `000300`  | identity — profiles, staff_roles, append-only audit_log                           |
+| `000400`  | geo — cities, localities (locality = the SEO unit)                                |
+| `000500`  | catalog — vendors, packages, media, style tags, availability, `vendor_private`    |
+| `000600`  | demand spine — events → enquiries → leads (5-vendor cap) → activities             |
+| `000700`  | money — quotes, bookings, payments, payouts, refunds, disputes                    |
+| `000800`  | trust — booking-gated reviews, moderation queue, real-wedding stories             |
+| `000900`  | monetisation — plans, subscriptions, GST-ready invoices                           |
+| `001000`  | ops — checklists, notifications outbox, e-invites, onboarding pipeline, analytics |
+| `001100`  | corporate Phase 2 — orgs, RFPs, bids (shipped dark)                               |
+| `001200`  | authorization helpers — the predicates every policy is built from                 |
+| `001300`  | **RLS policies** — plan §6's matrix, table by table                               |
+| `001400`  | search & ranking — FTS + trigram + PostGIS, one ranking function                  |
+| `001500`  | contact-masking view + state-machine RPCs                                         |
 
 Three design decisions worth knowing about, because they depart from a literal reading
 of the plan's table list:
@@ -229,7 +229,7 @@ These are not conventions — they are constraints, and `supabase/tests/` assert
   `public.vendor_leads` — a `routed` but unopened lead returns `NULL`. Vendors have **no**
   RLS policy on `enquiries` at all.
 - A refunded junk-lead credit revokes contact visibility again.
-- A review requires a *completed* booking, and `reviews.booking_id` is `UNIQUE`.
+- A review requires a _completed_ booking, and `reviews.booking_id` is `UNIQUE`.
 - Money tables have `SELECT` policies only — no client `INSERT`/`UPDATE` policy exists,
   so only service-role code can write them.
 - `app.vendor_rank()` takes no vendor identifier, so it physically cannot read
@@ -260,48 +260,48 @@ audit proving the contact-masking rule holds on every lead state.
 
 ## Commands
 
-| Command | Does |
-|---|---|
-| `pnpm dev` | Next dev server |
-| `pnpm build` | Production build of every package |
-| `pnpm typecheck` | `tsc --noEmit` across the workspace |
-| `pnpm format` | Prettier |
-| `pnpm db:start` / `db:stop` | Local Supabase stack (needs Docker) |
-| `pnpm db:reset` | Re-apply all migrations + seed |
-| `pnpm db:types` | Regenerate the Supabase TypeScript types |
-| `pnpm db:test` | pgTAP RLS suite |
-| `pnpm db:lint` | Supabase schema linter |
+| Command                     | Does                                     |
+| --------------------------- | ---------------------------------------- |
+| `pnpm dev`                  | Next dev server                          |
+| `pnpm build`                | Production build of every package        |
+| `pnpm typecheck`            | `tsc --noEmit` across the workspace      |
+| `pnpm format`               | Prettier                                 |
+| `pnpm db:start` / `db:stop` | Local Supabase stack (needs Docker)      |
+| `pnpm db:reset`             | Re-apply all migrations + seed           |
+| `pnpm db:types`             | Regenerate the Supabase TypeScript types |
+| `pnpm db:test`              | pgTAP RLS suite                          |
+| `pnpm db:lint`              | Supabase schema linter                   |
 
 **Demo logins** (after `pnpm db:reset`) — password `fremmo123`:
 
-| Email | Role |
-|---|---|
-| `priya@example.com` | customer with a completed booking + review |
+| Email                | Role                                       |
+| -------------------- | ------------------------------------------ |
+| `priya@example.com`  | customer with a completed booking + review |
 | `studio@example.com` | owner of Fremmo Studio (the anchor studio) |
-| `lensai@example.com` | owner of Lightleak Studio |
-| `admin@fremmo.test` | super admin |
-| `field@fremmo.test` | field agent, Lucknow only |
+| `lensai@example.com` | owner of Lightleak Studio                  |
+| `admin@fremmo.test`  | super admin                                |
+| `field@fremmo.test`  | field agent, Lucknow only                  |
 
 ---
 
 ## Progress against the plan's own epic backlog (§7.2)
 
-| Epic | Wks | State |
-|---|---:|---|
-| Identity, RLS harness & accounts | 10 | RLS + pgTAP done; account UI outstanding |
-| Catalog: profiles, taxonomy, media | 16 | Schema + public profile + partner editor UI done; upload pipeline outstanding |
-| Search, ranking & SEO engine | 14 | Ranking fn, ISR pages, sitemap, thresholds done |
-| Discovery, availability filter, shortlists | 13 | Discovery + availability done; shortlist UI outstanding |
-| Package cards & pricing display | 3 | Done |
-| Enquiry & lead verification | 10 | Form, action, OTP RPC done; round-trip needs a live instance |
-| Lead routing & caps | 8 | DB engine + cap done; partner inbox done |
-| Reviews & trust | 8 | Schema + display done; write flow outstanding |
-| Design system | 8 | Tokens + primitives + admin chrome done |
-| Admin console & moderation | 12 | Readiness, moderation, vendors, pipeline, leads done |
-| Notifications (outbox + pgmq) | 6 | Table + enqueue fn done; **workers outstanding** |
-| Analytics & instrumentation | 6 | Event table + names done; dashboards outstanding |
-| Vendor onboarding tool | 10 | Pipeline board done; field capture app outstanding |
-| Vendor app (Expo, Android) | 16 | **Not started** |
+| Epic                                       | Wks | State                                                                         |
+| ------------------------------------------ | --: | ----------------------------------------------------------------------------- |
+| Identity, RLS harness & accounts           |  10 | RLS + pgTAP done; account UI outstanding                                      |
+| Catalog: profiles, taxonomy, media         |  16 | Schema + public profile + partner editor UI done; upload pipeline outstanding |
+| Search, ranking & SEO engine               |  14 | Ranking fn, ISR pages, sitemap, thresholds done                               |
+| Discovery, availability filter, shortlists |  13 | Discovery + availability done; shortlist UI outstanding                       |
+| Package cards & pricing display            |   3 | Done                                                                          |
+| Enquiry & lead verification                |  10 | Form, action, OTP RPC done; round-trip needs a live instance                  |
+| Lead routing & caps                        |   8 | DB engine + cap done; partner inbox done                                      |
+| Reviews & trust                            |   8 | Schema + display done; write flow outstanding                                 |
+| Design system                              |   8 | Tokens + primitives + admin chrome done                                       |
+| Admin console & moderation                 |  12 | Readiness, moderation, vendors, pipeline, leads done                          |
+| Notifications (outbox + pgmq)              |   6 | Table + enqueue fn done; **workers outstanding**                              |
+| Analytics & instrumentation                |   6 | Event table + names done; dashboards outstanding                              |
+| Vendor onboarding tool                     |  10 | Pipeline board done; field capture app outstanding                            |
+| Vendor app (Expo, Android)                 |  16 | **Not started**                                                               |
 
 ## Start here next session
 

@@ -41,10 +41,9 @@ export function VendorDetailsForm({
   teamSize: number | null
   travelsOutstation: boolean
 }) {
-  const [state, act, pending] = useActionState<VendorActionState, FormData>(
-    updateVendorDetails,
-    { status: 'idle' },
-  )
+  const [state, act, pending] = useActionState<VendorActionState, FormData>(updateVendorDetails, {
+    status: 'idle',
+  })
 
   return (
     <form action={act} className="space-y-5">
@@ -57,7 +56,7 @@ export function VendorDetailsForm({
           type="text"
           required
           defaultValue={displayName}
-          className="w-full rounded-md border border-ink-200 px-3 py-2 text-sm text-ink-900 outline-none focus:border-ink-400"
+          className="border-ink-200 text-ink-900 focus:border-ink-400 w-full rounded-md border px-3 py-2 text-sm outline-none"
         />
       </Field>
 
@@ -67,9 +66,9 @@ export function VendorDetailsForm({
           name="about"
           rows={5}
           defaultValue={about ?? ''}
-          className="w-full rounded-md border border-ink-200 px-3 py-2 text-sm leading-relaxed text-ink-900 outline-none focus:border-ink-400"
+          className="border-ink-200 text-ink-900 focus:border-ink-400 w-full rounded-md border px-3 py-2 text-sm leading-relaxed outline-none"
         />
-        <p className="mt-1 text-xs text-ink-500">
+        <p className="text-ink-500 mt-1 text-xs">
           Shown on the public profile. Plan §13 gates going live on this being filled in.
         </p>
       </Field>
@@ -83,9 +82,9 @@ export function VendorDetailsForm({
             inputMode="numeric"
             defaultValue={paiseToRupees(priceBandMinPaise)}
             placeholder="1,20,000"
-            className="w-full rounded-md border border-ink-200 px-3 py-2 text-sm text-ink-900 outline-none focus:border-ink-400"
+            className="border-ink-200 text-ink-900 focus:border-ink-400 w-full rounded-md border px-3 py-2 text-sm outline-none"
           />
-          <span className="text-sm text-ink-500">to</span>
+          <span className="text-ink-500 text-sm">to</span>
           <input
             name="priceBandMax"
             type="text"
@@ -93,10 +92,10 @@ export function VendorDetailsForm({
             aria-label="Upper price band, in rupees"
             defaultValue={paiseToRupees(priceBandMaxPaise)}
             placeholder="3,50,000"
-            className="w-full rounded-md border border-ink-200 px-3 py-2 text-sm text-ink-900 outline-none focus:border-ink-400"
+            className="border-ink-200 text-ink-900 focus:border-ink-400 w-full rounded-md border px-3 py-2 text-sm outline-none"
           />
         </div>
-        <p className="mt-1 text-xs text-ink-500">
+        <p className="text-ink-500 mt-1 text-xs">
           Typed in rupees, stored as integer paise (plan §5).
         </p>
       </Field>
@@ -110,7 +109,7 @@ export function VendorDetailsForm({
             min={1900}
             max={new Date().getFullYear()}
             defaultValue={establishedYear ?? ''}
-            className="w-full rounded-md border border-ink-200 px-3 py-2 text-sm text-ink-900 outline-none focus:border-ink-400"
+            className="border-ink-200 text-ink-900 focus:border-ink-400 w-full rounded-md border px-3 py-2 text-sm outline-none"
           />
         </Field>
 
@@ -121,12 +120,12 @@ export function VendorDetailsForm({
             type="number"
             min={1}
             defaultValue={teamSize ?? ''}
-            className="w-full rounded-md border border-ink-200 px-3 py-2 text-sm text-ink-900 outline-none focus:border-ink-400"
+            className="border-ink-200 text-ink-900 focus:border-ink-400 w-full rounded-md border px-3 py-2 text-sm outline-none"
           />
         </Field>
       </div>
 
-      <label className="flex items-center gap-2 text-sm text-ink-800">
+      <label className="text-ink-800 flex items-center gap-2 text-sm">
         <input
           type="checkbox"
           name="travelsOutstation"
@@ -134,22 +133,22 @@ export function VendorDetailsForm({
           className="h-4 w-4"
         />
         Travels outstation
-        <span className="text-xs text-ink-500">
+        <span className="text-ink-500 text-xs">
           — what the destination-wedding filters search on
         </span>
       </label>
 
-      <div className="flex items-center gap-3 border-t border-ink-100 pt-4">
+      <div className="border-ink-100 flex items-center gap-3 border-t pt-4">
         <button
           type="submit"
           disabled={pending}
-          className="rounded-md bg-ink-900 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-ink-800 disabled:opacity-60"
+          className="bg-ink-900 hover:bg-ink-800 rounded-md px-4 py-2 text-sm font-medium text-white transition-colors disabled:opacity-60"
         >
           {pending ? 'Saving…' : 'Save changes'}
         </button>
 
         {state.status === 'done' && !pending && (
-          <span role="status" className="text-sm text-success-700">
+          <span role="status" className="text-success-700 text-sm">
             {state.message}
           </span>
         )}
@@ -195,7 +194,10 @@ function Field({
 }) {
   return (
     <div>
-      <label htmlFor={htmlFor} className="block text-xs font-semibold uppercase tracking-[0.14em] text-ink-500">
+      <label
+        htmlFor={htmlFor}
+        className="text-ink-500 block text-xs font-semibold tracking-[0.14em] uppercase"
+      >
         {label}
       </label>
       <div className="mt-2">{children}</div>

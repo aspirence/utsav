@@ -232,7 +232,9 @@ async function prepare(): Promise<Ready | { state: PackageState }> {
 
   const supabase = await getServerClientOrNull()
   if (!supabase) {
-    return { state: { status: 'error', message: 'Could not reach the database. Please try again.' } }
+    return {
+      state: { status: 'error', message: 'Could not reach the database. Please try again.' },
+    }
   }
 
   const membership = await activeMembership(supabase)

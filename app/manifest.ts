@@ -26,10 +26,14 @@ import type { MetadataRoute } from 'next'
  * the tight crop used everywhere that does no masking. Shipping one file for both purposes means
  * choosing which platform to look wrong on.
  *
- * The icons are the lotus mark — public/logo-mark.webp, the same crop <Brand> uses. Never the
- * old full lockup: a wordmark and a tagline are illegible at 192px and turn the icon into a grey
- * smudge on a home screen. Since the rebrand the mark carries no text at all, so these need no
- * change if the name ever moves again.
+ * The icons are the aperture mark, rendered from the same six paths <BrandMark> draws — see
+ * public/logo-mark.svg for the standalone copy. Never the full lockup: a wordmark and a tagline
+ * are illegible at 192px and turn the icon into a grey smudge on a home screen. The mark carries
+ * no text at all, so these need no change if the name ever moves again.
+ *
+ * The maskable file is flattened onto the canvas colour rather than left transparent. The mark
+ * is six separated blades around an open centre, so on a transparent icon the launcher's own
+ * background would show through the gaps and read as part of the artwork.
  */
 export default function manifest(): MetadataRoute.Manifest {
   return {

@@ -71,7 +71,7 @@ export function ShareBar({
               {/* Only labelled in place when the segment is wide enough to hold it. A number
                   clipped to "1" is worse than no number - the legend has it either way. */}
               {pct >= 12 && (
-                <span className="px-1 text-xs font-semibold tabular-nums text-white">
+                <span className="px-1 text-xs font-semibold text-white tabular-nums">
                   {Math.round(pct)}%
                 </span>
               )}
@@ -91,15 +91,15 @@ export function ShareBar({
               aria-hidden="true"
             />
             <dt className="text-ink-700">{s.label}</dt>
-            <dd className="ml-auto tabular-nums font-medium text-ink-900">{s.value}</dd>
-            <dd className="w-12 shrink-0 text-right tabular-nums text-ink-500">
+            <dd className="text-ink-900 ml-auto font-medium tabular-nums">{s.value}</dd>
+            <dd className="text-ink-500 w-12 shrink-0 text-right tabular-nums">
               {Math.round((s.value / sum) * 100)}%
             </dd>
           </div>
         ))}
       </dl>
 
-      {caption && <p className="mt-3 text-xs leading-relaxed text-ink-500">{caption}</p>}
+      {caption && <p className="text-ink-500 mt-3 text-xs leading-relaxed">{caption}</p>}
     </div>
   )
 }
@@ -145,7 +145,7 @@ export function ColumnChart({
           return (
             <div key={d.label} className="flex flex-1 flex-col items-center justify-end gap-1">
               {isPeak && (
-                <span className="text-xs font-semibold tabular-nums text-ink-800">{d.value}</span>
+                <span className="text-ink-800 text-xs font-semibold tabular-nums">{d.value}</span>
               )}
               <div
                 className="w-full rounded-t"
@@ -164,10 +164,10 @@ export function ColumnChart({
 
       {/* Baseline, then ticks. A hairline rule rather than a drawn axis - the bars sit on it
           and that is all an axis has to do here. */}
-      <div className="mt-1.5 border-t border-ink-200" />
+      <div className="border-ink-200 mt-1.5 border-t" />
       <div className="mt-1.5 flex gap-2">
         {data.map((d) => (
-          <span key={d.label} className="flex-1 text-center text-[11px] text-ink-500">
+          <span key={d.label} className="text-ink-500 flex-1 text-center text-[11px]">
             {d.label}
           </span>
         ))}
@@ -221,11 +221,11 @@ export function StatTile({
           </span>
         )}
         <div className="min-w-0">
-          <p className="text-xs font-semibold uppercase tracking-[0.12em] text-ink-500">{label}</p>
-          <p className="mt-1 font-display text-2xl leading-none text-ink-900">
+          <p className="text-ink-500 text-xs font-semibold tracking-[0.12em] uppercase">{label}</p>
+          <p className="font-display text-ink-900 mt-1 text-2xl leading-none">
             {typeof value === 'number' ? value.toLocaleString('en-IN') : value}
           </p>
-          {hint && <p className="mt-1.5 text-xs leading-snug text-ink-500">{hint}</p>}
+          {hint && <p className="text-ink-500 mt-1.5 text-xs leading-snug">{hint}</p>}
         </div>
       </div>
     </div>

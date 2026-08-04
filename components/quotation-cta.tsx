@@ -27,7 +27,7 @@ export function QuotationCta({ imageUrl }: { imageUrl?: string | null }) {
         <div className="u-media-fallback absolute inset-0" aria-hidden="true" />
       )}
 
-      <div className="absolute inset-0 bg-gradient-to-r from-ink-950/85 via-ink-950/60 to-ink-950/30" />
+      <div className="from-ink-950/85 via-ink-950/60 to-ink-950/30 absolute inset-0 bg-gradient-to-r" />
 
       <div className="relative grid items-center gap-6 px-8 py-14 sm:px-12 lg:grid-cols-[1fr_auto] lg:py-16">
         <div>
@@ -35,19 +35,19 @@ export function QuotationCta({ imageUrl }: { imageUrl?: string | null }) {
             Plan Your <span className="text-white/55">Perfect Celebration</span>
           </h2>
           <p className="mt-3 max-w-2xl text-white/85">
-            Tell us about your event, and we&rsquo;ll create a personalized quotation with the
-            best venues and vendors.
+            Tell us about your event, and we&rsquo;ll create a personalized quotation with the best
+            venues and vendors.
           </p>
         </div>
 
         <Link
           href="/enquire"
-          className="inline-flex shrink-0 items-center gap-3 rounded-md bg-surface-raised py-3 pl-6 pr-3 text-sm font-semibold text-ink-900 transition-colors hover:bg-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
+          className="bg-surface-raised text-ink-900 inline-flex shrink-0 items-center gap-3 rounded-md py-3 pr-3 pl-6 text-sm font-semibold transition-colors hover:bg-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
         >
           Get My Quotation
           <span
             aria-hidden="true"
-            className="flex h-8 w-8 items-center justify-center rounded-md bg-ink-900 text-white"
+            className="bg-ink-900 flex h-8 w-8 items-center justify-center rounded-md text-white"
           >
             &rarr;
           </span>

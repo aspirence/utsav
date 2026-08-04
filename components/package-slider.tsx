@@ -65,7 +65,7 @@ export function PackageSlider({ items }: { items: PackageCard[] }) {
                   <Link
                     href={item.href}
                     tabIndex={pi >= count ? -1 : undefined}
-                    className="group relative block h-[340px] overflow-hidden rounded-2xl focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-600 sm:h-[400px]"
+                    className="group focus-visible:outline-primary-600 relative block h-[340px] overflow-hidden rounded-2xl focus-visible:outline-2 focus-visible:outline-offset-2 sm:h-[400px]"
                   >
                     {item.imageUrl ? (
                       // eslint-disable-next-line @next/next/no-img-element -- plan section 12: Storage CDN
@@ -90,14 +90,14 @@ export function PackageSlider({ items }: { items: PackageCard[] }) {
 
                     {/* Lower half only, so the price pill at the top sits on the
                         photograph rather than on a wash. */}
-                    <div className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-ink-950/85 via-ink-950/40 to-transparent" />
+                    <div className="from-ink-950/85 via-ink-950/40 absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t to-transparent" />
 
-                    <span className="absolute right-4 top-4 rounded-full bg-surface-raised px-4 py-2 text-sm font-medium text-ink-900">
+                    <span className="bg-surface-raised text-ink-900 absolute top-4 right-4 rounded-full px-4 py-2 text-sm font-medium">
                       Starts At {formatPaise(item.startsAtPaise)}
                     </span>
 
                     <div className="absolute inset-x-0 bottom-0 p-5">
-                      <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-white/75">
+                      <p className="text-[11px] font-semibold tracking-[0.14em] text-white/75 uppercase">
                         Wedding Packages
                       </p>
                       <p className="mt-1 text-xl leading-tight text-white">{item.place}</p>
@@ -119,7 +119,7 @@ export function PackageSlider({ items }: { items: PackageCard[] }) {
                 key={i}
                 className={
                   'h-2 rounded-full transition-all duration-300 ' +
-                  (page === i ? 'w-6 bg-ink-800' : 'w-2 bg-ink-300')
+                  (page === i ? 'bg-ink-800 w-6' : 'bg-ink-300 w-2')
                 }
               />
             ))}
@@ -137,7 +137,7 @@ function Arrow({ dir, onClick }: { dir: 'prev' | 'next'; onClick: () => void }) 
       type="button"
       onClick={onClick}
       aria-label={dir === 'prev' ? 'Previous packages' : 'Next packages'}
-      className="flex h-9 w-9 items-center justify-center rounded-full border border-ink-200 bg-surface-raised text-ink-800 transition-colors hover:border-ink-300 hover:bg-ink-50"
+      className="border-ink-200 bg-surface-raised text-ink-800 hover:border-ink-300 hover:bg-ink-50 flex h-9 w-9 items-center justify-center rounded-full border transition-colors"
     >
       <span aria-hidden="true">{dir === 'prev' ? '←' : '→'}</span>
     </button>

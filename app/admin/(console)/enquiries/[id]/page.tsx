@@ -20,11 +20,7 @@ import { getAdminEnquiry } from '@/lib/admin-enquiries'
  */
 export const metadata = { title: 'Enquiry', robots: { index: false, follow: false } }
 
-export default async function AdminEnquiryPage({
-  params,
-}: {
-  params: Promise<{ id: string }>
-}) {
+export default async function AdminEnquiryPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params
   const e = await getAdminEnquiry(id)
   if (!e) notFound()
@@ -32,7 +28,7 @@ export default async function AdminEnquiryPage({
   return (
     <div className="space-y-6">
       <div>
-        <Link href="/admin/enquiries" className="text-sm text-ink-500 hover:text-ink-800">
+        <Link href="/admin/enquiries" className="text-ink-500 hover:text-ink-800 text-sm">
           &larr; All enquiries
         </Link>
         <div className="mt-2">
@@ -44,21 +40,21 @@ export default async function AdminEnquiryPage({
       </div>
 
       {e.isDemo && (
-        <p className="rounded-md border border-warning-500/40 bg-warning-50 px-4 py-3 text-sm text-warning-700">
+        <p className="border-warning-500/40 bg-warning-50 text-warning-700 rounded-md border px-4 py-3 text-sm">
           Demo row — no database attached. Not a real customer.
         </p>
       )}
 
       {e.spamScore >= 50 && (
-        <p className="rounded-md border border-danger-500/40 bg-danger-50 px-4 py-3 text-sm text-danger-700">
-          Spam score {e.spamScore}/100. Held back from routing — plan §12 names lead quality
-          as the top risk, so this is deliberately not a soft signal.
+        <p className="border-danger-500/40 bg-danger-50 text-danger-700 rounded-md border px-4 py-3 text-sm">
+          Spam score {e.spamScore}/100. Held back from routing — plan §12 names lead quality as the
+          top risk, so this is deliberately not a soft signal.
         </p>
       )}
 
       <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,0.8fr)]">
         <Panel className="p-5">
-          <h2 className="font-display text-lg text-ink-900">What they asked for</h2>
+          <h2 className="font-display text-ink-900 text-lg">What they asked for</h2>
 
           <dl className="mt-4 grid gap-4 sm:grid-cols-2">
             <Row label="Event">{titleCase(e.eventType)}</Row>
@@ -77,14 +73,14 @@ export default async function AdminEnquiryPage({
 
           {e.stylePreferences.length > 0 && (
             <div className="mt-5">
-              <p className="text-xs font-semibold uppercase tracking-[0.14em] text-ink-500">
+              <p className="text-ink-500 text-xs font-semibold tracking-[0.14em] uppercase">
                 Styles asked for
               </p>
               <div className="mt-2 flex flex-wrap gap-2">
                 {e.stylePreferences.map((s) => (
                   <span
                     key={s}
-                    className="rounded-full border border-ink-200 px-3 py-1 text-xs text-ink-700"
+                    className="border-ink-200 text-ink-700 rounded-full border px-3 py-1 text-xs"
                   >
                     {s}
                   </span>
@@ -95,10 +91,10 @@ export default async function AdminEnquiryPage({
 
           {e.message && (
             <div className="mt-5">
-              <p className="text-xs font-semibold uppercase tracking-[0.14em] text-ink-500">
+              <p className="text-ink-500 text-xs font-semibold tracking-[0.14em] uppercase">
                 Their message
               </p>
-              <p className="mt-2 border-l-2 border-ink-200 pl-4 leading-relaxed text-ink-700">
+              <p className="border-ink-200 text-ink-700 mt-2 border-l-2 pl-4 leading-relaxed">
                 {e.message}
               </p>
             </div>
@@ -106,8 +102,8 @@ export default async function AdminEnquiryPage({
         </Panel>
 
         <Panel className="p-5">
-          <h2 className="font-display text-lg text-ink-900">Contact</h2>
-          <p className="mt-1 text-xs text-ink-500">
+          <h2 className="font-display text-ink-900 text-lg">Contact</h2>
+          <p className="text-ink-500 mt-1 text-xs">
             Unmasked for staff. Vendors see this through `vendor_leads`, and only once the lead
             state permits it (plan §6).
           </p>
@@ -134,36 +130,35 @@ export default async function AdminEnquiryPage({
 
       <Panel className="p-5">
         <div className="flex flex-wrap items-baseline justify-between gap-2">
-          <h2 className="font-display text-lg text-ink-900">
-            Routed to {e.routedVendors.length}{' '}
-            {e.routedVendors.length === 1 ? 'vendor' : 'vendors'}
+          <h2 className="font-display text-ink-900 text-lg">
+            Routed to {e.routedVendors.length} {e.routedVendors.length === 1 ? 'vendor' : 'vendors'}
           </h2>
-          <p className="text-xs text-ink-500">
+          <p className="text-ink-500 text-xs">
             Cap of five is a database constraint, not a setting
           </p>
         </div>
 
         {e.routedVendors.length === 0 ? (
-          <p className="mt-4 text-sm text-ink-600">
+          <p className="text-ink-600 mt-4 text-sm">
             {e.status === 'pending_otp'
               ? 'Never verified, so it was never sent. No vendor was charged a credit for it.'
               : 'Not routed.'}
           </p>
         ) : (
-          <ol className="mt-4 divide-y divide-ink-100">
+          <ol className="divide-ink-100 mt-4 divide-y">
             {e.routedVendors.map((v) => (
               <li key={v.vendorSlug} className="flex flex-wrap items-center gap-4 py-3">
-                <span className="w-6 shrink-0 font-display text-lg text-ink-300">
+                <span className="font-display text-ink-300 w-6 shrink-0 text-lg">
                   {v.routedSeq}
                 </span>
                 <Link
                   href={`/admin/vendors/${v.vendorSlug}`}
-                  className="flex-1 font-medium text-ink-900 hover:text-primary-700"
+                  className="text-ink-900 hover:text-primary-700 flex-1 font-medium"
                 >
                   {v.vendorName}
                 </Link>
                 <LeadPill status={v.status} />
-                <span className="w-full text-xs text-ink-500 sm:w-auto">
+                <span className="text-ink-500 w-full text-xs sm:w-auto">
                   {[
                     v.viewedAt && `opened ${shortDate(v.viewedAt)}`,
                     v.respondedAt && `replied ${shortDate(v.respondedAt)}`,
@@ -196,8 +191,8 @@ function LeadPill({ status }: { status: string }) {
 function Row({ label, children }: { label: string; children: React.ReactNode }) {
   return (
     <div>
-      <dt className="text-xs font-semibold uppercase tracking-[0.14em] text-ink-500">{label}</dt>
-      <dd className="mt-1 text-ink-900">{children}</dd>
+      <dt className="text-ink-500 text-xs font-semibold tracking-[0.14em] uppercase">{label}</dt>
+      <dd className="text-ink-900 mt-1">{children}</dd>
     </div>
   )
 }

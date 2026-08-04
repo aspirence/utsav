@@ -42,7 +42,7 @@ export function ConsoleTopBar({
   viewSiteHref,
 }: ConsoleTopBarProps) {
   return (
-    <header className="sticky top-0 z-20 border-b border-ink-200 bg-white/95 backdrop-blur">
+    <header className="border-ink-200 sticky top-0 z-20 border-b bg-white/95 backdrop-blur">
       <div className="mx-auto flex max-w-[1500px] items-center gap-4 px-4 py-3 sm:px-6">
         {search ? (
           // method=get, so submitting puts the query in the URL and the target page reads it.
@@ -50,13 +50,13 @@ export function ConsoleTopBar({
             <label htmlFor="console-q" className="sr-only">
               {search.label}
             </label>
-            <div className="flex max-w-md items-center gap-2 rounded-md border border-ink-200 bg-ink-50 px-3 focus-within:border-ink-400">
+            <div className="border-ink-200 bg-ink-50 focus-within:border-ink-400 flex max-w-md items-center gap-2 rounded-md border px-3">
               <svg
                 viewBox="0 0 24 24"
                 fill="none"
                 stroke="currentColor"
                 strokeWidth={1.7}
-                className="h-4 w-4 shrink-0 text-ink-500"
+                className="text-ink-500 h-4 w-4 shrink-0"
                 aria-hidden="true"
               >
                 <circle cx="11" cy="11" r="7" />
@@ -67,7 +67,7 @@ export function ConsoleTopBar({
                 name="q"
                 type="search"
                 placeholder={search.placeholder}
-                className="w-full bg-transparent py-2 text-sm text-ink-900 outline-none placeholder:text-ink-400"
+                className="text-ink-900 placeholder:text-ink-400 w-full bg-transparent py-2 text-sm outline-none"
               />
             </div>
           </form>
@@ -86,7 +86,7 @@ export function ConsoleTopBar({
               'hidden shrink-0 rounded-full px-2.5 py-1 text-xs font-medium sm:inline ' +
               (badge.tone === 'warn'
                 ? 'bg-warning-50 text-warning-700'
-                : 'bg-success-50 text-success-700 ring-1 ring-success-100')
+                : 'bg-success-50 text-success-700 ring-success-100 ring-1')
             }
           >
             {badge.text}
@@ -95,15 +95,15 @@ export function ConsoleTopBar({
 
         <div className="flex shrink-0 items-center gap-2.5">
           <span className="hidden text-right text-xs leading-tight sm:block">
-            <span className="block max-w-[14rem] truncate font-medium text-ink-900">
+            <span className="text-ink-900 block max-w-[14rem] truncate font-medium">
               {identity.name}
             </span>
-            <span className="block text-ink-500">{identity.detail}</span>
+            <span className="text-ink-500 block">{identity.detail}</span>
           </span>
           {/* Initials, not a photo: there is no avatar anywhere in the schema, and a
               placeholder headshot would imply one exists. */}
           <span
-            className="flex h-9 w-9 items-center justify-center rounded-full bg-ink-800 text-xs font-semibold text-white"
+            className="bg-ink-800 flex h-9 w-9 items-center justify-center rounded-full text-xs font-semibold text-white"
             aria-hidden="true"
           >
             {identity.initials}
@@ -115,7 +115,7 @@ export function ConsoleTopBar({
         <form action={signOut} className="shrink-0">
           <button
             type="submit"
-            className="rounded-md border border-ink-200 px-3 py-2 text-xs font-medium text-ink-700 transition-colors hover:border-ink-300 hover:text-ink-900"
+            className="border-ink-200 text-ink-700 hover:border-ink-300 hover:text-ink-900 rounded-md border px-3 py-2 text-xs font-medium transition-colors"
           >
             Sign out
           </button>
@@ -124,7 +124,7 @@ export function ConsoleTopBar({
         {viewSiteHref && (
           <Link
             href={viewSiteHref}
-            className="hidden shrink-0 text-xs text-ink-500 underline-offset-2 hover:text-ink-900 hover:underline lg:inline"
+            className="text-ink-500 hover:text-ink-900 hidden shrink-0 text-xs underline-offset-2 hover:underline lg:inline"
           >
             View site ↗
           </Link>

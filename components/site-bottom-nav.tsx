@@ -1,11 +1,5 @@
 import { BottomNav, type BottomNavItem } from '@/components/bottom-nav'
-import {
-  IconCard,
-  IconGrid,
-  IconStore,
-  IconUser,
-  IconFlow,
-} from '@/components/console-sidebar'
+import { IconCard, IconGrid, IconStore, IconUser, IconFlow } from '@/components/console-sidebar'
 
 import { getSessionUser } from '@/lib/auth'
 import { getLaunchedCities } from '@/lib/queries'

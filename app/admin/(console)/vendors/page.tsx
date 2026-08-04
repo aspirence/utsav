@@ -45,8 +45,7 @@ export default async function AdminVendorsPage({
   const all = getAdminVendors()
   const rows = all.filter(
     (v) =>
-      (status === 'all' || v.status === status) &&
-      (category === 'all' || v.category === category),
+      (status === 'all' || v.status === status) && (category === 'all' || v.category === category),
   )
 
   const counts = all.reduce<Record<string, number>>((acc, v) => {
@@ -113,8 +112,8 @@ export default async function AdminVendorsPage({
             href={`/admin/vendors?status=${t.key}&category=${category}`}
             className={
               status === t.key
-                ? 'rounded-full bg-ink-900 px-3.5 py-1.5 text-sm font-medium text-white'
-                : 'rounded-full border border-ink-200 bg-white px-3.5 py-1.5 text-sm text-ink-700 hover:border-ink-300'
+                ? 'bg-ink-900 rounded-full px-3.5 py-1.5 text-sm font-medium text-white'
+                : 'border-ink-200 text-ink-700 hover:border-ink-300 rounded-full border bg-white px-3.5 py-1.5 text-sm'
             }
           >
             {t.label} ({t.count})
@@ -129,8 +128,8 @@ export default async function AdminVendorsPage({
             href={`/admin/vendors?status=${status}&category=${t.key}`}
             className={
               category === t.key
-                ? 'rounded-md bg-ink-700 px-3 py-1.5 text-sm font-medium text-white'
-                : 'rounded-md border border-ink-200 bg-white px-3 py-1.5 text-sm text-ink-600 hover:border-ink-300'
+                ? 'bg-ink-700 rounded-md px-3 py-1.5 text-sm font-medium text-white'
+                : 'border-ink-200 text-ink-600 hover:border-ink-300 rounded-md border bg-white px-3 py-1.5 text-sm'
             }
           >
             {t.label} ({t.count})
@@ -149,13 +148,13 @@ export default async function AdminVendorsPage({
               header: 'Vendor',
               render: (r) => (
                 <div>
-                  <p className="flex items-center gap-2 font-medium text-ink-900">
+                  <p className="text-ink-900 flex items-center gap-2 font-medium">
                     {r.name}
                     {/* Plan §11: the disclosure follows the listing everywhere,
                         including into the staff tools. */}
                     {r.isAnchor && <Pill tone="amber">Fremmo-owned</Pill>}
                   </p>
-                  <p className="text-xs text-ink-500">
+                  <p className="text-ink-500 text-xs">
                     {r.locality}, {r.city} · {r.category}
                   </p>
                 </div>
@@ -164,14 +163,22 @@ export default async function AdminVendorsPage({
             {
               key: 'status',
               header: 'Status',
-              render: (r) => <Pill tone={STATUS_TONE[r.status]}>{r.status.replace(/_/g, ' ')}</Pill>,
+              render: (r) => (
+                <Pill tone={STATUS_TONE[r.status]}>{r.status.replace(/_/g, ' ')}</Pill>
+              ),
             },
             {
               key: 'score',
               header: 'Profile',
               align: 'right',
               render: (r) => (
-                <span className={r.profileScore >= 60 ? 'tabular-nums text-ink-900' : 'tabular-nums text-danger-700'}>
+                <span
+                  className={
+                    r.profileScore >= 60
+                      ? 'text-ink-900 tabular-nums'
+                      : 'text-danger-700 tabular-nums'
+                  }
+                >
                   {r.profileScore}
                 </span>
               ),
@@ -181,7 +188,9 @@ export default async function AdminVendorsPage({
               header: 'Photos',
               align: 'right',
               render: (r) => (
-                <span className={r.mediaCount >= 5 ? 'tabular-nums' : 'tabular-nums text-danger-700'}>
+                <span
+                  className={r.mediaCount >= 5 ? 'tabular-nums' : 'text-danger-700 tabular-nums'}
+                >
                   {r.mediaCount}
                 </span>
               ),
@@ -190,7 +199,8 @@ export default async function AdminVendorsPage({
               key: 'seo',
               header: 'Gets leads',
               align: 'right',
-              render: (r) => (r.seoEligible ? <Pill tone="green">yes</Pill> : <Pill tone="red">no</Pill>),
+              render: (r) =>
+                r.seoEligible ? <Pill tone="green">yes</Pill> : <Pill tone="red">no</Pill>,
             },
             {
               key: 'kyc',
@@ -206,8 +216,7 @@ export default async function AdminVendorsPage({
                   <span className="text-ink-400">—</span>
                 ) : (
                   <span className="tabular-nums">
-                    {r.ratingAvg.toFixed(1)}{' '}
-                    <span className="text-ink-500">({r.ratingCount})</span>
+                    {r.ratingAvg.toFixed(1)} <span className="text-ink-500">({r.ratingCount})</span>
                   </span>
                 ),
             },
@@ -218,7 +227,7 @@ export default async function AdminVendorsPage({
               render: (r) => (
                 <Link
                   href={`/admin/vendors/${r.slug}`}
-                  className="inline-flex h-8 items-center rounded-md border border-ink-200 px-3 text-xs font-medium text-ink-800 hover:bg-ink-50"
+                  className="border-ink-200 text-ink-800 hover:bg-ink-50 inline-flex h-8 items-center rounded-md border px-3 text-xs font-medium"
                 >
                   Open
                 </Link>

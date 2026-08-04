@@ -30,7 +30,7 @@ export function ProfileForm({
   return (
     <form action={action} className="max-w-md space-y-5">
       <div>
-        <label htmlFor="fullName" className="block text-sm font-medium text-ink-800">
+        <label htmlFor="fullName" className="text-ink-800 block text-sm font-medium">
           Your name
         </label>
         <input
@@ -40,16 +40,16 @@ export function ProfileForm({
           autoComplete="name"
           defaultValue={fullName ?? ''}
           placeholder="Radha Jariwala"
-          className="mt-2 w-full rounded-md border border-ink-200 bg-surface-raised px-3.5 py-3 text-ink-900 outline-none focus:border-ink-400 placeholder:text-ink-400"
+          className="border-ink-200 bg-surface-raised text-ink-900 focus:border-ink-400 placeholder:text-ink-400 mt-2 w-full rounded-md border px-3.5 py-3 outline-none"
         />
-        <p className="mt-2 text-xs text-ink-500">
+        <p className="text-ink-500 mt-2 text-xs">
           Vendors see this on an enquiry, so they know who they are replying to.
         </p>
       </div>
 
       <div>
-        <label htmlFor="email" className="block text-sm font-medium text-ink-800">
-          Email <span className="font-normal text-ink-500">(optional)</span>
+        <label htmlFor="email" className="text-ink-800 block text-sm font-medium">
+          Email <span className="text-ink-500 font-normal">(optional)</span>
         </label>
         <input
           id="email"
@@ -58,19 +58,19 @@ export function ProfileForm({
           autoComplete="email"
           defaultValue={email ?? ''}
           placeholder="you@example.com"
-          className="mt-2 w-full rounded-md border border-ink-200 bg-surface-raised px-3.5 py-3 text-ink-900 outline-none focus:border-ink-400 placeholder:text-ink-400"
+          className="border-ink-200 bg-surface-raised text-ink-900 focus:border-ink-400 placeholder:text-ink-400 mt-2 w-full rounded-md border px-3.5 py-3 outline-none"
         />
-        <p className="mt-2 text-xs text-ink-500">
+        <p className="text-ink-500 mt-2 text-xs">
           For quotes and receipts. Everything urgent goes to your phone.
         </p>
       </div>
 
       <div>
-        <span className="block text-sm font-medium text-ink-800">Mobile</span>
-        <p className="mt-2 rounded-md border border-ink-100 bg-surface-sunken/60 px-3.5 py-3 text-ink-700">
+        <span className="text-ink-800 block text-sm font-medium">Mobile</span>
+        <p className="border-ink-100 bg-surface-sunken/60 text-ink-700 mt-2 rounded-md border px-3.5 py-3">
           {phone ?? '—'}
         </p>
-        <p className="mt-2 text-xs text-ink-500">
+        <p className="text-ink-500 mt-2 text-xs">
           This is your account. Changing it means verifying the new number.
         </p>
       </div>
@@ -79,12 +79,12 @@ export function ProfileForm({
         <button
           type="submit"
           disabled={pending}
-          className="rounded-md bg-primary-600 px-5 py-3 font-medium text-white transition-colors hover:bg-primary-700 disabled:opacity-60"
+          className="bg-primary-600 hover:bg-primary-700 rounded-md px-5 py-3 font-medium text-white transition-colors disabled:opacity-60"
         >
           {pending ? 'Saving…' : 'Save'}
         </button>
         {state.saved && !pending && (
-          <span role="status" className="text-sm text-success-700">
+          <span role="status" className="text-success-700 text-sm">
             Saved.
           </span>
         )}
@@ -93,7 +93,7 @@ export function ProfileForm({
       {state.error && (
         <p
           role="alert"
-          className="rounded-md border border-danger-500/30 bg-danger-50 px-3.5 py-2.5 text-sm text-danger-700"
+          className="border-danger-500/30 bg-danger-50 text-danger-700 rounded-md border px-3.5 py-2.5 text-sm"
         >
           {state.error}
         </p>

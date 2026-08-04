@@ -234,7 +234,10 @@ export async function rejectItem(id: string, reason: string): Promise<Moderation
 
   const parsed = rejectionSchema.safeParse({ id, reason })
   if (!parsed.success) {
-    return { status: 'error', message: firstIssue(parsed.error) ?? 'Please check what you entered.' }
+    return {
+      status: 'error',
+      message: firstIssue(parsed.error) ?? 'Please check what you entered.',
+    }
   }
 
   return decide(parsed.data.id, 'rejected', parsed.data.reason)

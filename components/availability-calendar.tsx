@@ -57,7 +57,7 @@ export function AvailabilityCalendar({
   const monthLabel = view.toLocaleDateString('en-IN', { month: 'long', year: 'numeric' })
 
   return (
-    <div className={cn('rounded-xl border border-ink-100 bg-surface-raised p-4 sm:p-5', className)}>
+    <div className={cn('border-ink-100 bg-surface-raised rounded-xl border p-4 sm:p-5', className)}>
       <div className="flex items-center justify-between gap-2">
         <Button
           variant="ghost"
@@ -68,7 +68,7 @@ export function AvailabilityCalendar({
         >
           ←
         </Button>
-        <p className="font-display text-lg text-ink-900" aria-live="polite">
+        <p className="font-display text-ink-900 text-lg" aria-live="polite">
           {monthLabel}
         </p>
         <Button
@@ -82,7 +82,7 @@ export function AvailabilityCalendar({
         </Button>
       </div>
 
-      <div className="mt-4 grid grid-cols-7 gap-1 text-center text-xs font-medium text-ink-500">
+      <div className="text-ink-500 mt-4 grid grid-cols-7 gap-1 text-center text-xs font-medium">
         {WEEKDAYS.map((day, i) => (
           <span key={i} aria-hidden="true">
             {day}
@@ -123,19 +123,19 @@ export function AvailabilityCalendar({
         })}
       </div>
 
-      <div className="mt-4 flex flex-wrap items-center gap-x-4 gap-y-1.5 border-t border-ink-100 pt-3 text-xs text-ink-500">
+      <div className="border-ink-100 text-ink-500 mt-4 flex flex-wrap items-center gap-x-4 gap-y-1.5 border-t pt-3 text-xs">
         <span className="inline-flex items-center gap-1.5">
-          <span className="h-2.5 w-2.5 rounded-sm bg-ink-100" /> Already booked
+          <span className="bg-ink-100 h-2.5 w-2.5 rounded-sm" /> Already booked
         </span>
         <span className="inline-flex items-center gap-1.5">
-          <span className="h-2.5 w-2.5 rounded-sm bg-primary-600" /> Your date
+          <span className="bg-primary-600 h-2.5 w-2.5 rounded-sm" /> Your date
         </span>
       </div>
 
       {blocked.size === 0 && (
-        <p className="mt-3 text-xs text-ink-500">
-          {vendorName} has not blocked any dates this month. Send an enquiry to have it
-          confirmed — a date is only held once they respond.
+        <p className="text-ink-500 mt-3 text-xs">
+          {vendorName} has not blocked any dates this month. Send an enquiry to have it confirmed —
+          a date is only held once they respond.
         </p>
       )}
 

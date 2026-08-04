@@ -173,8 +173,8 @@ export function Card({ className, ...props }: HTMLAttributes<HTMLDivElement>) {
   return (
     <div
       className={cn(
-        'overflow-hidden rounded-3xl border border-ink-100 bg-surface-raised',
-        'transition-colors hover:border-ink-200',
+        'border-ink-100 bg-surface-raised overflow-hidden rounded-3xl border',
+        'hover:border-ink-200 transition-colors',
         className,
       )}
       {...props}
@@ -203,9 +203,7 @@ export function Rating({
   className?: string
 }) {
   if (value == null || !count) {
-    return (
-      <span className={cn('text-xs font-medium text-ink-500', className)}>New on Fremmo</span>
-    )
+    return <span className={cn('text-ink-500 text-xs font-medium', className)}>New on Fremmo</span>
   }
 
   const dim = size === 'sm' ? 'h-3.5 w-3.5' : 'h-4 w-4'
@@ -218,7 +216,7 @@ export function Rating({
       <svg className={cn(dim, 'fill-accent-400')} viewBox="0 0 20 20" aria-hidden="true">
         <path d="M10 1.5l2.6 5.3 5.9.9-4.3 4.1 1 5.8L10 14.9 4.8 17.6l1-5.8L1.5 7.7l5.9-.9z" />
       </svg>
-      <span className={cn('font-semibold text-ink-900', size === 'sm' ? 'text-xs' : 'text-sm')}>
+      <span className={cn('text-ink-900 font-semibold', size === 'sm' ? 'text-xs' : 'text-sm')}>
         {value.toFixed(1)}
       </span>
       <span className={cn('text-ink-500', size === 'sm' ? 'text-xs' : 'text-sm')}>({count})</span>
@@ -273,7 +271,9 @@ export function MediaFrame({
 // ---------------------------------------------------------------------------
 
 export function Container({ className, ...props }: HTMLAttributes<HTMLDivElement>) {
-  return <div className={cn('mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8', className)} {...props} />
+  return (
+    <div className={cn('mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8', className)} {...props} />
+  )
 }
 
 export function SectionHeading({
@@ -290,16 +290,16 @@ export function SectionHeading({
   return (
     <div className={cn('max-w-2xl', className)}>
       {eyebrow && (
-        <p className="mb-2 text-xs font-semibold uppercase tracking-[0.14em] text-primary-600">
+        <p className="text-primary-600 mb-2 text-xs font-semibold tracking-[0.14em] uppercase">
           {eyebrow}
         </p>
       )}
-      <h2 className="text-2xl text-ink-900 sm:text-3xl">{title}</h2>
-      {description && <p className="mt-2.5 text-ink-600">{description}</p>}
+      <h2 className="text-ink-900 text-2xl sm:text-3xl">{title}</h2>
+      {description && <p className="text-ink-600 mt-2.5">{description}</p>}
     </div>
   )
 }
 
 export function Skeleton({ className }: { className?: string }) {
-  return <div className={cn('animate-pulse rounded-md bg-ink-100', className)} />
+  return <div className={cn('bg-ink-100 animate-pulse rounded-md', className)} />
 }

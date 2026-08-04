@@ -79,9 +79,9 @@ export default async function CityPage({ params }: Props) {
 
   return (
     <>
-      <section className="border-b border-ink-100 bg-gradient-to-b from-accent-50/60 to-surface">
+      <section className="border-ink-100 from-accent-50/60 to-surface border-b bg-gradient-to-b">
         <Container className="py-12 sm:py-16">
-          <nav aria-label="Breadcrumb" className="mb-4 text-sm text-ink-500">
+          <nav aria-label="Breadcrumb" className="text-ink-500 mb-4 text-sm">
             <Link href="/" className="hover:text-ink-800">
               Home
             </Link>
@@ -93,14 +93,14 @@ export default async function CityPage({ params }: Props) {
             {city.name}, {city.state}
           </Badge>
 
-          <h1 className="max-w-3xl text-4xl leading-[1.1] text-ink-900 sm:text-5xl">
+          <h1 className="text-ink-900 max-w-3xl text-4xl leading-[1.1] sm:text-5xl">
             Everyone you need for a celebration in {city.name}.
           </h1>
 
-          <p className="mt-5 max-w-2xl text-lg text-ink-600">
-            {liveTotal} live {liveTotal === 1 ? 'listing' : 'listings'} across{' '}
-            {stocked.length} {stocked.length === 1 ? 'category' : 'categories'}, each with a real
-            portfolio and a declared price band. Filter by locality, style and your date.
+          <p className="text-ink-600 mt-5 max-w-2xl text-lg">
+            {liveTotal} live {liveTotal === 1 ? 'listing' : 'listings'} across {stocked.length}{' '}
+            {stocked.length === 1 ? 'category' : 'categories'}, each with a real portfolio and a
+            declared price band. Filter by locality, style and your date.
           </p>
 
           <div className="mt-8 flex flex-wrap gap-3">
@@ -126,18 +126,18 @@ export default async function CityPage({ params }: Props) {
             <Link
               key={category.slug}
               href={`/${citySlug}/${category.slug}`}
-              className="group rounded-xl border border-ink-100 bg-surface-raised p-5 transition-colors hover:border-ink-300"
+              className="group border-ink-100 bg-surface-raised hover:border-ink-300 rounded-xl border p-5 transition-colors"
             >
               <div className="flex items-start justify-between gap-3">
-                <h3 className="font-display text-xl text-ink-900">{category.pluralName}</h3>
+                <h3 className="font-display text-ink-900 text-xl">{category.pluralName}</h3>
                 {category.isWedge && <Badge tone="primary">Most booked</Badge>}
               </div>
-              <p className="mt-2 text-sm text-ink-600">{category.description}</p>
-              <p className="mt-3 text-sm font-medium text-ink-900">
+              <p className="text-ink-600 mt-2 text-sm">{category.description}</p>
+              <p className="text-ink-900 mt-3 text-sm font-medium">
                 {total} {total === 1 ? 'listing' : 'listings'} in {city.name}
               </p>
               {category.styleTags.length > 0 && (
-                <p className="mt-1.5 text-xs text-ink-500">
+                <p className="text-ink-500 mt-1.5 text-xs">
                   {category.styleTags
                     .slice(0, 4)
                     .map((tag) => tag.name)
@@ -149,10 +149,10 @@ export default async function CityPage({ params }: Props) {
         </div>
 
         {empty.length > 0 && (
-          <p className="mt-6 text-sm text-ink-500">
+          <p className="text-ink-500 mt-6 text-sm">
             Not live in {city.name} yet:{' '}
             {empty.map((entry) => entry.category.pluralName.toLowerCase()).join(', ')}.{' '}
-            <Link href="/partner" className="font-medium text-primary-700 hover:text-primary-800">
+            <Link href="/partner" className="text-primary-700 hover:text-primary-800 font-medium">
               Run one of these businesses?
             </Link>
           </p>
@@ -169,7 +169,7 @@ export default async function CityPage({ params }: Props) {
             />
             <Link
               href={`/${citySlug}/photography`}
-              className="hidden shrink-0 text-sm font-medium text-primary-700 hover:text-primary-800 sm:block"
+              className="text-primary-700 hover:text-primary-800 hidden shrink-0 text-sm font-medium sm:block"
             >
               See all {featured.total} →
             </Link>
@@ -198,7 +198,7 @@ export default async function CityPage({ params }: Props) {
             />
             <Link
               href={`/stories?city=${citySlug}`}
-              className="hidden shrink-0 text-sm font-medium text-primary-700 hover:text-primary-800 sm:block"
+              className="text-primary-700 hover:text-primary-800 hidden shrink-0 text-sm font-medium sm:block"
             >
               All stories →
             </Link>
@@ -225,13 +225,13 @@ export default async function CityPage({ params }: Props) {
           <div className="mt-8 space-y-7">
             {stocked.map(({ category }) => (
               <div key={category.slug}>
-                <h3 className="text-sm font-semibold text-ink-900">{category.pluralName}</h3>
+                <h3 className="text-ink-900 text-sm font-semibold">{category.pluralName}</h3>
                 <div className="mt-2.5 flex flex-wrap gap-2">
                   {localities.map((locality) => (
                     <Link
                       key={locality.slug}
                       href={`/${citySlug}/${category.slug}/${locality.slug}`}
-                      className="rounded-full border border-ink-200 bg-surface-raised px-3.5 py-1.5 text-sm text-ink-700 transition-colors hover:border-ink-300 hover:text-ink-900"
+                      className="border-ink-200 bg-surface-raised text-ink-700 hover:border-ink-300 hover:text-ink-900 rounded-full border px-3.5 py-1.5 text-sm transition-colors"
                     >
                       {locality.name}
                     </Link>

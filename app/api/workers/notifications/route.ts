@@ -262,7 +262,13 @@ export async function POST(request: Request): Promise<Response> {
   const claim = await claimBatch(admin, limit)
   if (claim.error) {
     return json(
-      { status: 'error', message: claim.error, claimed: 0, sent: 0, failed: 0 } satisfies DrainSummary,
+      {
+        status: 'error',
+        message: claim.error,
+        claimed: 0,
+        sent: 0,
+        failed: 0,
+      } satisfies DrainSummary,
       200,
     )
   }
@@ -499,9 +505,7 @@ function addressFor(row: NotificationRow, book: AddressBook): string {
   switch (row.channel) {
     case 'whatsapp':
       // A vendor's WhatsApp number is often not the number they answer calls on.
-      return (
-        row.to_phone ?? vendor?.whatsapp_phone ?? vendor?.contact_phone ?? profile?.phone ?? ''
-      )
+      return row.to_phone ?? vendor?.whatsapp_phone ?? vendor?.contact_phone ?? profile?.phone ?? ''
     case 'sms':
       return row.to_phone ?? vendor?.contact_phone ?? profile?.phone ?? ''
     case 'email':

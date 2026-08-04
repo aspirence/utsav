@@ -2,7 +2,6 @@ import Link from 'next/link'
 
 import { Container } from '@/components/ui'
 
-
 /**
  * The reviews section: a photograph across the whole band, and the reviews themselves
  * running as an infinite vertical marquee on the left, as plain text with no card around
@@ -119,7 +118,7 @@ export function ReviewsMarquee({
   const duration = Math.max(28, filled.length * 9)
 
   return (
-    <section className="relative isolate overflow-hidden border-y border-ink-100 bg-surface">
+    <section className="border-ink-100 bg-surface relative isolate overflow-hidden border-y">
       {/*
         Full-bleed photograph, untouched — no wash, no mask.
 
@@ -144,7 +143,7 @@ export function ReviewsMarquee({
       <Container className={`py-10 sm:py-12 ${wide ? 'max-w-[1600px]' : ''}`}>
         <div className="grid gap-10 lg:grid-cols-[minmax(0,0.95fr)_minmax(0,1fr)]">
           <div>
-            <p className="text-xs font-semibold uppercase tracking-[0.14em] text-accent-300">
+            <p className="text-accent-300 text-xs font-semibold tracking-[0.14em] uppercase">
               {eyebrow}
             </p>
             <h2 className="mt-3 max-w-xl text-3xl leading-[1.14] text-white sm:text-4xl">
@@ -168,14 +167,14 @@ export function ReviewsMarquee({
                     <div className="flex items-center gap-2">
                       <Stars rating={review.rating} />
                       {review.verified && (
-                        <span className="text-xs font-medium text-accent-200">
+                        <span className="text-accent-200 text-xs font-medium">
                           Verified booking
                         </span>
                       )}
                     </div>
 
                     {review.title && (
-                      <p className="mt-2 max-w-xl font-display text-base leading-snug text-white">
+                      <p className="font-display mt-2 max-w-xl text-base leading-snug text-white">
                         &ldquo;{review.title}&rdquo;
                       </p>
                     )}
@@ -201,7 +200,7 @@ export function ReviewsMarquee({
                       {review.sourceHref ? (
                         <Link
                           href={review.sourceHref}
-                          className="font-medium text-white underline underline-offset-2 hover:text-accent-200"
+                          className="hover:text-accent-200 font-medium text-white underline underline-offset-2"
                           tabIndex={i >= filled.length ? -1 : undefined}
                         >
                           {review.sourceName}

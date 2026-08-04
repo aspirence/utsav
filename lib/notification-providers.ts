@@ -354,7 +354,11 @@ async function postJson(
 
   // A 2xx with an unreadable body is still a send. Record the acknowledgement rather than
   // retrying and risking a duplicate message the customer can see.
-  return { ok: true, providerMessageId: readMessageId(parsed) ?? `ack:${Date.now()}`, simulated: false }
+  return {
+    ok: true,
+    providerMessageId: readMessageId(parsed) ?? `ack:${Date.now()}`,
+    simulated: false,
+  }
 }
 
 /**

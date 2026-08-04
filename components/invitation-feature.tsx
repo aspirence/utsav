@@ -122,29 +122,28 @@ export function InvitationFeature({ imageUrl }: { imageUrl?: string | null }) {
 
       {/* ── Right: the copy ────────────────────────────────────────────── */}
       <div>
-        <h2 className="text-3xl leading-[1.15] text-ink-900 sm:text-4xl lg:text-5xl">
+        <h2 className="text-ink-900 text-3xl leading-[1.15] sm:text-4xl lg:text-5xl">
           The invitation is the first thing anyone sees of your wedding
         </h2>
 
-        <p className="mt-6 leading-relaxed text-ink-700">
-          Before the mandap, before the menu, before a single guest arrives — there is a
-          card in someone&rsquo;s hands. It sets the colour, the formality and the feeling
-          of everything that follows, and it is the one part of the wedding every single
-          person on your list will actually hold.
+        <p className="text-ink-700 mt-6 leading-relaxed">
+          Before the mandap, before the menu, before a single guest arrives — there is a card in
+          someone&rsquo;s hands. It sets the colour, the formality and the feeling of everything
+          that follows, and it is the one part of the wedding every single person on your list will
+          actually hold.
         </p>
 
-        <p className="mt-4 leading-relaxed text-ink-700">
-          Screen-printed and foiled cards, hand-painted Awadhi motifs, matching e-invites
-          for the cousins abroad, and the whole set proofed before anything goes to press.
-          Tell us the tradition and the date, and we will find the designers who have set
-          that script before.
+        <p className="text-ink-700 mt-4 leading-relaxed">
+          Screen-printed and foiled cards, hand-painted Awadhi motifs, matching e-invites for the
+          cousins abroad, and the whole set proofed before anything goes to press. Tell us the
+          tradition and the date, and we will find the designers who have set that script before.
         </p>
 
-        <div className="mt-10 border-t border-ink-200 pt-8">
+        <div className="border-ink-200 mt-10 border-t pt-8">
           <div className="flex flex-wrap items-center gap-x-12 gap-y-6">
             <div>
-              <p className="font-display text-4xl leading-none text-ink-900">48 hrs</p>
-              <p className="mt-2 text-sm leading-snug text-ink-600">
+              <p className="font-display text-ink-900 text-4xl leading-none">48 hrs</p>
+              <p className="text-ink-600 mt-2 text-sm leading-snug">
                 First proofs
                 <br />
                 back in your inbox
@@ -154,16 +153,16 @@ export function InvitationFeature({ imageUrl }: { imageUrl?: string | null }) {
             <button
               type="button"
               onClick={openPlayer}
-              className="group flex items-center gap-4 text-left focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-primary-600"
+              className="group focus-visible:outline-primary-600 flex items-center gap-4 text-left focus-visible:outline-2 focus-visible:outline-offset-4"
             >
-              <span className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full border border-ink-300 text-ink-900 transition-colors group-hover:border-ink-900 group-hover:bg-ink-900 group-hover:text-white">
+              <span className="border-ink-300 text-ink-900 group-hover:border-ink-900 group-hover:bg-ink-900 flex h-14 w-14 shrink-0 items-center justify-center rounded-full border transition-colors group-hover:text-white">
                 <svg viewBox="0 0 24 24" className="ml-0.5 h-5 w-5 fill-current" aria-hidden="true">
                   <path d="M8 5v14l11-7z" />
                 </svg>
               </span>
               <span>
-                <span className="block font-display text-xl text-ink-900">Watch how</span>
-                <span className="mt-0.5 block text-sm text-ink-600">
+                <span className="font-display text-ink-900 block text-xl">Watch how</span>
+                <span className="text-ink-600 mt-0.5 block text-sm">
                   From first sketch to the printed card
                 </span>
               </span>
@@ -175,7 +174,7 @@ export function InvitationFeature({ imageUrl }: { imageUrl?: string | null }) {
               page entirely (plan §13). */}
           <Link
             href="/invitation"
-            className="mt-8 inline-flex items-center gap-2 border-b border-ink-300 pb-1 text-sm font-semibold text-ink-900 transition-colors hover:border-ink-900"
+            className="border-ink-300 text-ink-900 hover:border-ink-900 mt-8 inline-flex items-center gap-2 border-b pb-1 text-sm font-semibold transition-colors"
           >
             Open a live invitation
             <span aria-hidden="true">&rarr;</span>
@@ -196,7 +195,7 @@ export function InvitationFeature({ imageUrl }: { imageUrl?: string | null }) {
       <dialog
         ref={dialog}
         className={
-          'overflow-hidden backdrop:bg-ink-950/80 backdrop:backdrop-blur-sm ' +
+          'backdrop:bg-ink-950/80 overflow-hidden backdrop:backdrop-blur-sm ' +
           (framed
             ? 'm-auto bg-transparent p-0'
             : // Edge to edge.
@@ -211,7 +210,7 @@ export function InvitationFeature({ imageUrl }: { imageUrl?: string | null }) {
               // 100dvh, not 100vh: on a phone 100vh is the viewport with the address bar
               // hidden, so the bottom of the video sits under the browser chrome until
               // you scroll - and there is nothing to scroll.
-              'fixed inset-0 m-0 h-[100dvh] max-h-none w-screen max-w-none bg-ink-950 p-0')
+              'bg-ink-950 fixed inset-0 m-0 h-[100dvh] max-h-none w-screen max-w-none p-0')
         }
         aria-label="How an invitation is made"
       >
@@ -222,7 +221,7 @@ export function InvitationFeature({ imageUrl }: { imageUrl?: string | null }) {
             <PhoneFrame>{player}</PhoneFrame>
 
             <form method="dialog">
-              <button className="rounded-full bg-surface-raised px-5 py-2 text-sm font-medium text-ink-900 hover:bg-white">
+              <button className="bg-surface-raised text-ink-900 rounded-full px-5 py-2 text-sm font-medium hover:bg-white">
                 Close
               </button>
             </form>
@@ -233,10 +232,10 @@ export function InvitationFeature({ imageUrl }: { imageUrl?: string | null }) {
 
             {/* Floated over the player rather than below it - there is no "below" when
                 the video owns the whole screen. */}
-            <form method="dialog" className="absolute right-3 top-3">
+            <form method="dialog" className="absolute top-3 right-3">
               <button
                 aria-label="Close video"
-                className="flex h-10 w-10 items-center justify-center rounded-full bg-ink-950/60 text-lg text-white backdrop-blur-sm"
+                className="bg-ink-950/60 flex h-10 w-10 items-center justify-center rounded-full text-lg text-white backdrop-blur-sm"
               >
                 &times;
               </button>
@@ -263,7 +262,7 @@ function PhoneFrame({ children }: { children: React.ReactNode }) {
   return (
     <div className="relative">
       {/* Body: the dark bezel. */}
-      <div className="relative h-[min(76vh,680px)] aspect-[9/19.5] rounded-[2.5rem] bg-ink-950 p-2.5 shadow-[0_28px_60px_-24px_rgba(24,17,12,0.5)] ring-1 ring-white/15">
+      <div className="bg-ink-950 relative aspect-[9/19.5] h-[min(76vh,680px)] rounded-[2.5rem] p-2.5 shadow-[0_28px_60px_-24px_rgba(24,17,12,0.5)] ring-1 ring-white/15">
         {/* Screen. */}
         <div className="relative h-full w-full overflow-hidden rounded-[2rem] bg-black">
           {children}
@@ -272,22 +271,22 @@ function PhoneFrame({ children }: { children: React.ReactNode }) {
         {/* Notch. */}
         <div
           aria-hidden="true"
-          className="absolute left-1/2 top-2.5 h-6 w-24 -translate-x-1/2 rounded-b-2xl bg-ink-950"
+          className="bg-ink-950 absolute top-2.5 left-1/2 h-6 w-24 -translate-x-1/2 rounded-b-2xl"
         />
       </div>
 
       {/* Side buttons. */}
       <span
         aria-hidden="true"
-        className="absolute -left-[3px] top-[22%] h-10 w-[3px] rounded-l bg-ink-800"
+        className="bg-ink-800 absolute top-[22%] -left-[3px] h-10 w-[3px] rounded-l"
       />
       <span
         aria-hidden="true"
-        className="absolute -left-[3px] top-[33%] h-16 w-[3px] rounded-l bg-ink-800"
+        className="bg-ink-800 absolute top-[33%] -left-[3px] h-16 w-[3px] rounded-l"
       />
       <span
         aria-hidden="true"
-        className="absolute -right-[3px] top-[28%] h-20 w-[3px] rounded-r bg-ink-800"
+        className="bg-ink-800 absolute top-[28%] -right-[3px] h-20 w-[3px] rounded-r"
       />
     </div>
   )

@@ -29,18 +29,18 @@ export function HowItWorks({
 }) {
   return (
     <Container className="py-14 sm:py-16">
-      <div className="rounded-3xl border-2 border-dotted border-primary-300/70 p-2 sm:p-2.5">
-        <div className="rounded-3xl bg-surface-raised px-5 py-12 sm:px-10 sm:py-14">
+      <div className="border-primary-300/70 rounded-3xl border-2 border-dotted p-2 sm:p-2.5">
+        <div className="bg-surface-raised rounded-3xl px-5 py-12 sm:px-10 sm:py-14">
           <div className="mx-auto max-w-2xl text-center">
             {eyebrow && (
-              <p className="text-xs font-semibold uppercase tracking-[0.16em] text-primary-700/80">
+              <p className="text-primary-700/80 text-xs font-semibold tracking-[0.16em] uppercase">
                 {eyebrow}
               </p>
             )}
-            <h2 className="mt-3 font-display text-3xl leading-tight text-ink-900 sm:text-4xl">
+            <h2 className="font-display text-ink-900 mt-3 text-3xl leading-tight sm:text-4xl">
               {title}
             </h2>
-            <p className="mt-4 leading-relaxed text-ink-700">{description}</p>
+            <p className="text-ink-700 mt-4 leading-relaxed">{description}</p>
           </div>
 
           <ol className="relative mt-12 grid grid-cols-2 gap-x-6 gap-y-12 sm:grid-cols-4 sm:gap-x-4">
@@ -48,13 +48,13 @@ export function HowItWorks({
                 opaque background and sit above it in source order instead. */}
             <span
               aria-hidden="true"
-              className="absolute left-[12.5%] right-[12.5%] top-9 hidden h-px bg-gradient-to-r from-primary-300 via-accent-400 to-primary-300 sm:block"
+              className="from-primary-300 via-accent-400 to-primary-300 absolute top-9 right-[12.5%] left-[12.5%] hidden h-px bg-gradient-to-r sm:block"
             />
 
             {steps.map((step, i) => (
               <li key={step.title} className="relative text-center">
                 <span
-                  className="relative z-10 mx-auto flex h-[72px] w-[72px] items-center justify-center rounded-full bg-surface-raised font-display text-xl text-ink-800 ring-1 ring-primary-300/70 shadow-[0_2px_10px_rgba(24,17,12,0.06)]"
+                  className="bg-surface-raised font-display text-ink-800 ring-primary-300/70 relative z-10 mx-auto flex h-[72px] w-[72px] items-center justify-center rounded-full text-xl shadow-[0_2px_10px_rgba(24,17,12,0.06)] ring-1"
                   // The number is decoration over an ordered list — the list already carries the
                   // order, and a screen reader announcing "01" before "Pick a design" says it twice.
                   aria-hidden="true"
@@ -62,10 +62,10 @@ export function HowItWorks({
                   {String(i + 1).padStart(2, '0')}
                 </span>
 
-                <h3 className="mt-5 font-display text-lg leading-snug text-ink-900">
+                <h3 className="font-display text-ink-900 mt-5 text-lg leading-snug">
                   {step.title}
                 </h3>
-                <p className="mx-auto mt-2 max-w-[22ch] text-sm leading-relaxed text-ink-600">
+                <p className="text-ink-600 mx-auto mt-2 max-w-[22ch] text-sm leading-relaxed">
                   {step.body}
                 </p>
               </li>

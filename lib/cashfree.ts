@@ -118,16 +118,16 @@ export class CashfreeError extends Error {
  * amount is asserted to survive the round trip — a float that arrives back as 149899.99999
  * paise is a reconciliation ticket months later, and it is cheaper to refuse to send it.
  */
-export async function createCashfreeOrder(
-  input: CreateOrderInput,
-): Promise<CreateOrderResult> {
+export async function createCashfreeOrder(input: CreateOrderInput): Promise<CreateOrderResult> {
   const config = cashfreeConfig()
   if (!config) throw new Error('Cashfree is not configured.')
 
   if (!Number.isInteger(input.amountPaise) || input.amountPaise < 100) {
     // Their minimum order_amount is 1 rupee. Below that the API rejects it with a message
     // about the amount, which is a confusing thing to surface from a form.
-    throw new Error(`Amount must be a whole number of paise, at least 100. Got ${input.amountPaise}.`)
+    throw new Error(
+      `Amount must be a whole number of paise, at least 100. Got ${input.amountPaise}.`,
+    )
   }
 
   const orderAmount = paiseToRupees(input.amountPaise)
@@ -268,9 +268,7 @@ function constantTimeEqual(a: string, b: string): boolean {
 // ---------------------------------------------------------------------------
 
 export type CashfreeWebhookType =
-  | 'PAYMENT_SUCCESS_WEBHOOK'
-  | 'PAYMENT_FAILED_WEBHOOK'
-  | 'PAYMENT_USER_DROPPED_WEBHOOK'
+  'PAYMENT_SUCCESS_WEBHOOK' | 'PAYMENT_FAILED_WEBHOOK' | 'PAYMENT_USER_DROPPED_WEBHOOK'
 
 export interface CashfreePaymentEvent {
   type: CashfreeWebhookType

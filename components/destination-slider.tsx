@@ -53,7 +53,7 @@ export function DestinationSlider({ items }: { items: DestinationCard[] }) {
               key={i}
               className={
                 'h-1.5 rounded-full transition-all duration-300 ' +
-                (page === i ? 'w-6 bg-ink-800' : 'w-1.5 bg-ink-300')
+                (page === i ? 'bg-ink-800 w-6' : 'bg-ink-300 w-1.5')
               }
             />
           ))}
@@ -64,9 +64,7 @@ export function DestinationSlider({ items }: { items: DestinationCard[] }) {
 
       <div className="overflow-hidden">
         <div
-          className={
-            'flex ' + (animate ? 'transition-transform duration-700 ease-out' : '')
-          }
+          className={'flex ' + (animate ? 'transition-transform duration-700 ease-out' : '')}
           style={{ transform: `translateX(-${index * 100}%)` }}
           role="group"
           aria-label="Destination wedding settings"
@@ -106,7 +104,7 @@ function Card({ item, inert }: { item: DestinationCard; inert: boolean }) {
         gives the left card 1.45fr and the right 1fr, so at equal height the left reads as
         a rectangle and the right as a square.
       */
-      className="group relative block h-[340px] overflow-hidden rounded-2xl focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-600 sm:h-[420px] lg:h-[480px]"
+      className="group focus-visible:outline-primary-600 relative block h-[340px] overflow-hidden rounded-2xl focus-visible:outline-2 focus-visible:outline-offset-2 sm:h-[420px] lg:h-[480px]"
     >
       <div className="h-full w-full">
         {item.imageUrl ? (
@@ -128,17 +126,17 @@ function Card({ item, inert }: { item: DestinationCard; inert: boolean }) {
 
       {/* Scrim weighted to the left, where the title sits, so the right of the
           photograph stays open. */}
-      <div className="absolute inset-0 bg-gradient-to-r from-ink-950/55 via-ink-950/20 to-transparent" />
+      <div className="from-ink-950/55 via-ink-950/20 absolute inset-0 bg-gradient-to-r to-transparent" />
 
       <div className="absolute inset-x-0 top-0 p-6 sm:p-7">
         <p
-          className="font-display text-xl italic text-white/90 sm:text-2xl"
+          className="font-display text-xl text-white/90 italic sm:text-2xl"
           style={{ textShadow: '0 1px 14px rgb(15 12 11 / 0.5)' }}
         >
           {item.script}
         </p>
         <h3
-          className="mt-1 max-w-[70%] text-2xl font-semibold uppercase leading-tight tracking-wide text-white sm:text-3xl"
+          className="mt-1 max-w-[70%] text-2xl leading-tight font-semibold tracking-wide text-white uppercase sm:text-3xl"
           style={{ textShadow: '0 1px 14px rgb(15 12 11 / 0.5)' }}
         >
           {item.title}
@@ -146,11 +144,11 @@ function Card({ item, inert }: { item: DestinationCard; inert: boolean }) {
         <p className="mt-3 max-w-[64%] text-sm leading-snug text-white/85">{item.blurb}</p>
       </div>
 
-      <span className="absolute bottom-5 right-5 inline-flex items-center gap-2 rounded-full bg-surface-raised py-2 pl-4 pr-2 text-sm font-medium text-ink-900">
+      <span className="bg-surface-raised text-ink-900 absolute right-5 bottom-5 inline-flex items-center gap-2 rounded-full py-2 pr-2 pl-4 text-sm font-medium">
         View details
         <span
           aria-hidden="true"
-          className="flex h-7 w-7 items-center justify-center rounded-md bg-ink-900 text-white transition-transform group-hover:translate-x-0.5"
+          className="bg-ink-900 flex h-7 w-7 items-center justify-center rounded-md text-white transition-transform group-hover:translate-x-0.5"
         >
           &rarr;
         </span>
@@ -165,7 +163,7 @@ function ArrowButton({ dir, onClick }: { dir: 'prev' | 'next'; onClick: () => vo
       type="button"
       onClick={onClick}
       aria-label={dir === 'prev' ? 'Previous destinations' : 'Next destinations'}
-      className="flex h-10 w-10 items-center justify-center rounded-md border border-ink-200 bg-surface-raised text-ink-800 transition-colors hover:border-ink-300 hover:bg-ink-50"
+      className="border-ink-200 bg-surface-raised text-ink-800 hover:border-ink-300 hover:bg-ink-50 flex h-10 w-10 items-center justify-center rounded-md border transition-colors"
     >
       <span aria-hidden="true">{dir === 'prev' ? '←' : '→'}</span>
     </button>

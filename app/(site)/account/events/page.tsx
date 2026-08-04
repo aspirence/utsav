@@ -24,17 +24,17 @@ export default async function EventsPage() {
     <div>
       <div className="flex flex-wrap items-start justify-between gap-4">
         <div className="max-w-prose">
-          <h2 className="font-display text-xl text-ink-900">Your events</h2>
-          <p className="mt-2 leading-relaxed text-ink-700">
-            One for each celebration. Enquiries, saved vendors and your checklist all sit
-            under whichever event they belong to.
+          <h2 className="font-display text-ink-900 text-xl">Your events</h2>
+          <p className="text-ink-700 mt-2 leading-relaxed">
+            One for each celebration. Enquiries, saved vendors and your checklist all sit under
+            whichever event they belong to.
           </p>
         </div>
         <EventForm cities={cities} />
       </div>
 
       {live.length === 0 ? (
-        <p className="mt-8 text-ink-600">Nothing yet. Add the first one above.</p>
+        <p className="text-ink-600 mt-8">Nothing yet. Add the first one above.</p>
       ) : (
         <ul className="mt-8 space-y-4">
           {live.map((e) => (
@@ -45,7 +45,7 @@ export default async function EventsPage() {
 
       {archived.length > 0 && (
         <div className="mt-12">
-          <h3 className="text-xs font-semibold uppercase tracking-[0.14em] text-ink-500">
+          <h3 className="text-ink-500 text-xs font-semibold tracking-[0.14em] uppercase">
             Archived
           </h3>
           <ul className="mt-4 space-y-4 opacity-60">
@@ -59,11 +59,7 @@ export default async function EventsPage() {
   )
 }
 
-function EventRow({
-  event,
-}: {
-  event: Awaited<ReturnType<typeof getMyEvents>>[number]
-}) {
+function EventRow({ event }: { event: Awaited<ReturnType<typeof getMyEvents>>[number] }) {
   const facts = [
     event.eventDate
       ? new Date(event.eventDate).toLocaleDateString('en-IN', {
@@ -80,9 +76,9 @@ function EventRow({
   ].filter(Boolean)
 
   return (
-    <li className="rounded-2xl border border-ink-100 bg-surface-raised p-5">
-      <p className="font-display text-lg text-ink-900">{event.name}</p>
-      <p className="mt-1 text-sm text-ink-600">{facts.join(' · ') || 'No details yet'}</p>
+    <li className="border-ink-100 bg-surface-raised rounded-2xl border p-5">
+      <p className="font-display text-ink-900 text-lg">{event.name}</p>
+      <p className="text-ink-600 mt-1 text-sm">{facts.join(' · ') || 'No details yet'}</p>
     </li>
   )
 }

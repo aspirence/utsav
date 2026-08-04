@@ -219,7 +219,8 @@ export async function deleteVendorMedia(
   const parsed = z
     .object({ vendorSlug: slugSchema, mediaId: z.string().uuid() })
     .safeParse({ vendorSlug, mediaId })
-  if (!parsed.success) return { status: 'error', message: 'That photograph reference is not valid.' }
+  if (!parsed.success)
+    return { status: 'error', message: 'That photograph reference is not valid.' }
 
   const supabase = await staffClient()
   if (!supabase) return { status: 'error', message: 'Could not reach the database.' }

@@ -44,9 +44,9 @@ export default async function StoriesPage({ searchParams }: Props) {
 
   return (
     <>
-      <div className="border-b border-ink-100 bg-surface-sunken/60">
+      <div className="border-ink-100 bg-surface-sunken/60 border-b">
         <Container className="py-8 sm:py-10">
-          <nav aria-label="Breadcrumb" className="mb-3 text-sm text-ink-500">
+          <nav aria-label="Breadcrumb" className="text-ink-500 mb-3 text-sm">
             <Link href="/" className="hover:text-ink-800">
               Home
             </Link>
@@ -54,8 +54,8 @@ export default async function StoriesPage({ searchParams }: Props) {
             <span className="text-ink-700">Real weddings</span>
           </nav>
 
-          <h1 className="text-3xl text-ink-900 sm:text-4xl">Real weddings</h1>
-          <p className="mt-2.5 max-w-2xl text-ink-600">
+          <h1 className="text-ink-900 text-3xl sm:text-4xl">Real weddings</h1>
+          <p className="text-ink-600 mt-2.5 max-w-2xl">
             What was actually asked for, who shot it, how big the crew was and when the gallery
             arrived. Every story names the vendor and links to their profile.
           </p>
@@ -93,22 +93,22 @@ export default async function StoriesPage({ searchParams }: Props) {
 
       <Container className="py-10">
         {!lead ? (
-          <div className="rounded-xl border border-dashed border-ink-200 p-12 text-center">
-            <p className="font-display text-xl text-ink-900">No stories under those filters yet</p>
-            <p className="mx-auto mt-2 max-w-md text-sm text-ink-600">
-              We publish a story only once the couple and the vendor have both signed off on it,
-              so this list grows slowly on purpose.
+          <div className="border-ink-200 rounded-xl border border-dashed p-12 text-center">
+            <p className="font-display text-ink-900 text-xl">No stories under those filters yet</p>
+            <p className="text-ink-600 mx-auto mt-2 max-w-md text-sm">
+              We publish a story only once the couple and the vendor have both signed off on it, so
+              this list grows slowly on purpose.
             </p>
             <Link
               href="/stories"
-              className="mt-5 inline-block text-sm font-medium text-primary-700 hover:text-primary-800"
+              className="text-primary-700 hover:text-primary-800 mt-5 inline-block text-sm font-medium"
             >
               See every story →
             </Link>
           </div>
         ) : (
           <>
-            <p className="text-sm text-ink-500">
+            <p className="text-ink-500 text-sm">
               {stories.length} {stories.length === 1 ? 'story' : 'stories'}
             </p>
 
@@ -121,9 +121,11 @@ export default async function StoriesPage({ searchParams }: Props) {
           </>
         )}
 
-        <section className="mt-14 rounded-xl border border-ink-100 bg-surface-raised p-6 sm:p-8">
-          <h2 className="font-display text-xl text-ink-900">Had your wedding shot through Fremmo?</h2>
-          <p className="mt-2 max-w-2xl text-sm text-ink-600">
+        <section className="border-ink-100 bg-surface-raised mt-14 rounded-xl border p-6 sm:p-8">
+          <h2 className="font-display text-ink-900 text-xl">
+            Had your wedding shot through Fremmo?
+          </h2>
+          <p className="text-ink-600 mt-2 max-w-2xl text-sm">
             Tell us about it. Stories are published only with the couple&apos;s written consent, and
             the vendor sees the draft before it goes live.
           </p>
@@ -157,8 +159,8 @@ function Chip({
       href={href}
       className={cn(
         active
-          ? 'rounded-full bg-ink-900 px-3.5 py-1.5 text-sm font-medium text-white'
-          : 'rounded-full border border-ink-200 bg-surface-raised px-3.5 py-1.5 text-sm text-ink-700 transition-colors hover:border-ink-300 hover:text-ink-900',
+          ? 'bg-ink-900 rounded-full px-3.5 py-1.5 text-sm font-medium text-white'
+          : 'border-ink-200 bg-surface-raised text-ink-700 hover:border-ink-300 hover:text-ink-900 rounded-full border px-3.5 py-1.5 text-sm transition-colors',
         className,
       )}
     >

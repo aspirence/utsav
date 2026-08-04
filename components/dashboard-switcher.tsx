@@ -46,7 +46,7 @@ export function DashboardSwitcher({
   return (
     <nav
       aria-label="Switch dashboard"
-      className={`inline-flex items-center gap-1 rounded-full border border-ink-200 bg-surface-raised p-1 ${className ?? ''}`}
+      className={`border-ink-200 bg-surface-raised inline-flex items-center gap-1 rounded-full border p-1 ${className ?? ''}`}
     >
       {surfaces.map((surface) => {
         const active = surface.href === DASHBOARDS[current]
@@ -54,7 +54,7 @@ export function DashboardSwitcher({
           <span
             key={surface.href}
             aria-current="page"
-            className="rounded-full bg-ink-900 px-4 py-1.5 text-sm font-semibold text-white"
+            className="bg-ink-900 rounded-full px-4 py-1.5 text-sm font-semibold text-white"
           >
             {surface.label}
           </span>
@@ -63,7 +63,7 @@ export function DashboardSwitcher({
             key={surface.href}
             href={surface.href}
             title={surface.detail}
-            className="rounded-full px-4 py-1.5 text-sm font-semibold text-ink-600 transition-colors hover:text-ink-900"
+            className="text-ink-600 hover:text-ink-900 rounded-full px-4 py-1.5 text-sm font-semibold transition-colors"
           >
             {surface.label}
           </Link>

@@ -88,7 +88,10 @@ const createSchema = z
       .trim()
       .max(60)
       .transform((v) => v.replace(/^@+/, ''))
-      .refine((v) => /^[A-Za-z0-9._]+$/.test(v), 'An Instagram handle is letters, numbers, dots and underscores')
+      .refine(
+        (v) => /^[A-Za-z0-9._]+$/.test(v),
+        'An Instagram handle is letters, numbers, dots and underscores',
+      )
       .optional(),
     priceBandMin: z.number().int().nonnegative().optional(),
     priceBandMax: z.number().int().nonnegative().optional(),
@@ -171,9 +174,7 @@ export async function createVendorListing(
    * client-side, so it does not repopulate without JavaScript) could file a Delhi listing in
    * Gomti Nagar and the database would accept it.
    */
-  const locality = d.localitySlug
-    ? await lookupLocality(supabase, d.localitySlug, city.id)
-    : null
+  const locality = d.localitySlug ? await lookupLocality(supabase, d.localitySlug, city.id) : null
 
   if (d.localitySlug && !locality) {
     return {
@@ -288,11 +289,11 @@ type WriteError = { code?: string; message: string } | null
  */
 interface Writer {
   auth: { getUser: () => PromiseLike<{ data: { user: { id: string } | null } }> }
-  from: (table: 'vendors' | 'vendor_categories' | 'audit_log' | 'cities' | 'localities' | 'categories') => {
+  from: (
+    table: 'vendors' | 'vendor_categories' | 'audit_log' | 'cities' | 'localities' | 'categories',
+  ) => {
     insert: (values: Record<string, unknown>) => PromiseLike<{ error: WriteError }> & {
-      select: (
-        columns: string,
-      ) => PromiseLike<{ data: { id: string }[] | null; error: WriteError }>
+      select: (columns: string) => PromiseLike<{ data: { id: string }[] | null; error: WriteError }>
     }
     select: (columns: string) => {
       eq: (column: string, value: string) => Filter

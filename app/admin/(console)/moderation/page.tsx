@@ -31,7 +31,11 @@ export default async function ModerationPage({
   const tabs = [
     { key: 'all', label: 'All', count: all.length },
     { key: 'pending', label: 'Pending', count: all.filter((i) => i.status === 'pending').length },
-    { key: 'escalated', label: 'Escalated', count: all.filter((i) => i.status === 'escalated').length },
+    {
+      key: 'escalated',
+      label: 'Escalated',
+      count: all.filter((i) => i.status === 'escalated').length,
+    },
   ]
 
   return (
@@ -39,7 +43,13 @@ export default async function ModerationPage({
       <PageHeader
         title="Moderation queue"
         description="Every item carries a 24-hour SLA. Overdue items sort to the top regardless of priority — a missed SLA is the failure, not a low-priority item."
-        action={overdue > 0 ? <Pill tone="red">{overdue} overdue</Pill> : <Pill tone="green">SLA clear</Pill>}
+        action={
+          overdue > 0 ? (
+            <Pill tone="red">{overdue} overdue</Pill>
+          ) : (
+            <Pill tone="green">SLA clear</Pill>
+          )
+        }
       />
 
       <div className="mb-4 flex flex-wrap gap-2">
@@ -49,8 +59,8 @@ export default async function ModerationPage({
             href={`/admin/moderation?status=${t.key}`}
             className={
               filter === t.key
-                ? 'rounded-full bg-ink-900 px-3.5 py-1.5 text-sm font-medium text-white'
-                : 'rounded-full border border-ink-200 bg-white px-3.5 py-1.5 text-sm text-ink-700 hover:border-ink-300'
+                ? 'bg-ink-900 rounded-full px-3.5 py-1.5 text-sm font-medium text-white'
+                : 'border-ink-200 text-ink-700 hover:border-ink-300 rounded-full border bg-white px-3.5 py-1.5 text-sm'
             }
           >
             {t.label} ({t.count})
@@ -69,8 +79,8 @@ export default async function ModerationPage({
               header: 'Item',
               render: (r) => (
                 <div>
-                  <p className="font-medium text-ink-900">{r.subjectLabel}</p>
-                  <p className="text-xs text-ink-500">{r.reason}</p>
+                  <p className="text-ink-900 font-medium">{r.subjectLabel}</p>
+                  <p className="text-ink-500 text-xs">{r.reason}</p>
                 </div>
               ),
             },
@@ -80,7 +90,11 @@ export default async function ModerationPage({
               render: (r) => <Pill tone="blue">{r.subjectType}</Pill>,
             },
             { key: 'vendor', header: 'Vendor', render: (r) => r.vendorName },
-            { key: 'city', header: 'City', render: (r) => <span className="text-ink-500">{r.city}</span> },
+            {
+              key: 'city',
+              header: 'City',
+              render: (r) => <span className="text-ink-500">{r.city}</span>,
+            },
             {
               key: 'flags',
               header: 'Auto flags',
@@ -97,8 +111,18 @@ export default async function ModerationPage({
                   </span>
                 ),
             },
-            { key: 'p', header: 'P', align: 'right', render: (r) => <span className="tabular-nums">{r.priority}</span> },
-            { key: 'sla', header: 'SLA', align: 'right', render: (r) => <SlaCell dueAt={r.slaDueAt} /> },
+            {
+              key: 'p',
+              header: 'P',
+              align: 'right',
+              render: (r) => <span className="tabular-nums">{r.priority}</span>,
+            },
+            {
+              key: 'sla',
+              header: 'SLA',
+              align: 'right',
+              render: (r) => <SlaCell dueAt={r.slaDueAt} />,
+            },
             {
               key: 'act',
               header: '',
@@ -106,7 +130,7 @@ export default async function ModerationPage({
               render: (r) => (
                 <Link
                   href={`/admin/moderation/${r.id}`}
-                  className="inline-flex h-8 items-center rounded-md bg-ink-900 px-3 text-xs font-medium text-white hover:bg-ink-800"
+                  className="bg-ink-900 hover:bg-ink-800 inline-flex h-8 items-center rounded-md px-3 text-xs font-medium text-white"
                 >
                   Review
                 </Link>

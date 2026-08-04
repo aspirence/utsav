@@ -52,7 +52,7 @@ export function ConsoleShell({
   children: ReactNode
 }) {
   return (
-    <div className="min-h-screen bg-ink-50 text-[0.9375rem]">
+    <div className="bg-ink-50 min-h-screen text-[0.9375rem]">
       {sidebar}
 
       <div className="lg:pl-60">
@@ -61,7 +61,7 @@ export function ConsoleShell({
         <main className="mx-auto max-w-[1500px] px-4 py-6 sm:px-6">{children}</main>
 
         <footer className="mx-auto max-w-[1500px] px-4 pb-8 sm:px-6">
-          <p className="border-t border-ink-200 pt-5 text-xs text-ink-500">{footnote}</p>
+          <p className="border-ink-200 text-ink-500 border-t pt-5 text-xs">{footnote}</p>
         </footer>
 
         {/*

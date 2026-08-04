@@ -61,13 +61,13 @@ export default async function TeamPage() {
                 header: 'Person',
                 render: (m) => (
                   <div className="min-w-0">
-                    <span className="block truncate font-medium text-ink-900">
+                    <span className="text-ink-900 block truncate font-medium">
                       {m.fullName ?? m.email ?? m.phone ?? 'No name'}
                       {m.profileId === gate.identity.id && (
-                        <span className="ml-2 text-xs font-normal text-ink-500">you</span>
+                        <span className="text-ink-500 ml-2 text-xs font-normal">you</span>
                       )}
                     </span>
-                    <span className="block truncate text-xs text-ink-500">
+                    <span className="text-ink-500 block truncate text-xs">
                       {m.email ?? m.phone ?? m.profileId}
                     </span>
                   </div>
@@ -90,7 +90,7 @@ export default async function TeamPage() {
                 key: 'scope',
                 header: 'Scope',
                 render: (m) => (
-                  <span className="text-xs text-ink-500">
+                  <span className="text-ink-500 text-xs">
                     {/* Empty city_ids is what app.staff_covers_city() reads as "all", so it is
                         a real answer rather than missing data. */}
                     {m.cityIds.length === 0 ? 'All cities' : `${m.cityIds.length} cities`}
@@ -120,16 +120,16 @@ export default async function TeamPage() {
 
         <div className="space-y-4">
           <Panel>
-            <h2 className="border-b border-ink-200 px-4 py-3 text-sm font-semibold text-ink-900">
+            <h2 className="border-ink-200 text-ink-900 border-b px-4 py-3 text-sm font-semibold">
               Grant a role
             </h2>
             <GrantRoleForm />
           </Panel>
 
-          <p className="text-xs leading-relaxed text-ink-500">
+          <p className="text-ink-500 text-xs leading-relaxed">
             Revoking your own super-admin role is refused, and so is revoking the last one held by
-            anybody — either would leave a console nobody can administer, recoverable only with
-            the service-role key at a terminal.
+            anybody — either would leave a console nobody can administer, recoverable only with the
+            service-role key at a terminal.
           </p>
         </div>
       </div>

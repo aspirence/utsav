@@ -106,7 +106,7 @@ export function ShortlistButton({
         )}
       >
         <svg
-          className={cn('h-4 w-4', saved ? 'fill-primary-600' : 'fill-none stroke-ink-500')}
+          className={cn('h-4 w-4', saved ? 'fill-primary-600' : 'stroke-ink-500 fill-none')}
           strokeWidth={1.6}
           viewBox="0 0 20 20"
           aria-hidden="true"
@@ -115,7 +115,7 @@ export function ShortlistButton({
         </svg>
         {saved ? 'Shortlisted' : 'Shortlist'}
       </button>
-      {error && <span className="text-xs text-danger-700">{error}</span>}
+      {error && <span className="text-danger-700 text-xs">{error}</span>}
     </span>
   )
 }

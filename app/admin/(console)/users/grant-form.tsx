@@ -2,12 +2,7 @@
 
 import { useActionState, useEffect, useState, useTransition } from 'react'
 
-import {
-  grantStaffRole,
-  revokeStaffRole,
-  searchAccounts,
-  type TeamActionState,
-} from './actions'
+import { grantStaffRole, revokeStaffRole, searchAccounts, type TeamActionState } from './actions'
 
 import type { AccountMatch } from '@/lib/admin-users'
 
@@ -80,24 +75,24 @@ export function GrantRoleForm() {
       {picked && <input type="hidden" name="profileId" value={picked.profileId} />}
 
       <div>
-        <label htmlFor="account" className="block text-xs font-semibold text-ink-700">
+        <label htmlFor="account" className="text-ink-700 block text-xs font-semibold">
           Account
         </label>
 
         {picked ? (
-          <div className="mt-1.5 flex items-center justify-between gap-3 rounded-md border border-ink-200 bg-ink-50 px-3 py-2 text-sm">
+          <div className="border-ink-200 bg-ink-50 mt-1.5 flex items-center justify-between gap-3 rounded-md border px-3 py-2 text-sm">
             <span className="min-w-0">
-              <span className="block truncate font-medium text-ink-900">
+              <span className="text-ink-900 block truncate font-medium">
                 {picked.fullName ?? picked.email ?? picked.phone}
               </span>
-              <span className="block truncate text-xs text-ink-500">
+              <span className="text-ink-500 block truncate text-xs">
                 {picked.email ?? picked.phone}
               </span>
             </span>
             <button
               type="button"
               onClick={() => setPicked(null)}
-              className="shrink-0 text-xs font-medium text-ink-600 underline underline-offset-2 hover:text-ink-900"
+              className="text-ink-600 hover:text-ink-900 shrink-0 text-xs font-medium underline underline-offset-2"
             >
               Change
             </button>
@@ -111,26 +106,26 @@ export function GrantRoleForm() {
               value={query}
               onChange={(e) => setQuery(e.target.value)}
               placeholder="Email, phone or name"
-              className="mt-1.5 w-full rounded-md border border-ink-200 px-3 py-2 text-sm text-ink-900 outline-none focus:border-ink-400"
+              className="border-ink-200 text-ink-900 focus:border-ink-400 mt-1.5 w-full rounded-md border px-3 py-2 text-sm outline-none"
             />
-            <p className="mt-1.5 text-xs text-ink-500">
+            <p className="text-ink-500 mt-1.5 text-xs">
               The account has to exist already — signing somebody up is not something this screen
               does. Three characters to search.
             </p>
 
             {matches.length > 0 && (
-              <ul className="mt-2 divide-y divide-ink-100 rounded-md border border-ink-200">
+              <ul className="divide-ink-100 border-ink-200 mt-2 divide-y rounded-md border">
                 {matches.map((m) => (
                   <li key={m.profileId}>
                     <button
                       type="button"
                       onClick={() => setPicked(m)}
-                      className="flex w-full flex-col items-start px-3 py-2 text-left text-sm hover:bg-ink-50"
+                      className="hover:bg-ink-50 flex w-full flex-col items-start px-3 py-2 text-left text-sm"
                     >
-                      <span className="font-medium text-ink-900">
+                      <span className="text-ink-900 font-medium">
                         {m.fullName ?? m.email ?? m.phone}
                       </span>
-                      <span className="text-xs text-ink-500">{m.email ?? m.phone}</span>
+                      <span className="text-ink-500 text-xs">{m.email ?? m.phone}</span>
                     </button>
                   </li>
                 ))}
@@ -138,14 +133,14 @@ export function GrantRoleForm() {
             )}
 
             {!searching && query.trim().length >= 3 && matches.length === 0 && (
-              <p className="mt-2 text-xs text-ink-500">No account matches that.</p>
+              <p className="text-ink-500 mt-2 text-xs">No account matches that.</p>
             )}
           </>
         )}
       </div>
 
       <div>
-        <label htmlFor="role" className="block text-xs font-semibold text-ink-700">
+        <label htmlFor="role" className="text-ink-700 block text-xs font-semibold">
           Role
         </label>
         <select
@@ -153,7 +148,7 @@ export function GrantRoleForm() {
           name="role"
           value={role}
           onChange={(e) => setRole(e.target.value)}
-          className="mt-1.5 w-full rounded-md border border-ink-200 px-3 py-2 text-sm text-ink-900 outline-none focus:border-ink-400"
+          className="border-ink-200 text-ink-900 focus:border-ink-400 mt-1.5 w-full rounded-md border px-3 py-2 text-sm outline-none"
         >
           {ROLES.map((r) => (
             <option key={r.value} value={r.value}>
@@ -161,44 +156,42 @@ export function GrantRoleForm() {
             </option>
           ))}
         </select>
-        <p className="mt-1.5 text-xs text-ink-500">
-          {ROLES.find((r) => r.value === role)?.hint}
-        </p>
+        <p className="text-ink-500 mt-1.5 text-xs">{ROLES.find((r) => r.value === role)?.hint}</p>
       </div>
 
       {/* Only field agents are city-scoped — plan §3 leaves the other three unscoped, and
           grantRole drops anything passed with them rather than pretending it took. */}
       {role === 'field_agent' && (
         <div>
-          <label htmlFor="cityIds" className="block text-xs font-semibold text-ink-700">
+          <label htmlFor="cityIds" className="text-ink-700 block text-xs font-semibold">
             City ids
           </label>
           <input
             id="cityIds"
             name="cityIds"
             placeholder="uuid, uuid — leave empty for every city"
-            className="mt-1.5 w-full rounded-md border border-ink-200 px-3 py-2 font-mono text-xs text-ink-900 outline-none focus:border-ink-400"
+            className="border-ink-200 text-ink-900 focus:border-ink-400 mt-1.5 w-full rounded-md border px-3 py-2 font-mono text-xs outline-none"
           />
         </div>
       )}
 
       <div>
-        <label htmlFor="reason" className="block text-xs font-semibold text-ink-700">
-          Reason <span className="font-normal text-ink-500">(goes in the audit log)</span>
+        <label htmlFor="reason" className="text-ink-700 block text-xs font-semibold">
+          Reason <span className="text-ink-500 font-normal">(goes in the audit log)</span>
         </label>
         <input
           id="reason"
           name="reason"
           maxLength={300}
           placeholder="Joined the moderation team"
-          className="mt-1.5 w-full rounded-md border border-ink-200 px-3 py-2 text-sm text-ink-900 outline-none focus:border-ink-400"
+          className="border-ink-200 text-ink-900 focus:border-ink-400 mt-1.5 w-full rounded-md border px-3 py-2 text-sm outline-none"
         />
       </div>
 
       <button
         type="submit"
         disabled={pending || !picked}
-        className="w-full rounded-md bg-ink-900 px-4 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-ink-800 disabled:opacity-50"
+        className="bg-ink-900 hover:bg-ink-800 w-full rounded-md px-4 py-2.5 text-sm font-semibold text-white transition-colors disabled:opacity-50"
       >
         {pending ? 'Granting…' : 'Grant role'}
       </button>
@@ -249,9 +242,7 @@ function Note({ tone, children }: { tone: 'error' | 'ok'; children: React.ReactN
     <p
       role={tone === 'error' ? 'alert' : 'status'}
       className={`rounded-md px-3 py-2 text-xs leading-relaxed ${
-        tone === 'error'
-          ? 'bg-danger-50 text-danger-700'
-          : 'bg-success-50 text-success-700'
+        tone === 'error' ? 'bg-danger-50 text-danger-700' : 'bg-success-50 text-success-700'
       }`}
     >
       {children}

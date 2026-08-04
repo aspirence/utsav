@@ -54,20 +54,19 @@ export function ExplorePlaces({
   if (places.length === 0) return null
 
   const current = places[active] ?? places[0]!
-  const step = (delta: number) =>
-    setActive((i) => (i + delta + places.length) % places.length)
+  const step = (delta: number) => setActive((i) => (i + delta + places.length) % places.length)
 
   return (
     <div className="grid items-start gap-10 lg:grid-cols-2 lg:gap-14">
       {/* ── Left: the list ─────────────────────────────────────────────── */}
       <div>
-        <p className="text-sm text-ink-600">{eyebrow}</p>
-        <h2 className="mt-2 text-3xl leading-tight text-ink-900 sm:text-4xl">{title}</h2>
-        <p className="mt-3 text-ink-600">{description}</p>
+        <p className="text-ink-600 text-sm">{eyebrow}</p>
+        <h2 className="text-ink-900 mt-2 text-3xl leading-tight sm:text-4xl">{title}</h2>
+        <p className="text-ink-600 mt-3">{description}</p>
 
-        <ul className="mt-10 border-t border-ink-200">
+        <ul className="border-ink-200 mt-10 border-t">
           {places.map((place, i) => (
-            <li key={place.slug} className="border-b border-ink-200">
+            <li key={place.slug} className="border-ink-200 border-b">
               <Link
                 href={place.href}
                 onMouseEnter={() => setActive(i)}
@@ -81,14 +80,12 @@ export function ExplorePlaces({
                 <span className="text-lg">
                   {place.name}
                   {place.count ? (
-                    <span className="ml-2 align-middle text-sm text-ink-400">
-                      {place.count}
-                    </span>
+                    <span className="text-ink-400 ml-2 align-middle text-sm">{place.count}</span>
                   ) : null}
                 </span>
                 <span
                   aria-hidden="true"
-                  className="shrink-0 text-ink-400 transition-transform group-hover:translate-x-1 group-[[aria-current]]:text-ink-900"
+                  className="text-ink-400 group-[[aria-current]]:text-ink-900 shrink-0 transition-transform group-hover:translate-x-1"
                 >
                   &rarr;
                 </span>
@@ -121,7 +118,7 @@ export function ExplorePlaces({
         )}
 
         {/* Bottom-weighted, because everything on this panel sits along the floor. */}
-        <div className="absolute inset-x-0 bottom-0 h-3/5 bg-gradient-to-t from-ink-950/85 via-ink-950/40 to-transparent" />
+        <div className="from-ink-950/85 via-ink-950/40 absolute inset-x-0 bottom-0 h-3/5 bg-gradient-to-t to-transparent" />
 
         <div className="absolute inset-x-0 bottom-0 p-6 sm:p-8">
           <p className="text-sm text-white/80">{current.region}</p>
@@ -130,7 +127,7 @@ export function ExplorePlaces({
           </p>
 
           {current.badge && (
-            <span className="mt-4 inline-block rounded-md bg-ink-950/55 px-3 py-1.5 text-sm text-white backdrop-blur-sm">
+            <span className="bg-ink-950/55 mt-4 inline-block rounded-md px-3 py-1.5 text-sm text-white backdrop-blur-sm">
               {current.badge}
             </span>
           )}
@@ -138,12 +135,12 @@ export function ExplorePlaces({
           <div className="mt-5 flex items-end justify-between gap-4">
             <Link
               href={current.href}
-              className="inline-flex items-center gap-3 rounded-md bg-surface-raised py-2.5 pl-5 pr-2.5 text-sm font-semibold text-ink-900 transition-colors hover:bg-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
+              className="bg-surface-raised text-ink-900 inline-flex items-center gap-3 rounded-md py-2.5 pr-2.5 pl-5 text-sm font-semibold transition-colors hover:bg-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
             >
               Explore
               <span
                 aria-hidden="true"
-                className="flex h-7 w-7 items-center justify-center rounded-md bg-ink-900 text-white"
+                className="bg-ink-900 flex h-7 w-7 items-center justify-center rounded-md text-white"
               >
                 &rarr;
               </span>
@@ -166,7 +163,7 @@ function PanelArrow({ dir, onClick }: { dir: 'prev' | 'next'; onClick: () => voi
       type="button"
       onClick={onClick}
       aria-label={dir === 'prev' ? 'Previous place' : 'Next place'}
-      className="flex h-10 w-10 items-center justify-center rounded-md border border-white/40 bg-ink-950/40 text-white backdrop-blur-sm transition-colors hover:bg-ink-950/70"
+      className="bg-ink-950/40 hover:bg-ink-950/70 flex h-10 w-10 items-center justify-center rounded-md border border-white/40 text-white backdrop-blur-sm transition-colors"
     >
       <span aria-hidden="true">{dir === 'prev' ? '←' : '→'}</span>
     </button>

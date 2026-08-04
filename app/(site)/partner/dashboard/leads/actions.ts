@@ -50,11 +50,7 @@ const respondSchema = leadResponseSchema.extend({
 
 const declineSchema = z.object({
   leadId: z.string().uuid(),
-  reason: z
-    .string()
-    .trim()
-    .min(5, 'Tell us what was off about this match')
-    .max(500),
+  reason: z.string().trim().min(5, 'Tell us what was off about this match').max(500),
 })
 
 const junkSchema = z.object({
@@ -185,7 +181,10 @@ export async function markNotAFit(leadId: string, reason: string): Promise<LeadA
 
   const parsed = declineSchema.safeParse({ leadId, reason })
   if (!parsed.success) {
-    return { status: 'error', message: firstIssue(parsed.error) ?? 'Please check what you entered.' }
+    return {
+      status: 'error',
+      message: firstIssue(parsed.error) ?? 'Please check what you entered.',
+    }
   }
 
   const lead = await loadOwnLead(parsed.data.leadId)
@@ -239,7 +238,10 @@ export async function reportJunkLead(leadId: string, reason: string): Promise<Le
 
   const parsed = junkSchema.safeParse({ leadId, reason })
   if (!parsed.success) {
-    return { status: 'error', message: firstIssue(parsed.error) ?? 'Please check what you entered.' }
+    return {
+      status: 'error',
+      message: firstIssue(parsed.error) ?? 'Please check what you entered.',
+    }
   }
 
   const lead = await loadOwnLead(parsed.data.leadId)

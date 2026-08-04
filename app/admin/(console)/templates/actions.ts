@@ -93,7 +93,6 @@ function srcUrl(label: string) {
     }, `${label} has to be an https:// link or a path on this site like /invitation`)
 }
 
-
 const templateSchema = z
   .object({
     slug: slugSchema,
@@ -107,7 +106,8 @@ const templateSchema = z
     isActive: z.boolean(),
   })
   .refine((d) => d.videoUrl != null || d.posterUrl != null, {
-    message: 'Give it either a preview video or a poster image — a card with neither is an empty phone',
+    message:
+      'Give it either a preview video or a poster image — a card with neither is an empty phone',
   })
 
 // ---------------------------------------------------------------------------

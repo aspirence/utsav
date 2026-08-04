@@ -110,7 +110,7 @@ export async function SiteFooter() {
           <div className="grid grid-cols-2 gap-x-6 gap-y-8 lg:grid-cols-3 lg:items-center">
             {/* ── Left: categories ─────────────────────────────────────── */}
             <div className="order-2 text-center lg:order-1 lg:justify-self-start lg:text-left">
-              <h2 className="text-accent-300 text-xs font-semibold uppercase tracking-[0.14em]">
+              <h2 className="text-accent-300 text-xs font-semibold tracking-[0.14em] uppercase">
                 Categories
               </h2>
               <ul className="mt-4 space-y-2.5">
@@ -130,15 +130,14 @@ export async function SiteFooter() {
             {/* ── Centre: the mark ─────────────────────────────────────── */}
             <div className="order-1 col-span-2 flex flex-col items-center text-center lg:order-2 lg:col-span-1">
               <Link href="/" aria-label="Fremmo — home">
-                {/* Same white knockout the header uses over the hero. The mark is dark brown
-                  and gold on transparent, so on ink-900 the wordmark would all but vanish
-                  while the lotus survived. One asset, two appearances - no second file to
-                  keep in sync. */}
-                {/* eslint-disable-next-line @next/next/no-img-element -- plan §12: no next/image */}
+                {/* Flat white on ink-900: `mono` paints the iris in the inherited colour, so the
+                  mark and the name knock out together. This used to be an invert filter over a
+                  raster mark, which is what the SVG replaced. */}
                 <Brand
-                  className="flex-col gap-4"
-                  markClassName="h-24 w-auto [filter:brightness(0)_invert(1)]"
-                  wordClassName="text-5xl text-white"
+                  mono
+                  className="flex-col gap-4 text-white"
+                  markClassName="h-24 w-auto"
+                  wordClassName="text-5xl"
                 />
               </Link>
               <p className="text-ink-300 mt-3 max-w-xs text-sm leading-relaxed">
@@ -151,7 +150,7 @@ export async function SiteFooter() {
               every other list on the page. Right-aligning a ragged list of links makes
               each one start in a different place, so the eye has no column to run down. */}
             <div className="order-3 text-center lg:justify-self-end lg:text-left">
-              <h2 className="text-accent-300 text-xs font-semibold uppercase tracking-[0.14em]">
+              <h2 className="text-accent-300 text-xs font-semibold tracking-[0.14em] uppercase">
                 Company
               </h2>
               <ul className="mt-4 space-y-2.5">

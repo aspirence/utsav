@@ -105,8 +105,8 @@ export function AdminModal({
         onClick={() => setOpen(true)}
         className={
           variant === 'primary'
-            ? 'inline-flex items-center gap-2 rounded-md bg-ink-900 px-4 py-2.5 text-sm font-medium text-white transition-colors hover:bg-ink-800'
-            : 'inline-flex h-8 items-center rounded-md border border-ink-200 px-3 text-xs font-medium text-ink-800 transition-colors hover:border-ink-300 hover:bg-ink-50'
+            ? 'bg-ink-900 hover:bg-ink-800 inline-flex items-center gap-2 rounded-md px-4 py-2.5 text-sm font-medium text-white transition-colors'
+            : 'border-ink-200 text-ink-800 hover:border-ink-300 hover:bg-ink-50 inline-flex h-8 items-center rounded-md border px-3 text-xs font-medium transition-colors'
         }
       >
         {trigger}
@@ -118,7 +118,7 @@ export function AdminModal({
         // Positioned by the top layer, so no ancestor can clip it. overflow-hidden keeps the
         // scrollbar out of the rounded corners; the panel inside scrolls instead.
         className={
-          'fixed inset-0 m-auto w-[calc(100vw-2rem)] overflow-hidden rounded-3xl border border-ink-200 bg-white p-0 text-ink-900 backdrop:bg-ink-950/50 ' +
+          'border-ink-200 text-ink-900 backdrop:bg-ink-950/50 fixed inset-0 m-auto w-[calc(100vw-2rem)] overflow-hidden rounded-3xl border bg-white p-0 ' +
           (width === 'lg' ? 'max-w-3xl' : 'max-w-xl')
         }
         // Clicking the backdrop. The event target is the dialog itself only when the click landed
@@ -128,13 +128,13 @@ export function AdminModal({
         }}
       >
         <div className="flex max-h-[85vh] flex-col">
-          <div className="flex items-start justify-between gap-4 border-b border-ink-200 px-5 py-4">
+          <div className="border-ink-200 flex items-start justify-between gap-4 border-b px-5 py-4">
             <div>
-              <h2 id={titleId} className="font-display text-lg text-ink-900">
+              <h2 id={titleId} className="font-display text-ink-900 text-lg">
                 {title}
               </h2>
               {description && (
-                <p className="mt-1 max-w-lg text-xs leading-relaxed text-ink-600">{description}</p>
+                <p className="text-ink-600 mt-1 max-w-lg text-xs leading-relaxed">{description}</p>
               )}
             </div>
 
@@ -142,7 +142,7 @@ export function AdminModal({
               type="button"
               onClick={close}
               aria-label="Close"
-              className="-mr-1 -mt-1 flex h-9 w-9 shrink-0 items-center justify-center rounded-md text-ink-500 transition-colors hover:bg-ink-100 hover:text-ink-900"
+              className="text-ink-500 hover:bg-ink-100 hover:text-ink-900 -mt-1 -mr-1 flex h-9 w-9 shrink-0 items-center justify-center rounded-md transition-colors"
             >
               <svg
                 viewBox="0 0 20 20"

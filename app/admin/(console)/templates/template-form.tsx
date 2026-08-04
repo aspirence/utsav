@@ -125,7 +125,7 @@ export function TemplateForm({
         </Field>
 
         <div className="flex items-end">
-          <label className="flex items-center gap-2 pb-2 text-sm text-ink-800">
+          <label className="text-ink-800 flex items-center gap-2 pb-2 text-sm">
             <input
               type="checkbox"
               name="isActive"
@@ -141,10 +141,10 @@ export function TemplateForm({
         <details> rather than a state toggle: the browser handles it, it works before hydration, and
         the summary line is honest about what is inside so nobody has to open it to find out.
       */}
-      <details className="rounded-md border border-ink-200 bg-ink-50/60 px-4 py-3">
-        <summary className="cursor-pointer text-sm font-medium text-ink-800">
+      <details className="border-ink-200 bg-ink-50/60 rounded-md border px-4 py-3">
+        <summary className="text-ink-800 cursor-pointer text-sm font-medium">
           Optional
-          <span className="ml-1.5 font-normal text-ink-500">
+          <span className="text-ink-500 ml-1.5 font-normal">
             — tag words, a poster image, and where it sits in the row
           </span>
         </summary>
@@ -207,17 +207,17 @@ export function TemplateForm({
         </p>
       )}
 
-      <div className="flex flex-wrap items-center gap-3 border-t border-ink-200 pt-4">
+      <div className="border-ink-200 flex flex-wrap items-center gap-3 border-t pt-4">
         <button
           type="submit"
           disabled={pending}
-          className="rounded-md bg-ink-900 px-4 py-2.5 text-sm font-medium text-white transition-colors hover:bg-ink-800 disabled:opacity-60"
+          className="bg-ink-900 hover:bg-ink-800 rounded-md px-4 py-2.5 text-sm font-medium text-white transition-colors disabled:opacity-60"
         >
           {pending ? 'Saving…' : initial ? 'Save changes' : 'Add template'}
         </button>
 
         {state.status === 'done' && !pending && (
-          <span role="status" className="text-sm leading-relaxed text-success-700">
+          <span role="status" className="text-success-700 text-sm leading-relaxed">
             {state.message}
           </span>
         )}
@@ -246,10 +246,16 @@ function describeLink(url: string): { tone: 'idle' | 'good' | 'warn'; message: s
   // A path on this site, checked before URL parsing because new URL() throws on one.
   if (trimmed.startsWith('/') && !trimmed.startsWith('//')) {
     if (/\.(mp4|webm|ogv|ogg|mov|m4v)$/i.test(trimmed)) {
-      return { tone: 'good', message: 'A video file on this site — it will loop silently in the phone frame.' }
+      return {
+        tone: 'good',
+        message: 'A video file on this site — it will loop silently in the phone frame.',
+      }
     }
     if (/\.(gif|webp|png|jpe?g|avif)$/i.test(trimmed)) {
-      return { tone: 'good', message: 'An image on this site — it will fill the phone frame. A GIF will animate.' }
+      return {
+        tone: 'good',
+        message: 'An image on this site — it will fill the phone frame. A GIF will animate.',
+      }
     }
     /*
      * A PAGE ON THIS SITE USED TO BE THE HEADLINE FEATURE HERE, and it is now the one thing
@@ -297,7 +303,8 @@ function describeLink(url: string): { tone: 'idle' | 'good' | 'warn'; message: s
   if (['youtube.com', 'm.youtube.com', 'youtu.be'].includes(host)) {
     return {
       tone: 'good',
-      message: "A YouTube link — the card shows YouTube's thumbnail as a still. Paste a file link if you want it to move.",
+      message:
+        "A YouTube link — the card shows YouTube's thumbnail as a still. Paste a file link if you want it to move.",
     }
   }
 
@@ -336,11 +343,11 @@ function Field({
     <div>
       <label
         htmlFor={htmlFor}
-        className="block text-xs font-semibold uppercase tracking-[0.14em] text-ink-500"
+        className="text-ink-500 block text-xs font-semibold tracking-[0.14em] uppercase"
       >
         {label}
         {required && (
-          <span className="ml-1 font-normal normal-case tracking-normal text-danger-700">
+          <span className="text-danger-700 ml-1 font-normal tracking-normal normal-case">
             required
           </span>
         )}
@@ -351,5 +358,5 @@ function Field({
 }
 
 function Hint({ children }: { children: React.ReactNode }) {
-  return <p className="mt-1.5 text-xs leading-relaxed text-ink-500">{children}</p>
+  return <p className="text-ink-500 mt-1.5 text-xs leading-relaxed">{children}</p>
 }

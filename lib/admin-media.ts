@@ -131,19 +131,84 @@ function item(
  * nobody what to look for.
  */
 const POOL: { path: string; alt: string; caption: string | null; tags: string[] }[] = [
-  { path: '/luck-1-1280.webp', alt: 'Bride and groom during the pheras', caption: 'Gomti Nagar, December 2026', tags: ['traditional'] },
-  { path: '/luck-2-1280.webp', alt: 'Haldi ceremony in the courtyard', caption: null, tags: ['candid'] },
-  { path: '/luck-3-1280.webp', alt: 'Couple portrait at golden hour', caption: 'Shot on the terrace at Hazratganj', tags: ['fine-art'] },
-  { path: '/luck-4-1280.webp', alt: 'Baraat arriving with dhol', caption: null, tags: ['candid', 'documentary'] },
-  { path: '/historical-1280.webp', alt: 'Couple at Rumi Darwaza', caption: 'Pre-wedding, Lucknow', tags: ['pre-wedding'] },
-  { path: '/temple-1280.webp', alt: 'Temple mandap set for the ceremony', caption: null, tags: ['traditional'] },
-  { path: '/mountain-1280.webp', alt: 'Mandap against the hills at dusk', caption: 'Destination setup', tags: ['destination'] },
-  { path: '/beach-1280.webp', alt: 'Beachside mandap at sunset', caption: null, tags: ['destination'] },
-  { path: '/marathi-1280.webp', alt: 'Marathi ceremony under the antarpat', caption: null, tags: ['traditional'] },
-  { path: '/punjabi-1280.webp', alt: 'Anand karaj in the gurudwara', caption: 'Punjabi ceremony', tags: ['documentary'] },
-  { path: '/tamil-1280.webp', alt: 'South Indian ceremony with the nadaswaram', caption: null, tags: ['traditional'] },
-  { path: '/place-gomti-nagar-1280.webp', alt: 'Reception hall dressed for the evening', caption: 'Gomti Nagar', tags: ['decor'] },
-  { path: '/place-hazratganj-1280.webp', alt: 'Banquet lawn laid out for dinner', caption: null, tags: ['decor'] },
+  {
+    path: '/luck-1-1280.webp',
+    alt: 'Bride and groom during the pheras',
+    caption: 'Gomti Nagar, December 2026',
+    tags: ['traditional'],
+  },
+  {
+    path: '/luck-2-1280.webp',
+    alt: 'Haldi ceremony in the courtyard',
+    caption: null,
+    tags: ['candid'],
+  },
+  {
+    path: '/luck-3-1280.webp',
+    alt: 'Couple portrait at golden hour',
+    caption: 'Shot on the terrace at Hazratganj',
+    tags: ['fine-art'],
+  },
+  {
+    path: '/luck-4-1280.webp',
+    alt: 'Baraat arriving with dhol',
+    caption: null,
+    tags: ['candid', 'documentary'],
+  },
+  {
+    path: '/historical-1280.webp',
+    alt: 'Couple at Rumi Darwaza',
+    caption: 'Pre-wedding, Lucknow',
+    tags: ['pre-wedding'],
+  },
+  {
+    path: '/temple-1280.webp',
+    alt: 'Temple mandap set for the ceremony',
+    caption: null,
+    tags: ['traditional'],
+  },
+  {
+    path: '/mountain-1280.webp',
+    alt: 'Mandap against the hills at dusk',
+    caption: 'Destination setup',
+    tags: ['destination'],
+  },
+  {
+    path: '/beach-1280.webp',
+    alt: 'Beachside mandap at sunset',
+    caption: null,
+    tags: ['destination'],
+  },
+  {
+    path: '/marathi-1280.webp',
+    alt: 'Marathi ceremony under the antarpat',
+    caption: null,
+    tags: ['traditional'],
+  },
+  {
+    path: '/punjabi-1280.webp',
+    alt: 'Anand karaj in the gurudwara',
+    caption: 'Punjabi ceremony',
+    tags: ['documentary'],
+  },
+  {
+    path: '/tamil-1280.webp',
+    alt: 'South Indian ceremony with the nadaswaram',
+    caption: null,
+    tags: ['traditional'],
+  },
+  {
+    path: '/place-gomti-nagar-1280.webp',
+    alt: 'Reception hall dressed for the evening',
+    caption: 'Gomti Nagar',
+    tags: ['decor'],
+  },
+  {
+    path: '/place-hazratganj-1280.webp',
+    alt: 'Banquet lawn laid out for dinner',
+    caption: null,
+    tags: ['decor'],
+  },
 ]
 
 /**

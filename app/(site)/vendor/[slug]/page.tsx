@@ -59,9 +59,9 @@ export default async function VendorPage({ params }: Props) {
         Plan §2/§S3: portfolio-first. The work fills the screen before any copy,
         because the photograph is what a couple actually decides on.
       */}
-      <section className="border-b border-ink-100 bg-surface-sunken/40">
+      <section className="border-ink-100 bg-surface-sunken/40 border-b">
         <Container className="py-8">
-          <nav aria-label="Breadcrumb" className="mb-5 text-sm text-ink-500">
+          <nav aria-label="Breadcrumb" className="text-ink-500 mb-5 text-sm">
             <Link href="/" className="hover:text-ink-800">
               Home
             </Link>
@@ -104,8 +104,8 @@ export default async function VendorPage({ params }: Props) {
           <div>
             <div className="flex flex-wrap items-start justify-between gap-4">
               <div>
-                <h1 className="text-3xl text-ink-900 sm:text-4xl">{vendor.displayName}</h1>
-                <p className="mt-1.5 text-ink-600">
+                <h1 className="text-ink-900 text-3xl sm:text-4xl">{vendor.displayName}</h1>
+                <p className="text-ink-600 mt-1.5">
                   {vendor.categoryName}
                   {vendor.localityName ? ` · ${vendor.localityName}` : ''}
                   {vendor.cityName ? `, ${vendor.cityName}` : ''}
@@ -117,14 +117,14 @@ export default async function VendorPage({ params }: Props) {
             {/* Plan §11/§12: the disclosure sits at the top of the profile, not in
                 small print, and links to the published policy. */}
             {vendor.isAnchorStudio && (
-              <div className="mt-5 rounded-lg border border-accent-200 bg-accent-50 p-4">
-                <p className="text-sm font-semibold text-accent-900">
+              <div className="border-accent-200 bg-accent-50 mt-5 rounded-lg border p-4">
+                <p className="text-accent-900 text-sm font-semibold">
                   This studio is owned by Fremmo
                 </p>
-                <p className="mt-1 text-sm text-accent-800">
+                <p className="text-accent-800 mt-1 text-sm">
                   It is ranked by exactly the same algorithm as every other listing, with no
-                  preference of any kind. It takes overflow bookings only and is capped at
-                  roughly 5% of bookings in this category.{' '}
+                  preference of any kind. It takes overflow bookings only and is capped at roughly
+                  5% of bookings in this category.{' '}
                   <Link href="/p/anchor-studio-policy" className="underline underline-offset-2">
                     Read the policy
                   </Link>
@@ -144,17 +144,14 @@ export default async function VendorPage({ params }: Props) {
             )}
 
             <div className="mt-7 max-w-2xl">
-              <p className="whitespace-pre-line leading-relaxed text-ink-700">{vendor.about}</p>
+              <p className="text-ink-700 leading-relaxed whitespace-pre-line">{vendor.about}</p>
             </div>
 
-            <dl className="mt-8 grid grid-cols-2 gap-6 border-y border-ink-100 py-6 sm:grid-cols-4">
+            <dl className="border-ink-100 mt-8 grid grid-cols-2 gap-6 border-y py-6 sm:grid-cols-4">
               {[
                 vendor.establishedYear && ['Since', String(vendor.establishedYear)],
                 vendor.teamSize && ['Team', `${vendor.teamSize} people`],
-                vendor.completedBookings > 0 && [
-                  'Events done',
-                  String(vendor.completedBookings),
-                ],
+                vendor.completedBookings > 0 && ['Events done', String(vendor.completedBookings)],
                 // Plan §2 "honest vendor dashboards": customers see the same response
                 // figure the vendor sees, computed once in app.refresh_vendor_response_metrics.
                 vendor.medianResponseMins != null && [
@@ -167,8 +164,8 @@ export default async function VendorPage({ params }: Props) {
                 .filter((x): x is [string, string] => Array.isArray(x))
                 .map(([label, value]) => (
                   <div key={label}>
-                    <dt className="text-xs uppercase tracking-wide text-ink-500">{label}</dt>
-                    <dd className="mt-1 font-display text-xl text-ink-900">{value}</dd>
+                    <dt className="text-ink-500 text-xs tracking-wide uppercase">{label}</dt>
+                    <dd className="font-display text-ink-900 mt-1 text-xl">{value}</dd>
                   </div>
                 ))}
             </dl>
@@ -201,18 +198,18 @@ export default async function VendorPage({ params }: Props) {
                       <CardBody>
                         <div className="flex flex-wrap items-start justify-between gap-4">
                           <div className="min-w-0 flex-1">
-                            <h3 className="font-display text-xl text-ink-900">{pkg.name}</h3>
+                            <h3 className="font-display text-ink-900 text-xl">{pkg.name}</h3>
                             {pkg.description && (
-                              <p className="mt-1.5 text-sm text-ink-600">{pkg.description}</p>
+                              <p className="text-ink-600 mt-1.5 text-sm">{pkg.description}</p>
                             )}
                           </div>
                           <div className="shrink-0 text-right">
-                            <p className="font-display text-2xl text-ink-900">{pkg.priceLabel}</p>
-                            <p className="text-xs text-ink-500">{pkg.perDayLabel}</p>
+                            <p className="font-display text-ink-900 text-2xl">{pkg.priceLabel}</p>
+                            <p className="text-ink-500 text-xs">{pkg.perDayLabel}</p>
                           </div>
                         </div>
 
-                        <ul className="mt-4 flex flex-wrap gap-x-5 gap-y-1.5 text-sm text-ink-600">
+                        <ul className="text-ink-600 mt-4 flex flex-wrap gap-x-5 gap-y-1.5 text-sm">
                           {pkg.durationDays !== 1 && <li>{pkg.durationDays} days</li>}
                           {pkg.crewSize && <li>{pkg.crewSize} crew</li>}
                           {pkg.editedPhotoCount && <li>{pkg.editedPhotoCount}+ edited photos</li>}
@@ -242,7 +239,7 @@ export default async function VendorPage({ params }: Props) {
                 description="Only customers with a completed booking on Fremmo can leave a review."
               />
               {vendor.reviews.length === 0 ? (
-                <p className="mt-5 rounded-lg border border-dashed border-ink-200 p-6 text-sm text-ink-600">
+                <p className="border-ink-200 text-ink-600 mt-5 rounded-lg border border-dashed p-6 text-sm">
                   No reviews yet. This listing is new to Fremmo.
                 </p>
               ) : (
@@ -255,12 +252,12 @@ export default async function VendorPage({ params }: Props) {
                           <Badge tone="success">Verified booking</Badge>
                         </div>
                         {review.title && (
-                          <h3 className="mt-3 font-display text-lg text-ink-900">{review.title}</h3>
+                          <h3 className="font-display text-ink-900 mt-3 text-lg">{review.title}</h3>
                         )}
                         {review.body && (
-                          <p className="mt-2 leading-relaxed text-ink-700">{review.body}</p>
+                          <p className="text-ink-700 mt-2 leading-relaxed">{review.body}</p>
                         )}
-                        <p className="mt-3 text-sm text-ink-500">
+                        <p className="text-ink-500 mt-3 text-sm">
                           {review.authorName}
                           {review.publishedAt
                             ? ` · ${new Date(review.publishedAt).toLocaleDateString('en-IN', {
@@ -298,8 +295,8 @@ export default async function VendorPage({ params }: Props) {
           <aside className="lg:sticky lg:top-24 lg:self-start">
             <Card>
               <CardBody>
-                <p className="text-xs uppercase tracking-wide text-ink-500">Starting from</p>
-                <p className="mt-1 font-display text-3xl text-ink-900">{vendor.priceBandLabel}</p>
+                <p className="text-ink-500 text-xs tracking-wide uppercase">Starting from</p>
+                <p className="font-display text-ink-900 mt-1 text-3xl">{vendor.priceBandLabel}</p>
 
                 <LinkButton
                   href={`/enquire?vendor=${vendor.slug}`}
@@ -330,7 +327,7 @@ export default async function VendorPage({ params }: Props) {
 
                 {/* Plan §1/§2: the promises that make the enquiry worth completing —
                     and that make the resulting lead worth paying for. */}
-                <ul className="mt-5 space-y-2.5 text-sm text-ink-600">
+                <ul className="text-ink-600 mt-5 space-y-2.5 text-sm">
                   <li className="flex gap-2">
                     <Check /> Your number is verified once, then shared with at most 5 vendors
                   </li>
@@ -342,7 +339,7 @@ export default async function VendorPage({ params }: Props) {
                   </li>
                 </ul>
 
-                <p className="mt-5 border-t border-ink-100 pt-4 text-xs text-ink-500">
+                <p className="border-ink-100 text-ink-500 mt-5 border-t pt-4 text-xs">
                   Contact details are shared with {vendor.displayName} only after you send an
                   enquiry, and only for responding to it.
                 </p>
@@ -358,7 +355,7 @@ export default async function VendorPage({ params }: Props) {
 function Check() {
   return (
     <svg
-      className="mt-0.5 h-4 w-4 shrink-0 fill-success-600"
+      className="fill-success-600 mt-0.5 h-4 w-4 shrink-0"
       viewBox="0 0 20 20"
       aria-hidden="true"
     >

@@ -5,13 +5,7 @@ import { useActionState } from 'react'
 
 import { formatPaise } from '@/lib/db'
 
-import {
-  GooglePayMark,
-  LockMark,
-  PaytmMark,
-  ShieldMark,
-  UpiMark,
-} from '@/components/payment-marks'
+import { GooglePayMark, LockMark, PaytmMark, ShieldMark, UpiMark } from '@/components/payment-marks'
 
 import {
   placeInvitationOrder,
@@ -78,7 +72,7 @@ export function BookingForm({
   }
 
   return (
-    <div className="overflow-hidden rounded-3xl border border-ink-200 bg-white">
+    <div className="border-ink-200 overflow-hidden rounded-3xl border bg-white">
       {/* Launch offer. The regular price is struck through beside it, or the discount is an
           assertion rather than a comparison. */}
       <p className="bg-danger-600 px-4 py-2.5 text-center text-sm font-semibold text-white">
@@ -99,9 +93,7 @@ export function BookingForm({
       <div className="bg-primary-900 px-5 py-6 sm:px-8">
         <h2 className="font-display text-xl text-white sm:text-2xl">Start your invitation</h2>
         <ol className="mt-4 max-w-sm space-y-2 text-sm text-white/85">
-          <Step n={1}>
-            Book — {formatPaise(bookingAmountPaise)} confirms your design slot.
-          </Step>
+          <Step n={1}>Book — {formatPaise(bookingAmountPaise)} confirms your design slot.</Step>
           {/* "next" and not "below": the wording form moved to the confirmation screen, and a
               step pointing at a section that is no longer on this page is worse than no step. */}
           <Step n={2}>Add your wording on the next screen, or send it on WhatsApp later.</Step>
@@ -117,7 +109,7 @@ export function BookingForm({
             {/* One group now, not three. The card wording moved to the confirmation screen, so
                 everything left here is what is needed to *place* an order — a name to call you
                 and a number to send the link to. */}
-            <legend className="w-full border-b border-ink-200 pb-2 text-sm font-semibold text-ink-900">
+            <legend className="border-ink-200 text-ink-900 w-full border-b pb-2 text-sm font-semibold">
               Your details
             </legend>
 
@@ -143,8 +135,8 @@ export function BookingForm({
                 {/* The +91 is a label, not a value: the input holds the ten digits and
                     indianPhoneInputSchema normalises to E.164 server-side, so a pasted
                     "+91 98765 43210" and a typed "9876543210" both work. */}
-                <div className="flex min-h-11 items-center overflow-hidden rounded-lg border border-ink-200 transition-colors focus-within:border-primary-600 focus-within:ring-2 focus-within:ring-primary-600/25">
-                  <span className="shrink-0 self-stretch border-r border-ink-200 bg-ink-50 px-3 py-2.5 text-sm leading-6 text-ink-600">
+                <div className="border-ink-200 focus-within:border-primary-600 focus-within:ring-primary-600/25 flex min-h-11 items-center overflow-hidden rounded-lg border transition-colors focus-within:ring-2">
+                  <span className="border-ink-200 bg-ink-50 text-ink-600 shrink-0 self-stretch border-r px-3 py-2.5 text-sm leading-6">
                     +91
                   </span>
                   <input
@@ -155,7 +147,7 @@ export function BookingForm({
                     inputMode="numeric"
                     autoComplete="tel-national"
                     placeholder="9876543210"
-                    className="w-full bg-transparent px-3.5 py-2.5 text-base text-ink-900 outline-none placeholder:text-ink-400 sm:text-sm"
+                    className="text-ink-900 placeholder:text-ink-400 w-full bg-transparent px-3.5 py-2.5 text-base outline-none sm:text-sm"
                   />
                 </div>
               </Field>
@@ -166,50 +158,49 @@ export function BookingForm({
             </div>
           </fieldset>
 
-
           <div>
             {/* A <p>, not a <legend> — this block is not a fieldset, and a legend outside one is
                 invalid. Styled to match the two above so the three still read as one sequence. */}
-            <p className="w-full border-b border-ink-200 pb-2 text-sm font-semibold text-ink-900">
+            <p className="border-ink-200 text-ink-900 w-full border-b pb-2 text-sm font-semibold">
               <span className="text-primary-700">3.</span> Summary
             </p>
 
-            <div className="mt-5 rounded-xl border border-ink-200 bg-surface-raised p-4">
+            <div className="border-ink-200 bg-surface-raised mt-5 rounded-xl border p-4">
               <div className="flex items-start justify-between gap-4">
                 <div>
-                  <p className="text-[11px] font-semibold uppercase tracking-[0.12em] text-ink-500">
+                  <p className="text-ink-500 text-[11px] font-semibold tracking-[0.12em] uppercase">
                     Selected design
                   </p>
-                  <p className="mt-1 font-display text-base leading-snug text-ink-900">
+                  <p className="font-display text-ink-900 mt-1 text-base leading-snug">
                     {templateName}
                   </p>
                 </div>
                 <div className="text-right">
-                  <p className="text-[11px] font-semibold uppercase tracking-[0.12em] text-ink-500">
+                  <p className="text-ink-500 text-[11px] font-semibold tracking-[0.12em] uppercase">
                     Full price
                   </p>
-                  <p className="mt-1 tabular-nums text-ink-900">
+                  <p className="text-ink-900 mt-1 tabular-nums">
                     {formatPaise(templatePricePaise)}
                   </p>
                 </div>
               </div>
 
-              <div className="mt-4 flex items-center justify-between gap-3 rounded-lg border border-primary-600/40 bg-primary-50 px-3 py-3">
-                <span className="text-sm font-medium text-ink-900">Booking amount</span>
+              <div className="border-primary-600/40 bg-primary-50 mt-4 flex items-center justify-between gap-3 rounded-lg border px-3 py-3">
+                <span className="text-ink-900 text-sm font-medium">Booking amount</span>
                 <span className="text-right">
-                  <span className="block text-lg font-semibold tabular-nums text-ink-900">
+                  <span className="text-ink-900 block text-lg font-semibold tabular-nums">
                     {formatPaise(bookingAmountPaise)}
                   </span>
-                  <span className="block text-[11px] text-primary-700">Refundable</span>
+                  <span className="text-primary-700 block text-[11px]">Refundable</span>
                 </span>
               </div>
 
-              <div className="mt-3 flex items-center justify-between text-sm text-ink-700">
+              <div className="text-ink-700 mt-3 flex items-center justify-between text-sm">
                 <span>Balance on delivery</span>
                 <span className="tabular-nums">{formatPaise(balancePaise)}</span>
               </div>
 
-              <p className="mt-4 rounded-md bg-warning-50 px-3 py-2.5 text-xs leading-relaxed text-warning-700">
+              <p className="bg-warning-50 text-warning-700 mt-4 rounded-md px-3 py-2.5 text-xs leading-relaxed">
                 You only pay the {formatPaise(balancePaise)} balance once you have seen the draft
                 and you are happy with it. If you are not, the booking amount comes back.
               </p>
@@ -232,7 +223,7 @@ export function BookingForm({
             <button
               type="submit"
               disabled={pending}
-              className="mt-5 flex w-full items-center justify-center gap-2 rounded-full bg-primary-900 px-6 py-4 text-sm font-semibold uppercase tracking-[0.08em] text-white shadow-[0_10px_24px_-12px_rgba(103,41,33,0.7)] transition-colors hover:bg-primary-800 disabled:opacity-60"
+              className="bg-primary-900 hover:bg-primary-800 mt-5 flex w-full items-center justify-center gap-2 rounded-full px-6 py-4 text-sm font-semibold tracking-[0.08em] text-white uppercase shadow-[0_10px_24px_-12px_rgba(103,41,33,0.7)] transition-colors disabled:opacity-60"
             >
               {pending ? 'Reserving…' : `Pay ${formatPaise(bookingAmountPaise)} & continue`}
               <span aria-hidden="true">&rarr;</span>
@@ -253,7 +244,7 @@ export function BookingForm({
               lib/cashfree.ts move together: a badge naming a company we do not use is worse than
               no badge, because it is checkable.
             */}
-            <div className="mt-5 flex flex-wrap items-center justify-center gap-x-4 gap-y-2 border-t border-ink-100 pt-4 text-[11px] text-ink-600">
+            <div className="border-ink-100 text-ink-600 mt-5 flex flex-wrap items-center justify-center gap-x-4 gap-y-2 border-t pt-4 text-[11px]">
               <span className="inline-flex items-center gap-1.5">
                 <LockMark />
                 256-bit secure payment
@@ -265,7 +256,7 @@ export function BookingForm({
             </div>
 
             <div className="mt-3 flex flex-wrap items-center justify-center gap-x-4 gap-y-2">
-              <span className="text-[11px] font-medium text-ink-600">Instant payment options</span>
+              <span className="text-ink-600 text-[11px] font-medium">Instant payment options</span>
               {/* Redrawn wordmarks, not the official brand assets — see the note in
                   components/payment-marks.tsx before launch. */}
               <span className="flex items-center gap-3.5">
@@ -274,7 +265,6 @@ export function BookingForm({
                 <PaytmMark />
               </span>
             </div>
-
           </div>
         </div>
 
@@ -284,13 +274,13 @@ export function BookingForm({
           visibly right of the middle — the kind of near-miss that reads as a mistake rather than as
           alignment.
         */}
-        <p className="border-t border-ink-100 px-5 pb-6 pt-4 text-center text-[11px] leading-relaxed text-ink-500 sm:px-8">
+        <p className="border-ink-100 text-ink-500 border-t px-5 pt-4 pb-6 text-center text-[11px] leading-relaxed sm:px-8">
           By paying, you agree to our{' '}
-          <Link href="/p/terms" className="underline hover:text-ink-800">
+          <Link href="/p/terms" className="hover:text-ink-800 underline">
             terms of service
           </Link>{' '}
           and{' '}
-          <Link href="/p/privacy" className="underline hover:text-ink-800">
+          <Link href="/p/privacy" className="hover:text-ink-800 underline">
             privacy policy
           </Link>
           .
@@ -318,16 +308,16 @@ function Placed({
 }) {
   return (
     <div className="space-y-6">
-      <div className="rounded-3xl border border-success-500/40 bg-white p-7 text-center sm:p-10">
+      <div className="border-success-500/40 rounded-3xl border bg-white p-7 text-center sm:p-10">
         {/* "Order received", not "slot reserved" — the row is awaiting_payment, and /admin/orders
             says in as many words that nothing is reserved until the money lands. */}
-        <p className="text-xs font-semibold uppercase tracking-[0.14em] text-success-700">
+        <p className="text-success-700 text-xs font-semibold tracking-[0.14em] uppercase">
           Order received
         </p>
-        <p className="mt-4 font-mono text-2xl tracking-[0.1em] text-ink-900 sm:text-3xl">
+        <p className="text-ink-900 mt-4 font-mono text-2xl tracking-[0.1em] sm:text-3xl">
           {reference}
         </p>
-        <p className="mx-auto mt-4 max-w-md text-sm leading-relaxed text-ink-700">{message}</p>
+        <p className="text-ink-700 mx-auto mt-4 max-w-md text-sm leading-relaxed">{message}</p>
       </div>
 
       {/*
@@ -346,13 +336,13 @@ function Placed({
       <div className="flex flex-wrap justify-center gap-3">
         <Link
           href="/"
-          className="rounded-full bg-ink-900 px-5 py-2.5 text-sm font-medium text-white hover:bg-ink-800"
+          className="bg-ink-900 hover:bg-ink-800 rounded-full px-5 py-2.5 text-sm font-medium text-white"
         >
           Back to the site
         </Link>
         <Link
           href="/account"
-          className="rounded-full border border-ink-300 px-5 py-2.5 text-sm font-medium text-ink-800 hover:bg-ink-50"
+          className="border-ink-300 text-ink-800 hover:bg-ink-50 rounded-full border px-5 py-2.5 text-sm font-medium"
         >
           My account
         </Link>
@@ -379,18 +369,18 @@ function CardDetailsForm({ detailsToken }: { detailsToken: string }) {
 
   if (state.status === 'saved') {
     return (
-      <div className="rounded-3xl border border-success-500/40 bg-white p-7 text-center sm:p-10">
-        <p className="text-xs font-semibold uppercase tracking-[0.14em] text-success-700">
+      <div className="border-success-500/40 rounded-3xl border bg-white p-7 text-center sm:p-10">
+        <p className="text-success-700 text-xs font-semibold tracking-[0.14em] uppercase">
           Your card is live
         </p>
-        <p className="mx-auto mt-3 max-w-md text-sm leading-relaxed text-ink-700">
+        <p className="text-ink-700 mx-auto mt-3 max-w-md text-sm leading-relaxed">
           {state.message}
         </p>
         {/* The link itself, not a "View card" button — this is the string that gets pasted into
             WhatsApp, so it has to be selectable and readable. */}
         <Link
           href={`/invite/${state.cardSlug}`}
-          className="mt-4 inline-block break-all font-medium text-primary-700 underline underline-offset-4 hover:text-primary-800"
+          className="text-primary-700 hover:text-primary-800 mt-4 inline-block font-medium break-all underline underline-offset-4"
         >
           /invite/{state.cardSlug}
         </Link>
@@ -399,10 +389,10 @@ function CardDetailsForm({ detailsToken }: { detailsToken: string }) {
   }
 
   return (
-    <div className="overflow-hidden rounded-3xl border border-ink-200 bg-white">
-      <div className="border-b border-ink-100 px-5 py-5 sm:px-8">
-        <h2 className="font-display text-lg text-ink-900">Now, the wording</h2>
-        <p className="mt-1 text-sm leading-relaxed text-ink-600">
+    <div className="border-ink-200 overflow-hidden rounded-3xl border bg-white">
+      <div className="border-ink-100 border-b px-5 py-5 sm:px-8">
+        <h2 className="font-display text-ink-900 text-lg">Now, the wording</h2>
+        <p className="text-ink-600 mt-1 text-sm leading-relaxed">
           Fill this in and your card goes live straight away — you will get a link you can open and
           check. Or skip it and we will collect the details on WhatsApp.
         </p>
@@ -413,19 +403,43 @@ function CardDetailsForm({ detailsToken }: { detailsToken: string }) {
 
         <div className="grid gap-5 sm:grid-cols-2">
           <Field label="Hosts" htmlFor="hosts" note="Whoever is inviting">
-            <input id="hosts" name="hosts" type="text" placeholder="Mr & Mrs Sharma" className={INPUT} />
+            <input
+              id="hosts"
+              name="hosts"
+              type="text"
+              placeholder="Mr & Mrs Sharma"
+              className={INPUT}
+            />
           </Field>
 
           <Field label="Venue" htmlFor="venue" note="Commas become line breaks">
-            <input id="venue" name="venue" type="text" placeholder="SMC Party Plot, Surat" className={INPUT} />
+            <input
+              id="venue"
+              name="venue"
+              type="text"
+              placeholder="SMC Party Plot, Surat"
+              className={INPUT}
+            />
           </Field>
 
           <Field label="Groom's name" htmlFor="groomName">
-            <input id="groomName" name="groomName" type="text" placeholder="Dhanesh" className={INPUT} />
+            <input
+              id="groomName"
+              name="groomName"
+              type="text"
+              placeholder="Dhanesh"
+              className={INPUT}
+            />
           </Field>
 
           <Field label="Bride's name" htmlFor="brideName">
-            <input id="brideName" name="brideName" type="text" placeholder="Radha" className={INPUT} />
+            <input
+              id="brideName"
+              name="brideName"
+              type="text"
+              placeholder="Radha"
+              className={INPUT}
+            />
           </Field>
 
           <Field label="Groom's parents" htmlFor="groomParents" note="Optional">
@@ -437,18 +451,30 @@ function CardDetailsForm({ detailsToken }: { detailsToken: string }) {
           </Field>
 
           <Field label="Date, as it should read" htmlFor="cardDate">
-            <input id="cardDate" name="cardDate" type="text" placeholder="Monday, 1st May" className={INPUT} />
+            <input
+              id="cardDate"
+              name="cardDate"
+              type="text"
+              placeholder="Monday, 1st May"
+              className={INPUT}
+            />
           </Field>
 
           <Field label="Time" htmlFor="cardTime">
-            <input id="cardTime" name="cardTime" type="text" placeholder="9:00 p.m. onwards" className={INPUT} />
+            <input
+              id="cardTime"
+              name="cardTime"
+              type="text"
+              placeholder="9:00 p.m. onwards"
+              className={INPUT}
+            />
           </Field>
         </div>
 
         {state.status === 'error' && (
           <p
             role="alert"
-            className="mt-5 rounded-md border border-danger-500/30 bg-danger-50 px-3 py-2.5 text-sm leading-relaxed text-danger-700"
+            className="border-danger-500/30 bg-danger-50 text-danger-700 mt-5 rounded-md border px-3 py-2.5 text-sm leading-relaxed"
           >
             {state.message}
           </p>
@@ -457,7 +483,7 @@ function CardDetailsForm({ detailsToken }: { detailsToken: string }) {
         <button
           type="submit"
           disabled={pending}
-          className="mt-6 flex min-h-12 w-full items-center justify-center gap-2 rounded-full bg-primary-700 px-6 text-sm font-semibold text-white transition-colors hover:bg-primary-800 disabled:opacity-60 sm:w-auto sm:px-8"
+          className="bg-primary-700 hover:bg-primary-800 mt-6 flex min-h-12 w-full items-center justify-center gap-2 rounded-full px-6 text-sm font-semibold text-white transition-colors disabled:opacity-60 sm:w-auto sm:px-8"
         >
           {pending ? 'Saving…' : 'Save and publish my card'}
         </button>
@@ -519,10 +545,10 @@ function Field({
   return (
     <div>
       <label htmlFor={htmlFor} className="flex flex-wrap items-baseline gap-x-2 text-sm">
-        <span className="font-medium text-ink-800">
+        <span className="text-ink-800 font-medium">
           {label}
           {required && (
-            <span aria-hidden="true" className="ml-0.5 text-danger-700">
+            <span aria-hidden="true" className="text-danger-700 ml-0.5">
               *
             </span>
           )}
@@ -535,7 +561,7 @@ function Field({
           people will click one before deciding it is not clickable. A hint is quieter than the
           label it hangs off, never louder.
         */}
-        {note && <span className="text-xs text-ink-500">{note}</span>}
+        {note && <span className="text-ink-500 text-xs">{note}</span>}
       </label>
       <div className="mt-1.5">{children}</div>
     </div>

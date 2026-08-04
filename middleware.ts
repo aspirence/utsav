@@ -157,9 +157,7 @@ function parseAllowlist(raw: string | undefined): string[] {
  */
 function isAllowed(ip: string | null, allowlist: string[]): boolean {
   if (!ip) return false
-  return allowlist.some((entry) =>
-    entry.endsWith('.') ? ip.startsWith(entry) : ip === entry,
-  )
+  return allowlist.some((entry) => (entry.endsWith('.') ? ip.startsWith(entry) : ip === entry))
 }
 
 export const config = {

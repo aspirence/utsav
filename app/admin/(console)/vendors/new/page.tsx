@@ -31,7 +31,7 @@ export default async function NewVendorPage() {
         action={
           <Link
             href="/admin/vendors"
-            className="rounded-md border border-ink-300 bg-white px-4 py-2.5 text-sm font-medium text-ink-800 transition-colors hover:bg-ink-50"
+            className="border-ink-300 text-ink-800 hover:bg-ink-50 rounded-md border bg-white px-4 py-2.5 text-sm font-medium transition-colors"
           >
             Back to vendors
           </Link>
@@ -39,9 +39,9 @@ export default async function NewVendorPage() {
       />
 
       {!isLive && (
-        <p className="mb-5 rounded-md border border-warning-500/40 bg-warning-50 px-3 py-2.5 text-sm text-warning-700">
-          The cities and categories below are the seed lists, not live data — no Supabase
-          instance is attached, so submitting this form will not write anything.
+        <p className="border-warning-500/40 bg-warning-50 text-warning-700 mb-5 rounded-md border px-3 py-2.5 text-sm">
+          The cities and categories below are the seed lists, not live data — no Supabase instance
+          is attached, so submitting this form will not write anything.
         </p>
       )}
 
@@ -59,30 +59,30 @@ export default async function NewVendorPage() {
           The contact-details limit is the one worth flagging to whoever runs this product:
           the person doing the visit cannot record the vendor's phone number.
         */}
-        <section className="mt-8 border-t border-ink-200 pt-5">
-          <h2 className="text-xs font-semibold uppercase tracking-[0.14em] text-ink-500">
+        <section className="border-ink-200 mt-8 border-t pt-5">
+          <h2 className="text-ink-500 text-xs font-semibold tracking-[0.14em] uppercase">
             Two things this form cannot do
           </h2>
-          <dl className="mt-3 space-y-4 text-sm leading-relaxed text-ink-600">
+          <dl className="text-ink-600 mt-3 space-y-4 text-sm leading-relaxed">
             <div>
-              <dt className="font-medium text-ink-900">Contact details are not on it.</dt>
+              <dt className="text-ink-900 font-medium">Contact details are not on it.</dt>
               <dd className="mt-1 max-w-2xl">
-                A vendor&rsquo;s phone, email and WhatsApp live in <code>vendor_private</code>,
-                and writes to that table are limited to super admins and finance. A field agent
-                — the person actually standing in the studio — cannot write it, so the field is
-                left off rather than added and silently ignored. If the field team needs to
-                capture a number on the visit, that is a decision about who may hold a
-                vendor&rsquo;s personal number before they have agreed to anything, and it needs
-                a policy change rather than a form change.
+                A vendor&rsquo;s phone, email and WhatsApp live in <code>vendor_private</code>, and
+                writes to that table are limited to super admins and finance. A field agent — the
+                person actually standing in the studio — cannot write it, so the field is left off
+                rather than added and silently ignored. If the field team needs to capture a number
+                on the visit, that is a decision about who may hold a vendor&rsquo;s personal number
+                before they have agreed to anything, and it needs a policy change rather than a form
+                change.
               </dd>
             </div>
             <div>
-              <dt className="font-medium text-ink-900">
+              <dt className="text-ink-900 font-medium">
                 Only field agents and super admins may save.
               </dt>
               <dd className="mt-1 max-w-2xl">
-                Moderators approve listings; they do not create them. If you are a moderator,
-                this form will refuse on save and say so.
+                Moderators approve listings; they do not create them. If you are a moderator, this
+                form will refuse on save and say so.
               </dd>
             </div>
           </dl>

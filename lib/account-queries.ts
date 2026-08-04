@@ -85,7 +85,9 @@ export async function getMyEvents(): Promise<AccountEvent[]> {
 
   const { data } = await supabase
     .from('events')
-    .select('id, name, event_type, event_date, date_flexible, guest_count, budget_min, budget_max, is_archived, cities(name)')
+    .select(
+      'id, name, event_type, event_date, date_flexible, guest_count, budget_min, budget_max, is_archived, cities(name)',
+    )
     .order('event_date', { ascending: true, nullsFirst: false })
 
   if (!data) return []
@@ -215,7 +217,10 @@ export async function getMyInvitationOrders(): Promise<AccountInvitationOrder[]>
     .order('created_at', { ascending: false })
 
   const { data, error } = withCard.error
-    ? await supabase.from('invitation_orders').select(BASE).order('created_at', { ascending: false })
+    ? await supabase
+        .from('invitation_orders')
+        .select(BASE)
+        .order('created_at', { ascending: false })
     : withCard
 
   if (error || !data) return []

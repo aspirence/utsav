@@ -269,11 +269,11 @@ function Field({
     <div>
       <label
         htmlFor={htmlFor}
-        className="text-ink-500 block text-xs font-semibold uppercase tracking-[0.14em]"
+        className="text-ink-500 block text-xs font-semibold tracking-[0.14em] uppercase"
       >
         {label}
         {required && (
-          <span className="text-danger-700 ml-1 font-normal normal-case tracking-normal">
+          <span className="text-danger-700 ml-1 font-normal tracking-normal normal-case">
             required
           </span>
         )}

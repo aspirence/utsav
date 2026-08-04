@@ -13,13 +13,7 @@ import { refundLeadCredit, type RefundState } from './actions'
  * refusal from the database rather than a hidden button, which is the honest failure
  * mode: the capability lives in public.staff_roles, not in this UI.
  */
-export function RefundCreditButton({
-  leadId,
-  reference,
-}: {
-  leadId: string
-  reference: string
-}) {
+export function RefundCreditButton({ leadId, reference }: { leadId: string; reference: string }) {
   const [open, setOpen] = useState(false)
   const [reason, setReason] = useState('')
   const [state, setState] = useState<RefundState>({ status: 'idle' })
@@ -46,7 +40,7 @@ export function RefundCreditButton({
             setOpen(true)
             setState({ status: 'idle' })
           }}
-          className="h-8 rounded-md border border-ink-200 px-2.5 text-xs font-medium text-ink-800 transition-colors hover:bg-ink-50"
+          className="border-ink-200 text-ink-800 hover:bg-ink-50 h-8 rounded-md border px-2.5 text-xs font-medium transition-colors"
         >
           Refund a credit
         </button>
@@ -56,10 +50,10 @@ export function RefundCreditButton({
   }
 
   return (
-    <div className="ml-auto w-64 rounded-lg border border-ink-200 bg-ink-50 p-2.5 text-left">
+    <div className="border-ink-200 bg-ink-50 ml-auto w-64 rounded-lg border p-2.5 text-left">
       <label
         htmlFor={`refund-reason-${leadId}`}
-        className="text-xs font-semibold uppercase tracking-wide text-ink-500"
+        className="text-ink-500 text-xs font-semibold tracking-wide uppercase"
       >
         Why was {reference} junk?
       </label>
@@ -70,9 +64,9 @@ export function RefundCreditButton({
         rows={3}
         maxLength={500}
         placeholder="Number is switched off and the event date has already passed."
-        className="mt-1.5 w-full rounded-md border border-ink-200 bg-white px-2.5 py-2 text-xs text-ink-900 placeholder:text-ink-400 focus:border-primary-500 focus:outline-none"
+        className="border-ink-200 text-ink-900 placeholder:text-ink-400 focus:border-primary-500 mt-1.5 w-full rounded-md border bg-white px-2.5 py-2 text-xs focus:outline-none"
       />
-      <p className="mt-1.5 text-xs text-ink-500">
+      <p className="text-ink-500 mt-1.5 text-xs">
         Returns the credit to the vendor&rsquo;s plan and revokes their access to the
         customer&rsquo;s contact details. Recorded against your identity.
       </p>
@@ -82,7 +76,7 @@ export function RefundCreditButton({
           type="button"
           disabled={pending || reason.trim().length < 10}
           onClick={submit}
-          className="h-8 flex-1 rounded-md bg-ink-900 text-xs font-medium text-white transition-colors hover:bg-ink-800 disabled:cursor-not-allowed disabled:opacity-50"
+          className="bg-ink-900 hover:bg-ink-800 h-8 flex-1 rounded-md text-xs font-medium text-white transition-colors disabled:cursor-not-allowed disabled:opacity-50"
         >
           {pending ? 'Refunding…' : 'Refund credit'}
         </button>
@@ -93,7 +87,7 @@ export function RefundCreditButton({
             setOpen(false)
             setReason('')
           }}
-          className="h-8 rounded-md border border-ink-200 bg-white px-2.5 text-xs font-medium text-ink-800 transition-colors hover:bg-ink-100 disabled:opacity-50"
+          className="border-ink-200 text-ink-800 hover:bg-ink-100 h-8 rounded-md border bg-white px-2.5 text-xs font-medium transition-colors disabled:opacity-50"
         >
           Cancel
         </button>

@@ -149,7 +149,7 @@ export function CalendarGrid({
   return (
     <div className="space-y-5">
       {notice && (
-        <p className="rounded-lg border border-ink-200 bg-surface-sunken px-4 py-3 text-sm text-ink-600">
+        <p className="border-ink-200 bg-surface-sunken text-ink-600 rounded-lg border px-4 py-3 text-sm">
           {notice}
         </p>
       )}
@@ -160,7 +160,7 @@ export function CalendarGrid({
             <div className="min-w-0">
               <label
                 htmlFor="availability-reason"
-                className="block text-xs font-medium text-ink-600"
+                className="text-ink-600 block text-xs font-medium"
               >
                 Why
               </label>
@@ -169,7 +169,7 @@ export function CalendarGrid({
                 value={reason}
                 onChange={(event) => setReason(event.target.value as AvailabilityReason)}
                 disabled={!canManage}
-                className="mt-1 h-11 rounded-lg border border-ink-200 bg-surface-raised px-3 text-sm text-ink-900 focus:border-primary-500 focus:outline-none disabled:opacity-50"
+                className="border-ink-200 bg-surface-raised text-ink-900 focus:border-primary-500 mt-1 h-11 rounded-lg border px-3 text-sm focus:outline-none disabled:opacity-50"
               >
                 {REASON_OPTIONS.map((option) => (
                   <option key={option.value} value={option.value}>
@@ -180,7 +180,7 @@ export function CalendarGrid({
             </div>
 
             <div className="min-w-0">
-              <label htmlFor="range-from" className="block text-xs font-medium text-ink-600">
+              <label htmlFor="range-from" className="text-ink-600 block text-xs font-medium">
                 Block from
               </label>
               <input
@@ -190,12 +190,12 @@ export function CalendarGrid({
                 min={todayIso}
                 onChange={(event) => setRangeFrom(event.target.value)}
                 disabled={!canManage}
-                className="mt-1 h-11 rounded-lg border border-ink-200 bg-surface-raised px-3 text-sm text-ink-900 focus:border-primary-500 focus:outline-none disabled:opacity-50"
+                className="border-ink-200 bg-surface-raised text-ink-900 focus:border-primary-500 mt-1 h-11 rounded-lg border px-3 text-sm focus:outline-none disabled:opacity-50"
               />
             </div>
 
             <div className="min-w-0">
-              <label htmlFor="range-to" className="block text-xs font-medium text-ink-600">
+              <label htmlFor="range-to" className="text-ink-600 block text-xs font-medium">
                 Until
               </label>
               <input
@@ -205,7 +205,7 @@ export function CalendarGrid({
                 min={rangeFrom || todayIso}
                 onChange={(event) => setRangeTo(event.target.value)}
                 disabled={!canManage}
-                className="mt-1 h-11 rounded-lg border border-ink-200 bg-surface-raised px-3 text-sm text-ink-900 focus:border-primary-500 focus:outline-none disabled:opacity-50"
+                className="border-ink-200 bg-surface-raised text-ink-900 focus:border-primary-500 mt-1 h-11 rounded-lg border px-3 text-sm focus:outline-none disabled:opacity-50"
               />
             </div>
 
@@ -213,9 +213,9 @@ export function CalendarGrid({
               {pending ? 'Saving…' : 'Block this stretch'}
             </Button>
 
-            <p className="w-full text-xs text-ink-500">
-              Blocking a stretch only adds dates. Anything already blocked — including a
-              date held by a confirmed booking — is left exactly as it is.
+            <p className="text-ink-500 w-full text-xs">
+              Blocking a stretch only adds dates. Anything already blocked — including a date held
+              by a confirmed booking — is left exactly as it is.
             </p>
           </form>
         </CardBody>
@@ -287,11 +287,11 @@ function MonthCard({
     <Card>
       <CardBody>
         <div className="mb-3 flex items-center justify-between">
-          <h2 className="font-display text-base text-ink-900">{label}</h2>
+          <h2 className="font-display text-ink-900 text-base">{label}</h2>
           <Badge tone={blockedCount > 0 ? 'neutral' : 'success'}>{blockedCount} blocked</Badge>
         </div>
 
-        <div className="grid grid-cols-7 gap-1 text-center text-[11px] text-ink-400">
+        <div className="text-ink-400 grid grid-cols-7 gap-1 text-center text-[11px]">
           {WEEKDAYS.map((day, i) => (
             <span key={i} aria-hidden="true">
               {day}
@@ -326,14 +326,17 @@ function MonthCard({
                 onClick={() => onToggle(date)}
                 className={cn(
                   'h-9 rounded text-xs transition-colors',
-                  'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-1',
-                  isPast && 'cursor-not-allowed text-ink-300',
-                  !isPast && locked && 'cursor-not-allowed bg-success-600 font-medium text-white',
-                  !isPast && !locked && isBlocked && 'bg-ink-900 font-medium text-white hover:bg-ink-700',
+                  'focus-visible:ring-primary-500 focus-visible:ring-2 focus-visible:ring-offset-1 focus-visible:outline-none',
+                  isPast && 'text-ink-300 cursor-not-allowed',
+                  !isPast && locked && 'bg-success-600 cursor-not-allowed font-medium text-white',
+                  !isPast &&
+                    !locked &&
+                    isBlocked &&
+                    'bg-ink-900 hover:bg-ink-700 font-medium text-white',
                   !isPast &&
                     !isBlocked &&
-                    'border border-ink-100 bg-surface-raised text-ink-700 hover:border-ink-300 hover:bg-ink-50',
-                  isToday && !isBlocked && 'ring-1 ring-primary-300',
+                    'border-ink-100 bg-surface-raised text-ink-700 hover:border-ink-300 hover:bg-ink-50 border',
+                  isToday && !isBlocked && 'ring-primary-300 ring-1',
                   pending && 'opacity-90',
                 )}
               >

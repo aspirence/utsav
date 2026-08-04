@@ -143,10 +143,13 @@ function AttributeInput({
 
   return (
     <div>
-      <label htmlFor={id} className="text-ink-500 block text-xs font-semibold uppercase tracking-[0.14em]">
+      <label
+        htmlFor={id}
+        className="text-ink-500 block text-xs font-semibold tracking-[0.14em] uppercase"
+      >
         {field.label}
         {field.type === 'money' && (
-          <span className="text-ink-400 ml-1 font-normal normal-case tracking-normal">
+          <span className="text-ink-400 ml-1 font-normal tracking-normal normal-case">
             in rupees
           </span>
         )}
@@ -154,7 +157,12 @@ function AttributeInput({
 
       <div className="mt-2">
         {field.type === 'select' ? (
-          <select id={id} name={name} defaultValue={typeof value === 'string' ? value : ''} className={INPUT}>
+          <select
+            id={id}
+            name={name}
+            defaultValue={typeof value === 'string' ? value : ''}
+            className={INPUT}
+          >
             <option value="">Not set</option>
             {field.options.map((o) => (
               <option key={o} value={o}>

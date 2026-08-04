@@ -34,7 +34,7 @@ export default async function PartnerLeadDetailPage({
     <div className="space-y-6">
       <Link
         href="/partner/dashboard/leads"
-        className="inline-block text-sm text-ink-500 hover:text-ink-800"
+        className="text-ink-500 hover:text-ink-800 inline-block text-sm"
       >
         ← Back to leads
       </Link>
@@ -43,23 +43,26 @@ export default async function PartnerLeadDetailPage({
         <CardBody className="space-y-5">
           <div className="flex flex-wrap items-start justify-between gap-3">
             <div>
-              <h1 className="font-display text-2xl text-ink-900">
+              <h1 className="font-display text-ink-900 text-2xl">
                 {lead.contactName ?? lead.contactFirstName}
               </h1>
-              <p className="mt-1 capitalize text-ink-600">
+              <p className="text-ink-600 mt-1 capitalize">
                 {lead.eventType.replace(/_/g, ' ')}
                 {lead.localityName ? ` · ${lead.localityName}` : ''}
               </p>
             </div>
             <div className="flex flex-wrap gap-2">
               <Badge tone="neutral">Vendor {lead.routedSeq} of 5</Badge>
-              <Badge tone={lead.status === 'converted' ? 'success' : 'primary'} className="capitalize">
+              <Badge
+                tone={lead.status === 'converted' ? 'success' : 'primary'}
+                className="capitalize"
+              >
                 {lead.status}
               </Badge>
             </div>
           </div>
 
-          <div className="rounded-lg bg-surface-sunken p-4">
+          <div className="bg-surface-sunken rounded-lg p-4">
             <ContactLine lead={lead} />
           </div>
 
@@ -86,22 +89,22 @@ export default async function PartnerLeadDetailPage({
               ],
             ].map(([label, value]) => (
               <div key={label}>
-                <dt className="text-xs uppercase tracking-wide text-ink-500">{label}</dt>
-                <dd className="mt-0.5 font-medium text-ink-900">{value}</dd>
+                <dt className="text-ink-500 text-xs tracking-wide uppercase">{label}</dt>
+                <dd className="text-ink-900 mt-0.5 font-medium">{value}</dd>
               </div>
             ))}
           </dl>
 
           {lead.message && (
             <div>
-              <p className="text-xs uppercase tracking-wide text-ink-500">What they said</p>
-              <p className="mt-1.5 leading-relaxed text-ink-700">{lead.message}</p>
+              <p className="text-ink-500 text-xs tracking-wide uppercase">What they said</p>
+              <p className="text-ink-700 mt-1.5 leading-relaxed">{lead.message}</p>
             </div>
           )}
 
           {lead.stylePreferences.length > 0 && (
             <div>
-              <p className="text-xs uppercase tracking-wide text-ink-500">Style preference</p>
+              <p className="text-ink-500 text-xs tracking-wide uppercase">Style preference</p>
               <div className="mt-2 flex flex-wrap gap-1.5">
                 {lead.stylePreferences.map((s) => (
                   <Badge key={s} tone="accent" className="capitalize">
@@ -117,10 +120,10 @@ export default async function PartnerLeadDetailPage({
       {canWork && (
         <Card>
           <CardBody>
-            <h2 className="font-display text-lg text-ink-900">Respond</h2>
-            <p className="mt-1 text-sm text-ink-600">
-              Replying within two hours roughly doubles your chance of winning the booking —
-              and response time is a ranking input, so it compounds. This lead is open until{' '}
+            <h2 className="font-display text-ink-900 text-lg">Respond</h2>
+            <p className="text-ink-600 mt-1 text-sm">
+              Replying within two hours roughly doubles your chance of winning the booking — and
+              response time is a ranking input, so it compounds. This lead is open until{' '}
               {new Date(lead.expiresAt).toLocaleDateString('en-IN', {
                 day: 'numeric',
                 month: 'long',
@@ -140,11 +143,11 @@ export default async function PartnerLeadDetailPage({
 
       <Card className="border-ink-200 bg-surface-sunken">
         <CardBody>
-          <p className="text-sm text-ink-600">
-            <strong className="font-semibold text-ink-800">Was this lead junk?</strong>{' '}
-            Tell us why and a moderator reviews it, usually within a day. If it was junk they
-            refund the credit — that call is theirs, not automatic. We use these reports to
-            tune routing, so it genuinely improves what you get next.
+          <p className="text-ink-600 text-sm">
+            <strong className="text-ink-800 font-semibold">Was this lead junk?</strong> Tell us why
+            and a moderator reviews it, usually within a day. If it was junk they refund the credit
+            — that call is theirs, not automatic. We use these reports to tune routing, so it
+            genuinely improves what you get next.
           </p>
           <ReportJunkForm leadId={lead.leadId} alreadyRefunded={Boolean(lead.creditRefundedAt)} />
         </CardBody>

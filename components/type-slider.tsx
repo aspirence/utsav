@@ -57,11 +57,7 @@ export function TypeSlider({ items, label }: { items: SliderCard[]; label: strin
     to time the jump back off the trailing clone; if the two disagree the reset lands
     mid-transition and the loop visibly stutters once per lap.
   */
-  const { index, page, animate, next, prev, pauseProps } = usePagedLoop(
-    count,
-    HOLD_MS,
-    SLIDE_MS,
-  )
+  const { index, page, animate, next, prev, pauseProps } = usePagedLoop(count, HOLD_MS, SLIDE_MS)
 
   if (count === 0) return null
 
@@ -89,7 +85,7 @@ export function TypeSlider({ items, label }: { items: SliderCard[]; label: strin
                   <Link
                     href={item.href}
                     tabIndex={pi >= count ? -1 : undefined}
-                    className="group relative block overflow-hidden rounded-2xl focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-600"
+                    className="group focus-visible:outline-primary-600 relative block overflow-hidden rounded-2xl focus-visible:outline-2 focus-visible:outline-offset-2"
                   >
                     <div className="aspect-[3/4] w-full overflow-hidden">
                       {item.imageUrl ? (
@@ -121,11 +117,11 @@ export function TypeSlider({ items, label }: { items: SliderCard[]; label: strin
                       photograph varies, so this is sized for the worst case and the label
                       carries a soft shadow as a second line of defence.
                     */}
-                    <div className="absolute inset-x-0 bottom-0 h-3/5 bg-gradient-to-t from-ink-950/85 via-ink-950/45 to-transparent" />
+                    <div className="from-ink-950/85 via-ink-950/45 absolute inset-x-0 bottom-0 h-3/5 bg-gradient-to-t to-transparent" />
 
                     <div className="absolute inset-x-0 bottom-0 p-4">
                       <h3
-                        className="text-xl font-semibold leading-tight text-white"
+                        className="text-xl leading-tight font-semibold text-white"
                         style={{ textShadow: '0 1px 12px rgb(15 12 11 / 0.55)' }}
                       >
                         {item.title}
@@ -149,7 +145,7 @@ export function TypeSlider({ items, label }: { items: SliderCard[]; label: strin
                 key={i}
                 className={
                   'h-2 rounded-full transition-all duration-300 ' +
-                  (page === i ? 'w-6 bg-ink-800' : 'w-2 bg-ink-300')
+                  (page === i ? 'bg-ink-800 w-6' : 'bg-ink-300 w-2')
                 }
               />
             ))}
@@ -167,7 +163,7 @@ function Arrow({ dir, onClick }: { dir: 'prev' | 'next'; onClick: () => void }) 
       type="button"
       onClick={onClick}
       aria-label={dir === 'prev' ? 'Previous' : 'Next'}
-      className="flex h-9 w-9 items-center justify-center rounded-full border border-ink-200 bg-surface-raised text-ink-800 transition-colors hover:border-ink-300 hover:bg-ink-50"
+      className="border-ink-200 bg-surface-raised text-ink-800 hover:border-ink-300 hover:bg-ink-50 flex h-9 w-9 items-center justify-center rounded-full border transition-colors"
     >
       <span aria-hidden="true">{dir === 'prev' ? '←' : '→'}</span>
     </button>

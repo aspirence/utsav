@@ -68,7 +68,6 @@ const SCENE_TEXTURES = [
  * location.search there costs nothing and keeps this prerendered.
  */
 export default function InvitationPage() {
-
   return (
     <main className="relative h-[100dvh] w-full overflow-hidden bg-[#2a1f16]">
       {SCENE_TEXTURES.map((href) => (
@@ -81,7 +80,7 @@ export default function InvitationPage() {
           the whole viewport and there is no "above". */}
       <Link
         href="/"
-        className="absolute left-4 top-4 z-10 rounded-full bg-[#2a1f16]/70 px-4 py-2 text-sm text-white/90 backdrop-blur-sm transition-colors hover:bg-[#2a1f16] hover:text-white"
+        className="absolute top-4 left-4 z-10 rounded-full bg-[#2a1f16]/70 px-4 py-2 text-sm text-white/90 backdrop-blur-sm transition-colors hover:bg-[#2a1f16] hover:text-white"
       >
         &larr; Fremmo
       </Link>

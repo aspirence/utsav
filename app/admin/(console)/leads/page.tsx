@@ -17,14 +17,86 @@ interface RecentEnquiry {
 }
 
 const RECENT: RecentEnquiry[] = [
-  { id: 'FRM-E-4821', customer: 'Ananya I.', category: 'Photography', city: 'Lucknow', routed: 5, responded: 2, status: 'routed', minutesAgo: 14 },
-  { id: 'FRM-E-4820', customer: 'Rohit M.', category: 'Venues', city: 'Delhi NCR', routed: 5, responded: 4, status: 'routed', minutesAgo: 52 },
-  { id: 'FRM-E-4819', customer: 'Meera R.', category: 'Photography', city: 'Lucknow', routed: 5, responded: 5, status: 'routed', minutesAgo: 96 },
-  { id: 'FRM-E-4818', customer: 'Karthik I.', category: 'Makeup', city: 'Lucknow', routed: 3, responded: 1, status: 'routed', minutesAgo: 140 },
-  { id: 'FRM-E-4817', customer: 'Deepa S.', category: 'Catering', city: 'Lucknow', routed: 5, responded: 0, status: 'routed', minutesAgo: 190 },
-  { id: 'FRM-E-4816', customer: '—', category: 'Photography', city: 'Delhi NCR', routed: 0, responded: 0, status: 'pending_otp', minutesAgo: 210 },
-  { id: 'FRM-E-4815', customer: 'Lakshmi S.', category: 'Photography', city: 'Lucknow', routed: 5, responded: 3, status: 'routed', minutesAgo: 265 },
-  { id: 'FRM-E-4814', customer: '—', category: 'Decor', city: 'Lucknow', routed: 0, responded: 0, status: 'spam', minutesAgo: 300 },
+  {
+    id: 'FRM-E-4821',
+    customer: 'Ananya I.',
+    category: 'Photography',
+    city: 'Lucknow',
+    routed: 5,
+    responded: 2,
+    status: 'routed',
+    minutesAgo: 14,
+  },
+  {
+    id: 'FRM-E-4820',
+    customer: 'Rohit M.',
+    category: 'Venues',
+    city: 'Delhi NCR',
+    routed: 5,
+    responded: 4,
+    status: 'routed',
+    minutesAgo: 52,
+  },
+  {
+    id: 'FRM-E-4819',
+    customer: 'Meera R.',
+    category: 'Photography',
+    city: 'Lucknow',
+    routed: 5,
+    responded: 5,
+    status: 'routed',
+    minutesAgo: 96,
+  },
+  {
+    id: 'FRM-E-4818',
+    customer: 'Karthik I.',
+    category: 'Makeup',
+    city: 'Lucknow',
+    routed: 3,
+    responded: 1,
+    status: 'routed',
+    minutesAgo: 140,
+  },
+  {
+    id: 'FRM-E-4817',
+    customer: 'Deepa S.',
+    category: 'Catering',
+    city: 'Lucknow',
+    routed: 5,
+    responded: 0,
+    status: 'routed',
+    minutesAgo: 190,
+  },
+  {
+    id: 'FRM-E-4816',
+    customer: '—',
+    category: 'Photography',
+    city: 'Delhi NCR',
+    routed: 0,
+    responded: 0,
+    status: 'pending_otp',
+    minutesAgo: 210,
+  },
+  {
+    id: 'FRM-E-4815',
+    customer: 'Lakshmi S.',
+    category: 'Photography',
+    city: 'Lucknow',
+    routed: 5,
+    responded: 3,
+    status: 'routed',
+    minutesAgo: 265,
+  },
+  {
+    id: 'FRM-E-4814',
+    customer: '—',
+    category: 'Decor',
+    city: 'Lucknow',
+    routed: 0,
+    responded: 0,
+    status: 'spam',
+    minutesAgo: 300,
+  },
 ]
 
 /**
@@ -75,27 +147,35 @@ export default function AdminLeadsPage() {
           },
         ].map((t) => (
           <Panel key={t.label} className="p-4">
-            <p className="text-xs uppercase tracking-wide text-ink-500">{t.label}</p>
-            <p className="mt-1.5 font-display text-2xl text-ink-900">{t.value}</p>
+            <p className="text-ink-500 text-xs tracking-wide uppercase">{t.label}</p>
+            <p className="font-display text-ink-900 mt-1.5 text-2xl">{t.value}</p>
             <div className="mt-1.5">
-              {t.hint && <span className="text-xs text-ink-500">{t.hint}</span>}
+              {t.hint && <span className="text-ink-500 text-xs">{t.hint}</span>}
             </div>
           </Panel>
         ))}
       </div>
 
       <Panel>
-        <h2 className="border-b border-ink-200 px-4 py-3 font-display text-lg text-ink-900">
+        <h2 className="border-ink-200 font-display text-ink-900 border-b px-4 py-3 text-lg">
           Recent enquiries
         </h2>
         <AdminTable
           rowKey={(r) => r.id}
           rows={RECENT}
           columns={[
-            { key: 'id', header: 'Enquiry', render: (r) => <span className="font-mono text-xs">{r.id}</span> },
+            {
+              key: 'id',
+              header: 'Enquiry',
+              render: (r) => <span className="font-mono text-xs">{r.id}</span>,
+            },
             { key: 'cust', header: 'Customer', render: (r) => r.customer },
             { key: 'cat', header: 'Category', render: (r) => r.category },
-            { key: 'city', header: 'City', render: (r) => <span className="text-ink-500">{r.city}</span> },
+            {
+              key: 'city',
+              header: 'City',
+              render: (r) => <span className="text-ink-500">{r.city}</span>,
+            },
             {
               key: 'routed',
               header: 'Vendors routed',
@@ -107,7 +187,7 @@ export default function AdminLeadsPage() {
                   <span className="tabular-nums">
                     {r.routed} / 5
                     {r.routed < 5 && (
-                      <span className="ml-1.5 text-xs text-ink-500">(thin supply)</span>
+                      <span className="text-ink-500 ml-1.5 text-xs">(thin supply)</span>
                     )}
                   </span>
                 ),
@@ -121,9 +201,7 @@ export default function AdminLeadsPage() {
                   <span className="text-ink-400">—</span>
                 ) : (
                   <span
-                    className={
-                      r.responded === 0 ? 'tabular-nums text-danger-700' : 'tabular-nums'
-                    }
+                    className={r.responded === 0 ? 'text-danger-700 tabular-nums' : 'tabular-nums'}
                   >
                     {r.responded}
                   </span>
@@ -168,12 +246,12 @@ export default function AdminLeadsPage() {
       </Panel>
 
       <Panel className="mt-5 p-4">
-        <h2 className="font-display text-base text-ink-900">About credit refunds</h2>
-        <p className="mt-1.5 max-w-3xl text-sm text-ink-600">
-          Refunding a credit returns it to the vendor&rsquo;s plan, removes the lead from
-          their response-rate denominator, and revokes their access to the customer&rsquo;s
-          contact details. It is logged against your identity. Use it generously — plan §12
-          treats junk leads as the single biggest threat to renewal.
+        <h2 className="font-display text-ink-900 text-base">About credit refunds</h2>
+        <p className="text-ink-600 mt-1.5 max-w-3xl text-sm">
+          Refunding a credit returns it to the vendor&rsquo;s plan, removes the lead from their
+          response-rate denominator, and revokes their access to the customer&rsquo;s contact
+          details. It is logged against your identity. Use it generously — plan §12 treats junk
+          leads as the single biggest threat to renewal.
         </p>
       </Panel>
     </>

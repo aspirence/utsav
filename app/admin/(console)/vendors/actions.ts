@@ -4,12 +4,7 @@ import { revalidatePath } from 'next/cache'
 import { cookies } from 'next/headers'
 import { z } from 'zod'
 
-import {
-  createFremmoServerClient,
-  hasSupabaseEnv,
-  slugSchema,
-  type VendorStatus,
-} from '@/lib/db'
+import { createFremmoServerClient, hasSupabaseEnv, slugSchema, type VendorStatus } from '@/lib/db'
 
 /**
  * Staff vendor management. Plan §3: "Admin console — separate deploy, SSO + IP
@@ -91,20 +86,14 @@ const detailsSchema = z
     about: z.string().trim().max(4000).optional(),
     priceBandMin: z.number().int().nonnegative().optional(),
     priceBandMax: z.number().int().nonnegative().optional(),
-    establishedYear: z.coerce
-      .number()
-      .int()
-      .min(1900)
-      .max(new Date().getFullYear())
-      .optional(),
+    establishedYear: z.coerce.number().int().min(1900).max(new Date().getFullYear()).optional(),
     teamSize: z.coerce.number().int().positive().max(500).optional(),
     travelsOutstation: z.boolean(),
   })
   // Mirrors the vendors_price_band_ordered check. Catching it here means the operator reads a
   // sentence instead of a Postgres constraint name.
   .refine(
-    (d) =>
-      d.priceBandMin == null || d.priceBandMax == null || d.priceBandMin <= d.priceBandMax,
+    (d) => d.priceBandMin == null || d.priceBandMax == null || d.priceBandMin <= d.priceBandMax,
     { message: 'The lower price band has to be the smaller number' },
   )
 
@@ -261,7 +250,10 @@ export async function suspendVendor(slug: string, reason: string): Promise<Vendo
 
   const parsed = suspendSchema.safeParse({ slug, reason })
   if (!parsed.success) {
-    return { status: 'error', message: firstIssue(parsed.error) ?? 'Please check what you entered.' }
+    return {
+      status: 'error',
+      message: firstIssue(parsed.error) ?? 'Please check what you entered.',
+    }
   }
 
   const loaded = await loadVendor(parsed.data.slug)
@@ -343,7 +335,10 @@ export async function sendBackToDraft(slug: string, reason: string): Promise<Ven
 
   const parsed = sendBackSchema.safeParse({ slug, reason })
   if (!parsed.success) {
-    return { status: 'error', message: firstIssue(parsed.error) ?? 'Please check what you entered.' }
+    return {
+      status: 'error',
+      message: firstIssue(parsed.error) ?? 'Please check what you entered.',
+    }
   }
 
   const loaded = await loadVendor(parsed.data.slug)
@@ -395,14 +390,20 @@ interface StaffWriter {
   from: (table: 'vendors' | 'audit_log' | 'staff_roles') => {
     insert: (values: Record<string, unknown>) => PromiseLike<{ error: WriteError }>
     update: (values: Record<string, unknown>) => {
-      eq: (column: string, value: string) => {
+      eq: (
+        column: string,
+        value: string,
+      ) => {
         select: (
           columns: string,
         ) => PromiseLike<{ data: { id: string }[] | null; error: WriteError }>
       }
     }
     select: (columns: string) => {
-      eq: (column: string, value: string) => {
+      eq: (
+        column: string,
+        value: string,
+      ) => {
         is: (
           column: string,
           value: null,

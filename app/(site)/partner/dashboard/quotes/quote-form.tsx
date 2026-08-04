@@ -184,10 +184,10 @@ export function QuoteForm({
     return (
       <Card>
         <CardBody className="py-10 text-center">
-          <p className="font-display text-lg text-ink-900">No open leads to quote</p>
-          <p className="mx-auto mt-1.5 max-w-md text-sm text-ink-600">
-            A quote hangs off a lead, so there is nothing to write until an enquiry is routed
-            to you. Expired and already-booked leads cannot be quoted.
+          <p className="font-display text-ink-900 text-lg">No open leads to quote</p>
+          <p className="text-ink-600 mx-auto mt-1.5 max-w-md text-sm">
+            A quote hangs off a lead, so there is nothing to write until an enquiry is routed to
+            you. Expired and already-booked leads cannot be quoted.
           </p>
         </CardBody>
       </Card>
@@ -198,24 +198,24 @@ export function QuoteForm({
     <div className="grid gap-5 lg:grid-cols-[1fr_300px] lg:items-start">
       <div className="space-y-5">
         {state.status === 'error' && (
-          <p className="rounded-lg bg-danger-50 px-4 py-3 text-sm text-danger-700">
+          <p className="bg-danger-50 text-danger-700 rounded-lg px-4 py-3 text-sm">
             {state.message}
           </p>
         )}
         {state.status === 'unconfigured' && (
-          <p className="rounded-lg bg-warning-50 px-4 py-3 text-sm text-warning-700">
+          <p className="bg-warning-50 text-warning-700 rounded-lg px-4 py-3 text-sm">
             {state.message}
           </p>
         )}
         {(state.status === 'draft_saved' || state.status === 'sent') && (
-          <p className="rounded-lg bg-success-50 px-4 py-3 text-sm text-success-700">
+          <p className="bg-success-50 text-success-700 rounded-lg px-4 py-3 text-sm">
             {state.message}
           </p>
         )}
 
         <Card>
           <CardBody className="space-y-4">
-            <h3 className="font-display text-lg text-ink-900">Who is this for?</h3>
+            <h3 className="font-display text-ink-900 text-lg">Who is this for?</h3>
 
             <Field label="Enquiry" error={fieldErrors?.leadId}>
               <select
@@ -232,9 +232,9 @@ export function QuoteForm({
             </Field>
 
             {selectedLead && (
-              <p className="text-sm text-ink-600">
+              <p className="text-ink-600 text-sm">
                 They told us their budget is{' '}
-                <span className="font-medium text-ink-900">{selectedLead.budgetLabel}</span>. You
+                <span className="text-ink-900 font-medium">{selectedLead.budgetLabel}</span>. You
                 can quote outside it — they will see the difference plainly.
               </p>
             )}
@@ -280,13 +280,13 @@ export function QuoteForm({
         <Card>
           <CardBody className="space-y-4">
             <div className="flex flex-wrap items-center justify-between gap-3">
-              <h3 className="font-display text-lg text-ink-900">What is included</h3>
+              <h3 className="font-display text-ink-900 text-lg">What is included</h3>
               <Button type="button" variant="outline" size="sm" onClick={addRow}>
                 Add a line
               </Button>
             </div>
 
-            {lineItemError && <p className="text-sm text-danger-700">{lineItemError}</p>}
+            {lineItemError && <p className="text-danger-700 text-sm">{lineItemError}</p>}
 
             <div className="space-y-3">
               {rows.map((row) => {
@@ -320,14 +320,14 @@ export function QuoteForm({
                       className={`${inputClass} text-right`}
                     />
                     <div className="flex items-center justify-between gap-2 sm:justify-end">
-                      <span className="text-sm tabular-nums text-ink-700 sm:w-24 sm:text-right">
+                      <span className="text-ink-700 text-sm tabular-nums sm:w-24 sm:text-right">
                         {formatPaise(amount)}
                       </span>
                       <button
                         type="button"
                         onClick={() => removeRow(row.key)}
                         aria-label="Remove this line"
-                        className="rounded-md px-2 py-1 text-sm text-ink-400 hover:bg-ink-100 hover:text-ink-700"
+                        className="text-ink-400 hover:bg-ink-100 hover:text-ink-700 rounded-md px-2 py-1 text-sm"
                       >
                         ✕
                       </button>
@@ -337,7 +337,7 @@ export function QuoteForm({
               })}
             </div>
 
-            <p className="text-xs text-ink-500">
+            <p className="text-ink-500 text-xs">
               Prices are in rupees. Fremmo stores them as whole paise, so nothing is lost to
               rounding between here and the customer&rsquo;s screen.
             </p>
@@ -346,7 +346,7 @@ export function QuoteForm({
 
         <Card>
           <CardBody className="space-y-4">
-            <h3 className="font-display text-lg text-ink-900">Price and advance</h3>
+            <h3 className="font-display text-ink-900 text-lg">Price and advance</h3>
 
             <div className="grid gap-4 sm:grid-cols-2">
               <Field label="Discount (₹)" error={fieldErrors?.discount}>
@@ -358,7 +358,7 @@ export function QuoteForm({
                   className={`${inputClass} text-right`}
                 />
               </Field>
-              <label className="flex items-start gap-2.5 self-end pb-2.5 text-sm text-ink-700">
+              <label className="text-ink-700 flex items-start gap-2.5 self-end pb-2.5 text-sm">
                 <input
                   type="checkbox"
                   checked={gstRegistered}
@@ -367,7 +367,7 @@ export function QuoteForm({
                 />
                 <span>
                   Add GST at 18%
-                  <span className="block text-xs text-ink-500">
+                  <span className="text-ink-500 block text-xs">
                     Charged on the amount after discount.
                   </span>
                 </span>
@@ -375,22 +375,22 @@ export function QuoteForm({
             </div>
 
             {overDiscount && (
-              <p className="rounded-lg bg-danger-50 px-3 py-2 text-sm text-danger-700">
+              <p className="bg-danger-50 text-danger-700 rounded-lg px-3 py-2 text-sm">
                 That discount is larger than the {formatPaise(totals.subtotal)} of work quoted.
               </p>
             )}
 
             <fieldset>
-              <legend className="mb-2 text-sm font-medium text-ink-800">
+              <legend className="text-ink-800 mb-2 text-sm font-medium">
                 Advance payable on booking
               </legend>
-              <p className="mb-3 text-sm text-ink-600">
-                Escrow holds the advance, not the full amount. The balance stays with the
-                customer until the work is delivered.
+              <p className="text-ink-600 mb-3 text-sm">
+                Escrow holds the advance, not the full amount. The balance stays with the customer
+                until the work is delivered.
               </p>
 
               <div className="flex flex-wrap items-center gap-3">
-                <label className="flex items-center gap-2 text-sm text-ink-700">
+                <label className="text-ink-700 flex items-center gap-2 text-sm">
                   <input
                     type="radio"
                     name="advanceMode"
@@ -400,7 +400,7 @@ export function QuoteForm({
                   />
                   A percentage
                 </label>
-                <label className="flex items-center gap-2 text-sm text-ink-700">
+                <label className="text-ink-700 flex items-center gap-2 text-sm">
                   <input
                     type="radio"
                     name="advanceMode"
@@ -422,7 +422,7 @@ export function QuoteForm({
                       aria-label="Advance percentage"
                       className={`${inputClass} w-24 text-right`}
                     />
-                    <span className="text-sm text-ink-600">
+                    <span className="text-ink-600 text-sm">
                       % — {formatPaise(totals.advanceAmount)}
                     </span>
                   </div>
@@ -438,11 +438,11 @@ export function QuoteForm({
                 )}
               </div>
 
-              {advanceError && <p className="mt-2 text-sm text-danger-700">{advanceError}</p>}
+              {advanceError && <p className="text-danger-700 mt-2 text-sm">{advanceError}</p>}
               {overAdvance && (
-                <p className="mt-2 rounded-lg bg-danger-50 px-3 py-2 text-sm text-danger-700">
-                  The advance is more than the quote total. Escrow cannot hold more than the
-                  job is worth.
+                <p className="bg-danger-50 text-danger-700 mt-2 rounded-lg px-3 py-2 text-sm">
+                  The advance is more than the quote total. Escrow cannot hold more than the job is
+                  worth.
                 </p>
               )}
             </fieldset>
@@ -466,7 +466,7 @@ export function QuoteForm({
       <div className="lg:sticky lg:top-24">
         <Card>
           <CardBody className="space-y-3">
-            <h3 className="font-display text-lg text-ink-900">Summary</h3>
+            <h3 className="font-display text-ink-900 text-lg">Summary</h3>
 
             <dl className="space-y-2 text-sm">
               <SummaryRow label="Subtotal" value={formatPaise(totals.subtotal)} />
@@ -478,27 +478,27 @@ export function QuoteForm({
               )}
             </dl>
 
-            <div className="flex items-baseline justify-between border-t border-ink-100 pt-3">
-              <span className="text-sm font-medium text-ink-800">Total</span>
-              <span className="font-display text-2xl tabular-nums text-ink-900">
+            <div className="border-ink-100 flex items-baseline justify-between border-t pt-3">
+              <span className="text-ink-800 text-sm font-medium">Total</span>
+              <span className="font-display text-ink-900 text-2xl tabular-nums">
                 {formatPaise(totals.total)}
               </span>
             </div>
 
-            <div className="rounded-lg bg-surface-sunken p-3">
+            <div className="bg-surface-sunken rounded-lg p-3">
               <div className="flex items-baseline justify-between">
-                <span className="text-sm font-medium text-ink-800">Advance now</span>
-                <span className="font-display text-lg tabular-nums text-ink-900">
+                <span className="text-ink-800 text-sm font-medium">Advance now</span>
+                <span className="font-display text-ink-900 text-lg tabular-nums">
                   {formatPaise(totals.advanceAmount)}
                 </span>
               </div>
-              <div className="mt-1 flex items-baseline justify-between text-sm text-ink-600">
+              <div className="text-ink-600 mt-1 flex items-baseline justify-between text-sm">
                 <span>Balance later</span>
                 <span className="tabular-nums">{formatPaise(Math.max(0, totals.balance))}</span>
               </div>
-              <p className="mt-2 text-xs text-ink-500">
-                Escrow releases the advance to you once the booking is confirmed, and the
-                balance after the event.
+              <p className="text-ink-500 mt-2 text-xs">
+                Escrow releases the advance to you once the booking is confirmed, and the balance
+                after the event.
               </p>
             </div>
 
@@ -522,7 +522,7 @@ export function QuoteForm({
               </Button>
             </div>
 
-            <p className="text-xs text-ink-500">
+            <p className="text-ink-500 text-xs">
               A draft is yours alone — the customer cannot see it until you send it.
             </p>
           </CardBody>
@@ -564,14 +564,14 @@ export function QuoteRowActions({
 
   if (status === 'accepted') {
     return (
-      <p className="text-sm text-success-700">
+      <p className="text-success-700 text-sm">
         Accepted — a booking now exists against this quote.
       </p>
     )
   }
 
   if (status !== 'draft' && status !== 'sent') {
-    return <p className="text-sm capitalize text-ink-500">{status}</p>
+    return <p className="text-ink-500 text-sm capitalize">{status}</p>
   }
 
   return (
@@ -608,7 +608,7 @@ function SummaryRow({ label, value }: { label: string; value: string }) {
   return (
     <div className="flex items-baseline justify-between">
       <dt className="text-ink-600">{label}</dt>
-      <dd className="tabular-nums text-ink-900">{value}</dd>
+      <dd className="text-ink-900 tabular-nums">{value}</dd>
     </div>
   )
 }
@@ -630,10 +630,10 @@ function Field({
 }) {
   return (
     <label className="block">
-      <span className="mb-1.5 block text-sm font-medium text-ink-800">{label}</span>
+      <span className="text-ink-800 mb-1.5 block text-sm font-medium">{label}</span>
       {children}
-      {hint && !error && <span className="mt-1 block text-xs text-ink-500">{hint}</span>}
-      {error && <span className="mt-1 block text-xs text-danger-700">{error[0]}</span>}
+      {hint && !error && <span className="text-ink-500 mt-1 block text-xs">{hint}</span>}
+      {error && <span className="text-danger-700 mt-1 block text-xs">{error[0]}</span>}
     </label>
   )
 }

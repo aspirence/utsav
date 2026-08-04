@@ -12,18 +12,12 @@ import { EVENT_TYPE_LABEL, formatEventDate, type Story } from '@/lib/stories'
  * Plan §11: the vendor credit is not a caption, it is the point. Every story links to
  * the profile that shot it.
  */
-export function StoryCard({
-  story,
-  priority,
-}: {
-  story: Story
-  priority?: boolean
-}) {
+export function StoryCard({ story, priority }: { story: Story; priority?: boolean }) {
   const where = [story.localityName, story.cityName].filter(Boolean).join(', ')
   const when = formatEventDate(story.eventDate)
 
   return (
-    <article className="group relative overflow-hidden rounded-xl border border-ink-100 bg-surface-raised transition-colors hover:border-ink-300">
+    <article className="group border-ink-100 bg-surface-raised hover:border-ink-300 relative overflow-hidden rounded-xl border transition-colors">
       <MediaFrame
         src={story.coverUrl}
         alt={story.coupleNames ? `${story.coupleNames} — ${story.title}` : story.title}
@@ -34,21 +28,24 @@ export function StoryCard({
       />
 
       <div className="p-4">
-        <p className="text-xs font-semibold uppercase tracking-[0.14em] text-primary-600">
+        <p className="text-primary-600 text-xs font-semibold tracking-[0.14em] uppercase">
           {EVENT_TYPE_LABEL[story.eventType]}
           {story.coupleNames ? ` · ${story.coupleNames}` : ''}
         </p>
 
-        <h3 className="mt-2 font-display text-lg leading-tight text-ink-900">
-          <Link href={`/stories/${story.slug}`} className="after:absolute after:inset-0 after:content-['']">
+        <h3 className="font-display text-ink-900 mt-2 text-lg leading-tight">
+          <Link
+            href={`/stories/${story.slug}`}
+            className="after:absolute after:inset-0 after:content-['']"
+          >
             {story.title}
           </Link>
         </h3>
 
-        {story.subtitle && <p className="mt-2 text-sm text-ink-600">{story.subtitle}</p>}
+        {story.subtitle && <p className="text-ink-600 mt-2 text-sm">{story.subtitle}</p>}
 
         {(where || when) && (
-          <p className="mt-2 text-sm text-ink-500">{[where, when].filter(Boolean).join(' · ')}</p>
+          <p className="text-ink-500 mt-2 text-sm">{[where, when].filter(Boolean).join(' · ')}</p>
         )}
 
         {story.styleTags.length > 0 && (
@@ -62,11 +59,11 @@ export function StoryCard({
         )}
 
         {story.vendorSlug && story.vendorName && (
-          <p className="mt-3 border-t border-ink-100 pt-3 text-xs text-ink-500">
+          <p className="border-ink-100 text-ink-500 mt-3 border-t pt-3 text-xs">
             Shot by{' '}
             <Link
               href={`/vendor/${story.vendorSlug}`}
-              className="relative z-10 font-medium text-ink-700 underline decoration-ink-300 underline-offset-2 hover:text-ink-900"
+              className="text-ink-700 decoration-ink-300 hover:text-ink-900 relative z-10 font-medium underline underline-offset-2"
             >
               {story.vendorName}
             </Link>

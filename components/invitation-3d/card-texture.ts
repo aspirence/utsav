@@ -24,8 +24,8 @@ function silhouette(x: CanvasRenderingContext2D, w: number, h: number) {
   const cx = w / 2
   // Fractions of the height, measured off the film.
   const apex = 0.0 // tip of the onion arch
-  const shoulder = 0.20 // where the arch meets the jambs
-  const foot = 0.80 // where the jambs meet the trefoil
+  const shoulder = 0.2 // where the arch meets the jambs
+  const foot = 0.8 // where the jambs meet the trefoil
   const toe = 1.0 // tip of the trefoil
 
   x.beginPath()
@@ -37,12 +37,12 @@ function silhouette(x: CanvasRenderingContext2D, w: number, h: number) {
   x.lineTo(w, foot * h)
 
   // Right lobe of the trefoil, then in to the toe.
-  x.bezierCurveTo(w, h * 0.865, w * 0.80, h * 0.85, w * 0.78, h * 0.895)
+  x.bezierCurveTo(w, h * 0.865, w * 0.8, h * 0.85, w * 0.78, h * 0.895)
   x.bezierCurveTo(w * 0.76, h * 0.95, cx + w * 0.06, h * 0.955, cx, toe * h)
 
   // Mirror back up the left side.
   x.bezierCurveTo(cx - w * 0.06, h * 0.955, w * 0.24, h * 0.95, w * 0.22, h * 0.895)
-  x.bezierCurveTo(w * 0.20, h * 0.85, 0, h * 0.865, 0, foot * h)
+  x.bezierCurveTo(w * 0.2, h * 0.85, 0, h * 0.865, 0, foot * h)
   x.lineTo(0, shoulder * h)
   x.bezierCurveTo(0, h * 0.09, cx - w * 0.18, h * 0.03, cx, apex * h)
   x.closePath()

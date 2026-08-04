@@ -818,10 +818,7 @@ export type Database = {
       // from Insert/Update: the row is created by the on_auth_user_created trigger, and
       // the phone is the account identity - changing it is an OTP re-verification, not a
       // column write.
-      profiles: Table<
-        ProfileRow,
-        Omit<Partial<ProfileRow>, 'id' | 'phone' | 'phone_verified'>
-      >
+      profiles: Table<ProfileRow, Omit<Partial<ProfileRow>, 'id' | 'phone' | 'phone_verified'>>
 
       // Read-only from any client. `staff_roles_select_own` admits the holder and super
       // admins; there is no write policy at all, by design. /admin/users writes it through the

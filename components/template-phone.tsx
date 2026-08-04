@@ -2,6 +2,8 @@
 
 import { useEffect, useRef, useState } from 'react'
 
+import { cn } from '@/components/ui'
+
 /**
  * A phone with an invitation running in it.
  *
@@ -69,8 +71,18 @@ export function TemplatePhone({
   const { ref, seen, everSeen } = useOnScreen<HTMLDivElement>()
 
   const r = compact
-    ? { outer: 'rounded-[1.05rem]', mid: 'rounded-[0.95rem]', screen: 'rounded-[0.8rem]', pad: 'p-[1.5px]' }
-    : { outer: 'rounded-[2.1rem]', mid: 'rounded-[1.95rem]', screen: 'rounded-[1.75rem]', pad: 'p-[3px]' }
+    ? {
+        outer: 'rounded-[1.05rem]',
+        mid: 'rounded-[0.95rem]',
+        screen: 'rounded-[0.8rem]',
+        pad: 'p-[1.5px]',
+      }
+    : {
+        outer: 'rounded-[2.1rem]',
+        mid: 'rounded-[1.95rem]',
+        screen: 'rounded-[1.75rem]',
+        pad: 'p-[3px]',
+      }
 
   return (
     /*
@@ -85,18 +97,35 @@ export function TemplatePhone({
      */
     <div
       ref={ref}
-      className={
-        `relative ${r.outer} ${r.pad} bg-gradient-to-b from-ink-700 via-ink-900 to-ink-800 ` +
-        (compact
-          ? 'shadow-[0_6px_16px_-8px_rgba(24,17,12,0.4)] '
-          : 'shadow-[0_16px_34px_-14px_rgba(24,17,12,0.45)] ') +
-        (className ?? '')
-      }
+      /*
+       * cn(), not string concatenation.
+       *
+       * THIS WAS BROKEN AND IT WAS INVISIBLE. The shadow ternary and the caller's `className`
+       * were joined with `+` and no separator, so the two welded into one class:
+       *
+       *     shadow-[0_16px_34px_-14px_rgba(24,17,12,0.45)]mx-auto
+       *
+       * which matches nothing. Both halves were lost — every phone on the site rendered with no
+       * drop shadow, and TemplateGrid's `mx-auto` never applied, so each phone sat flush against
+       * the left edge of its cell while the name and price under it were centred. The cards read
+       * as subtly crooked and nothing in the markup said why.
+       *
+       * cn() is clsx + twMerge: it joins with spaces and it resolves genuine conflicts by letting
+       * the caller win. Concatenation cannot do either, and this is the second time in this
+       * codebase that a `+` between two class strings has silently deleted both.
+       */
+      className={cn(
+        'relative from-ink-700 via-ink-900 to-ink-800 bg-gradient-to-b',
+        r.outer,
+        r.pad,
+        compact
+          ? 'shadow-[0_6px_16px_-8px_rgba(24,17,12,0.4)]'
+          : 'shadow-[0_16px_34px_-14px_rgba(24,17,12,0.45)]',
+        className,
+      )}
     >
       <div className={`relative overflow-hidden ${r.mid} ${r.pad} bg-ink-950`}>
-        <div
-          className={`relative aspect-[1206/2622] overflow-hidden ${r.screen} bg-ink-900`}
-        >
+        <div className={`relative aspect-[1206/2622] overflow-hidden ${r.screen} bg-ink-900`}>
           <Preview item={item} active={seen} mounted={everSeen || eager} eager={eager} />
 
           {showIsland && (
@@ -107,7 +136,7 @@ export function TemplatePhone({
              */
             <span
               aria-hidden="true"
-              className="absolute left-1/2 top-[1.6%] z-10 h-[3.1%] w-[30%] -translate-x-1/2 rounded-full bg-black"
+              className="absolute top-[1.6%] left-1/2 z-10 h-[3.1%] w-[30%] -translate-x-1/2 rounded-full bg-black"
             />
           )}
         </div>
@@ -214,7 +243,7 @@ function Poster({ item, eager = false }: { item: PhonePreview; eager?: boolean }
 
   return (
     <div className="flex h-full w-full items-center justify-center px-4 text-center">
-      <p className="text-xs leading-relaxed text-ink-400">
+      <p className="text-ink-400 text-xs leading-relaxed">
         No preview yet — add a video, image or GIF link in the console.
       </p>
     </div>

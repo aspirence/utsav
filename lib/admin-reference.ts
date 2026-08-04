@@ -69,7 +69,10 @@ export async function getAdminReference(): Promise<AdminReference> {
       .from('cities')
       .select('id, slug, name, state, is_launched')
       .order('launch_order', { ascending: true }),
-    supabase.from('localities').select('id, city_id, slug, name').order('name', { ascending: true }),
+    supabase
+      .from('localities')
+      .select('id, city_id, slug, name')
+      .order('name', { ascending: true }),
     supabase
       .from('categories')
       .select('id, slug, name, is_wedge')
@@ -167,12 +170,47 @@ const DEMO_CITIES: RefCity[] = [
       loc('vasant-kunj', 'Vasant Kunj'),
     ],
   },
-  { id: null, slug: 'mumbai', name: 'Mumbai', state: 'Maharashtra', isLaunched: false, localities: [] },
-  { id: null, slug: 'hyderabad', name: 'Hyderabad', state: 'Telangana', isLaunched: false, localities: [] },
+  {
+    id: null,
+    slug: 'mumbai',
+    name: 'Mumbai',
+    state: 'Maharashtra',
+    isLaunched: false,
+    localities: [],
+  },
+  {
+    id: null,
+    slug: 'hyderabad',
+    name: 'Hyderabad',
+    state: 'Telangana',
+    isLaunched: false,
+    localities: [],
+  },
   { id: null, slug: 'pune', name: 'Pune', state: 'Maharashtra', isLaunched: false, localities: [] },
-  { id: null, slug: 'chennai', name: 'Chennai', state: 'Tamil Nadu', isLaunched: false, localities: [] },
-  { id: null, slug: 'jaipur', name: 'Jaipur', state: 'Rajasthan', isLaunched: false, localities: [] },
-  { id: null, slug: 'ahmedabad', name: 'Ahmedabad', state: 'Gujarat', isLaunched: false, localities: [] },
+  {
+    id: null,
+    slug: 'chennai',
+    name: 'Chennai',
+    state: 'Tamil Nadu',
+    isLaunched: false,
+    localities: [],
+  },
+  {
+    id: null,
+    slug: 'jaipur',
+    name: 'Jaipur',
+    state: 'Rajasthan',
+    isLaunched: false,
+    localities: [],
+  },
+  {
+    id: null,
+    slug: 'ahmedabad',
+    name: 'Ahmedabad',
+    state: 'Gujarat',
+    isLaunched: false,
+    localities: [],
+  },
 ]
 
 const DEMO_CATEGORIES: RefCategory[] = [

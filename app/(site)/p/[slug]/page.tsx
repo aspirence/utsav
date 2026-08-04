@@ -166,14 +166,14 @@ export default async function CmsPage({ params }: Props) {
   return (
     <Container className="py-14">
       <article className="mx-auto max-w-2xl">
-        <h1 className="text-3xl text-ink-900 sm:text-4xl">{page.title}</h1>
-        <p className="mt-4 text-lg leading-relaxed text-ink-600">{page.intro}</p>
+        <h1 className="text-ink-900 text-3xl sm:text-4xl">{page.title}</h1>
+        <p className="text-ink-600 mt-4 text-lg leading-relaxed">{page.intro}</p>
 
         <div className="mt-10 space-y-8">
           {page.sections.map((section) => (
             <section key={section.heading}>
-              <h2 className="text-xl text-ink-900">{section.heading}</h2>
-              <p className="mt-2 leading-relaxed text-ink-700">{section.body}</p>
+              <h2 className="text-ink-900 text-xl">{section.heading}</h2>
+              <p className="text-ink-700 mt-2 leading-relaxed">{section.body}</p>
             </section>
           ))}
         </div>

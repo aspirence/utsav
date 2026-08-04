@@ -3,6 +3,8 @@
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 
+import { cn } from '@/components/ui'
+
 /**
  * The phone navigation bar — one implementation, four surfaces.
  *
@@ -85,7 +87,7 @@ export function BottomNav({
        * open it covers everything, and a tab bar floating on top of an open menu is wrong.
        */
       className={
-        `fixed inset-x-0 bottom-0 z-40 border-t border-ink-200/80 bg-white/95 ` +
+        `border-ink-200/80 fixed inset-x-0 bottom-0 z-40 border-t bg-white/95 ` +
         `pb-[env(safe-area-inset-bottom)] backdrop-blur ${hidden}`
       }
     >
@@ -107,12 +109,12 @@ export function BottomNav({
                  * immediate to read as a press. `touch-manipulation` drops the 300ms
                  * double-tap-zoom delay that otherwise sits between the tap and the navigation.
                  */
-                className={
-                  `flex min-h-[3.25rem] touch-manipulation select-none flex-col items-center ` +
-                  `justify-center gap-1 px-1 py-1.5 text-[0.6875rem] font-medium leading-none ` +
-                  `transition-transform active:scale-95 ` +
-                  (active ? 'text-primary-700' : 'text-ink-500')
-                }
+                className={cn(
+                  'flex min-h-[3.25rem] touch-manipulation flex-col items-center select-none',
+                  'justify-center gap-1 px-1 py-1.5 text-[0.6875rem] leading-none font-medium',
+                  'transition-transform active:scale-95',
+                  active ? 'text-primary-700' : 'text-ink-500',
+                )}
               >
                 <span aria-hidden="true" className="grid h-6 w-6 place-items-center">
                   {item.icon}
@@ -140,10 +142,7 @@ export function BottomNav({
 export function BottomNavSpacer({ hideFrom = 'md' }: { hideFrom?: 'sm' | 'md' | 'lg' }) {
   const hidden = { sm: 'sm:hidden', md: 'md:hidden', lg: 'lg:hidden' }[hideFrom]
   return (
-    <div
-      aria-hidden="true"
-      className={`h-[calc(3.25rem+env(safe-area-inset-bottom))] ${hidden}`}
-    />
+    <div aria-hidden="true" className={`h-[calc(3.25rem+env(safe-area-inset-bottom))] ${hidden}`} />
   )
 }
 

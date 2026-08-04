@@ -107,11 +107,7 @@ const ROLE_LABEL: Record<VendorMemberRole, string> = {
  * Plan §3's one human wears all three hats; they should not have to relearn the furniture on the
  * way between them.
  */
-export default async function PartnerDashboardLayout({
-  children,
-}: {
-  children: React.ReactNode
-}) {
+export default async function PartnerDashboardLayout({ children }: { children: React.ReactNode }) {
   // Set by middleware; a Server Component cannot read its own path. The fallback keeps the gate
   // working if that header is ever absent — it just returns you to the overview.
   const path = (await headers()).get('x-pathname') ?? '/partner/dashboard'

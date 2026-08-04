@@ -147,12 +147,7 @@ export const otpVerifySchema = z.object({
 export const vendorProfileSchema = z.object({
   displayName: z.string().trim().min(2).max(120),
   about: z.string().trim().max(4000).optional(),
-  establishedYear: z
-    .number()
-    .int()
-    .min(1900)
-    .max(new Date().getFullYear())
-    .optional(),
+  establishedYear: z.number().int().min(1900).max(new Date().getFullYear()).optional(),
   teamSize: z.number().int().positive().max(500).optional(),
   travelsOutstation: z.boolean().default(false),
   localitySlug: slugSchema.optional(),

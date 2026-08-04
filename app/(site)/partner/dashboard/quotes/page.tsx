@@ -63,8 +63,8 @@ export default async function PartnerQuotesPage({
     <div className="space-y-6">
       <div className="flex flex-wrap items-start justify-between gap-4">
         <div>
-          <h2 className="font-display text-xl text-ink-900">Quotes</h2>
-          <p className="mt-1 text-sm text-ink-600">
+          <h2 className="font-display text-ink-900 text-xl">Quotes</h2>
+          <p className="text-ink-600 mt-1 text-sm">
             {outstanding.length === 0
               ? 'Nothing is with a customer right now.'
               : `${outstanding.length} quote${outstanding.length === 1 ? '' : 's'} with customers, ` +
@@ -80,8 +80,8 @@ export default async function PartnerQuotesPage({
           }
           className={
             compose
-              ? 'inline-flex h-11 items-center rounded-lg border border-ink-200 bg-surface-raised px-5 text-sm font-medium text-ink-800 hover:border-ink-300'
-              : 'inline-flex h-11 items-center rounded-lg bg-primary-600 px-5 text-sm font-medium text-white hover:bg-primary-700'
+              ? 'border-ink-200 bg-surface-raised text-ink-800 hover:border-ink-300 inline-flex h-11 items-center rounded-lg border px-5 text-sm font-medium'
+              : 'bg-primary-600 hover:bg-primary-700 inline-flex h-11 items-center rounded-lg px-5 text-sm font-medium text-white'
           }
         >
           {compose ? 'Close' : 'Write a quote'}
@@ -103,8 +103,8 @@ export default async function PartnerQuotesPage({
             href={`/partner/dashboard/quotes?status=${tab.key}`}
             className={
               filter === tab.key
-                ? 'rounded-full bg-ink-900 px-4 py-1.5 text-sm font-medium text-white'
-                : 'rounded-full border border-ink-200 bg-surface-raised px-4 py-1.5 text-sm text-ink-700 hover:border-ink-300'
+                ? 'bg-ink-900 rounded-full px-4 py-1.5 text-sm font-medium text-white'
+                : 'border-ink-200 bg-surface-raised text-ink-700 hover:border-ink-300 rounded-full border px-4 py-1.5 text-sm'
             }
           >
             {tab.label} ({tab.count})
@@ -115,8 +115,8 @@ export default async function PartnerQuotesPage({
       {shown.length === 0 ? (
         <Card>
           <CardBody className="py-12 text-center">
-            <p className="font-display text-lg text-ink-900">{EMPTY_COPY[filter]?.title}</p>
-            <p className="mx-auto mt-1.5 max-w-md text-sm text-ink-600">
+            <p className="font-display text-ink-900 text-lg">{EMPTY_COPY[filter]?.title}</p>
+            <p className="text-ink-600 mx-auto mt-1.5 max-w-md text-sm">
               {EMPTY_COPY[filter]?.body}
             </p>
           </CardBody>
@@ -131,11 +131,11 @@ export default async function PartnerQuotesPage({
 
       <Card className="border-ink-200 bg-surface-sunken">
         <CardBody>
-          <p className="text-sm text-ink-600">
-            <strong className="font-semibold text-ink-800">How acceptance works.</strong> When a
-            customer accepts, Fremmo creates the booking and asks them for the advance only —
-            never the full amount. The balance stays with them until you have delivered. You
-            cannot accept on their behalf, and neither can we.
+          <p className="text-ink-600 text-sm">
+            <strong className="text-ink-800 font-semibold">How acceptance works.</strong> When a
+            customer accepts, Fremmo creates the booking and asks them for the advance only — never
+            the full amount. The balance stays with them until you have delivered. You cannot accept
+            on their behalf, and neither can we.
           </p>
         </CardBody>
       </Card>
@@ -156,13 +156,13 @@ function QuoteRow({ quote }: { quote: PartnerQuote }) {
         <div className="flex flex-wrap items-start justify-between gap-4">
           <div className="min-w-0 flex-1">
             <div className="flex flex-wrap items-center gap-2">
-              <h3 className="font-display text-lg text-ink-900">{quote.title}</h3>
+              <h3 className="font-display text-ink-900 text-lg">{quote.title}</h3>
               <Badge tone={toneFor(quote.status)} className="capitalize">
                 {quote.status}
               </Badge>
             </div>
 
-            <p className="mt-1 text-sm text-ink-600">
+            <p className="text-ink-600 mt-1 text-sm">
               {quote.customerLabel}
               {quote.eventType ? ` · ${quote.eventType.replace(/_/g, ' ')}` : ''}
               {quote.eventDate ? ` · ${formatDay(quote.eventDate)}` : ''}
@@ -171,34 +171,34 @@ function QuoteRow({ quote }: { quote: PartnerQuote }) {
 
             <dl className="mt-3 flex flex-wrap gap-x-6 gap-y-2 text-sm">
               <div>
-                <dt className="text-xs uppercase tracking-wide text-ink-500">Total</dt>
-                <dd className="mt-0.5 font-medium tabular-nums text-ink-900">
+                <dt className="text-ink-500 text-xs tracking-wide uppercase">Total</dt>
+                <dd className="text-ink-900 mt-0.5 font-medium tabular-nums">
                   {formatPaise(quote.total)}
                 </dd>
               </div>
               <div>
-                <dt className="text-xs uppercase tracking-wide text-ink-500">
+                <dt className="text-ink-500 text-xs tracking-wide uppercase">
                   Advance{quote.advancePct == null ? '' : ` (${quote.advancePct}%)`}
                 </dt>
-                <dd className="mt-0.5 font-medium tabular-nums text-ink-900">
+                <dd className="text-ink-900 mt-0.5 font-medium tabular-nums">
                   {formatPaise(quote.advanceAmount)}
                 </dd>
               </div>
               <div>
-                <dt className="text-xs uppercase tracking-wide text-ink-500">Balance later</dt>
-                <dd className="mt-0.5 tabular-nums text-ink-700">{formatPaise(balance)}</dd>
+                <dt className="text-ink-500 text-xs tracking-wide uppercase">Balance later</dt>
+                <dd className="text-ink-700 mt-0.5 tabular-nums">{formatPaise(balance)}</dd>
               </div>
               {quote.taxAmount > 0 && (
                 <div>
-                  <dt className="text-xs uppercase tracking-wide text-ink-500">Of which GST</dt>
-                  <dd className="mt-0.5 tabular-nums text-ink-700">
+                  <dt className="text-ink-500 text-xs tracking-wide uppercase">Of which GST</dt>
+                  <dd className="text-ink-700 mt-0.5 tabular-nums">
                     {formatPaise(quote.taxAmount)}
                   </dd>
                 </div>
               )}
             </dl>
 
-            <p className="mt-3 text-xs text-ink-500">
+            <p className="text-ink-500 mt-3 text-xs">
               {quote.sentAt
                 ? `Sent ${formatDay(quote.sentAt)}`
                 : `Drafted ${formatDay(quote.createdAt)}`}
@@ -207,9 +207,9 @@ function QuoteRow({ quote }: { quote: PartnerQuote }) {
             </p>
 
             {expiring && (
-              <p className="mt-2 text-xs font-medium text-warning-700">
-                This price expires within three days. app.accept_quote() refuses an expired
-                quote, so send a fresh one if you still want the job.
+              <p className="text-warning-700 mt-2 text-xs font-medium">
+                This price expires within three days. app.accept_quote() refuses an expired quote,
+                so send a fresh one if you still want the job.
               </p>
             )}
           </div>

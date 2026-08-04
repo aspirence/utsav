@@ -58,7 +58,7 @@ export function SearchBox({
       onSubmit={handleSubmit}
       role="search"
       className={cn(
-        'grid gap-2 rounded-full border border-ink-100 bg-surface-raised p-2',
+        'border-ink-100 bg-surface-raised grid gap-2 rounded-full border p-2',
         'sm:grid-cols-[1fr_auto_auto_auto] sm:items-center',
         className,
       )}
@@ -69,7 +69,7 @@ export function SearchBox({
           value={query}
           onChange={(event) => setQuery(event.target.value)}
           placeholder="Candid photographer, farmhouse venue…"
-          className="w-full rounded-lg border border-ink-200 bg-surface-raised px-3.5 py-2.5 text-ink-900 placeholder:text-ink-400 focus:border-primary-500 focus:outline-none sm:border-transparent sm:shadow-none"
+          className="border-ink-200 bg-surface-raised text-ink-900 placeholder:text-ink-400 focus:border-primary-500 w-full rounded-lg border px-3.5 py-2.5 focus:outline-none sm:border-transparent sm:shadow-none"
         />
       </label>
 

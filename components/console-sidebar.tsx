@@ -61,17 +61,17 @@ export function ConsoleSidebar({
   return (
     <>
       {/* Phone: a bar with a toggle. The rail itself is the same markup, slid in. */}
-      <div className="flex h-14 items-center gap-3 border-b border-ink-800 bg-ink-900 px-4 lg:hidden">
+      <div className="border-ink-800 bg-ink-900 flex h-14 items-center gap-3 border-b px-4 lg:hidden">
         <button
           type="button"
           onClick={() => setOpen((v) => !v)}
           aria-expanded={open}
           aria-label={open ? 'Close menu' : 'Open menu'}
-          className="flex h-9 w-9 items-center justify-center rounded-md text-white hover:bg-ink-800"
+          className="hover:bg-ink-800 flex h-9 w-9 items-center justify-center rounded-md text-white"
         >
           <span className="relative block h-3.5 w-5" aria-hidden="true">
-            <span className="absolute left-0 top-0 block h-0.5 w-5 bg-current" />
-            <span className="absolute left-0 top-1.5 block h-0.5 w-5 bg-current" />
+            <span className="absolute top-0 left-0 block h-0.5 w-5 bg-current" />
+            <span className="absolute top-1.5 left-0 block h-0.5 w-5 bg-current" />
             <span className="absolute bottom-0 left-0 block h-0.5 w-5 bg-current" />
           </span>
         </button>
@@ -80,7 +80,7 @@ export function ConsoleSidebar({
 
       <aside
         className={
-          'fixed inset-y-0 left-0 z-40 flex w-60 flex-col border-r border-ink-800/60 bg-gradient-to-b from-ink-900 via-ink-900 to-ink-950 transition-transform duration-300 lg:translate-x-0 ' +
+          'border-ink-800/60 from-ink-900 via-ink-900 to-ink-950 fixed inset-y-0 left-0 z-40 flex w-60 flex-col border-r bg-gradient-to-b transition-transform duration-300 lg:translate-x-0 ' +
           (open ? 'translate-x-0' : '-translate-x-full')
         }
       >
@@ -96,11 +96,8 @@ export function ConsoleSidebar({
           is now sr-only. Printing it beside a lockup that already reads "Fremmo" would set the
           word twice in one 72px header; a screen reader still gets the distinction.
         */}
-        <div className="flex h-[4.5rem] shrink-0 items-center border-b border-ink-800/70 px-5">
-          <Brand
-            markClassName="h-8 w-auto [filter:brightness(0)_invert(1)]"
-            wordClassName="text-xl text-white"
-          />
+        <div className="border-ink-800/70 flex h-[4.5rem] shrink-0 items-center border-b px-5">
+          <Brand mono className="text-white" markClassName="h-8 w-auto" wordClassName="text-xl" />
           <span className="sr-only">{brand}</span>
         </div>
 
@@ -113,10 +110,7 @@ export function ConsoleSidebar({
           The nav keeps `overflow-y-auto`, so a role with enough sections to overflow can still
           reach them by wheel, trackpad, touch, or by tabbing to a link below the fold.
         */}
-        <nav
-          aria-label="Sections"
-          className="scrollbar-none flex-1 overflow-y-auto px-3 py-4"
-        >
+        <nav aria-label="Sections" className="flex-1 scrollbar-none overflow-y-auto px-3 py-4">
           {groups.map((group, index) => (
             <div key={group.label ?? `group-${index}`} className="mb-5 last:mb-0">
               {/*
@@ -125,7 +119,7 @@ export function ConsoleSidebar({
                 5.13:1.
               */}
               {group.label && (
-                <p className="px-3 pb-2 text-[10px] font-semibold uppercase tracking-[0.16em] text-ink-400">
+                <p className="text-ink-400 px-3 pb-2 text-[10px] font-semibold tracking-[0.16em] uppercase">
                   {group.label}
                 </p>
               )}
@@ -143,8 +137,8 @@ export function ConsoleSidebar({
                           // it, and nothing inside this link is absolutely positioned any more.
                           'group flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm transition-colors ' +
                           (active
-                            ? 'bg-gradient-to-r from-ink-800 to-ink-800/40 font-semibold text-white'
-                            : 'font-medium text-ink-300 hover:bg-ink-800/50 hover:text-white')
+                            ? 'from-ink-800 to-ink-800/40 bg-gradient-to-r font-semibold text-white'
+                            : 'text-ink-300 hover:bg-ink-800/50 font-medium hover:text-white')
                         }
                       >
                         {/*
@@ -183,10 +177,10 @@ export function ConsoleSidebar({
           on top of this link — the word was half-covered by it in dev. The extra bottom padding
           lifts it clear, and costs a production build nothing but 44px of dark rail.
         */}
-        <div className="shrink-0 border-t border-ink-800/70 p-3 pb-14">
+        <div className="border-ink-800/70 shrink-0 border-t p-3 pb-14">
           <Link
             href={footer.href}
-            className="flex items-center justify-between rounded-lg px-3 py-2.5 text-sm text-ink-300 transition-colors hover:bg-ink-800 hover:text-white"
+            className="text-ink-300 hover:bg-ink-800 flex items-center justify-between rounded-lg px-3 py-2.5 text-sm transition-colors hover:text-white"
           >
             {footer.label}
             <span aria-hidden="true" className="text-ink-400">
@@ -201,7 +195,7 @@ export function ConsoleSidebar({
           type="button"
           aria-label="Close menu"
           onClick={() => setOpen(false)}
-          className="fixed inset-0 z-30 bg-ink-950/50 lg:hidden"
+          className="bg-ink-950/50 fixed inset-0 z-30 lg:hidden"
         />
       )}
     </>

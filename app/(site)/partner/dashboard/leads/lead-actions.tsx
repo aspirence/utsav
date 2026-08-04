@@ -105,9 +105,9 @@ export function LeadWorkActions({
           >
             {job === 'open' ? 'Opening…' : 'Open lead and reveal contact'}
           </Button>
-          <p className="mt-2 text-xs text-ink-500">
-            The customer’s number is masked until you open the lead. Opening it is recorded
-            against your account with a timestamp, and it is what starts your response clock.
+          <p className="text-ink-500 mt-2 text-xs">
+            The customer’s number is masked until you open the lead. Opening it is recorded against
+            your account with a timestamp, and it is what starts your response clock.
           </p>
         </div>
       )}
@@ -116,7 +116,7 @@ export function LeadWorkActions({
         <div className="flex flex-wrap gap-2">
           <a
             href={`tel:${contactPhone}`}
-            className="inline-flex h-11 items-center rounded-lg bg-primary-600 px-5 text-sm font-medium text-white transition-colors hover:bg-primary-700"
+            className="bg-primary-600 hover:bg-primary-700 inline-flex h-11 items-center rounded-lg px-5 text-sm font-medium text-white transition-colors"
           >
             Call {contactFirstName}
           </a>
@@ -125,7 +125,7 @@ export function LeadWorkActions({
               href={whatsappHref}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex h-11 items-center rounded-lg border border-ink-200 bg-surface-raised px-5 text-sm font-medium text-ink-800 transition-colors hover:border-ink-300 hover:bg-ink-50"
+              className="border-ink-200 bg-surface-raised text-ink-800 hover:border-ink-300 hover:bg-ink-50 inline-flex h-11 items-center rounded-lg border px-5 text-sm font-medium transition-colors"
             >
               Message on WhatsApp
             </a>
@@ -134,14 +134,14 @@ export function LeadWorkActions({
       )}
 
       {canRespond && (
-        <details className="mt-3 rounded-lg border border-ink-100 bg-surface-sunken p-4">
-          <summary className="cursor-pointer text-sm font-medium text-ink-800">
+        <details className="border-ink-100 bg-surface-sunken mt-3 rounded-lg border p-4">
+          <summary className="text-ink-800 cursor-pointer text-sm font-medium">
             Mark as responded
           </summary>
-          <p className="mt-2 text-xs text-ink-500">
-            Log this once you have actually called or messaged them. Your median response
-            time is measured from this, and it shows on your public profile. The customer and
-            our team can both read this note, so keep it factual.
+          <p className="text-ink-500 mt-2 text-xs">
+            Log this once you have actually called or messaged them. Your median response time is
+            measured from this, and it shows on your public profile. The customer and our team can
+            both read this note, so keep it factual.
           </p>
           <textarea
             value={note}
@@ -149,7 +149,7 @@ export function LeadWorkActions({
             rows={3}
             maxLength={1000}
             placeholder="Called and shared the two-day package. Sending a full quote tomorrow."
-            className="mt-2 w-full rounded-lg border border-ink-200 bg-surface-raised px-3 py-2 text-sm text-ink-900 placeholder:text-ink-400 focus:border-primary-500 focus:outline-none"
+            className="border-ink-200 bg-surface-raised text-ink-900 placeholder:text-ink-400 focus:border-primary-500 mt-2 w-full rounded-lg border px-3 py-2 text-sm focus:outline-none"
           />
           <Button
             type="button"
@@ -162,11 +162,11 @@ export function LeadWorkActions({
         </details>
       )}
 
-      <details className="mt-3 rounded-lg border border-ink-100 p-4">
-        <summary className="cursor-pointer text-sm font-medium text-ink-800">Not a fit</summary>
-        <p className="mt-2 text-xs text-ink-500">
-          This records why the match was wrong. It does not message the customer and it does
-          not change the lead — the lead still expires on its own if nobody replies.
+      <details className="border-ink-100 mt-3 rounded-lg border p-4">
+        <summary className="text-ink-800 cursor-pointer text-sm font-medium">Not a fit</summary>
+        <p className="text-ink-500 mt-2 text-xs">
+          This records why the match was wrong. It does not message the customer and it does not
+          change the lead — the lead still expires on its own if nobody replies.
         </p>
         <textarea
           value={reason}
@@ -174,7 +174,7 @@ export function LeadWorkActions({
           rows={2}
           maxLength={500}
           placeholder="Already booked on that date."
-          className="mt-2 w-full rounded-lg border border-ink-200 bg-surface-raised px-3 py-2 text-sm text-ink-900 placeholder:text-ink-400 focus:border-primary-500 focus:outline-none"
+          className="border-ink-200 bg-surface-raised text-ink-900 placeholder:text-ink-400 focus:border-primary-500 mt-2 w-full rounded-lg border px-3 py-2 text-sm focus:outline-none"
         />
         <Button
           type="button"
@@ -209,7 +209,7 @@ export function ReportJunkForm({
 
   if (alreadyRefunded) {
     return (
-      <p className="mt-3 text-sm text-ink-500">
+      <p className="text-ink-500 mt-3 text-sm">
         The credit for this lead has already been refunded.
       </p>
     )
@@ -217,7 +217,7 @@ export function ReportJunkForm({
 
   return (
     <details className="mt-3">
-      <summary className="cursor-pointer text-sm font-medium text-ink-800">
+      <summary className="text-ink-800 cursor-pointer text-sm font-medium">
         Report this lead
       </summary>
       <textarea
@@ -226,7 +226,7 @@ export function ReportJunkForm({
         rows={2}
         maxLength={500}
         placeholder="Number is switched off and the event date has already passed."
-        className="mt-2 w-full rounded-lg border border-ink-200 bg-surface-raised px-3 py-2 text-sm text-ink-900 placeholder:text-ink-400 focus:border-primary-500 focus:outline-none"
+        className="border-ink-200 bg-surface-raised text-ink-900 placeholder:text-ink-400 focus:border-primary-500 mt-2 w-full rounded-lg border px-3 py-2 text-sm focus:outline-none"
       />
       <Button
         type="button"

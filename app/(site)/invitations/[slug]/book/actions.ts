@@ -299,9 +299,7 @@ export async function placeInvitationOrder(
  * paragraph where two measured lines belong, and the wipe timing in invitation-3d was tuned to
  * these lengths. cardContentSchema's defaults are what fill them.
  */
-function cardContent(
-  card: Record<string, string | undefined>,
-): ParsedCardContent | null {
+function cardContent(card: Record<string, string | undefined>): ParsedCardContent | null {
   if (!card.hosts || !card.groomName || !card.brideName) return null
   if (!card.cardDate || !card.cardTime || !card.venue) return null
 
@@ -423,10 +421,7 @@ export type CardState =
  * Nothing about a published card implies the order is paid — /account/invitations shows the real
  * status beside it, and the confirmation copy says the slot is held once the amount reaches us.
  */
-export async function saveInvitationCard(
-  _prev: CardState,
-  form: FormData,
-): Promise<CardState> {
+export async function saveInvitationCard(_prev: CardState, form: FormData): Promise<CardState> {
   const parsed = z
     .object({ token: z.string().uuid('That link is not valid any more.'), card: cardSchema })
     .superRefine((value, ctx) => {

@@ -2,12 +2,7 @@
 
 import { revalidatePath } from 'next/cache'
 
-import {
-  CONSENT_TEXT,
-  CONSENT_VERSION,
-  createAdminClient,
-  enquiryDraftSchema,
-} from '@/lib/db'
+import { CONSENT_TEXT, CONSENT_VERSION, createAdminClient, enquiryDraftSchema } from '@/lib/db'
 
 import { getServerClientOrNull, hasSupabaseEnv } from '@/lib/supabase'
 

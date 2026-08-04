@@ -1,10 +1,12 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
 
-import { Container, SectionHeading, cn } from '@/components/ui'
+import { Container, SectionHeading } from '@/components/ui'
 
+import { InvitationFilters } from '@/components/invitation-filters'
 import { TemplateGrid } from '@/components/template-grid'
 import { getLiveInvitationTemplates } from '@/lib/invitation-templates'
+import { whatsappHref } from '@/lib/whatsapp'
 
 type Props = {
   searchParams: Promise<Record<string, string | string[] | undefined>>
@@ -57,36 +59,30 @@ export default async function InvitationsPage({ searchParams }: Props) {
 
   return (
     <Container className="py-12 sm:py-16">
-      <SectionHeading
-        eyebrow="Digital invitations"
-        title="Every invitation, in one place"
-        description="Hand-crafted templates, each one a blank canvas for your own names, dates and traditions. Tap any card to see it running on a phone."
-      />
+      {/*
+        Heading and filter trigger on one row, which is the whole reason the pill row moved into
+        a dialog — see components/invitation-filters.tsx. `items-end` sits the control on the
+        heading's baseline block rather than floating it level with the eyebrow, and the whole
+        row stacks on a phone, where a 44px control beside a three-line heading would squeeze
+        the title into a column.
+      */}
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+        <SectionHeading
+          eyebrow="Digital invitations"
+          title="Every invitation, in one place"
+          description="Hand-crafted templates, each one a blank canvas for your own names, dates and traditions. Tap any card to see it running on a phone."
+        />
 
-      {tags.length > 0 && (
-        /*
-         * Filters as links, not a client component.
-         *
-         * Each one is a plain href carrying `?tag=`, so the page stays a Server Component, the
-         * filtered view is shareable and crawlable, and back does what it should. A useState
-         * filter would ship JavaScript to do worse.
-         *
-         * `scroll-rail` with momentum: on a phone this row runs past the edge, and a filter
-         * strip that scrolls without inertia is the most obvious tell that something is a web
-         * page rather than an app.
-         */
-        <nav aria-label="Filter by style" className="scroll-rail mt-8 -mx-4 flex gap-2 overflow-x-auto px-4 sm:mx-0 sm:flex-wrap sm:px-0">
-          <FilterPill href="/invitations" label="All" active={!activeTag} />
-          {tags.map((tag) => (
-            <FilterPill
-              key={tag}
-              href={`/invitations?tag=${encodeURIComponent(tag)}`}
-              label={tag}
-              active={activeTag === tag}
-            />
-          ))}
-        </nav>
-      )}
+        {tags.length > 0 && (
+          <InvitationFilters
+            tags={tags}
+            {...(activeTag ? { activeTag } : {})}
+            customHref={whatsappHref(
+              'Hi Fremmo — I would like a custom digital invitation design.',
+            )}
+          />
+        )}
+      </div>
 
       <div className="mt-10">
         {shown.length > 0 ? (
@@ -97,13 +93,13 @@ export default async function InvitationsPage({ searchParams }: Props) {
            * the live set. It names the tag and offers the way back rather than showing an empty
            * grid, which reads as a broken page.
            */
-          <div className="rounded-xl border border-ink-200 bg-white px-6 py-12 text-center">
+          <div className="border-ink-200 rounded-xl border bg-white px-6 py-12 text-center">
             <p className="text-ink-700">
               No invitations tagged &ldquo;{activeTag}&rdquo; just yet.
             </p>
             <Link
               href="/invitations"
-              className="mt-3 inline-block text-sm font-medium text-primary-700 underline-offset-4 hover:underline"
+              className="text-primary-700 mt-3 inline-block text-sm font-medium underline-offset-4 hover:underline"
             >
               See all invitations
             </Link>
@@ -114,21 +110,7 @@ export default async function InvitationsPage({ searchParams }: Props) {
   )
 }
 
-function FilterPill({ href, label, active }: { href: string; label: string; active: boolean }) {
-  return (
-    <Link
-      href={href}
-      aria-current={active ? 'page' : undefined}
-      // min-h-9 keeps the pill past a thumb-sized target on a phone; `shrink-0` stops the row
-      // squeezing them into unreadable slivers instead of scrolling.
-      className={cn(
-        'inline-flex min-h-9 shrink-0 items-center rounded-full px-4 text-sm font-medium transition-colors',
-        active
-          ? 'bg-ink-900 text-white'
-          : 'bg-white text-ink-700 ring-1 ring-ink-200 hover:text-ink-950',
-      )}
-    >
-      {label}
-    </Link>
-  )
-}
+/*
+ * FilterPill moved into components/invitation-filters.tsx with the row it belonged to. It is
+ * not exported from there and has no other caller — the home page never had filters.
+ */

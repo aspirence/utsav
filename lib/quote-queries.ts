@@ -438,8 +438,8 @@ const DEMO_QUOTES: PartnerQuote[] = [
     status: 'sent',
     title: 'Two-day Tamil wedding coverage for Lakshmi',
     notes:
-      'Muhurtham at 6am means the crew arrives the previous evening. Travel and stay are '
-      + 'included for Lucknow; outstation is quoted separately.',
+      'Muhurtham at 6am means the crew arrives the previous evening. Travel and stay are ' +
+      'included for Lucknow; outstation is quoted separately.',
     lines: [
       ['Wedding day coverage, lead photographer', 2, 55_000],
       ['Second shooter, candid', 2, 18_000],

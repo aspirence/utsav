@@ -77,11 +77,11 @@ export function OtpStep({
         <Badge tone="accent" className="mb-4">
           One last step
         </Badge>
-        <h2 className="font-display text-2xl text-ink-900">Verify your number</h2>
-        <p className="mt-2 text-ink-600">{message ?? `We sent a 6-digit code to ${phone}.`}</p>
-        <p className="mt-4 rounded-lg bg-surface-sunken p-4 text-sm text-ink-600">
-          Until you enter this code your enquiry stays unverified and is not sent to any
-          vendor. That is deliberate — it is what keeps the vendors on Fremmo responsive.
+        <h2 className="font-display text-ink-900 text-2xl">Verify your number</h2>
+        <p className="text-ink-600 mt-2">{message ?? `We sent a 6-digit code to ${phone}.`}</p>
+        <p className="bg-surface-sunken text-ink-600 mt-4 rounded-lg p-4 text-sm">
+          Until you enter this code your enquiry stays unverified and is not sent to any vendor.
+          That is deliberate — it is what keeps the vendors on Fremmo responsive.
         </p>
 
         <form action={formAction} className="mt-5">
@@ -92,7 +92,7 @@ export function OtpStep({
             <span className="sr-only">6-digit verification code</span>
             <input
               name="token"
-              className="w-full rounded-lg border border-ink-200 bg-surface-raised px-4 py-3 text-center font-mono text-2xl tracking-[0.4em] text-ink-900 placeholder:text-ink-300 focus:border-primary-600 focus:outline-none focus:ring-2 focus:ring-primary-600/25"
+              className="border-ink-200 bg-surface-raised text-ink-900 placeholder:text-ink-300 focus:border-primary-600 focus:ring-primary-600/25 w-full rounded-lg border px-4 py-3 text-center font-mono text-2xl tracking-[0.4em] focus:ring-2 focus:outline-none"
               inputMode="numeric"
               autoComplete="one-time-code"
               pattern="[0-9]*"
@@ -104,15 +104,15 @@ export function OtpStep({
           </label>
 
           {state.status === 'error' && state.fieldErrors?.token && (
-            <p className="mt-2 text-sm text-danger-700">{state.fieldErrors.token[0]}</p>
+            <p className="text-danger-700 mt-2 text-sm">{state.fieldErrors.token[0]}</p>
           )}
           {state.status === 'error' && (
-            <p className="mt-3 rounded-lg bg-danger-50 px-4 py-3 text-sm text-danger-700">
+            <p className="bg-danger-50 text-danger-700 mt-3 rounded-lg px-4 py-3 text-sm">
               {state.message}
             </p>
           )}
           {state.status === 'unconfigured' && (
-            <p className="mt-3 rounded-lg bg-warning-50 px-4 py-3 text-sm text-warning-700">
+            <p className="bg-warning-50 text-warning-700 mt-3 rounded-lg px-4 py-3 text-sm">
               {state.message}
             </p>
           )}
@@ -128,8 +128,8 @@ export function OtpStep({
             <span
               className={
                 resendState.status === 'resent'
-                  ? 'text-sm text-success-700'
-                  : 'text-sm text-ink-500'
+                  ? 'text-success-700 text-sm'
+                  : 'text-ink-500 text-sm'
               }
             >
               {resendState.message}
@@ -159,15 +159,15 @@ function VerifiedPanel({
         <Badge tone="success" className="mb-4">
           Verified
         </Badge>
-        <h2 className="font-display text-2xl text-ink-900">
+        <h2 className="font-display text-ink-900 text-2xl">
           {state.vendorCount > 0 ? 'Your enquiry is with the vendors' : 'Your enquiry is verified'}
         </h2>
-        <p className="mt-2 text-ink-600">{state.message}</p>
+        <p className="text-ink-600 mt-2">{state.message}</p>
 
         {!state.routed && (
-          <p className="mt-4 rounded-lg bg-warning-50 px-4 py-3 text-sm text-warning-700">
-            Nothing further is needed from you. Your enquiry is saved and verified; the
-            matching run will retry on its own.
+          <p className="bg-warning-50 text-warning-700 mt-4 rounded-lg px-4 py-3 text-sm">
+            Nothing further is needed from you. Your enquiry is saved and verified; the matching run
+            will retry on its own.
           </p>
         )}
 
@@ -178,17 +178,17 @@ function VerifiedPanel({
                 <VendorRow key={vendor.slug} vendor={vendor} position={index + 1} />
               ))}
             </ol>
-            <p className="mt-4 text-sm text-ink-600">
+            <p className="text-ink-600 mt-4 text-sm">
               They see your enquiry now and most call back the same day. Each of them has{' '}
-              {LEAD_EXPIRY_DAYS} days to respond before the enquiry lapses on their side, so
-              you are not left waiting indefinitely.
+              {LEAD_EXPIRY_DAYS} days to respond before the enquiry lapses on their side, so you are
+              not left waiting indefinitely.
             </p>
           </>
         )}
 
-        <p className="mt-4 rounded-lg bg-surface-sunken p-4 text-sm text-ink-600">
-          At most five vendors will ever see this enquiry. Your number is shared only with
-          them, only so they can respond to it, and never resold.
+        <p className="bg-surface-sunken text-ink-600 mt-4 rounded-lg p-4 text-sm">
+          At most five vendors will ever see this enquiry. Your number is shared only with them,
+          only so they can respond to it, and never resold.
         </p>
 
         <LinkButton href={continueHref} variant="outline" size="lg" fullWidth className="mt-5">
@@ -201,8 +201,8 @@ function VerifiedPanel({
 
 function VendorRow({ vendor, position }: { vendor: RoutedVendor; position: number }) {
   return (
-    <li className="flex items-center gap-3 rounded-lg border border-ink-100 px-4 py-3">
-      <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-ink-100 text-xs font-semibold text-ink-700">
+    <li className="border-ink-100 flex items-center gap-3 rounded-lg border px-4 py-3">
+      <span className="bg-ink-100 text-ink-700 flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-xs font-semibold">
         {position}
       </span>
       <a href={`/vendor/${vendor.slug}`} className="text-ink-900 hover:text-primary-700">
@@ -227,7 +227,11 @@ function ResendButton({ cooldown }: { cooldown: number }) {
 
   return (
     <Button type="submit" variant="ghost" size="sm" disabled={pending || waiting}>
-      {pending ? 'Sending…' : waiting ? `Send the code again in ${cooldown}s` : 'Send the code again'}
+      {pending
+        ? 'Sending…'
+        : waiting
+          ? `Send the code again in ${cooldown}s`
+          : 'Send the code again'}
     </Button>
   )
 }

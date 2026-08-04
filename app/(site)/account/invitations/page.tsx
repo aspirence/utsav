@@ -37,31 +37,31 @@ export default async function AccountInvitationsPage() {
   return (
     <div className="space-y-10">
       <section>
-        <h2 className="font-display text-xl text-ink-900">Your cards</h2>
+        <h2 className="font-display text-ink-900 text-xl">Your cards</h2>
 
         {orders.length === 0 ? (
-          <p className="mt-2 max-w-prose text-sm leading-relaxed text-ink-600">
-            Nothing ordered yet. Pick a design below — you pay{' '}
-            {formatPaise(BOOKING.amountPaise)} to book it and the balance when it is ready.
+          <p className="text-ink-600 mt-2 max-w-prose text-sm leading-relaxed">
+            Nothing ordered yet. Pick a design below — you pay {formatPaise(BOOKING.amountPaise)} to
+            book it and the balance when it is ready.
           </p>
         ) : (
           <ul className="mt-4 space-y-3">
             {orders.map((order) => (
               <li
                 key={order.reference}
-                className="rounded-lg border border-ink-200 bg-white p-4 sm:flex sm:items-center sm:justify-between sm:gap-4"
+                className="border-ink-200 rounded-lg border bg-white p-4 sm:flex sm:items-center sm:justify-between sm:gap-4"
               >
                 <div className="min-w-0">
-                  <p className="font-medium text-ink-900">{order.templateName}</p>
+                  <p className="text-ink-900 font-medium">{order.templateName}</p>
                   {/* The reference is what support asks for, so it is selectable text in a
                       monospace face rather than a styled badge nobody can copy cleanly. */}
-                  <p className="mt-0.5 font-mono text-xs text-ink-500">{order.reference}</p>
+                  <p className="text-ink-500 mt-0.5 font-mono text-xs">{order.reference}</p>
                   {order.publicSlug && (
                     // The whole point of the card. Shown as the link itself rather than as
                     // "View card", because this is the string that gets copied into WhatsApp.
                     <Link
                       href={`/invite/${order.publicSlug}`}
-                      className="mt-1 inline-block break-all text-xs text-primary-700 underline underline-offset-2 hover:text-primary-800"
+                      className="text-primary-700 hover:text-primary-800 mt-1 inline-block text-xs break-all underline underline-offset-2"
                     >
                       /invite/{order.publicSlug}
                     </Link>
@@ -69,7 +69,7 @@ export default async function AccountInvitationsPage() {
                 </div>
 
                 <div className="mt-3 flex items-center gap-4 sm:mt-0 sm:shrink-0">
-                  <span className="text-sm text-ink-700">
+                  <span className="text-ink-700 text-sm">
                     {order.paidAt ? (
                       <>Balance {order.balanceLabel}</>
                     ) : (
@@ -95,17 +95,17 @@ export default async function AccountInvitationsPage() {
 
       <section>
         <div className="flex flex-wrap items-baseline justify-between gap-3">
-          <h2 className="font-display text-xl text-ink-900">Designs</h2>
+          <h2 className="font-display text-ink-900 text-xl">Designs</h2>
           <Link
             href="/invitation"
-            className="text-sm text-ink-600 underline underline-offset-2 hover:text-ink-900"
+            className="text-ink-600 hover:text-ink-900 text-sm underline underline-offset-2"
           >
             See how they work
           </Link>
         </div>
 
         {templates.length === 0 ? (
-          <p className="mt-2 max-w-prose text-sm leading-relaxed text-ink-600">
+          <p className="text-ink-600 mt-2 max-w-prose text-sm leading-relaxed">
             No designs are live right now. They arrive in collections — check back shortly.
           </p>
         ) : (
@@ -118,7 +118,7 @@ export default async function AccountInvitationsPage() {
                 <li key={template.id}>
                   <Link
                     href={`/invitations/${template.slug}`}
-                    className="group block overflow-hidden rounded-lg border border-ink-200 bg-white transition-colors hover:border-ink-300"
+                    className="group border-ink-200 hover:border-ink-300 block overflow-hidden rounded-lg border bg-white transition-colors"
                   >
                     <MediaFrame
                       src={template.posterUrl}
@@ -127,11 +127,11 @@ export default async function AccountInvitationsPage() {
                       className="rounded-none"
                     />
                     <div className="p-4">
-                      <p className="font-medium text-ink-900">{template.name}</p>
-                      <p className="mt-1 text-sm text-ink-700">
+                      <p className="text-ink-900 font-medium">{template.name}</p>
+                      <p className="text-ink-700 mt-1 text-sm">
                         {formatPaise(template.pricePaise)}
                       </p>
-                      <p className="mt-0.5 text-xs text-ink-500">
+                      <p className="text-ink-500 mt-0.5 text-xs">
                         {formatPaise(legs.bookingPaise)} to book, {formatPaise(legs.balancePaise)}{' '}
                         later
                       </p>

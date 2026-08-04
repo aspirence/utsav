@@ -90,8 +90,8 @@ export function CreateVendorForm({
         </Field>
 
         <Field label="Profile URL" htmlFor="slug" required>
-          <div className="flex items-center gap-0 overflow-hidden rounded-md border border-ink-200 focus-within:border-ink-400">
-            <span className="shrink-0 border-r border-ink-200 bg-ink-50 px-3 py-2 text-sm text-ink-500">
+          <div className="border-ink-200 focus-within:border-ink-400 flex items-center gap-0 overflow-hidden rounded-md border">
+            <span className="border-ink-200 bg-ink-50 text-ink-500 shrink-0 border-r px-3 py-2 text-sm">
               /vendor/
             </span>
             <input
@@ -106,7 +106,7 @@ export function CreateVendorForm({
               }}
               placeholder="lightleak-studio"
               pattern="[a-z0-9]+(-[a-z0-9]+)*"
-              className="w-full px-3 py-2 text-sm text-ink-900 outline-none"
+              className="text-ink-900 w-full px-3 py-2 text-sm outline-none"
             />
           </div>
           <Hint>
@@ -198,8 +198,8 @@ export function CreateVendorForm({
             ))}
           </select>
           <Hint>
-            One to start with. More can be added from the listing afterwards — a caterer who
-            also does decor is two categories, not one merged listing.
+            One to start with. More can be added from the listing afterwards — a caterer who also
+            does decor is two categories, not one merged listing.
           </Hint>
         </Field>
 
@@ -224,7 +224,7 @@ export function CreateVendorForm({
               placeholder="120000"
               className={INPUT}
             />
-            <span className="shrink-0 text-sm text-ink-500">to</span>
+            <span className="text-ink-500 shrink-0 text-sm">to</span>
             <input
               name="priceBandMax"
               type="text"
@@ -253,14 +253,23 @@ export function CreateVendorForm({
             />
           </Field>
           <Field label="Team size" htmlFor="teamSize">
-            <input id="teamSize" name="teamSize" type="number" min={1} placeholder="4" className={INPUT} />
+            <input
+              id="teamSize"
+              name="teamSize"
+              type="number"
+              min={1}
+              placeholder="4"
+              className={INPUT}
+            />
           </Field>
         </div>
 
-        <label className="flex flex-wrap items-center gap-2 text-sm text-ink-800">
+        <label className="text-ink-800 flex flex-wrap items-center gap-2 text-sm">
           <input type="checkbox" name="travelsOutstation" className="h-4 w-4" />
           Travels outstation
-          <span className="text-xs text-ink-500">— what the destination-wedding filters search on</span>
+          <span className="text-ink-500 text-xs">
+            — what the destination-wedding filters search on
+          </span>
         </label>
       </Section>
 
@@ -305,19 +314,19 @@ export function CreateVendorForm({
         </p>
       )}
 
-      <div className="flex flex-wrap items-center gap-3 border-t border-ink-200 pt-5">
+      <div className="border-ink-200 flex flex-wrap items-center gap-3 border-t pt-5">
         <button
           type="submit"
           disabled={pending}
-          className="rounded-md bg-ink-900 px-4 py-2.5 text-sm font-medium text-white transition-colors hover:bg-ink-800 disabled:opacity-60"
+          className="bg-ink-900 hover:bg-ink-800 rounded-md px-4 py-2.5 text-sm font-medium text-white transition-colors disabled:opacity-60"
         >
           {pending ? 'Filing…' : 'Create as draft'}
         </button>
-        <Link href="/admin/vendors" className="text-sm text-ink-600 hover:text-ink-900">
+        <Link href="/admin/vendors" className="text-ink-600 hover:text-ink-900 text-sm">
           Cancel
         </Link>
         {!isLive && (
-          <span className="text-xs text-warning-700">
+          <span className="text-warning-700 text-xs">
             No database attached — this will not write anything.
           </span>
         )}
@@ -328,13 +337,13 @@ export function CreateVendorForm({
 
 function Created({ message, slug }: { message: string; slug: string }) {
   return (
-    <div className="rounded-lg border border-success-500/40 bg-success-50 p-5">
-      <h2 className="font-display text-lg text-ink-900">Draft created</h2>
-      <p className="mt-2 max-w-2xl text-sm leading-relaxed text-ink-700">{message}</p>
+    <div className="border-success-500/40 bg-success-50 rounded-lg border p-5">
+      <h2 className="font-display text-ink-900 text-lg">Draft created</h2>
+      <p className="text-ink-700 mt-2 max-w-2xl text-sm leading-relaxed">{message}</p>
       <div className="mt-4 flex flex-wrap gap-3">
         <Link
           href={`/admin/vendors/${slug}`}
-          className="rounded-md bg-ink-900 px-4 py-2 text-sm font-medium text-white hover:bg-ink-800"
+          className="bg-ink-900 hover:bg-ink-800 rounded-md px-4 py-2 text-sm font-medium text-white"
         >
           Open the listing
         </Link>
@@ -342,13 +351,13 @@ function Created({ message, slug }: { message: string; slug: string }) {
             vendor's price band in the box is how two studios end up with one band. */}
         <Link
           href="/admin/vendors/new"
-          className="rounded-md border border-ink-300 bg-white px-4 py-2 text-sm font-medium text-ink-800 hover:bg-ink-50"
+          className="border-ink-300 text-ink-800 hover:bg-ink-50 rounded-md border bg-white px-4 py-2 text-sm font-medium"
         >
           Create another
         </Link>
         <Link
           href="/admin/vendors?status=draft&category=all"
-          className="rounded-md px-4 py-2 text-sm text-ink-600 hover:text-ink-900"
+          className="text-ink-600 hover:text-ink-900 rounded-md px-4 py-2 text-sm"
         >
           All drafts
         </Link>
@@ -370,9 +379,9 @@ function Section({
   children: React.ReactNode
 }) {
   return (
-    <fieldset className="rounded-lg border border-ink-200 bg-white p-5">
-      <legend className="px-1 font-display text-base text-ink-900">{title}</legend>
-      {note && <p className="mb-5 max-w-2xl text-xs leading-relaxed text-ink-500">{note}</p>}
+    <fieldset className="border-ink-200 rounded-lg border bg-white p-5">
+      <legend className="font-display text-ink-900 px-1 text-base">{title}</legend>
+      {note && <p className="text-ink-500 mb-5 max-w-2xl text-xs leading-relaxed">{note}</p>}
       <div className="space-y-5">{children}</div>
     </fieldset>
   )
@@ -393,11 +402,11 @@ function Field({
     <div>
       <label
         htmlFor={htmlFor}
-        className="block text-xs font-semibold uppercase tracking-[0.14em] text-ink-500"
+        className="text-ink-500 block text-xs font-semibold tracking-[0.14em] uppercase"
       >
         {label}
         {required && (
-          <span className="ml-1 font-normal normal-case tracking-normal text-danger-700">
+          <span className="text-danger-700 ml-1 font-normal tracking-normal normal-case">
             required
           </span>
         )}
@@ -408,7 +417,7 @@ function Field({
 }
 
 function Hint({ children }: { children: React.ReactNode }) {
-  return <p className="mt-1.5 text-xs leading-relaxed text-ink-500">{children}</p>
+  return <p className="text-ink-500 mt-1.5 text-xs leading-relaxed">{children}</p>
 }
 
 /** Mirrors slugify() in actions.ts. Preview only — the server derives its own. */

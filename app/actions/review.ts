@@ -60,7 +60,10 @@ export type ReviewState =
 interface BookingLookup {
   from: (table: 'bookings') => {
     select: (columns: string) => {
-      eq: (column: string, value: string) => {
+      eq: (
+        column: string,
+        value: string,
+      ) => {
         maybeSingle: () => Promise<{
           data: { id: string; vendor_id: string; status: string } | null
           error: { message: string } | null

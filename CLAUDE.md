@@ -57,7 +57,7 @@ decision from the user, not a refactor.
 ## Gotchas already hit
 
 - **`interface` vs `type` in `database.types.ts`.** postgrest-js requires table rows to
-  satisfy `Record<string, unknown>`. TypeScript interfaces do *not* get implicit index
+  satisfy `Record<string, unknown>`. TypeScript interfaces do _not_ get implicit index
   signatures, so an `interface` row type silently collapses the entire schema to `never`.
   Always use `type`. This is why Supabase's generator emits type aliases.
 - **`FORCE ROW LEVEL SECURITY` breaks the helper functions.** It applies RLS to

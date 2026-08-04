@@ -114,23 +114,22 @@ export default async function PartnerPackagesPage({
     <div className="space-y-6">
       <div className="flex flex-wrap items-end justify-between gap-4">
         <div>
-          <h1 className="font-display text-2xl text-ink-900">Packages</h1>
-          <p className="mt-1.5 max-w-2xl text-ink-600">
-            Every package shows a per-day price alongside the total, because that is what a
-            couple compares you on when your quote covers three days and someone else&rsquo;s
-            covers one.
+          <h1 className="font-display text-ink-900 text-2xl">Packages</h1>
+          <p className="text-ink-600 mt-1.5 max-w-2xl">
+            Every package shows a per-day price alongside the total, because that is what a couple
+            compares you on when your quote covers three days and someone else&rsquo;s covers one.
           </p>
         </div>
         <Link
           href="/partner/dashboard/packages?edit=new"
-          className="inline-flex h-11 items-center rounded-lg bg-primary-600 px-5 text-sm font-medium text-white hover:bg-primary-700"
+          className="bg-primary-600 hover:bg-primary-700 inline-flex h-11 items-center rounded-lg px-5 text-sm font-medium text-white"
         >
           Add a package
         </Link>
       </div>
 
       {load.kind === 'demo' && (
-        <p className="rounded-lg border border-warning-500/30 bg-warning-50 px-4 py-3 text-sm text-warning-700">
+        <p className="border-warning-500/30 bg-warning-50 text-warning-700 rounded-lg border px-4 py-3 text-sm">
           These are sample packages. Connect a Supabase instance to edit your real ones.
         </p>
       )}
@@ -138,14 +137,14 @@ export default async function PartnerPackagesPage({
       {packages.length === 0 ? (
         <Card>
           <CardBody className="py-12 text-center">
-            <p className="font-display text-lg text-ink-900">No packages yet</p>
-            <p className="mx-auto mt-1.5 max-w-md text-sm text-ink-600">
-              A listing with at least one package earns 15 points towards the completeness
-              score, and enquiries mentioning a package convert roughly twice as often.
+            <p className="font-display text-ink-900 text-lg">No packages yet</p>
+            <p className="text-ink-600 mx-auto mt-1.5 max-w-md text-sm">
+              A listing with at least one package earns 15 points towards the completeness score,
+              and enquiries mentioning a package convert roughly twice as often.
             </p>
             <Link
               href="/partner/dashboard/packages?edit=new"
-              className="mt-5 inline-flex h-11 items-center rounded-lg bg-primary-600 px-5 text-sm font-medium text-white hover:bg-primary-700"
+              className="bg-primary-600 hover:bg-primary-700 mt-5 inline-flex h-11 items-center rounded-lg px-5 text-sm font-medium text-white"
             >
               Add your first package
             </Link>
@@ -159,7 +158,7 @@ export default async function PartnerPackagesPage({
 
           {hidden.length > 0 && (
             <div className="pt-4">
-              <h2 className="mb-3 text-xs uppercase tracking-[0.14em] text-ink-500">
+              <h2 className="text-ink-500 mb-3 text-xs tracking-[0.14em] uppercase">
                 Hidden from customers
               </h2>
               <div className="space-y-3">
@@ -184,15 +183,15 @@ function PackageRow({ pkg }: { pkg: PartnerPackage }) {
         <div className="flex flex-wrap items-start justify-between gap-4">
           <div className="min-w-0 flex-1">
             <div className="flex flex-wrap items-center gap-2">
-              <h3 className="font-display text-lg text-ink-900">{pkg.name}</h3>
+              <h3 className="font-display text-ink-900 text-lg">{pkg.name}</h3>
               {!pkg.isActive && <Badge tone="neutral">Hidden</Badge>}
             </div>
 
             {pkg.description && (
-              <p className="mt-1 line-clamp-2 text-sm text-ink-600">{pkg.description}</p>
+              <p className="text-ink-600 mt-1 line-clamp-2 text-sm">{pkg.description}</p>
             )}
 
-            <p className="mt-2 text-sm text-ink-500">
+            <p className="text-ink-500 mt-2 text-sm">
               {days}
               {pkg.crewSize ? ` · ${pkg.crewSize} crew` : ''}
               {pkg.editedPhotoCount ? ` · ${pkg.editedPhotoCount} edited photos` : ''}
@@ -211,15 +210,15 @@ function PackageRow({ pkg }: { pkg: PartnerPackage }) {
           </div>
 
           <div className="shrink-0 text-right">
-            <p className="font-display text-xl text-ink-900">
+            <p className="font-display text-ink-900 text-xl">
               {formatPaise(pkg.price, { compact: false })}
             </p>
-            <p className="text-xs text-ink-500">{formatPerDay(pkg.pricePerDay)}</p>
+            <p className="text-ink-500 text-xs">{formatPerDay(pkg.pricePerDay)}</p>
 
             <div className="mt-3 flex flex-col items-end gap-1">
               <Link
                 href={`/partner/dashboard/packages?edit=${pkg.id}`}
-                className="inline-flex h-9 items-center rounded-lg border border-ink-200 bg-surface-raised px-4 text-sm font-medium text-ink-800 hover:border-ink-300"
+                className="border-ink-200 bg-surface-raised text-ink-800 hover:border-ink-300 inline-flex h-9 items-center rounded-lg border px-4 text-sm font-medium"
               >
                 Edit
               </Link>
@@ -248,35 +247,27 @@ function Header({
       {backLink && (
         <Link
           href="/partner/dashboard/packages"
-          className="text-sm text-ink-600 hover:text-ink-900"
+          className="text-ink-600 hover:text-ink-900 text-sm"
         >
           ← All packages
         </Link>
       )}
-      <h1 className="mt-1 font-display text-2xl text-ink-900">{title}</h1>
-      <p className="mt-1.5 max-w-2xl text-ink-600">{description}</p>
+      <h1 className="font-display text-ink-900 mt-1 text-2xl">{title}</h1>
+      <p className="text-ink-600 mt-1.5 max-w-2xl">{description}</p>
     </div>
   )
 }
 
-function Notice({
-  title,
-  body,
-  backLink,
-}: {
-  title: string
-  body: string
-  backLink?: boolean
-}) {
+function Notice({ title, body, backLink }: { title: string; body: string; backLink?: boolean }) {
   return (
     <Card>
       <CardBody className="py-12 text-center">
-        <p className="font-display text-lg text-ink-900">{title}</p>
-        <p className="mx-auto mt-1.5 max-w-md text-sm text-ink-600">{body}</p>
+        <p className="font-display text-ink-900 text-lg">{title}</p>
+        <p className="text-ink-600 mx-auto mt-1.5 max-w-md text-sm">{body}</p>
         {backLink && (
           <Link
             href="/partner/dashboard/packages"
-            className="mt-4 inline-block text-sm text-primary-700 hover:text-primary-800"
+            className="text-primary-700 hover:text-primary-800 mt-4 inline-block text-sm"
           >
             ← All packages
           </Link>

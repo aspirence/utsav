@@ -44,7 +44,7 @@ export default async function AdminTemplatesPage() {
       />
 
       {isDemo && (
-        <p className="mb-5 rounded-md border border-warning-500/40 bg-warning-50 px-3 py-2.5 text-sm leading-relaxed text-warning-700">
+        <p className="border-warning-500/40 bg-warning-50 text-warning-700 mb-5 rounded-md border px-3 py-2.5 text-sm leading-relaxed">
           These are the demo templates, not database rows — no Supabase instance is attached, so
           saving will not write anything. They deliberately carry no preview videos: there is
           nothing to point at until you paste real links here.
@@ -62,8 +62,8 @@ export default async function AdminTemplatesPage() {
       </div>
 
       <Panel className="mb-6">
-        <div className="border-b border-ink-200 px-4 py-3">
-          <h2 className="font-display text-lg text-ink-900">Current templates</h2>
+        <div className="border-ink-200 border-b px-4 py-3">
+          <h2 className="font-display text-ink-900 text-lg">Current templates</h2>
         </div>
         <AdminTable
           rowKey={(r: InvitationTemplate) => r.slug}
@@ -75,8 +75,8 @@ export default async function AdminTemplatesPage() {
               header: 'Template',
               render: (r) => (
                 <div>
-                  <p className="font-medium text-ink-900">{r.name}</p>
-                  <p className="mt-0.5 text-xs text-ink-500">
+                  <p className="text-ink-900 font-medium">{r.name}</p>
+                  <p className="text-ink-500 mt-0.5 text-xs">
                     /{r.slug}
                     {r.tags.length > 0 && ` · ${r.tags.join(' · ')}`}
                   </p>
@@ -98,7 +98,11 @@ export default async function AdminTemplatesPage() {
               key: 'state',
               header: 'On the home page',
               render: (r) =>
-                r.isActive ? <Pill tone="green">published</Pill> : <Pill tone="neutral">draft</Pill>,
+                r.isActive ? (
+                  <Pill tone="green">published</Pill>
+                ) : (
+                  <Pill tone="neutral">draft</Pill>
+                ),
             },
             {
               key: 'edit',
@@ -152,7 +156,7 @@ function PreviewCell({ template }: { template: InvitationTemplate }) {
     return (
       <div>
         <Pill tone="green">video</Pill>
-        <p className="mt-1 max-w-[22rem] truncate text-xs text-ink-500">{template.videoUrl}</p>
+        <p className="text-ink-500 mt-1 max-w-[22rem] truncate text-xs">{template.videoUrl}</p>
       </div>
     )
   }
@@ -164,7 +168,7 @@ function PreviewCell({ template }: { template: InvitationTemplate }) {
         {/* imageUrl, not videoUrl: for a YouTube link the two differ — what was pasted is the
             watch URL, what renders is the derived thumbnail, and the second is the useful one
             when a card looks wrong. */}
-        <p className="mt-1 max-w-[22rem] truncate text-xs text-ink-500">{template.imageUrl}</p>
+        <p className="text-ink-500 mt-1 max-w-[22rem] truncate text-xs">{template.imageUrl}</p>
       </div>
     )
   }
@@ -174,7 +178,7 @@ function PreviewCell({ template }: { template: InvitationTemplate }) {
       <Pill tone={template.posterUrl ? 'amber' : 'red'}>
         {template.posterUrl ? 'poster only' : 'nothing'}
       </Pill>
-      <p className="mt-1 max-w-[22rem] text-xs text-ink-500">
+      <p className="text-ink-500 mt-1 max-w-[22rem] text-xs">
         {template.videoUrl
           ? 'That link is not a video file, an image, a GIF or a YouTube URL, so nothing renders. Vimeo links need a poster image alongside them.'
           : template.posterUrl

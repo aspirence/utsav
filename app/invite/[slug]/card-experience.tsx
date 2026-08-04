@@ -58,9 +58,9 @@ export function CardExperience({ card }: { card: PublishedCard }) {
         <div className="relative z-10 mx-auto max-w-md px-6 py-16 text-center text-[#e8dcc9]">
           <p className="text-sm">{content.hosts}</p>
           <p className="mt-4 text-sm">{content.invitationLine}</p>
-          <p className="mt-8 font-display text-3xl italic">{content.groom.name}</p>
+          <p className="font-display mt-8 text-3xl italic">{content.groom.name}</p>
           <p className="mt-2 text-sm">{content.joiner}</p>
-          <p className="mt-2 font-display text-3xl italic">{content.bride.name}</p>
+          <p className="font-display mt-2 text-3xl italic">{content.bride.name}</p>
           <p className="mt-8 text-sm">{content.date}</p>
           <p className="text-sm">{content.time}</p>
           {content.venueLines.map((line) => (

@@ -20,14 +20,14 @@ export default async function EnquiriesPage() {
   if (enquiries.length === 0) {
     return (
       <div className="max-w-prose">
-        <h2 className="font-display text-xl text-ink-900">No enquiries yet</h2>
-        <p className="mt-3 leading-relaxed text-ink-700">
-          When you send one, it appears here with the five vendors it went to and what each
-          of them did with it.
+        <h2 className="font-display text-ink-900 text-xl">No enquiries yet</h2>
+        <p className="text-ink-700 mt-3 leading-relaxed">
+          When you send one, it appears here with the five vendors it went to and what each of them
+          did with it.
         </p>
         <Link
           href="/lucknow/photography"
-          className="mt-6 inline-flex items-center gap-2 rounded-md bg-primary-600 px-5 py-3 font-medium text-white transition-colors hover:bg-primary-700"
+          className="bg-primary-600 hover:bg-primary-700 mt-6 inline-flex items-center gap-2 rounded-md px-5 py-3 font-medium text-white transition-colors"
         >
           Find photographers
           <span aria-hidden="true">&rarr;</span>
@@ -39,14 +39,14 @@ export default async function EnquiriesPage() {
   return (
     <div className="space-y-8">
       {enquiries.map((e) => (
-        <article key={e.id} className="rounded-2xl border border-ink-100 bg-surface-raised p-6">
+        <article key={e.id} className="border-ink-100 bg-surface-raised rounded-2xl border p-6">
           <div className="flex flex-wrap items-start justify-between gap-4">
             <div>
-              <h2 className="font-display text-lg text-ink-900">
+              <h2 className="font-display text-ink-900 text-lg">
                 {e.categoryName ?? 'Vendors'}
                 {e.cityName ? ` in ${e.cityName}` : ''}
               </h2>
-              <p className="mt-1 text-sm text-ink-600">
+              <p className="text-ink-600 mt-1 text-sm">
                 {[
                   e.eventDate ? formatDate(e.eventDate) : 'Date to be decided',
                   e.budgetLabel,
@@ -60,29 +60,29 @@ export default async function EnquiriesPage() {
           </div>
 
           {e.message && (
-            <p className="mt-4 border-l-2 border-ink-200 pl-4 text-sm leading-relaxed text-ink-700">
+            <p className="border-ink-200 text-ink-700 mt-4 border-l-2 pl-4 text-sm leading-relaxed">
               {e.message}
             </p>
           )}
 
-          <div className="mt-6 border-t border-ink-100 pt-5">
-            <p className="text-xs font-semibold uppercase tracking-[0.14em] text-ink-500">
+          <div className="border-ink-100 mt-6 border-t pt-5">
+            <p className="text-ink-500 text-xs font-semibold tracking-[0.14em] uppercase">
               {/* Stated as a count, because the count is the promise. */}
               Sent to {e.vendors.length} {e.vendors.length === 1 ? 'vendor' : 'vendors'}
               {e.vendors.length < 5 && ' — never more than five'}
             </p>
 
             {e.vendors.length === 0 ? (
-              <p className="mt-3 text-sm text-ink-600">
+              <p className="text-ink-600 mt-3 text-sm">
                 Not routed yet. This happens within a few minutes of verifying your number.
               </p>
             ) : (
-              <ul className="mt-4 divide-y divide-ink-100">
+              <ul className="divide-ink-100 mt-4 divide-y">
                 {e.vendors.map((v) => (
                   <li key={v.vendorSlug} className="flex items-center justify-between gap-4 py-3">
                     <Link
                       href={`/vendor/${v.vendorSlug}`}
-                      className="font-medium text-ink-900 hover:text-primary-700"
+                      className="text-ink-900 hover:text-primary-700 font-medium"
                     >
                       {v.vendorName}
                     </Link>
@@ -112,7 +112,10 @@ function EnquiryStatus({ status }: { status: string }) {
       cls: 'border-warning-500/40 bg-warning-50 text-warning-700',
     },
     verified: { label: 'Verified', cls: 'border-ink-200 bg-surface text-ink-700' },
-    routed: { label: 'Sent to vendors', cls: 'border-success-500/40 bg-success-50 text-success-700' },
+    routed: {
+      label: 'Sent to vendors',
+      cls: 'border-success-500/40 bg-success-50 text-success-700',
+    },
     closed: { label: 'Closed', cls: 'border-ink-200 bg-surface text-ink-600' },
     spam: { label: 'Held for review', cls: 'border-ink-200 bg-surface text-ink-600' },
   }

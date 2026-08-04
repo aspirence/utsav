@@ -20,19 +20,19 @@ export const metadata: Metadata = {
 export default function PartnerPage() {
   return (
     <>
-      <section className="border-b border-ink-100 bg-gradient-to-b from-primary-50/50 to-surface">
+      <section className="border-ink-100 from-primary-50/50 to-surface border-b bg-gradient-to-b">
         <Container className="py-16 sm:py-20">
           <div className="max-w-3xl">
             <Badge tone="primary" className="mb-5">
               Onboarding photographers in Lucknow and Delhi NCR
             </Badge>
-            <h1 className="text-4xl leading-tight text-ink-900 sm:text-5xl">
+            <h1 className="text-ink-900 text-4xl leading-tight sm:text-5xl">
               Enquiries worth answering. Not a lead dump.
             </h1>
-            <p className="mt-5 max-w-2xl text-lg text-ink-600">
-              Every enquiry you receive is phone-verified and carries a real budget and a
-              real date. It goes to at most five vendors — including you. If a lead turns
-              out to be junk, tell us and we refund the credit.
+            <p className="text-ink-600 mt-5 max-w-2xl text-lg">
+              Every enquiry you receive is phone-verified and carries a real budget and a real date.
+              It goes to at most five vendors — including you. If a lead turns out to be junk, tell
+              us and we refund the credit.
             </p>
             <div className="mt-8 flex flex-wrap gap-3">
               <LinkButton href="/partner/signup" size="lg">
@@ -82,8 +82,8 @@ export default function PartnerPage() {
           ].map((item) => (
             <Card key={item.title}>
               <CardBody>
-                <h3 className="font-display text-lg text-ink-900">{item.title}</h3>
-                <p className="mt-2 text-sm leading-relaxed text-ink-600">{item.body}</p>
+                <h3 className="font-display text-ink-900 text-lg">{item.title}</h3>
+                <p className="text-ink-600 mt-2 text-sm leading-relaxed">{item.body}</p>
               </CardBody>
             </Card>
           ))}
@@ -96,10 +96,10 @@ export default function PartnerPage() {
             <h2 className="font-display text-2xl text-white sm:text-3xl">
               We come to you for the first shoot
             </h2>
-            <p className="mt-3 max-w-2xl text-ink-200">
-              Our field team photographs your work, writes your profile, and sets your price
-              bands with you. You approve it before it goes live. There is no self-serve
-              signup form that dumps a half-finished listing onto the platform.
+            <p className="text-ink-200 mt-3 max-w-2xl">
+              Our field team photographs your work, writes your profile, and sets your price bands
+              with you. You approve it before it goes live. There is no self-serve signup form that
+              dumps a half-finished listing onto the platform.
             </p>
             <LinkButton href="/partner/signup" variant="primary" size="lg" className="mt-7">
               Request a visit

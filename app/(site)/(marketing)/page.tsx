@@ -107,18 +107,20 @@ export default async function HomePage() {
              be tall enough that the copy is not crowded against the nav bar. Viewport
              units with a floor, so a short laptop window still gets a real hero and a
              phone in landscape does not get a 500px one. The pt clears the 112px bar. */}
-      <section className="relative isolate flex min-h-[640px] items-center border-b border-ink-100 bg-surface lg:min-h-[88vh]">
+      <section className="border-ink-100 bg-surface relative isolate flex min-h-[640px] items-center border-b lg:min-h-[88vh]">
         <HeroBackground />
 
-        <Container className="relative w-full pb-20 pt-40 sm:pb-28 sm:pt-44">
+        <Container className="relative w-full pt-40 pb-20 sm:pt-44 sm:pb-28">
           <div className="max-w-3xl">
             {/* font-normal, against the 500 that h1/h2/h3 get globally. Playfair is a
                 high-contrast face and this is the largest type on the site, so it is the
                 one place the thin strokes actually read - anything heavier here loses the
                 thing the face was chosen for. */}
             <h1
-              className="text-4xl font-normal leading-[1.08] text-white sm:text-5xl lg:text-6xl xl:text-7xl"
-              style={{ textShadow: '0 2px 18px rgb(15 12 11 / 0.75), 0 1px 3px rgb(15 12 11 / 0.6)' }}
+              className="text-4xl leading-[1.08] font-normal text-white sm:text-5xl lg:text-6xl xl:text-7xl"
+              style={{
+                textShadow: '0 2px 18px rgb(15 12 11 / 0.75), 0 1px 3px rgb(15 12 11 / 0.6)',
+              }}
             >
               Find the people who will make your celebration.
             </h1>
@@ -129,10 +131,12 @@ export default async function HomePage() {
                 there is no overlay to lean on. */}
             <p
               className="mt-5 max-w-2xl text-lg font-medium text-white"
-              style={{ textShadow: '0 1px 14px rgb(15 12 11 / 0.8), 0 1px 2px rgb(15 12 11 / 0.7)' }}
+              style={{
+                textShadow: '0 1px 14px rgb(15 12 11 / 0.8), 0 1px 2px rgb(15 12 11 / 0.7)',
+              }}
             >
-              Real portfolios, honest price bands, and packages you can actually compare.
-              See who is free on your date before you send a single message.
+              Real portfolios, honest price bands, and packages you can actually compare. See who is
+              free on your date before you send a single message.
             </p>
           </div>
 
@@ -206,7 +210,7 @@ export default async function HomePage() {
               // screen reader reads links out of their surrounding section, so "View all" on
               // its own lands with no idea what it leads to.
               aria-label={`View all ${templates.length} invitations`}
-              className="inline-flex min-h-11 items-center rounded-full bg-ink-900 px-7 text-sm font-semibold text-white transition-colors hover:bg-ink-800"
+              className="bg-ink-900 hover:bg-ink-800 inline-flex min-h-11 items-center rounded-full px-7 text-sm font-semibold text-white transition-colors"
             >
               View all
             </Link>
@@ -242,16 +246,16 @@ export default async function HomePage() {
              is still built, still in the sitemap and still linked from the footer - but
              the homepage only has room for one editorial band and a destination is the
              thing a couple is actually choosing between at this point in the page. */}
-      <section className="border-y border-ink-100 bg-surface-raised">
+      <section className="border-ink-100 bg-surface-raised border-y">
         {/* Inside the container, unlike the marquee sliders above: this one pages, and a
             page has to align to the same gutters as the heading or the pairs land
             half-off the screen. Wider than the page default (max-w-7xl) because the
             photographs are the content here and 1280px was cropping them hard. */}
         <Container className="max-w-[1520px] py-14">
-          <p className="text-sm text-ink-600">
+          <p className="text-ink-600 text-sm">
             Discover curated wedding packages across India&rsquo;s most stunning destinations.
           </p>
-          <h2 className="mt-2 text-3xl leading-tight text-ink-900 sm:text-4xl">
+          <h2 className="text-ink-900 mt-2 text-3xl leading-tight sm:text-4xl">
             Destinations beyond ordinary
           </h2>
 
@@ -289,7 +293,7 @@ export default async function HomePage() {
              the category page's own filters carry the same `?budgetMax=` parameters, so a
              row of them there is the natural place rather than back on the homepage. */}
       {localities.length > 0 && (
-        <section className="border-t border-ink-100 bg-surface-sunken/40">
+        <section className="border-ink-100 bg-surface-sunken/40 border-t">
           <Container className="py-16">
             <ExplorePlaces
               places={toPlaces(localities, citySlug, cityName, city?.state ?? null)}
@@ -318,24 +322,24 @@ export default async function HomePage() {
       {/* 10. Wedding packages - Lucknow only, by area within the city.
              pb is lighter than pt: the footer frieze sits directly under this section and
              brings its own air, so a full py-16 underneath stacked two gaps into one. */}
-      <section className="border-t border-ink-100 bg-surface-raised">
-        <Container className="pb-8 pt-16">
+      <section className="border-ink-100 bg-surface-raised border-t">
+        <Container className="pt-16 pb-8">
           <div className="flex items-end justify-between gap-6">
             <div>
-              <p className="text-sm text-ink-600">Explore the packages</p>
-              <h2 className="mt-2 text-3xl leading-tight text-ink-900 sm:text-4xl">
+              <p className="text-ink-600 text-sm">Explore the packages</p>
+              <h2 className="text-ink-900 mt-2 text-3xl leading-tight sm:text-4xl">
                 Discover our wedding packages
               </h2>
             </div>
 
             <Link
               href="/lucknow/photography"
-              className="hidden shrink-0 items-center gap-3 rounded-md bg-ink-900 py-3 pl-6 pr-3 text-sm font-semibold text-white transition-colors hover:bg-ink-800 sm:inline-flex"
+              className="bg-ink-900 hover:bg-ink-800 hidden shrink-0 items-center gap-3 rounded-md py-3 pr-3 pl-6 text-sm font-semibold text-white transition-colors sm:inline-flex"
             >
               View all
               <span
                 aria-hidden="true"
-                className="flex h-8 w-8 items-center justify-center rounded-md bg-white text-ink-900"
+                className="text-ink-900 flex h-8 w-8 items-center justify-center rounded-md bg-white"
               >
                 &rarr;
               </span>

@@ -1,7 +1,8 @@
+import { BrandMark } from '@/components/brand-mark'
 import { cn } from '@/components/ui'
 
 /**
- * The brand lockup: the lotus mark, then the name set in type.
+ * The brand lockup: the aperture mark, then the name set in type.
  *
  * ── WHY THE NAME IS TEXT AND NOT PART OF THE IMAGE ───────────────────────────
  * The old asset was a single lockup — mark, "utsava" wordmark and a "celebrate every moment"
@@ -23,32 +24,36 @@ import { cn } from '@/components/ui'
  * That is the standard failure of an icon-plus-wordmark lockup and it is entirely silent to
  * anyone not using one.
  *
- * The mark is gold on transparent, so on a dark surface callers invert it —
- * `[filter:brightness(0)_invert(1)]` — exactly as they did with the old lockup.
+ * ── THE MARK IS NOW DRAWN, NOT LOADED ───────────────────────────────────────
+ * It used to be `<img src="/logo-mark.webp">` and dark surfaces knocked it white with
+ * `[filter:brightness(0)_invert(1)]`, because a raster file cannot be recoloured any other way.
+ * <BrandMark> is inline SVG, so the same job is a `mono` prop and an ordinary text colour — no
+ * filter buffer, no second asset, and it stays sharp at the 20px favicon as well as the 96px
+ * footer. The filter still works if a caller needs it: the header uses it because its knockout
+ * is conditional on the transparent-hero state and a CSS variant is the only thing that can
+ * switch on that.
  */
 export function Brand({
   className,
   markClassName = 'h-8 w-auto',
   wordClassName = 'text-2xl',
+  mono = false,
 }: {
   className?: string
-  /** Sizing and any filter for the lotus. Callers on dark surfaces pass the invert filter. */
+  /** Sizing for the mark. Callers on dark surfaces usually pass `mono` instead of a filter. */
   markClassName?: string
   /** Sizing for the name. Colour is inherited, so it follows the surface. */
   wordClassName?: string
+  /**
+   * Paint the mark in the inherited text colour rather than the marigold gradient. For dark
+   * surfaces, where the whole lockup is one flat knockout.
+   */
+  mono?: boolean
 }) {
   return (
     <span className={cn('inline-flex items-center gap-2.5', className)}>
-      {/* eslint-disable-next-line @next/next/no-img-element -- plan §12: no next/image */}
-      <img
-        src="/logo-mark.webp"
-        alt=""
-        aria-hidden="true"
-        width={193}
-        height={144}
-        className={cn('shrink-0', markClassName)}
-      />
-      <span className={cn('font-display font-bold leading-none tracking-tight', wordClassName)}>
+      <BrandMark mono={mono} className={markClassName} />
+      <span className={cn('font-display leading-none font-bold tracking-tight', wordClassName)}>
         Fremmo
       </span>
     </span>

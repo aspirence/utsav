@@ -100,7 +100,7 @@ export function VendorStatusControls({
             type="button"
             disabled={busy}
             onClick={() => run('publish', () => publishVendor(slug))}
-            className={`${PANEL_BUTTON} bg-success-600 text-white hover:bg-success-700`}
+            className={`${PANEL_BUTTON} bg-success-600 hover:bg-success-700 text-white`}
           >
             {job === 'publish' ? 'Publishing…' : 'Approve & publish'}
           </button>
@@ -110,16 +110,16 @@ export function VendorStatusControls({
             disabled={busy}
             onClick={() => togglePanel('send_back')}
             aria-expanded={open === 'send_back'}
-            className={`${PANEL_BUTTON} border border-ink-200 bg-white text-ink-800 hover:bg-ink-50`}
+            className={`${PANEL_BUTTON} border-ink-200 text-ink-800 hover:bg-ink-50 border bg-white`}
           >
             Send back to draft
           </button>
 
           {open === 'send_back' && (
-            <div className="rounded-lg border border-ink-200 bg-ink-50 p-3">
+            <div className="border-ink-200 bg-ink-50 rounded-lg border p-3">
               <label
                 htmlFor="send-back-reason"
-                className="text-xs font-semibold uppercase tracking-wide text-ink-500"
+                className="text-ink-500 text-xs font-semibold tracking-wide uppercase"
               >
                 What has to change?
               </label>
@@ -130,17 +130,17 @@ export function VendorStatusControls({
                 rows={3}
                 maxLength={500}
                 placeholder="Only two usable photos and no price band. Reshoot the venue set and capture a band before resubmitting."
-                className="mt-1.5 w-full rounded-lg border border-ink-200 bg-white px-3 py-2 text-sm text-ink-900 placeholder:text-ink-400 focus:border-primary-500 focus:outline-none"
+                className="border-ink-200 text-ink-900 placeholder:text-ink-400 focus:border-primary-500 mt-1.5 w-full rounded-lg border bg-white px-3 py-2 text-sm focus:outline-none"
               />
-              <p className="mt-1.5 text-xs text-ink-500">
-                This goes on the audit record, so whoever picks the listing up next reads it
-                in your words.
+              <p className="text-ink-500 mt-1.5 text-xs">
+                This goes on the audit record, so whoever picks the listing up next reads it in your
+                words.
               </p>
               <button
                 type="button"
                 disabled={busy || !reasonReady}
                 onClick={() => run('send_back', () => sendBackToDraft(slug, reason))}
-                className={`${PANEL_BUTTON} mt-2 bg-ink-900 text-white hover:bg-ink-800`}
+                className={`${PANEL_BUTTON} bg-ink-900 hover:bg-ink-800 mt-2 text-white`}
               >
                 {job === 'send_back' ? 'Sending back…' : 'Send back to draft'}
               </button>
@@ -156,32 +156,32 @@ export function VendorStatusControls({
             disabled={busy}
             onClick={() => togglePanel('suspend')}
             aria-expanded={open === 'suspend'}
-            className={`${PANEL_BUTTON} border border-danger-500/40 bg-white text-danger-700 hover:bg-danger-50`}
+            className={`${PANEL_BUTTON} border-danger-500/40 text-danger-700 hover:bg-danger-50 border bg-white`}
           >
             Suspend listing
           </button>
 
           {open === 'suspend' && (
-            <div className="rounded-lg border border-danger-500/40 bg-danger-50 p-3">
-              <p className="text-sm font-semibold text-danger-700">
+            <div className="border-danger-500/40 bg-danger-50 rounded-lg border p-3">
+              <p className="text-danger-700 text-sm font-semibold">
                 This takes {displayName} off the market
               </p>
-              <p className="mt-1 text-xs text-danger-700">
-                It stops appearing in search, stops being routed new enquiries, and the team
-                is blocked from responding to the leads they already hold. Reinstating it is
-                a second, separately audited decision.
+              <p className="text-danger-700 mt-1 text-xs">
+                It stops appearing in search, stops being routed new enquiries, and the team is
+                blocked from responding to the leads they already hold. Reinstating it is a second,
+                separately audited decision.
               </p>
 
               {isAnchor && (
-                <p className="mt-2 rounded-md bg-white/70 px-2.5 py-2 text-xs font-medium text-danger-700">
-                  This is the founder&rsquo;s studio. Escalate before you suspend it — the
-                  action is recorded as one that should have been escalated.
+                <p className="text-danger-700 mt-2 rounded-md bg-white/70 px-2.5 py-2 text-xs font-medium">
+                  This is the founder&rsquo;s studio. Escalate before you suspend it — the action is
+                  recorded as one that should have been escalated.
                 </p>
               )}
 
               <label
                 htmlFor="suspend-reason"
-                className="mt-3 block text-xs font-semibold uppercase tracking-wide text-danger-700"
+                className="text-danger-700 mt-3 block text-xs font-semibold tracking-wide uppercase"
               >
                 Reason
               </label>
@@ -192,16 +192,15 @@ export function VendorStatusControls({
                 rows={3}
                 maxLength={500}
                 placeholder="Portfolio contains watermarked images from another studio, reported twice and confirmed."
-                className="mt-1.5 w-full rounded-lg border border-danger-500/40 bg-white px-3 py-2 text-sm text-ink-900 placeholder:text-ink-400 focus:border-danger-500 focus:outline-none"
+                className="border-danger-500/40 text-ink-900 placeholder:text-ink-400 focus:border-danger-500 mt-1.5 w-full rounded-lg border bg-white px-3 py-2 text-sm focus:outline-none"
               />
-              <p className="mt-1.5 text-xs text-danger-700">
-                The vendor&rsquo;s own team can read this on their dashboard. Write it for
-                them.
+              <p className="text-danger-700 mt-1.5 text-xs">
+                The vendor&rsquo;s own team can read this on their dashboard. Write it for them.
               </p>
 
               <label
                 htmlFor="suspend-confirm"
-                className="mt-3 block text-xs font-semibold uppercase tracking-wide text-danger-700"
+                className="text-danger-700 mt-3 block text-xs font-semibold tracking-wide uppercase"
               >
                 Type <span className="font-mono normal-case">{displayName}</span> to confirm
               </label>
@@ -211,7 +210,7 @@ export function VendorStatusControls({
                 value={confirmName}
                 onChange={(e) => setConfirmName(e.target.value)}
                 autoComplete="off"
-                className="mt-1.5 w-full rounded-lg border border-danger-500/40 bg-white px-3 py-2 text-sm text-ink-900 focus:border-danger-500 focus:outline-none"
+                className="border-danger-500/40 text-ink-900 focus:border-danger-500 mt-1.5 w-full rounded-lg border bg-white px-3 py-2 text-sm focus:outline-none"
               />
 
               <div className="mt-3 flex gap-2">
@@ -219,7 +218,7 @@ export function VendorStatusControls({
                   type="button"
                   disabled={busy || !reasonReady || !nameMatches}
                   onClick={() => run('suspend', () => suspendVendor(slug, reason))}
-                  className={`${PANEL_BUTTON} bg-danger-500 text-white hover:bg-danger-700`}
+                  className={`${PANEL_BUTTON} bg-danger-500 hover:bg-danger-700 text-white`}
                 >
                   {job === 'suspend' ? 'Suspending…' : 'Suspend listing'}
                 </button>
@@ -227,7 +226,7 @@ export function VendorStatusControls({
                   type="button"
                   disabled={busy}
                   onClick={() => togglePanel('suspend')}
-                  className={`${PANEL_BUTTON} border border-ink-200 bg-white text-ink-800 hover:bg-ink-100`}
+                  className={`${PANEL_BUTTON} border-ink-200 text-ink-800 hover:bg-ink-100 border bg-white`}
                 >
                   Cancel
                 </button>
@@ -242,23 +241,23 @@ export function VendorStatusControls({
           type="button"
           disabled={busy}
           onClick={() => run('reinstate', () => reinstateVendor(slug))}
-          className={`${PANEL_BUTTON} bg-ink-900 text-white hover:bg-ink-800`}
+          className={`${PANEL_BUTTON} bg-ink-900 hover:bg-ink-800 text-white`}
         >
           {job === 'reinstate' ? 'Reinstating…' : 'Reinstate'}
         </button>
       )}
 
       {status === 'draft' && (
-        <p className="rounded-lg bg-ink-50 p-3 text-sm text-ink-600">
-          Still with the field team. It cannot be published until the listing clears the
-          quality gates above and the agent submits it for review.
+        <p className="bg-ink-50 text-ink-600 rounded-lg p-3 text-sm">
+          Still with the field team. It cannot be published until the listing clears the quality
+          gates above and the agent submits it for review.
         </p>
       )}
 
       {status === 'paused' && (
-        <p className="rounded-lg bg-ink-50 p-3 text-sm text-ink-600">
-          Paused by the vendor themselves — the listing is hidden but keeps its data and its
-          leads. Only they can unpause it, from their own dashboard.
+        <p className="bg-ink-50 text-ink-600 rounded-lg p-3 text-sm">
+          Paused by the vendor themselves — the listing is hidden but keeps its data and its leads.
+          Only they can unpause it, from their own dashboard.
         </p>
       )}
 

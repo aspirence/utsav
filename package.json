@@ -14,6 +14,7 @@
     "lint": "next lint",
     "typecheck": "tsc --noEmit",
     "images": "node scripts/optimize-images.mjs",
+    "icons": "node scripts/generate-icons.mjs",
     "format": "prettier --write \"**/*.{ts,tsx,js,jsx,json,md,sql,yaml,yml}\"",
     "format:check": "prettier --check \"**/*.{ts,tsx,js,jsx,json,md,sql,yaml,yml}\"",
     "db:start": "supabase start",

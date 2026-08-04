@@ -292,10 +292,7 @@ export function TemplateCollections({ items }: { items: TemplateCard[] }) {
         adds nothing it cannot already reach.
       */}
       {enoughToLoop && (
-        <ul
-          aria-hidden="true"
-          className="mt-6 flex items-center justify-center gap-1.5 sm:hidden"
-        >
+        <ul aria-hidden="true" className="mt-6 flex items-center justify-center gap-1.5 sm:hidden">
           {items.map((item, i) => (
             <li
               key={item.slug}
@@ -304,9 +301,9 @@ export function TemplateCollections({ items }: { items: TemplateCard[] }) {
                 // The live card is wider rather than merely darker: at 6px a colour change
                 // alone is close to invisible, and this stays legible for anyone who cannot
                 // separate the two tones.
-                (i === (((index % count) + count) % count)
-                  ? 'w-4 bg-primary-600'
-                  : 'w-1.5 bg-ink-300')
+                (i === ((index % count) + count) % count
+                  ? 'bg-primary-600 w-4'
+                  : 'bg-ink-300 w-1.5')
               }
             />
           ))}
@@ -319,7 +316,7 @@ export function TemplateCollections({ items }: { items: TemplateCard[] }) {
             type="button"
             onClick={() => advance(-1)}
             aria-label="Previous template"
-            className="absolute -left-4 top-[36%] hidden h-11 w-11 items-center justify-center rounded-full bg-white text-lg text-ink-800 ring-1 ring-ink-200/70 transition-colors hover:text-ink-950 sm:flex"
+            className="text-ink-800 ring-ink-200/70 hover:text-ink-950 absolute top-[36%] -left-4 hidden h-11 w-11 items-center justify-center rounded-full bg-white text-lg ring-1 transition-colors sm:flex"
           >
             <span aria-hidden="true">&#8249;</span>
           </button>
@@ -327,7 +324,7 @@ export function TemplateCollections({ items }: { items: TemplateCard[] }) {
             type="button"
             onClick={() => advance(1)}
             aria-label="Next template"
-            className="absolute -right-4 top-[36%] hidden h-11 w-11 items-center justify-center rounded-full bg-white text-lg text-ink-800 ring-1 ring-ink-200/70 transition-colors hover:text-ink-950 sm:flex"
+            className="text-ink-800 ring-ink-200/70 hover:text-ink-950 absolute top-[36%] -right-4 hidden h-11 w-11 items-center justify-center rounded-full bg-white text-lg ring-1 transition-colors sm:flex"
           >
             <span aria-hidden="true">&#8250;</span>
           </button>
@@ -364,7 +361,7 @@ function TemplateFigure({ item }: { item: TemplateCard }) {
       */}
       <figcaption className="mt-3 text-center sm:mt-5">
         {item.tags.length > 0 && (
-          <p className="text-[10px] font-semibold uppercase tracking-[0.1em] text-primary-700/80 sm:text-[11px] sm:tracking-[0.16em]">
+          <p className="text-primary-700/80 text-[10px] font-semibold tracking-[0.1em] uppercase sm:text-[11px] sm:tracking-[0.16em]">
             {item.tags.map((tag, i) => (
               <span key={tag}>
                 {i > 0 && <span aria-hidden="true"> &middot; </span>}
@@ -379,7 +376,7 @@ function TemplateFigure({ item }: { item: TemplateCard }) {
           different depths. It has to shrink with the type or it reserves space for a third line
           that can no longer occur.
         */}
-        <h3 className="mt-1.5 line-clamp-2 min-h-[2.75rem] font-display text-base leading-snug text-ink-900 sm:mt-2 sm:min-h-[3.5rem] sm:text-xl">
+        <h3 className="font-display text-ink-900 mt-1.5 line-clamp-2 min-h-[2.75rem] text-base leading-snug sm:mt-2 sm:min-h-[3.5rem] sm:text-xl">
           {item.name}
         </h3>
 
@@ -407,16 +404,16 @@ function TemplateFigure({ item }: { item: TemplateCard }) {
 function PriceFlip({ item, href }: { item: TemplateCard; href: string }) {
   return (
     <div className="relative mt-3 h-11 [perspective:800px]">
-      <div className="relative h-full w-full transition-transform duration-500 [transform-style:preserve-3d] group-hover:[transform:rotateX(180deg)] group-focus-within:[transform:rotateX(180deg)]">
-        <p className="absolute inset-0 flex items-center justify-center text-lg tabular-nums text-ink-800 [backface-visibility:hidden]">
+      <div className="relative h-full w-full transition-transform duration-500 [transform-style:preserve-3d] group-focus-within:[transform:rotateX(180deg)] group-hover:[transform:rotateX(180deg)]">
+        <p className="text-ink-800 absolute inset-0 flex items-center justify-center text-lg tabular-nums [backface-visibility:hidden]">
           {formatPaise(item.pricePaise)}
         </p>
 
         {/* Pre-rotated, so it reads the right way up once the parent turns over. */}
-        <div className="absolute inset-0 flex items-center justify-center [backface-visibility:hidden] [transform:rotateX(180deg)]">
+        <div className="absolute inset-0 flex [transform:rotateX(180deg)] items-center justify-center [backface-visibility:hidden]">
           <Link
             href={href}
-            className="inline-flex h-10 items-center rounded-full bg-primary-600 px-6 text-sm font-medium text-white transition-colors hover:bg-primary-700"
+            className="bg-primary-600 hover:bg-primary-700 inline-flex h-10 items-center rounded-full px-6 text-sm font-medium text-white transition-colors"
           >
             Order now
           </Link>

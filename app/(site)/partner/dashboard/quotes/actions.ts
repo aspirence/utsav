@@ -98,11 +98,7 @@ const quoteDraftSchema = z
     // fixture inbox uses readable ids like `demo-lead-4`, which a uuid rule would reject
     // with a confusing message before the "no database connected" one could be shown.
     leadId: z.string().trim().min(1, 'Pick the enquiry this quote answers'),
-    title: z
-      .string()
-      .trim()
-      .min(3, 'Give the quote a title the customer will recognise')
-      .max(160),
+    title: z.string().trim().min(3, 'Give the quote a title the customer will recognise').max(160),
     notes: z.string().trim().max(2000).optional(),
     lineItems: z
       .array(lineItemSchema)
@@ -392,8 +388,7 @@ export async function withdrawQuote(quoteId: string): Promise<QuoteState> {
   if (!hasSupabaseEnv()) {
     return {
       status: 'unconfigured',
-      message:
-        'No Supabase instance is connected, so this quote only exists in the sample data.',
+      message: 'No Supabase instance is connected, so this quote only exists in the sample data.',
     }
   }
 

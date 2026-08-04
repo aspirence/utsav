@@ -110,10 +110,7 @@ const CALENDAR_PATH = '/partner/dashboard/calendar'
  * `reason` is only read when blocking; unblocking deletes the row outright, because
  * absence of a row is what "available" means (migration 000500).
  */
-export async function toggleBlockedDate(
-  dateIso: string,
-  reason?: string,
-): Promise<CalendarState> {
+export async function toggleBlockedDate(dateIso: string, reason?: string): Promise<CalendarState> {
   const parsed = toggleInputSchema.safeParse({ date: dateIso, reason })
   if (!parsed.success) {
     return { status: 'error', message: firstIssue(parsed.error) }
@@ -320,8 +317,7 @@ export async function loadVendorAvailability(): Promise<AvailabilitySnapshot> {
       today,
       days: [],
       canManage: false,
-      notice:
-        'Sign in with the account invited to your studio to see and edit its calendar.',
+      notice: 'Sign in with the account invited to your studio to see and edit its calendar.',
     }
   }
 
@@ -333,8 +329,7 @@ export async function loadVendorAvailability(): Promise<AvailabilitySnapshot> {
 // ---------------------------------------------------------------------------
 
 type VendorSession =
-  | { ok: true; supabase: FremmoClient; vendorId: string }
-  | { ok: false; state: CalendarState }
+  { ok: true; supabase: FremmoClient; vendorId: string } | { ok: false; state: CalendarState }
 
 async function requireVendorSession(): Promise<VendorSession> {
   if (!hasSupabaseEnv()) {

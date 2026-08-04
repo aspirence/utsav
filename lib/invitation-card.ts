@@ -92,7 +92,9 @@ export async function getPublishedCard(slug: string): Promise<PublishedCard | nu
 
   const { data, error } = await supabase
     .from('invitation_cards')
-    .select('public_slug, template_slug, template_name, card_content, card_content_version, published_at')
+    .select(
+      'public_slug, template_slug, template_name, card_content, card_content_version, published_at',
+    )
     .eq('public_slug', slug)
     .maybeSingle()
 

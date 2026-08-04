@@ -48,15 +48,15 @@ export default function PipelinePage() {
             return (
               <section key={stage.key} className="w-[260px] shrink-0">
                 <div className="mb-2 flex items-center justify-between px-1">
-                  <h2 className="text-sm font-semibold text-ink-800">{stage.label}</h2>
-                  <span className="rounded-full bg-ink-200 px-2 py-0.5 text-xs tabular-nums text-ink-700">
+                  <h2 className="text-ink-800 text-sm font-semibold">{stage.label}</h2>
+                  <span className="bg-ink-200 text-ink-700 rounded-full px-2 py-0.5 text-xs tabular-nums">
                     {items.length}
                   </span>
                 </div>
 
                 <div className="space-y-2">
                   {items.length === 0 ? (
-                    <div className="rounded-lg border border-dashed border-ink-200 p-4 text-center text-xs text-ink-400">
+                    <div className="border-ink-200 text-ink-400 rounded-lg border border-dashed p-4 text-center text-xs">
                       Empty
                     </div>
                   ) : (
@@ -70,12 +70,12 @@ export default function PipelinePage() {
       </div>
 
       <Panel className="mt-5 p-4">
-        <h2 className="font-display text-base text-ink-900">Why the shoot comes first</h2>
-        <p className="mt-1.5 max-w-3xl text-sm text-ink-600">
-          A listing cannot go live below 5 photos and a price band, and it will not receive
-          routed leads until its profile score clears 60. That is why the board is
-          organised around the shoot rather than around the signup: capturing the work is
-          the step that unblocks everything else.
+        <h2 className="font-display text-ink-900 text-base">Why the shoot comes first</h2>
+        <p className="text-ink-600 mt-1.5 max-w-3xl text-sm">
+          A listing cannot go live below 5 photos and a price band, and it will not receive routed
+          leads until its profile score clears 60. That is why the board is organised around the
+          shoot rather than around the signup: capturing the work is the step that unblocks
+          everything else.
         </p>
       </Panel>
     </>
@@ -92,11 +92,11 @@ function PipelineCardView({ card }: { card: PipelineCard }) {
         overdue ? 'border-danger-500/40' : 'border-ink-200'
       }`}
     >
-      <p className="text-sm font-medium text-ink-900">{card.business}</p>
-      <p className="mt-0.5 text-xs text-ink-500">
+      <p className="text-ink-900 text-sm font-medium">{card.business}</p>
+      <p className="text-ink-500 mt-0.5 text-xs">
         {card.locality}, {card.city}
       </p>
-      <p className="mt-0.5 text-xs text-ink-500">{card.category}</p>
+      <p className="text-ink-500 mt-0.5 text-xs">{card.category}</p>
 
       <div className="mt-2 flex flex-wrap items-center gap-1.5">
         {card.photos > 0 && (
@@ -105,16 +105,16 @@ function PipelineCardView({ card }: { card: PipelineCard }) {
         {card.priceBandCaptured && <Pill tone="green">price band</Pill>}
       </div>
 
-      <div className="mt-2.5 flex items-center justify-between border-t border-ink-100 pt-2 text-xs">
+      <div className="border-ink-100 mt-2.5 flex items-center justify-between border-t pt-2 text-xs">
         <span className="text-ink-500">{card.agent}</span>
         {card.nextActionInDays == null ? (
           <span className="text-ink-400">—</span>
         ) : overdue ? (
-          <span className="font-medium text-danger-700">
+          <span className="text-danger-700 font-medium">
             {Math.abs(card.nextActionInDays)}d overdue
           </span>
         ) : dueToday ? (
-          <span className="font-medium text-warning-700">Today</span>
+          <span className="text-warning-700 font-medium">Today</span>
         ) : (
           <span className="text-ink-500">in {card.nextActionInDays}d</span>
         )}

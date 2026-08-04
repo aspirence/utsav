@@ -17,43 +17,37 @@ export default async function PartnerCalendarPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="font-display text-2xl text-ink-900">Your availability</h1>
-        <p className="mt-1.5 max-w-2xl text-ink-600">
-          Block the dates you are already booked or away. We stop routing enquiries to you
-          for those days, and customers filtering by &ldquo;free on my date&rdquo; will not
-          see you. Everything else stays open by default — you never have to confirm you
-          are free.
+        <h1 className="font-display text-ink-900 text-2xl">Your availability</h1>
+        <p className="text-ink-600 mt-1.5 max-w-2xl">
+          Block the dates you are already booked or away. We stop routing enquiries to you for those
+          days, and customers filtering by &ldquo;free on my date&rdquo; will not see you.
+          Everything else stays open by default — you never have to confirm you are free.
         </p>
       </div>
 
       <div className="flex flex-wrap gap-4 text-sm">
         <span className="flex items-center gap-2">
-          <span className="h-3.5 w-3.5 rounded border border-ink-200 bg-surface-raised" />
+          <span className="border-ink-200 bg-surface-raised h-3.5 w-3.5 rounded border" />
           Available
         </span>
         <span className="flex items-center gap-2">
-          <span className="h-3.5 w-3.5 rounded bg-ink-900" />
+          <span className="bg-ink-900 h-3.5 w-3.5 rounded" />
           Blocked
         </span>
         <span className="flex items-center gap-2">
-          <span className="h-3.5 w-3.5 rounded bg-success-600" />
+          <span className="bg-success-600 h-3.5 w-3.5 rounded" />
           Confirmed booking
         </span>
       </div>
 
-      <CalendarGrid
-        initialDays={days}
-        todayIso={today}
-        canManage={canManage}
-        notice={notice}
-      />
+      <CalendarGrid initialDays={days} todayIso={today} canManage={canManage} notice={notice} />
 
       <Card className="border-ink-200 bg-surface-sunken">
         <CardBody>
-          <p className="text-sm text-ink-600">
-            Dates tied to a confirmed booking cannot be unblocked here — cancelling a
-            booking releases the date automatically. This keeps the calendar honest, which
-            is what lets customers trust the &ldquo;free on your date&rdquo; badge.
+          <p className="text-ink-600 text-sm">
+            Dates tied to a confirmed booking cannot be unblocked here — cancelling a booking
+            releases the date automatically. This keeps the calendar honest, which is what lets
+            customers trust the &ldquo;free on your date&rdquo; badge.
           </p>
         </CardBody>
       </Card>

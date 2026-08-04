@@ -49,7 +49,7 @@ export default async function AdminOrdersPage() {
       />
 
       {isDemo && (
-        <p className="mb-5 rounded-md border border-warning-500/40 bg-warning-50 px-3 py-2.5 text-sm leading-relaxed text-warning-700">
+        <p className="border-warning-500/40 bg-warning-50 text-warning-700 mb-5 rounded-md border px-3 py-2.5 text-sm leading-relaxed">
           These are demo orders, not database rows — no Supabase instance is attached. They include
           the awkward cases on purpose: one that never paid, one still waiting on the customer, and
           one refunded.
@@ -57,12 +57,7 @@ export default async function AdminOrdersPage() {
       )}
 
       <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-        <StatTile
-          label="Orders"
-          value={orders.length}
-          hint="All time"
-          icon={<IconReceipt />}
-        />
+        <StatTile label="Orders" value={orders.length} hint="All time" icon={<IconReceipt />} />
         <StatTile
           label="Collected"
           value={formatPaise(totals.collectedPaise)}
@@ -86,16 +81,15 @@ export default async function AdminOrdersPage() {
       </div>
 
       {totals.awaitingPayment > 0 && (
-        <p className="mt-4 rounded-md border border-ink-200 bg-white px-3 py-2.5 text-sm text-ink-700">
-          {totals.awaitingPayment}{' '}
-          {totals.awaitingPayment === 1 ? 'order has' : 'orders have'} not paid their booking amount
-          yet. Nothing is reserved for them until it lands.
+        <p className="border-ink-200 text-ink-700 mt-4 rounded-md border bg-white px-3 py-2.5 text-sm">
+          {totals.awaitingPayment} {totals.awaitingPayment === 1 ? 'order has' : 'orders have'} not
+          paid their booking amount yet. Nothing is reserved for them until it lands.
         </p>
       )}
 
       <Panel className="mt-5">
-        <div className="border-b border-ink-200 px-4 py-3">
-          <h2 className="font-display text-lg text-ink-900">All orders</h2>
+        <div className="border-ink-200 border-b px-4 py-3">
+          <h2 className="font-display text-ink-900 text-lg">All orders</h2>
         </div>
         <AdminTable
           rowKey={(r: AdminInvitationOrder) => r.reference}
@@ -107,8 +101,8 @@ export default async function AdminOrdersPage() {
               header: 'Reference',
               render: (r) => (
                 <div>
-                  <p className="font-mono text-xs tracking-wide text-ink-900">{r.reference}</p>
-                  <p className="mt-0.5 text-xs text-ink-500">{when(r.createdAt)}</p>
+                  <p className="text-ink-900 font-mono text-xs tracking-wide">{r.reference}</p>
+                  <p className="text-ink-500 mt-0.5 text-xs">{when(r.createdAt)}</p>
                 </div>
               ),
             },
@@ -117,7 +111,7 @@ export default async function AdminOrdersPage() {
               header: 'Customer',
               render: (r) => (
                 <div>
-                  <p className="flex items-center gap-2 font-medium text-ink-900">
+                  <p className="text-ink-900 flex items-center gap-2 font-medium">
                     {r.contactName}
                     {/* An unclaimed order has no account behind it, so the customer cannot see it
                         on their own dashboard. Worth knowing before telling them to "check your
@@ -126,7 +120,7 @@ export default async function AdminOrdersPage() {
                   </p>
                   {/* Staff read these unmasked: unlike a vendor lead (plan §6), they are the party
                       who has to deliver the order. */}
-                  <p className="mt-0.5 text-xs text-ink-500">
+                  <p className="text-ink-500 mt-0.5 text-xs">
                     {/* Email is optional since 20260803000300 — the booking form is name +
                         WhatsApp only. Joined rather than interpolated, so an order without one
                         does not render a dangling "·". */}
@@ -146,7 +140,7 @@ export default async function AdminOrdersPage() {
               align: 'right',
               render: (r) =>
                 r.paidAt ? (
-                  <span className="tabular-nums text-ink-900">
+                  <span className="text-ink-900 tabular-nums">
                     {formatPaise(r.bookingAmountPaise)}
                   </span>
                 ) : (
@@ -175,7 +169,7 @@ export default async function AdminOrdersPage() {
               header: 'Balance',
               align: 'right',
               render: (r) => (
-                <span className="tabular-nums text-ink-700">{formatPaise(r.balancePaise)}</span>
+                <span className="text-ink-700 tabular-nums">{formatPaise(r.balancePaise)}</span>
               ),
             },
             {
@@ -187,7 +181,7 @@ export default async function AdminOrdersPage() {
         />
       </Panel>
 
-      <p className="mt-5 max-w-3xl text-xs leading-relaxed text-ink-500">
+      <p className="text-ink-500 mt-5 max-w-3xl text-xs leading-relaxed">
         Amounts, references and payment stamps cannot be edited from this console —
         app.guard_invitation_order_columns() rejects it. They are set when the order is placed and
         by the payment webhook, so a price cannot be rewritten after a customer has agreed to it.
@@ -266,7 +260,7 @@ function PaymentCell({ order }: { order: AdminInvitationOrder }) {
 
   if (!latest) {
     return (
-      <span className="text-xs text-ink-400">
+      <span className="text-ink-400 text-xs">
         {order.paidAt ? 'Recorded before the ledger existed' : 'No attempts'}
       </span>
     )
@@ -277,25 +271,25 @@ function PaymentCell({ order }: { order: AdminInvitationOrder }) {
       <div className="flex items-center gap-1.5">
         <PaymentStatusPill status={latest.status} />
         {latest.method && (
-          <span className="text-xs uppercase tracking-wide text-ink-600">{latest.method}</span>
+          <span className="text-ink-600 text-xs tracking-wide uppercase">{latest.method}</span>
         )}
       </div>
 
       {/* The reconciliation key. font-mono because it gets compared against Cashfree's
           dashboard character by character, and a proportional font makes that harder than it
           needs to be. `break-all` so a long id wraps instead of widening the column. */}
-      <p className="mt-1 break-all font-mono text-[11px] text-ink-700">{latest.paymentId}</p>
+      <p className="text-ink-700 mt-1 font-mono text-[11px] break-all">{latest.paymentId}</p>
 
-      <p className="mt-0.5 text-[11px] text-ink-500">
+      <p className="text-ink-500 mt-0.5 text-[11px]">
         {formatPaise(latest.amountPaise)} · {shortDateTime(latest.paidAt ?? latest.receivedAt)}
       </p>
 
       {latest.failureReason && (
-        <p className="mt-0.5 text-[11px] text-danger-700">{latest.failureReason}</p>
+        <p className="text-danger-700 mt-0.5 text-[11px]">{latest.failureReason}</p>
       )}
 
       {earlier.length > 0 && (
-        <p className="mt-0.5 text-[11px] text-ink-500">
+        <p className="text-ink-500 mt-0.5 text-[11px]">
           +{earlier.length} earlier {earlier.length === 1 ? 'attempt' : 'attempts'}
         </p>
       )}
@@ -312,7 +306,13 @@ function PaymentCell({ order }: { order: AdminInvitationOrder }) {
  */
 function PaymentStatusPill({ status }: { status: string }) {
   const tone =
-    status === 'SUCCESS' ? 'green' : status === 'FAILED' ? 'red' : status === 'USER_DROPPED' ? 'amber' : 'neutral'
+    status === 'SUCCESS'
+      ? 'green'
+      : status === 'FAILED'
+        ? 'red'
+        : status === 'USER_DROPPED'
+          ? 'amber'
+          : 'neutral'
 
   const label =
     status === 'USER_DROPPED' ? 'Dropped' : status.charAt(0) + status.slice(1).toLowerCase()

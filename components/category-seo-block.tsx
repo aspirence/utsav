@@ -56,10 +56,10 @@ export function CategorySeoBlock({
   }
 
   return (
-    <section className="mt-14 border-t border-ink-100 pt-10">
+    <section className="border-ink-100 mt-14 border-t pt-10">
       {localities.length > 0 && (
         <div>
-          <h2 className="font-display text-xl text-ink-900">
+          <h2 className="font-display text-ink-900 text-xl">
             {categoryPlural} by locality in {cityName}
           </h2>
           <div className="mt-4 flex flex-wrap gap-2">
@@ -67,12 +67,12 @@ export function CategorySeoBlock({
               <Link
                 key={l.slug}
                 href={`${base}/${l.slug}`}
-                className="rounded-full border border-ink-200 bg-surface-raised px-3.5 py-1.5 text-sm text-ink-700 transition-colors hover:border-ink-300 hover:text-ink-900"
+                className="border-ink-200 bg-surface-raised text-ink-700 hover:border-ink-300 hover:text-ink-900 rounded-full border px-3.5 py-1.5 text-sm transition-colors"
               >
                 {l.name}
                 {/* The count is the honest signal. A locality with two listings says so
                     rather than promising a choice it cannot deliver. */}
-                <span className="ml-1.5 text-ink-400">{l.count}</span>
+                <span className="text-ink-400 ml-1.5">{l.count}</span>
               </Link>
             ))}
           </div>
@@ -80,7 +80,7 @@ export function CategorySeoBlock({
       )}
 
       <div className="mt-8">
-        <h2 className="font-display text-xl text-ink-900">
+        <h2 className="font-display text-ink-900 text-xl">
           {categoryPlural} in {cityName} by budget
         </h2>
         <div className="mt-4 flex flex-wrap gap-2">
@@ -88,7 +88,7 @@ export function CategorySeoBlock({
             <Link
               key={r.value}
               href={`${base}?budgetMax=${r.value}`}
-              className="rounded-full border border-ink-200 bg-surface-raised px-3.5 py-1.5 text-sm text-ink-700 transition-colors hover:border-ink-300 hover:text-ink-900"
+              className="border-ink-200 bg-surface-raised text-ink-700 hover:border-ink-300 hover:text-ink-900 rounded-full border px-3.5 py-1.5 text-sm transition-colors"
             >
               {categoryName} under {formatPaise(r.value, { compact: true })}
             </Link>
@@ -98,19 +98,19 @@ export function CategorySeoBlock({
 
       {faqs.length > 0 && (
         <div className="mt-10 max-w-3xl">
-          <h2 className="font-display text-xl text-ink-900">
+          <h2 className="font-display text-ink-900 text-xl">
             Booking {categoryPlural.toLowerCase()} in {cityName}
           </h2>
-          <div className="mt-4 divide-y divide-ink-100 border-y border-ink-100">
+          <div className="divide-ink-100 border-ink-100 mt-4 divide-y border-y">
             {faqs.map((f) => (
               <details key={f.q} className="group py-3">
-                <summary className="flex cursor-pointer list-none items-center justify-between gap-4 font-medium text-ink-900">
+                <summary className="text-ink-900 flex cursor-pointer list-none items-center justify-between gap-4 font-medium">
                   {f.q}
-                  <span className="shrink-0 text-ink-400 transition-transform group-open:rotate-45">
+                  <span className="text-ink-400 shrink-0 transition-transform group-open:rotate-45">
                     +
                   </span>
                 </summary>
-                <p className="mt-2 leading-relaxed text-ink-600">{f.a}</p>
+                <p className="text-ink-600 mt-2 leading-relaxed">{f.a}</p>
               </details>
             ))}
           </div>

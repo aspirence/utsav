@@ -46,10 +46,7 @@ Deno.serve(async (request: Request) => {
   const secret = Deno.env.get('WORKER_SECRET')
   if (!secret) {
     // Fail closed: this runs under the service-role key and mutates lead state.
-    return json(
-      { status: 'unconfigured', message: 'WORKER_SECRET is not set.', expired: 0 },
-      503,
-    )
+    return json({ status: 'unconfigured', message: 'WORKER_SECRET is not set.', expired: 0 }, 503)
   }
 
   if (!(await isAuthorized(request, secret))) {

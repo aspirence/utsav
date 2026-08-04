@@ -43,7 +43,7 @@ export function CategoryCard({
   imageAlt = '',
 }: CategoryCardProps) {
   return (
-    <article className="group relative min-h-[188px] overflow-hidden rounded-xl border border-ink-100 bg-surface-raised transition-colors hover:border-ink-300">
+    <article className="group border-ink-100 bg-surface-raised hover:border-ink-300 relative min-h-[188px] overflow-hidden rounded-xl border transition-colors">
       {/*
         Image area — fills the right, sits behind the white panel and its curve.
 
@@ -70,17 +70,17 @@ export function CategoryCard({
           aria-hidden decoration; the ellipse is inset vertically beyond the card so its
           flat top and bottom never show. */}
       <div
-        className="absolute inset-y-0 left-0 w-[68%] bg-surface-raised sm:w-[58%]"
+        className="bg-surface-raised absolute inset-y-0 left-0 w-[68%] sm:w-[58%]"
         aria-hidden="true"
       />
       <div
-        className="absolute -inset-y-10 left-[calc(68%-3.25rem)] w-[6.5rem] rounded-[50%] bg-surface-raised sm:left-[calc(58%-3.25rem)]"
+        className="bg-surface-raised absolute -inset-y-10 left-[calc(68%-3.25rem)] w-[6.5rem] rounded-[50%] sm:left-[calc(58%-3.25rem)]"
         aria-hidden="true"
       />
 
       <div className="relative flex h-full min-h-[188px] w-[68%] flex-col justify-center p-5 sm:w-[58%] sm:p-6">
         <div className="flex items-start gap-2.5">
-          <h3 className="font-display text-xl leading-tight text-ink-900 sm:text-2xl">
+          <h3 className="font-display text-ink-900 text-xl leading-tight sm:text-2xl">
             {/* The whole card is the hit target — the pseudo-element stretches this
                 anchor over it, so the curve and the image are clickable too. */}
             <Link href={href} className="after:absolute after:inset-0 after:content-['']">
@@ -94,13 +94,13 @@ export function CategoryCard({
           )}
         </div>
 
-        <p className="mt-2 text-sm leading-relaxed text-ink-600">{description}</p>
+        <p className="text-ink-600 mt-2 text-sm leading-relaxed">{description}</p>
 
         {tags.length > 0 && (
-          <p className="mt-2 text-xs text-ink-500">{tags.slice(0, 4).join(' · ')}</p>
+          <p className="text-ink-500 mt-2 text-xs">{tags.slice(0, 4).join(' · ')}</p>
         )}
 
-        <span className="mt-3 inline-flex items-center gap-1 text-sm font-semibold text-primary-700 transition-colors group-hover:text-primary-800">
+        <span className="text-primary-700 group-hover:text-primary-800 mt-3 inline-flex items-center gap-1 text-sm font-semibold transition-colors">
           {cta}
           <span aria-hidden="true" className="transition-transform group-hover:translate-x-0.5">
             →

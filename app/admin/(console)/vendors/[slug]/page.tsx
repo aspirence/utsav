@@ -33,7 +33,10 @@ export default async function AdminVendorDetailPage({
 
   return (
     <>
-      <Link href="/admin/vendors" className="mb-4 inline-block text-sm text-ink-500 hover:text-ink-800">
+      <Link
+        href="/admin/vendors"
+        className="text-ink-500 hover:text-ink-800 mb-4 inline-block text-sm"
+      >
         ← Back to vendors
       </Link>
 
@@ -53,7 +56,7 @@ export default async function AdminVendorDetailPage({
       <div className="grid gap-5 lg:grid-cols-[1fr_340px]">
         <div className="space-y-5">
           <Panel className="p-5">
-            <h2 className="font-display text-lg text-ink-900">Listing quality</h2>
+            <h2 className="font-display text-ink-900 text-lg">Listing quality</h2>
             <dl className="mt-4 grid gap-4 sm:grid-cols-3">
               {[
                 ['Profile score', `${vendor.profileScore}/100`],
@@ -69,16 +72,16 @@ export default async function AdminVendorDetailPage({
                 ['Category', vendor.category],
               ].map(([k, v]) => (
                 <div key={k}>
-                  <dt className="text-xs uppercase tracking-wide text-ink-500">{k}</dt>
-                  <dd className="mt-0.5 font-medium text-ink-900">{v}</dd>
+                  <dt className="text-ink-500 text-xs tracking-wide uppercase">{k}</dt>
+                  <dd className="text-ink-900 mt-0.5 font-medium">{v}</dd>
                 </div>
               ))}
             </dl>
 
             {blockers.length > 0 && (
-              <div className="mt-5 rounded-lg border border-warning-500/30 bg-warning-50 p-3">
-                <p className="text-sm font-semibold text-warning-700">Blocking go-live</p>
-                <ul className="mt-1.5 list-inside list-disc text-sm text-warning-700">
+              <div className="border-warning-500/30 bg-warning-50 mt-5 rounded-lg border p-3">
+                <p className="text-warning-700 text-sm font-semibold">Blocking go-live</p>
+                <ul className="text-warning-700 mt-1.5 list-inside list-disc text-sm">
                   {blockers.map((b) => (
                     <li key={b}>{b}</li>
                   ))}
@@ -91,11 +94,11 @@ export default async function AdminVendorDetailPage({
               state. It goes through the same audit path, so the change lands on record with
               the patch that was applied — plan §3 makes that log the point of the console. */}
           <Panel className="p-5">
-            <h2 className="font-display text-lg text-ink-900">Listing details</h2>
-            <p className="mt-1 text-sm text-ink-600">
-              Editable copy. Status, scores and ratings are not here — the first moves through
-              the controls on the right so every change carries a reason, and the rest are
-              derived columns the database refuses a write to.
+            <h2 className="font-display text-ink-900 text-lg">Listing details</h2>
+            <p className="text-ink-600 mt-1 text-sm">
+              Editable copy. Status, scores and ratings are not here — the first moves through the
+              controls on the right so every change carries a reason, and the rest are derived
+              columns the database refuses a write to.
             </p>
             <div className="mt-5">
               <VendorDetailsForm
@@ -139,22 +142,21 @@ export default async function AdminVendorDetailPage({
 
           {vendor.isAnchor && (
             <Panel className="border-accent-300 bg-accent-50 p-5">
-              <h2 className="font-display text-base text-accent-900">
+              <h2 className="font-display text-accent-900 text-base">
                 This is the founder&rsquo;s studio
               </h2>
-              <p className="mt-1.5 text-sm text-accent-800">
-                It is ranked by the same SQL as every other listing, carries a public
-                disclosure badge, and is capped at roughly 5% of category bookings. Any
-                moderation decision affecting it should be escalated rather than taken by
-                whoever happens to pick it up.
+              <p className="text-accent-800 mt-1.5 text-sm">
+                It is ranked by the same SQL as every other listing, carries a public disclosure
+                badge, and is capped at roughly 5% of category bookings. Any moderation decision
+                affecting it should be escalated rather than taken by whoever happens to pick it up.
               </p>
             </Panel>
           )}
         </div>
 
         <Panel className="h-fit p-5">
-          <h2 className="font-display text-lg text-ink-900">Status</h2>
-          <p className="mt-1 text-sm text-ink-600">
+          <h2 className="font-display text-ink-900 text-lg">Status</h2>
+          <p className="text-ink-600 mt-1 text-sm">
             Transitions are recorded in the audit log with your identity.
           </p>
 

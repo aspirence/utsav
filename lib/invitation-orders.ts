@@ -101,8 +101,13 @@ export async function getInvitationOrders(): Promise<AdminInvitationOrder[]> {
    */
   const { data: paymentRows } = await supabase
     .from('invitation_payments')
-    .select('id, order_id, aggregator, aggregator_payment_id, amount, status, method, paid_at, failure_reason, received_at')
-    .in('order_id', data.map((o) => o.id))
+    .select(
+      'id, order_id, aggregator, aggregator_payment_id, amount, status, method, paid_at, failure_reason, received_at',
+    )
+    .in(
+      'order_id',
+      data.map((o) => o.id),
+    )
     .order('received_at', { ascending: false })
 
   const byOrder = new Map<string, AdminOrderPayment[]>()

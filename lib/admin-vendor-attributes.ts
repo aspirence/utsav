@@ -44,7 +44,8 @@ export async function getVendorCategoryDetails(
     .eq('vendor_id', vendor.id)
 
   const primary = links?.find((l) => l.is_primary) ?? links?.[0]
-  if (!primary) return { categorySlug: '', categoryName: fallbackCategoryName, values: {}, isDemo: false }
+  if (!primary)
+    return { categorySlug: '', categoryName: fallbackCategoryName, values: {}, isDemo: false }
 
   const { data: category } = await supabase
     .from('categories')

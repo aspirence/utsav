@@ -94,15 +94,15 @@ export default async function LoginPage({
 
   return (
     <Container className="max-w-md py-16 sm:py-24">
-      <h1 className="text-3xl leading-tight text-ink-900 sm:text-4xl">Login</h1>
-      <p className="mt-3 text-ink-700">
+      <h1 className="text-ink-900 text-3xl leading-tight sm:text-4xl">Login</h1>
+      <p className="text-ink-700 mt-3">
         Use your email and password, or your mobile number and a code.
       </p>
 
       {linkError && (
         <div
           role="alert"
-          className="mt-6 rounded-md border border-danger-500/30 bg-danger-50 px-3.5 py-2.5 text-sm leading-relaxed text-danger-700"
+          className="border-danger-500/30 bg-danger-50 text-danger-700 mt-6 rounded-md border px-3.5 py-2.5 text-sm leading-relaxed"
         >
           {linkError}
 
@@ -113,7 +113,7 @@ export default async function LoginPage({
             <form action={signOut} className="mt-2.5">
               <button
                 type="submit"
-                className="font-semibold underline underline-offset-2 hover:text-danger-500"
+                className="hover:text-danger-500 font-semibold underline underline-offset-2"
               >
                 Sign out
               </button>
@@ -126,13 +126,13 @@ export default async function LoginPage({
         <LoginForm {...(next ? { next } : {})} />
       </div>
 
-      <p className="mt-8 border-t border-ink-100 pt-6 text-sm leading-relaxed text-ink-600">
+      <p className="border-ink-100 text-ink-600 mt-8 border-t pt-6 text-sm leading-relaxed">
         By continuing you agree to our{' '}
-        <Link href="/p/terms" className="underline underline-offset-2 hover:text-ink-900">
+        <Link href="/p/terms" className="hover:text-ink-900 underline underline-offset-2">
           terms
         </Link>{' '}
         and{' '}
-        <Link href="/p/privacy" className="underline underline-offset-2 hover:text-ink-900">
+        <Link href="/p/privacy" className="hover:text-ink-900 underline underline-offset-2">
           privacy policy
         </Link>
         .

@@ -3,6 +3,8 @@
 import { useRouter, useSearchParams } from 'next/navigation'
 import { useCallback, useEffect, useMemo, useRef, useState, useTransition } from 'react'
 
+import { cn } from '@/components/ui'
+
 /**
  * The discovery search bar. Plan §2 Must-tier:
  * "Category × locality discovery with price bands and the 'free on my date'
@@ -219,9 +221,7 @@ export function DiscoverFilters({
         <Segment
           id="budget"
           label="Budget"
-          value={
-            priceRungs.find((r) => String(r.value) === draft.budgetMax)?.label ?? 'Any budget'
-          }
+          value={priceRungs.find((r) => String(r.value) === draft.budgetMax)?.label ?? 'Any budget'}
           muted={!draft.budgetMax}
           open={open}
           setOpen={setOpen}
@@ -320,9 +320,7 @@ export function DiscoverFilters({
 
       <div className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-1 text-sm">
         {/* Only when the draft has drifted from what is applied — a permanent hint is furniture. */}
-        {dirty && (
-          <span className="text-primary-700">Press Search to apply your changes.</span>
-        )}
+        {dirty && <span className="text-primary-700">Press Search to apply your changes.</span>}
         {activeCount > 0 && (
           <button
             type="button"
@@ -367,7 +365,7 @@ function Bar({ children, onClose }: { children: React.ReactNode; onClose: () => 
   return (
     <div
       ref={ref}
-      className="border-ink-200/70 bg-surface-raised relative flex flex-col rounded-3xl border sm:rounded-full sm:flex-row sm:items-stretch sm:rounded-full"
+      className="border-ink-200/70 bg-surface-raised relative flex flex-col rounded-3xl border sm:flex-row sm:items-stretch sm:rounded-full"
     >
       {children}
     </div>
@@ -405,11 +403,19 @@ function Segment({
 
   return (
     <div
-      className={
-        'relative flex-1 ' +
-        (last ? '' : 'border-ink-200/70 border-b sm:border-b-0 sm:border-r ') +
-        (isOpen ? 'bg-surface-raised z-20 rounded-3xl sm:rounded-full' : '')
-      }
+      /*
+        cn(), because the two ternaries used to be joined with `+` and no space. Both branches
+        can be non-empty at once — an open segment that is not the last one — and then
+        `sm:border-b-0` and `bg-surface-raised` welded into a single class that matches nothing,
+        taking the divider reset and the open segment's raised background with it. The bug only
+        appeared on the segment you were actually interacting with, which is the hardest kind to
+        catch by looking at a static page.
+      */
+      className={cn(
+        'relative flex-1',
+        !last && 'border-ink-200/70 border-b sm:border-r sm:border-b-0',
+        isOpen && 'bg-surface-raised z-20 rounded-3xl sm:rounded-full',
+      )}
     >
       <button
         type="button"
@@ -419,9 +425,7 @@ function Segment({
       >
         <span className="min-w-0">
           <span className="text-ink-900 block text-[13px] font-semibold">{label}</span>
-          <span
-            className={'block truncate text-sm ' + (muted ? 'text-ink-400' : 'text-ink-700')}
-          >
+          <span className={'block truncate text-sm ' + (muted ? 'text-ink-400' : 'text-ink-700')}>
             {value}
           </span>
         </span>
@@ -435,7 +439,7 @@ function Segment({
           idea inline — the panel is mounted only while open, so the initial state is the animation.
         */
         <div
-          className="border-ink-200 bg-surface-raised absolute left-0 top-[calc(100%+0.5rem)] z-30 max-h-72 w-full min-w-[15rem] overflow-y-auto rounded-lg border py-1.5 shadow-[0_16px_40px_-20px_rgba(24,17,12,0.45)] sm:w-auto"
+          className="border-ink-200 bg-surface-raised absolute top-[calc(100%+0.5rem)] left-0 z-30 max-h-72 w-full min-w-[15rem] overflow-y-auto rounded-lg border py-1.5 shadow-[0_16px_40px_-20px_rgba(24,17,12,0.45)] sm:w-auto"
           style={{ animation: 'u-drop 160ms cubic-bezier(0.22, 1, 0.36, 1)' }}
         >
           {children}

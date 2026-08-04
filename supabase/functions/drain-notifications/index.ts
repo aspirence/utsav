@@ -143,7 +143,10 @@ Deno.serve(async (request: Request) => {
 
   const ids: string[] = (due ?? []).map((row: { id: string }) => row.id)
   if (ids.length === 0) {
-    return json({ status: 'ok', claimed: 0, sent: 0, failed: 0, retrying: 0, requeued, simulated: 0 }, 200)
+    return json(
+      { status: 'ok', claimed: 0, sent: 0, failed: 0, retrying: 0, requeued, simulated: 0 },
+      200,
+    )
   }
 
   const { data: claimed, error: claimError } = await supabase
@@ -154,7 +157,10 @@ Deno.serve(async (request: Request) => {
     .select(NOTIFICATION_COLUMNS)
 
   if (claimError) {
-    return json({ status: 'error', message: claimError.message, claimed: 0, sent: 0, failed: 0 }, 200)
+    return json(
+      { status: 'error', message: claimError.message, claimed: 0, sent: 0, failed: 0 },
+      200,
+    )
   }
 
   const rows: NotificationRow[] = claimed ?? []
@@ -218,7 +224,10 @@ Deno.serve(async (request: Request) => {
     }
   }
 
-  return json({ status: 'ok', claimed: rows.length, sent, failed, retrying, requeued, simulated }, 200)
+  return json(
+    { status: 'ok', claimed: rows.length, sent, failed, retrying, requeued, simulated },
+    200,
+  )
 })
 
 // ---------------------------------------------------------------------------
@@ -246,7 +255,10 @@ async function requeueStaleSending(supabase: any): Promise<number> {
 }
 
 interface AddressBook {
-  vendors: Map<string, { whatsapp_phone: string | null; contact_phone: string | null; contact_email: string | null }>
+  vendors: Map<
+    string,
+    { whatsapp_phone: string | null; contact_phone: string | null; contact_email: string | null }
+  >
   profiles: Map<string, { phone: string | null; email: string | null }>
 }
 
@@ -387,7 +399,11 @@ async function send(row: NotificationRow, book: AddressBook): Promise<DispatchRe
  * template Meta has approved, which is why free text is not an option. Template names
  * cannot contain dots, so 'lead.new' is registered as 'lead_new'.
  */
-async function sendWhatsApp(row: NotificationRow, to: string, body: string): Promise<DispatchResult> {
+async function sendWhatsApp(
+  row: NotificationRow,
+  to: string,
+  body: string,
+): Promise<DispatchResult> {
   const token = Deno.env.get('WHATSAPP_API_TOKEN')
   const phoneNumberId = Deno.env.get('WHATSAPP_PHONE_NUMBER_ID')
   if (!token || !phoneNumberId) {
@@ -548,7 +564,11 @@ async function postJson(
 
   // A 2xx with an unreadable body is still a send. Record the acknowledgement rather than
   // retrying and risking a duplicate the vendor can see.
-  return { ok: true, providerMessageId: readMessageId(parsed) ?? `ack:${Date.now()}`, simulated: false }
+  return {
+    ok: true,
+    providerMessageId: readMessageId(parsed) ?? `ack:${Date.now()}`,
+    simulated: false,
+  }
 }
 
 /** No credentials: log exactly what would have gone out and return an obviously fake id. */

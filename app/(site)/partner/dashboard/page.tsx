@@ -57,9 +57,9 @@ export default async function PartnerOverviewPage() {
           {tiles.map((t) => (
             <Card key={t.label}>
               <CardBody>
-                <p className="text-xs uppercase tracking-wide text-ink-500">{t.label}</p>
-                <p className="mt-1.5 font-display text-3xl text-ink-900">{t.value}</p>
-                <p className="mt-1 text-xs text-ink-500">{t.hint}</p>
+                <p className="text-ink-500 text-xs tracking-wide uppercase">{t.label}</p>
+                <p className="font-display text-ink-900 mt-1.5 text-3xl">{t.value}</p>
+                <p className="text-ink-500 mt-1 text-xs">{t.hint}</p>
               </CardBody>
             </Card>
           ))}
@@ -68,10 +68,10 @@ export default async function PartnerOverviewPage() {
 
       <section>
         <div className="mb-4 flex items-center justify-between gap-4">
-          <h2 className="font-display text-xl text-ink-900">Recent leads</h2>
+          <h2 className="font-display text-ink-900 text-xl">Recent leads</h2>
           <Link
             href="/partner/dashboard/leads"
-            className="text-sm font-medium text-primary-700 hover:text-primary-800"
+            className="text-primary-700 hover:text-primary-800 text-sm font-medium"
           >
             See all {stats.totalLeads} →
           </Link>
@@ -83,11 +83,11 @@ export default async function PartnerOverviewPage() {
               <Card>
                 <CardBody className="flex flex-wrap items-center justify-between gap-4">
                   <div className="min-w-0">
-                    <p className="font-medium text-ink-900">
+                    <p className="text-ink-900 font-medium">
                       {lead.contactFirstName} · {lead.eventType.replace(/_/g, ' ')}
                       {lead.localityName ? ` in ${lead.localityName}` : ''}
                     </p>
-                    <p className="mt-0.5 text-sm text-ink-500">
+                    <p className="text-ink-500 mt-0.5 text-sm">
                       {lead.eventDate
                         ? new Date(lead.eventDate).toLocaleDateString('en-IN', {
                             day: 'numeric',
@@ -110,12 +110,12 @@ export default async function PartnerOverviewPage() {
           Telling vendors the mechanism exists is what makes it worth anything. */}
       <Card className="border-ink-200 bg-surface-sunken">
         <CardBody>
-          <h2 className="font-display text-lg text-ink-900">Got a lead that was not real?</h2>
-          <p className="mt-1.5 text-sm text-ink-600">
-            Every enquiry is phone-verified before it reaches you, and goes to at most five
-            vendors. If one still turns out to be junk, report it and we refund the credit —
-            no argument. Your dashboard shows refunded leads separately so your response
-            rate is never penalised for them.
+          <h2 className="font-display text-ink-900 text-lg">Got a lead that was not real?</h2>
+          <p className="text-ink-600 mt-1.5 text-sm">
+            Every enquiry is phone-verified before it reaches you, and goes to at most five vendors.
+            If one still turns out to be junk, report it and we refund the credit — no argument.
+            Your dashboard shows refunded leads separately so your response rate is never penalised
+            for them.
           </p>
         </CardBody>
       </Card>

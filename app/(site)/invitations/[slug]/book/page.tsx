@@ -55,17 +55,17 @@ export default async function BookInvitationPage({
 
   return (
     <Container className="py-12 sm:py-16">
-      <nav aria-label="Breadcrumb" className="mb-8 text-sm text-ink-600">
+      <nav aria-label="Breadcrumb" className="text-ink-600 mb-8 text-sm">
         <Link href="/" className="hover:text-ink-900">
           Home
         </Link>
-        <span aria-hidden="true" className="mx-2 text-ink-400">
+        <span aria-hidden="true" className="text-ink-400 mx-2">
           /
         </span>
         <Link href={`/invitations/${template.slug}`} className="hover:text-ink-900">
           {template.name}
         </Link>
-        <span aria-hidden="true" className="mx-2 text-ink-400">
+        <span aria-hidden="true" className="text-ink-400 mx-2">
           /
         </span>
         <span className="text-ink-900">Book</span>
@@ -85,11 +85,11 @@ export default async function BookInvitationPage({
       */}
       <div className="grid gap-10 lg:grid-cols-[340px_minmax(0,1fr)] lg:gap-12 xl:gap-16">
         <div className="lg:sticky lg:top-24 lg:self-start">
-          <p className="inline-flex items-center rounded-full border border-ink-200 bg-surface-raised px-4 py-2 text-xs font-semibold uppercase tracking-[0.14em] text-ink-600">
+          <p className="border-ink-200 bg-surface-raised text-ink-600 inline-flex items-center rounded-full border px-4 py-2 text-xs font-semibold tracking-[0.14em] uppercase">
             Premium wedding invitations
           </p>
 
-          <h1 className="mt-6 font-display text-4xl leading-tight text-ink-900 sm:text-5xl">
+          <h1 className="font-display text-ink-900 mt-6 text-4xl leading-tight sm:text-5xl">
             Book with confidence
           </h1>
 
@@ -121,13 +121,13 @@ export default async function BookInvitationPage({
                 as a rounded blob rather than a phone. */}
             <TemplatePhone item={template} compact className="w-[104px] shrink-0" />
             <div>
-              <p className="font-display text-base leading-snug text-ink-900">{template.name}</p>
-              <p className="mt-1 text-sm tabular-nums text-ink-600">
+              <p className="font-display text-ink-900 text-base leading-snug">{template.name}</p>
+              <p className="text-ink-600 mt-1 text-sm tabular-nums">
                 {formatPaise(template.pricePaise)} all-inclusive
               </p>
               <Link
                 href={`/invitations/${template.slug}`}
-                className="mt-2 inline-block text-sm text-primary-700 hover:underline"
+                className="text-primary-700 mt-2 inline-block text-sm hover:underline"
               >
                 Change design
               </Link>
@@ -151,9 +151,9 @@ export default async function BookInvitationPage({
 
 function Assurance({ title, children }: { title: string; children: React.ReactNode }) {
   return (
-    <li className="rounded-xl border border-ink-200 bg-surface-raised p-4">
-      <p className="font-medium text-ink-900">{title}</p>
-      <p className="mt-1.5 text-sm leading-relaxed text-ink-600">{children}</p>
+    <li className="border-ink-200 bg-surface-raised rounded-xl border p-4">
+      <p className="text-ink-900 font-medium">{title}</p>
+      <p className="text-ink-600 mt-1.5 text-sm leading-relaxed">{children}</p>
     </li>
   )
 }

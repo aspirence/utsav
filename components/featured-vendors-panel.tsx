@@ -64,19 +64,17 @@ export function FeaturedVendorsPanel({
           the floor and finish level with the image grid beside it - and there is no grid
           beside it below lg, so all they did there was open a hole above the link. */}
       <div className="max-w-2xl lg:flex lg:h-full lg:flex-col">
-        <p className="text-base text-ink-600">
-          Ranked by the work, not by what anyone pays us.
-        </p>
+        <p className="text-ink-600 text-base">Ranked by the work, not by what anyone pays us.</p>
 
         {/* 30/36px, down from 36/48. At 48px the line measured wider than the column at
             every width below lg, so it was either wrapping or running off the edge. */}
-        <h2 className="mt-2 text-3xl leading-[1.12] text-ink-900 sm:text-4xl lg:whitespace-nowrap">
+        <h2 className="text-ink-900 mt-2 text-3xl leading-[1.12] sm:text-4xl lg:whitespace-nowrap">
           Photographers in {cityName}
         </h2>
 
-        <p className="mt-5 text-lg leading-relaxed text-ink-700">
-          Ordering here is decided by one database function, and these are its only
-          inputs. Nothing else moves a listing up.
+        <p className="text-ink-700 mt-5 text-lg leading-relaxed">
+          Ordering here is decided by one database function, and these are its only inputs. Nothing
+          else moves a listing up.
         </p>
 
         <ul className="mt-8 space-y-6">
@@ -99,14 +97,14 @@ export function FeaturedVendorsPanel({
             },
           ].map((point) => (
             <li key={point.t} className="flex gap-3.5">
-              <span className="mt-1.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-primary-600">
+              <span className="bg-primary-600 mt-1.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full">
                 <svg viewBox="0 0 20 20" className="h-3.5 w-3.5 fill-white" aria-hidden="true">
                   <path d="M8.1 13.4L4.7 10l-1.2 1.2 4.6 4.6 9-9-1.2-1.2z" />
                 </svg>
               </span>
               <span>
-                <span className="text-lg font-medium text-ink-900">{point.t}</span>
-                <span className="mt-1 block leading-relaxed text-ink-600">{point.d}</span>
+                <span className="text-ink-900 text-lg font-medium">{point.t}</span>
+                <span className="text-ink-600 mt-1 block leading-relaxed">{point.d}</span>
               </span>
             </li>
           ))}
@@ -114,7 +112,7 @@ export function FeaturedVendorsPanel({
 
         <Link
           href={seeAllHref}
-          className="mt-6 inline-flex w-fit items-center gap-1.5 font-semibold text-primary-700 hover:text-primary-800 lg:mt-auto lg:pt-8"
+          className="text-primary-700 hover:text-primary-800 mt-6 inline-flex w-fit items-center gap-1.5 font-semibold lg:mt-auto lg:pt-8"
         >
           See all {totalCount} photographers
           <span aria-hidden="true">&rarr;</span>
@@ -127,7 +125,7 @@ export function FeaturedVendorsPanel({
           <li key={vendor.slug}>
             <Link
               href={`/vendor/${vendor.slug}`}
-              className="group relative block h-[260px] overflow-hidden rounded-2xl focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-600 sm:h-[330px] lg:h-[370px]"
+              className="group focus-visible:outline-primary-600 relative block h-[260px] overflow-hidden rounded-2xl focus-visible:outline-2 focus-visible:outline-offset-2 sm:h-[330px] lg:h-[370px]"
             >
               {/* eslint-disable-next-line @next/next/no-img-element -- plan section 12: Storage CDN */}
               <img
@@ -139,20 +137,20 @@ export function FeaturedVendorsPanel({
               />
 
               {/* Scrim on the lower half only, so the photograph keeps its top. */}
-              <div className="absolute inset-x-0 bottom-0 h-3/5 bg-gradient-to-t from-ink-950/85 via-ink-950/40 to-transparent" />
+              <div className="from-ink-950/85 via-ink-950/40 absolute inset-x-0 bottom-0 h-3/5 bg-gradient-to-t to-transparent" />
 
               <span
                 aria-hidden="true"
-                className="absolute right-3 top-3 flex h-8 w-8 items-center justify-center rounded-md bg-ink-950/45 text-white backdrop-blur-sm transition-colors group-hover:bg-ink-950/70"
+                className="bg-ink-950/45 group-hover:bg-ink-950/70 absolute top-3 right-3 flex h-8 w-8 items-center justify-center rounded-md text-white backdrop-blur-sm transition-colors"
               >
                 &#8599;
               </span>
 
               <div className="absolute inset-x-0 bottom-0 p-4">
-                <p className="text-[11px] font-semibold uppercase tracking-[0.12em] text-white/75">
+                <p className="text-[11px] font-semibold tracking-[0.12em] text-white/75 uppercase">
                   Photography
                 </p>
-                <p className="mt-0.5 font-display text-lg leading-tight text-white">
+                <p className="font-display mt-0.5 text-lg leading-tight text-white">
                   {vendor.displayName}
                 </p>
                 <p className="mt-0.5 text-xs text-white/70">
@@ -162,7 +160,9 @@ export function FeaturedVendorsPanel({
 
                 {/* Plan section 11/12: the disclosure follows the listing everywhere. */}
                 {vendor.isAnchorStudio && (
-                  <p className="mt-1.5 text-[11px] text-accent-200">Fremmo-owned · no ranking preference</p>
+                  <p className="text-accent-200 mt-1.5 text-[11px]">
+                    Fremmo-owned · no ranking preference
+                  </p>
                 )}
               </div>
             </Link>

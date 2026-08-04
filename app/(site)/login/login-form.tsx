@@ -40,7 +40,7 @@ export function LoginForm({ next }: { next?: string }) {
       <div
         role="tablist"
         aria-label="Sign-in method"
-        className="mb-6 flex rounded-md border border-ink-200 p-1"
+        className="border-ink-200 mb-6 flex rounded-md border p-1"
       >
         <MethodTab active={method === 'email'} onClick={() => setMethod('email')}>
           Email
@@ -115,15 +115,15 @@ function EmailForm({ next }: { next?: string }) {
       <div>
         <p
           role="status"
-          className="rounded-md border border-ink-200 bg-surface-raised px-3.5 py-3 text-sm leading-relaxed text-ink-700"
+          className="border-ink-200 bg-surface-raised text-ink-700 rounded-md border px-3.5 py-3 text-sm leading-relaxed"
         >
           {signedUp.notice}
         </p>
-        <p className="mt-4 text-center text-sm text-ink-600">
+        <p className="text-ink-600 mt-4 text-center text-sm">
           <button
             type="button"
             onClick={() => setMode('signin')}
-            className="font-semibold underline underline-offset-2 hover:text-ink-900"
+            className="hover:text-ink-900 font-semibold underline underline-offset-2"
           >
             Log in
           </button>
@@ -146,7 +146,7 @@ function EmailForm({ next }: { next?: string }) {
         {mode === 'signup' && (
           <div>
             <label htmlFor="fullName" className={LABEL}>
-              Your name <span className="font-normal text-ink-500">(optional)</span>
+              Your name <span className="text-ink-500 font-normal">(optional)</span>
             </label>
             <input
               id="fullName"
@@ -194,9 +194,7 @@ function EmailForm({ next }: { next?: string }) {
             maxLength={200}
             className={FIELD}
           />
-          {mode === 'signup' && (
-            <p className="mt-2 text-xs text-ink-500">At least 8 characters.</p>
-          )}
+          {mode === 'signup' && <p className="text-ink-500 mt-2 text-xs">At least 8 characters.</p>}
         </div>
 
         <button type="submit" disabled={pending} className={SUBMIT}>
@@ -210,12 +208,12 @@ function EmailForm({ next }: { next?: string }) {
         </button>
       </form>
 
-      <p className="mt-4 text-center text-sm text-ink-600">
+      <p className="text-ink-600 mt-4 text-center text-sm">
         {mode === 'signin' ? 'No account yet?' : 'Already have an account?'}{' '}
         <button
           type="button"
           onClick={() => setMode(mode === 'signin' ? 'signup' : 'signin')}
-          className="underline underline-offset-2 hover:text-ink-900"
+          className="hover:text-ink-900 underline underline-offset-2"
         >
           {mode === 'signin' ? 'Create one' : 'Login'}
         </button>
@@ -265,8 +263,8 @@ function PhoneForm({ next }: { next?: string }) {
             <label htmlFor="phone" className={LABEL}>
               Mobile number
             </label>
-            <div className="mt-2 flex items-center rounded-md border border-ink-200 bg-surface-raised focus-within:border-ink-400">
-              <span className="pl-3.5 pr-2 text-ink-500">+91</span>
+            <div className="border-ink-200 bg-surface-raised focus-within:border-ink-400 mt-2 flex items-center rounded-md border">
+              <span className="text-ink-500 pr-2 pl-3.5">+91</span>
               <input
                 id="phone"
                 name="phone"
@@ -275,10 +273,10 @@ function PhoneForm({ next }: { next?: string }) {
                 autoComplete="tel"
                 required
                 placeholder="98765 43210"
-                className="w-full rounded-r-md bg-transparent py-3 pr-3.5 text-ink-900 outline-none placeholder:text-ink-400"
+                className="text-ink-900 placeholder:text-ink-400 w-full rounded-r-md bg-transparent py-3 pr-3.5 outline-none"
               />
             </div>
-            <p className="mt-2 text-xs text-ink-500">
+            <p className="text-ink-500 mt-2 text-xs">
               We text you a code. No password to remember.
             </p>
           </div>
@@ -307,9 +305,9 @@ function PhoneForm({ next }: { next?: string }) {
               required
               maxLength={8}
               placeholder="······"
-              className="mt-2 w-full rounded-md border border-ink-200 bg-surface-raised px-3.5 py-3 text-center text-2xl tracking-[0.4em] text-ink-900 outline-none focus:border-ink-400 placeholder:tracking-[0.3em] placeholder:text-ink-300"
+              className="border-ink-200 bg-surface-raised text-ink-900 focus:border-ink-400 placeholder:text-ink-300 mt-2 w-full rounded-md border px-3.5 py-3 text-center text-2xl tracking-[0.4em] outline-none placeholder:tracking-[0.3em]"
             />
-            <p className="mt-2 text-xs text-ink-500">Sent to {phone}.</p>
+            <p className="text-ink-500 mt-2 text-xs">Sent to {phone}.</p>
           </div>
 
           <button type="submit" disabled={verifying} className={SUBMIT}>
@@ -323,7 +321,7 @@ function PhoneForm({ next }: { next?: string }) {
             {next && <input type="hidden" name="next" value={next} />}
             <button
               type="submit"
-              className="w-full text-sm text-ink-600 underline underline-offset-2 hover:text-ink-900"
+              className="text-ink-600 hover:text-ink-900 w-full text-sm underline underline-offset-2"
             >
               Send a new code
             </button>
@@ -340,7 +338,7 @@ function ErrorNote({ children }: { children: React.ReactNode }) {
   return (
     <p
       role="alert"
-      className="mt-4 rounded-md border border-danger-500/30 bg-danger-50 px-3.5 py-2.5 text-sm text-danger-700"
+      className="border-danger-500/30 bg-danger-50 text-danger-700 mt-4 rounded-md border px-3.5 py-2.5 text-sm"
     >
       {children}
     </p>

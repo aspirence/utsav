@@ -71,22 +71,22 @@ export function ProfileForm({
   return (
     <form action={formAction} className="space-y-6">
       {state.status === 'saved' && state.message && (
-        <p className="rounded-lg bg-success-50 px-4 py-3 text-sm text-success-700">
+        <p className="bg-success-50 text-success-700 rounded-lg px-4 py-3 text-sm">
           {state.message}
         </p>
       )}
       {state.status === 'error' && state.message && (
-        <p className="rounded-lg bg-danger-50 px-4 py-3 text-sm text-danger-700">{state.message}</p>
+        <p className="bg-danger-50 text-danger-700 rounded-lg px-4 py-3 text-sm">{state.message}</p>
       )}
       {state.status === 'unconfigured' && state.message && (
-        <p className="rounded-lg bg-warning-50 px-4 py-3 text-sm text-warning-700">
+        <p className="bg-warning-50 text-warning-700 rounded-lg px-4 py-3 text-sm">
           {state.message}
         </p>
       )}
 
       <Card>
         <CardBody className="space-y-4">
-          <h2 className="font-display text-lg text-ink-900">Who you are</h2>
+          <h2 className="font-display text-ink-900 text-lg">Who you are</h2>
 
           <div className="grid gap-4 sm:grid-cols-2">
             <Field label="Business name" error={state.fieldErrors?.displayName}>
@@ -159,7 +159,7 @@ export function ProfileForm({
             />
           </Field>
 
-          <label className="flex items-center gap-2.5 text-sm text-ink-700">
+          <label className="text-ink-700 flex items-center gap-2.5 text-sm">
             <input
               type="checkbox"
               name="travelsOutstation"
@@ -173,11 +173,11 @@ export function ProfileForm({
 
       <Card>
         <CardBody className="space-y-4">
-          <h2 className="font-display text-lg text-ink-900">Price band</h2>
-          <p className="text-sm text-ink-600">
-            This is the range you normally work in, not a quote. Enquiries with a budget
-            below your lower figure are not routed to you, so setting it honestly is what
-            keeps your lead inbox worth reading.
+          <h2 className="font-display text-ink-900 text-lg">Price band</h2>
+          <p className="text-ink-600 text-sm">
+            This is the range you normally work in, not a quote. Enquiries with a budget below your
+            lower figure are not routed to you, so setting it honestly is what keeps your lead inbox
+            worth reading.
           </p>
 
           <div className="grid gap-4 sm:grid-cols-2">
@@ -207,8 +207,8 @@ export function ProfileForm({
             </Field>
           </div>
 
-          <p className="rounded-lg bg-surface-sunken px-4 py-3 text-sm text-ink-700">
-            Customers will see <strong className="font-semibold text-ink-900">{bandLabel}</strong>{' '}
+          <p className="bg-surface-sunken text-ink-700 rounded-lg px-4 py-3 text-sm">
+            Customers will see <strong className="text-ink-900 font-semibold">{bandLabel}</strong>{' '}
             on your card.
           </p>
         </CardBody>
@@ -216,17 +216,17 @@ export function ProfileForm({
 
       <Card>
         <CardBody className="space-y-4">
-          <h2 className="font-display text-lg text-ink-900">Style</h2>
-          <p className="text-sm text-ink-600">
-            Up to eight. These are the filters couples use most, and they decide which
-            searches you appear in.
+          <h2 className="font-display text-ink-900 text-lg">Style</h2>
+          <p className="text-ink-600 text-sm">
+            Up to eight. These are the filters couples use most, and they decide which searches you
+            appear in.
           </p>
 
           <div className="flex flex-wrap gap-2">
             {styleTags.map((tag) => (
               <label
                 key={tag.slug}
-                className="cursor-pointer rounded-full border border-ink-200 bg-surface-raised px-3.5 py-1.5 text-sm text-ink-700 has-[:checked]:border-ink-900 has-[:checked]:bg-ink-900 has-[:checked]:text-white"
+                className="border-ink-200 bg-surface-raised text-ink-700 has-[:checked]:border-ink-900 has-[:checked]:bg-ink-900 cursor-pointer rounded-full border px-3.5 py-1.5 text-sm has-[:checked]:text-white"
               >
                 <input
                   type="checkbox"
@@ -240,17 +240,17 @@ export function ProfileForm({
             ))}
           </div>
           {state.fieldErrors?.styleTags && (
-            <p className="text-xs text-danger-700">{state.fieldErrors.styleTags[0]}</p>
+            <p className="text-danger-700 text-xs">{state.fieldErrors.styleTags[0]}</p>
           )}
         </CardBody>
       </Card>
 
       <Card>
         <CardBody className="space-y-4">
-          <h2 className="font-display text-lg text-ink-900">Where else you are</h2>
-          <p className="text-sm text-ink-600">
-            Public links only. Your phone number and email stay private — customers reach
-            you through a verified enquiry, never off the page.
+          <h2 className="font-display text-ink-900 text-lg">Where else you are</h2>
+          <p className="text-ink-600 text-sm">
+            Public links only. Your phone number and email stay private — customers reach you
+            through a verified enquiry, never off the page.
           </p>
 
           <div className="grid gap-4 sm:grid-cols-2">
@@ -277,9 +277,9 @@ export function ProfileForm({
 
       <div className="flex items-center gap-3">
         <SaveButton />
-        <p className="text-xs text-ink-500">
-          Your rating, response time and profile score are calculated by Fremmo and cannot
-          be edited here.
+        <p className="text-ink-500 text-xs">
+          Your rating, response time and profile score are calculated by Fremmo and cannot be edited
+          here.
         </p>
       </div>
     </form>
@@ -314,10 +314,10 @@ function Field({
 }) {
   return (
     <label className={`block ${className ?? ''}`}>
-      <span className="mb-1.5 block text-sm font-medium text-ink-800">{label}</span>
+      <span className="text-ink-800 mb-1.5 block text-sm font-medium">{label}</span>
       {children}
-      {hint && !error && <span className="mt-1 block text-xs text-ink-500">{hint}</span>}
-      {error && <span className="mt-1 block text-xs text-danger-700">{error[0]}</span>}
+      {hint && !error && <span className="text-ink-500 mt-1 block text-xs">{hint}</span>}
+      {error && <span className="text-danger-700 mt-1 block text-xs">{error[0]}</span>}
     </label>
   )
 }

@@ -45,8 +45,8 @@ export default async function PartnerLeadsPage({
             href={`/partner/dashboard/leads?status=${tab.key}`}
             className={
               filter === tab.key
-                ? 'rounded-full bg-ink-900 px-4 py-1.5 text-sm font-medium text-white'
-                : 'rounded-full border border-ink-200 bg-surface-raised px-4 py-1.5 text-sm text-ink-700 hover:border-ink-300'
+                ? 'bg-ink-900 rounded-full px-4 py-1.5 text-sm font-medium text-white'
+                : 'border-ink-200 bg-surface-raised text-ink-700 hover:border-ink-300 rounded-full border px-4 py-1.5 text-sm'
             }
           >
             {tab.label} ({tab.count})
@@ -57,8 +57,8 @@ export default async function PartnerLeadsPage({
       {shown.length === 0 ? (
         <Card>
           <CardBody className="py-12 text-center">
-            <p className="font-display text-lg text-ink-900">Nothing here right now</p>
-            <p className="mt-1.5 text-sm text-ink-600">
+            <p className="font-display text-ink-900 text-lg">Nothing here right now</p>
+            <p className="text-ink-600 mt-1.5 text-sm">
               New enquiries appear the moment they are verified and routed to you.
             </p>
           </CardBody>
@@ -75,9 +75,7 @@ export default async function PartnerLeadsPage({
 }
 
 function LeadRow({ lead }: { lead: PartnerLead }) {
-  const hoursLeft = Math.round(
-    (new Date(lead.expiresAt).getTime() - Date.now()) / 3_600_000,
-  )
+  const hoursLeft = Math.round((new Date(lead.expiresAt).getTime() - Date.now()) / 3_600_000)
   const urgent = ['routed', 'viewed'].includes(lead.status) && hoursLeft > 0 && hoursLeft < 48
 
   return (
@@ -86,7 +84,7 @@ function LeadRow({ lead }: { lead: PartnerLead }) {
         <div className="flex flex-wrap items-start justify-between gap-4">
           <div className="min-w-0 flex-1">
             <div className="flex flex-wrap items-center gap-2">
-              <h2 className="font-display text-lg text-ink-900">
+              <h2 className="font-display text-ink-900 text-lg">
                 {lead.contactName ?? `${lead.contactFirstName} ·`}{' '}
                 <span className="capitalize">{lead.eventType.replace(/_/g, ' ')}</span>
               </h2>
@@ -96,7 +94,7 @@ function LeadRow({ lead }: { lead: PartnerLead }) {
               <Badge tone="neutral">Vendor {lead.routedSeq} of 5</Badge>
             </div>
 
-            <dl className="mt-2 flex flex-wrap gap-x-5 gap-y-1 text-sm text-ink-600">
+            <dl className="text-ink-600 mt-2 flex flex-wrap gap-x-5 gap-y-1 text-sm">
               <div>
                 <dt className="sr-only">Event date</dt>
                 <dd>
@@ -110,11 +108,21 @@ function LeadRow({ lead }: { lead: PartnerLead }) {
                   {lead.dateFlexible && lead.eventDate ? ' (flexible)' : ''}
                 </dd>
               </div>
-              {lead.guestCount && <div><dt className="sr-only">Guests</dt><dd>{lead.guestCount} guests</dd></div>}
-              {lead.localityName && <div><dt className="sr-only">Locality</dt><dd>{lead.localityName}</dd></div>}
+              {lead.guestCount && (
+                <div>
+                  <dt className="sr-only">Guests</dt>
+                  <dd>{lead.guestCount} guests</dd>
+                </div>
+              )}
+              {lead.localityName && (
+                <div>
+                  <dt className="sr-only">Locality</dt>
+                  <dd>{lead.localityName}</dd>
+                </div>
+              )}
               <div>
                 <dt className="sr-only">Budget</dt>
-                <dd className="font-medium text-ink-800">
+                <dd className="text-ink-800 font-medium">
                   {formatPriceBand(lead.budgetMin, lead.budgetMax)}
                 </dd>
               </div>
@@ -137,13 +145,11 @@ function LeadRow({ lead }: { lead: PartnerLead }) {
 
           <div className="shrink-0 text-right">
             {urgent && (
-              <p className="mb-2 text-xs font-semibold text-primary-700">
-                Expires in {hoursLeft}h
-              </p>
+              <p className="text-primary-700 mb-2 text-xs font-semibold">Expires in {hoursLeft}h</p>
             )}
             <Link
               href={`/partner/dashboard/leads/${lead.leadId}`}
-              className="inline-flex h-9 items-center rounded-lg bg-primary-600 px-4 text-sm font-medium text-white hover:bg-primary-700"
+              className="bg-primary-600 hover:bg-primary-700 inline-flex h-9 items-center rounded-lg px-4 text-sm font-medium text-white"
             >
               {lead.contactVisible ? 'Open' : 'Open & reveal contact'}
             </Link>
@@ -153,4 +159,3 @@ function LeadRow({ lead }: { lead: PartnerLead }) {
     </Card>
   )
 }
-

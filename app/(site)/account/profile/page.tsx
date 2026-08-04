@@ -19,8 +19,8 @@ export default async function ProfilePage() {
 
   return (
     <div>
-      <h2 className="font-display text-xl text-ink-900">Your details</h2>
-      <p className="mt-2 max-w-prose text-ink-600">
+      <h2 className="font-display text-ink-900 text-xl">Your details</h2>
+      <p className="text-ink-600 mt-2 max-w-prose">
         Only what a vendor needs to reply to you properly.
       </p>
 
